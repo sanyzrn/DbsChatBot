@@ -237,6 +237,14 @@
 		if ( cfg.buttonSize ) { root.style.setProperty( '--nfx-btn-size', parseInt( cfg.buttonSize, 10 ) + 'px' ); }
 		if ( cfg.iconSize ) { root.style.setProperty( '--nfx-icon-size', parseInt( cfg.iconSize, 10 ) + 'px' ); }
 		if ( cfg.buttonRadius != null && cfg.buttonRadius !== '' ) { root.style.setProperty( '--nfx-btn-radius', parseInt( cfg.buttonRadius, 10 ) + '%' ); }
+		// فونت و استایل پنجره.
+		if ( cfg.fontStack ) { root.style.setProperty( '--nfx-font', cfg.fontStack ); }
+		if ( cfg.fontSize ) { root.style.setProperty( '--nfx-font-size', parseInt( cfg.fontSize, 10 ) + 'px' ); }
+		if ( cfg.windowWidth ) { root.style.setProperty( '--nfx-win-width', parseInt( cfg.windowWidth, 10 ) + 'px' ); }
+		if ( cfg.windowRadius != null && cfg.windowRadius !== '' ) { root.style.setProperty( '--nfx-win-radius', parseInt( cfg.windowRadius, 10 ) + 'px' ); }
+		if ( cfg.bubbleRadius != null && cfg.bubbleRadius !== '' ) { root.style.setProperty( '--nfx-bubble-radius', parseInt( cfg.bubbleRadius, 10 ) + 'px' ); }
+		if ( cfg.userBubble ) { root.style.setProperty( '--nfx-user-bubble', cfg.userBubble ); }
+		if ( cfg.botBubble ) { root.style.setProperty( '--nfx-bot-bubble', cfg.botBubble ); }
 	}
 	var iconPx = parseInt( cfg.iconSize, 10 ) || 28;
 

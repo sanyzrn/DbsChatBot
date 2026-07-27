@@ -80,6 +80,17 @@ class Nafas_Chatbot_Settings {
 			'primary_hover'      => '#991211',
 			'theme_mode'         => 'light', // light | dark | auto.
 
+			// فونت و استایل پنجرهٔ چت (مبتنی بر متغیرهای CSS).
+			'font_family'        => 'vazirmatn', // vazirmatn | system | inter | roboto | custom.
+			'font_name'          => '',   // نام خانوادهٔ فونت سفارشی (وقتی font_family = custom).
+			'font_url'           => '',   // آدرس شیوه‌نامهٔ فونت سفارشی (@font-face).
+			'font_size'          => 14,   // اندازهٔ پایهٔ متن پیام‌ها (px).
+			'window_width'       => 384,  // عرض پنجرهٔ چت (px).
+			'window_radius'      => 24,   // گردی گوشه‌های پنجره (px).
+			'bubble_radius'      => 16,   // گردی گوشه‌های حباب پیام (px).
+			'user_bubble_color'  => '',   // رنگ حباب کاربر (خالی = رنگ اصلی).
+			'bot_bubble_color'   => '',   // رنگ حباب ربات (خالی = پس‌زمینهٔ کارت).
+
 			// آیکون شناور (سفارشی‌سازی).
 			'button_size'        => 60, // قطر دکمه بر حسب پیکسل.
 			'icon_size'          => 28, // اندازه آیکون بر حسب پیکسل.

@@ -78,7 +78,8 @@ class Nafas_Chatbot_Elementor_Widget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_style_depends() {
-		return array( 'nafas-chatbot', 'nafas-chatbot-font' );
+		// فونت به‌صورت شرطی و بر اساس انتخاب کاربر در enqueue_with_config() بارگذاری می‌شود.
+		return array( 'nafas-chatbot' );
 	}
 
 	/**
@@ -315,6 +316,72 @@ class Nafas_Chatbot_Elementor_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'user_bubble_color',
+			array(
+				'label'   => esc_html__( 'رنگ حباب کاربر', 'nafas-chatbot' ),
+				'type'    => Controls_Manager::COLOR,
+				'default' => '',
+			)
+		);
+
+		$this->add_control(
+			'bot_bubble_color',
+			array(
+				'label'   => esc_html__( 'رنگ حباب ربات', 'nafas-chatbot' ),
+				'type'    => Controls_Manager::COLOR,
+				'default' => '',
+			)
+		);
+
+		$this->add_control(
+			'font_size',
+			array(
+				'label'       => esc_html__( 'اندازهٔ متن پیام (px)', 'nafas-chatbot' ),
+				'type'        => Controls_Manager::NUMBER,
+				'min'         => 10,
+				'max'         => 24,
+				'default'     => '',
+				'placeholder' => (string) Nafas_Chatbot_Settings::get( 'font_size', 14 ),
+			)
+		);
+
+		$this->add_control(
+			'window_width',
+			array(
+				'label'       => esc_html__( 'عرض پنجره (px)', 'nafas-chatbot' ),
+				'type'        => Controls_Manager::NUMBER,
+				'min'         => 300,
+				'max'         => 520,
+				'default'     => '',
+				'placeholder' => (string) Nafas_Chatbot_Settings::get( 'window_width', 384 ),
+			)
+		);
+
+		$this->add_control(
+			'window_radius',
+			array(
+				'label'       => esc_html__( 'گردی گوشه‌های پنجره (px)', 'nafas-chatbot' ),
+				'type'        => Controls_Manager::NUMBER,
+				'min'         => 0,
+				'max'         => 40,
+				'default'     => '',
+				'placeholder' => (string) Nafas_Chatbot_Settings::get( 'window_radius', 24 ),
+			)
+		);
+
+		$this->add_control(
+			'bubble_radius',
+			array(
+				'label'       => esc_html__( 'گردی گوشه‌های حباب (px)', 'nafas-chatbot' ),
+				'type'        => Controls_Manager::NUMBER,
+				'min'         => 0,
+				'max'         => 30,
+				'default'     => '',
+				'placeholder' => (string) Nafas_Chatbot_Settings::get( 'bubble_radius', 16 ),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -338,6 +405,13 @@ class Nafas_Chatbot_Elementor_Widget extends Widget_Base {
 			'show_products' => ! empty( $settings['show_products'] ) ? 'yes' : 'no',
 			'show_adr'      => ! empty( $settings['show_adr'] ) ? 'yes' : 'no',
 			'show_consult'  => ! empty( $settings['show_consult'] ) ? 'yes' : 'no',
+			// استایل پنجره (فقط در صورت مقداردهی، جایگزین تنظیم سراسری می‌شوند).
+			'user_bubble_color' => isset( $settings['user_bubble_color'] ) ? $settings['user_bubble_color'] : '',
+			'bot_bubble_color'  => isset( $settings['bot_bubble_color'] ) ? $settings['bot_bubble_color'] : '',
+			'font_size'         => isset( $settings['font_size'] ) ? $settings['font_size'] : '',
+			'window_width'      => isset( $settings['window_width'] ) ? $settings['window_width'] : '',
+			'window_radius'     => isset( $settings['window_radius'] ) ? $settings['window_radius'] : '',
+			'bubble_radius'     => isset( $settings['bubble_radius'] ) ? $settings['bubble_radius'] : '',
 		);
 
 		// محصولات سفارشی.

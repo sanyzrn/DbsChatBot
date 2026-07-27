@@ -31,10 +31,75 @@
 			activateTab( window.location.hash );
 		}
 
+		/* ---------- پیش‌نمایش زندهٔ ظاهر ---------- */
+		var fontStacks = {
+			vazirmatn: "'Vazirmatn', 'Vazir', Tahoma, sans-serif",
+			system: "system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+			inter: "'Inter', system-ui, sans-serif",
+			roboto: "'Roboto', system-ui, sans-serif"
+		};
+		function fieldVal( id ) {
+			var e = document.getElementById( id );
+			return e ? String( e.value || '' ) : '';
+		}
+		function fontStack() {
+			var fam = fieldVal( 'font_family' );
+			if ( fam === 'custom' ) {
+				var name = fieldVal( 'font_name' );
+				return name ? "'" + name + "', sans-serif" : '';
+			}
+			return fontStacks[ fam ] || fontStacks.vazirmatn;
+		}
+		function updatePreview() {
+			var p = document.getElementById( 'nfx-preview' );
+			if ( ! p ) { return; }
+			function setVar( key, val ) {
+				if ( val !== '' && val != null ) { p.style.setProperty( key, val ); }
+				else { p.style.removeProperty( key ); }
+			}
+			function px( id ) { var v = fieldVal( id ); return v === '' ? '' : ( parseInt( v, 10 ) + 'px' ); }
+
+			setVar( '--nfx-primary', fieldVal( 'primary_color' ) );
+			setVar( '--nfx-primary-hover', fieldVal( 'primary_hover' ) );
+			setVar( '--nfx-user-bubble', fieldVal( 'user_bubble_color' ) );
+			setVar( '--nfx-bot-bubble', fieldVal( 'bot_bubble_color' ) );
+			setVar( '--nfx-font', fontStack() );
+			setVar( '--nfx-font-size', px( 'font_size' ) );
+			setVar( '--nfx-win-width', px( 'window_width' ) );
+			setVar( '--nfx-win-radius', px( 'window_radius' ) );
+			setVar( '--nfx-bubble-radius', px( 'bubble_radius' ) );
+			setVar( '--nfx-btn-size', px( 'button_size' ) );
+			var br = fieldVal( 'button_radius' );
+			setVar( '--nfx-btn-radius', br === '' ? '' : ( parseInt( br, 10 ) + '%' ) );
+
+			var tm = fieldVal( 'theme_mode' );
+			p.setAttribute( 'data-theme', tm === 'dark' ? 'dark' : 'light' );
+
+			var head = p.querySelector( '.nfx-preview__title' );
+			var ht = document.getElementById( 'header_title' );
+			if ( head && ht && ht.value ) { head.textContent = ht.value; }
+		}
+		window.NafasUpdatePreview = updatePreview;
+
+		// نمایش/مخفی فیلدهای فونت سفارشی.
+		function toggleFontCustom() {
+			$( '.nafas-font-custom' ).toggle( fieldVal( 'font_family' ) === 'custom' );
+		}
+
 		/* ---------- انتخاب رنگ ---------- */
 		if ( $.fn.wpColorPicker ) {
-			$( '.nafas-color-picker' ).wpColorPicker();
+			$( '.nafas-color-picker' ).wpColorPicker( {
+				change: function () { setTimeout( updatePreview, 60 ); },
+				clear:  function () { setTimeout( updatePreview, 60 ); }
+			} );
 		}
+
+		// رویدادهای زندهٔ کنترل‌های ظاهر.
+		$( '#tab-appearance' ).on( 'input change', 'input, select', updatePreview );
+		$( '#font_family' ).on( 'change', toggleFontCustom );
+		$( '#header_title' ).on( 'input', updatePreview );
+		toggleFontCustom();
+		updatePreview();
 
 		/* ---------- نمایش شرطی فیلدهای AI ---------- */
 		function toggleAiFields() {
