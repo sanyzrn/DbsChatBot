@@ -574,6 +574,18 @@ class Nafas_Chatbot_Admin {
 		$new['icon_size']       = isset( $in['icon_size'] ) ? max( 16, min( 80, (int) $in['icon_size'] ) ) : 28;
 		$new['button_radius']   = isset( $in['button_radius'] ) ? max( 0, min( 50, (int) $in['button_radius'] ) ) : 50;
 
+		// فونت و استایل پنجرهٔ چت.
+		$font_family            = isset( $in['font_family'] ) ? sanitize_text_field( $in['font_family'] ) : 'vazirmatn';
+		$new['font_family']     = in_array( $font_family, array( 'vazirmatn', 'system', 'inter', 'roboto', 'custom' ), true ) ? $font_family : 'vazirmatn';
+		$new['font_name']       = isset( $in['font_name'] ) ? sanitize_text_field( $in['font_name'] ) : '';
+		$new['font_url']        = isset( $in['font_url'] ) ? esc_url_raw( $in['font_url'] ) : '';
+		$new['font_size']       = isset( $in['font_size'] ) ? max( 10, min( 24, (int) $in['font_size'] ) ) : 14;
+		$new['window_width']    = isset( $in['window_width'] ) ? max( 300, min( 520, (int) $in['window_width'] ) ) : 384;
+		$new['window_radius']   = isset( $in['window_radius'] ) ? max( 0, min( 40, (int) $in['window_radius'] ) ) : 24;
+		$new['bubble_radius']   = isset( $in['bubble_radius'] ) ? max( 0, min( 30, (int) $in['bubble_radius'] ) ) : 16;
+		$new['user_bubble_color'] = isset( $in['user_bubble_color'] ) ? (string) sanitize_hex_color( $in['user_bubble_color'] ) : '';
+		$new['bot_bubble_color']  = isset( $in['bot_bubble_color'] ) ? (string) sanitize_hex_color( $in['bot_bubble_color'] ) : '';
+
 		// تجربه کاربری / ساعات کاری.
 		$new['proactive_delay'] = isset( $in['proactive_delay'] ) ? max( 2, min( 120, (int) $in['proactive_delay'] ) ) : 12;
 		$new['office_start']    = isset( $in['office_start'] ) ? max( 0, min( 23, (int) $in['office_start'] ) ) : 8;

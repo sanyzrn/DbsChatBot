@@ -20,7 +20,7 @@
 	--nfx-control-bg: #f1f5f9;
 	--nfx-control-hover: #e2e8f0;
 
-	font-family: 'Vazirmatn', 'Vazir', Tahoma, sans-serif;
+	font-family: var(--nfx-font, 'Vazirmatn', 'Vazir', Tahoma, sans-serif);
 	direction: rtl;
 	line-height: 1.7;
 }
@@ -114,12 +114,12 @@
 	position: fixed;
 	bottom: 96px;
 	z-index: 99998;
-	width: 384px;
+	width: var(--nfx-win-width, 384px);
 	max-width: calc(100% - 2rem);
 	height: min(600px, 80vh);
 	background: var(--nfx-bg-card);
 	border: 1px solid var(--nfx-border);
-	border-radius: 24px;
+	border-radius: var(--nfx-win-radius, 24px);
 	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 	display: flex;
 	flex-direction: column;
@@ -481,20 +481,20 @@
 .nfx-msg__bubble {
 	max-width: 80%;
 	padding: 12px;
-	border-radius: 16px;
-	font-size: 14px;
+	border-radius: var(--nfx-bubble-radius, 16px);
+	font-size: var(--nfx-font-size, 14px);
 	line-height: 1.7;
 	word-wrap: break-word;
 }
 .nfx-msg--bot .nfx-msg__bubble {
-	background: var(--nfx-bg-card);
+	background: var(--nfx-bot-bubble, var(--nfx-bg-card));
 	border: 1px solid var(--nfx-border);
 	color: var(--nfx-text);
 	border-bottom-left-radius: 0;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .nfx-msg--user .nfx-msg__bubble {
-	background: var(--nfx-primary);
+	background: var(--nfx-user-bubble, var(--nfx-primary));
 	color: #fff;
 	border-bottom-right-radius: 0;
 	box-shadow: 0 4px 6px -1px color-mix(in srgb, var(--nfx-primary) 20%, transparent);

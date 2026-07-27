@@ -291,7 +291,85 @@ $secret_ph = function ( $key ) {
 							</select>
 						</td>
 					</tr>
+
+					<tr><th colspan="2"><h3 class="nafas-section" style="margin:8px 0 0"><?php esc_html_e( 'فونت و استایل پنجره', 'nafas-chatbot' ); ?></h3></th></tr>
+					<tr>
+						<th><label for="font_family"><?php esc_html_e( 'فونت', 'nafas-chatbot' ); ?></label></th>
+						<td>
+							<select name="font_family" id="font_family">
+								<option value="vazirmatn" <?php selected( $s['font_family'], 'vazirmatn' ); ?>><?php esc_html_e( 'وزیرمتن (فارسی)', 'nafas-chatbot' ); ?></option>
+								<option value="system" <?php selected( $s['font_family'], 'system' ); ?>><?php esc_html_e( 'فونت سیستمی (بدون بارگذاری خارجی)', 'nafas-chatbot' ); ?></option>
+								<option value="inter" <?php selected( $s['font_family'], 'inter' ); ?>>Inter (Google)</option>
+								<option value="roboto" <?php selected( $s['font_family'], 'roboto' ); ?>>Roboto (Google)</option>
+								<option value="custom" <?php selected( $s['font_family'], 'custom' ); ?>><?php esc_html_e( 'سفارشی (آدرس فونت)', 'nafas-chatbot' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'برای بازار فارسی «وزیرمتن» و برای سایت‌های چندزبانه «سیستمی» یا Google پیشنهاد می‌شود.', 'nafas-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="nafas-font-custom">
+						<th><label for="font_name"><?php esc_html_e( 'نام خانوادهٔ فونت', 'nafas-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="font_name" name="font_name" value="<?php echo esc_attr( $s['font_name'] ); ?>" class="regular-text" dir="ltr" placeholder="e.g. IRANSans">
+							<p class="description"><?php esc_html_e( 'نام font-family که در فایل فونت سفارشی تعریف شده است.', 'nafas-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="nafas-font-custom">
+						<th><label for="font_url"><?php esc_html_e( 'آدرس شیوه‌نامهٔ فونت', 'nafas-chatbot' ); ?></label></th>
+						<td><input type="url" id="font_url" name="font_url" value="<?php echo esc_attr( $s['font_url'] ); ?>" class="large-text" dir="ltr" placeholder="https://...font.css"></td>
+					</tr>
+					<tr>
+						<th><label for="font_size"><?php esc_html_e( 'اندازهٔ متن پیام (px)', 'nafas-chatbot' ); ?></label></th>
+						<td><input type="number" id="font_size" name="font_size" value="<?php echo esc_attr( $s['font_size'] ); ?>" min="10" max="24" class="small-text"></td>
+					</tr>
+					<tr>
+						<th><label for="window_width"><?php esc_html_e( 'عرض پنجرهٔ چت (px)', 'nafas-chatbot' ); ?></label></th>
+						<td><input type="number" id="window_width" name="window_width" value="<?php echo esc_attr( $s['window_width'] ); ?>" min="300" max="520" class="small-text"></td>
+					</tr>
+					<tr>
+						<th><label for="window_radius"><?php esc_html_e( 'گردی گوشه‌های پنجره (px)', 'nafas-chatbot' ); ?></label></th>
+						<td><input type="number" id="window_radius" name="window_radius" value="<?php echo esc_attr( $s['window_radius'] ); ?>" min="0" max="40" class="small-text"></td>
+					</tr>
+					<tr>
+						<th><label for="bubble_radius"><?php esc_html_e( 'گردی گوشه‌های حباب پیام (px)', 'nafas-chatbot' ); ?></label></th>
+						<td><input type="number" id="bubble_radius" name="bubble_radius" value="<?php echo esc_attr( $s['bubble_radius'] ); ?>" min="0" max="30" class="small-text"></td>
+					</tr>
+					<tr>
+						<th><label for="user_bubble_color"><?php esc_html_e( 'رنگ حباب کاربر', 'nafas-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="user_bubble_color" name="user_bubble_color" value="<?php echo esc_attr( $s['user_bubble_color'] ); ?>" class="nafas-color-picker">
+							<p class="description"><?php esc_html_e( 'خالی = استفاده از رنگ اصلی.', 'nafas-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="bot_bubble_color"><?php esc_html_e( 'رنگ حباب ربات', 'nafas-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="bot_bubble_color" name="bot_bubble_color" value="<?php echo esc_attr( $s['bot_bubble_color'] ); ?>" class="nafas-color-picker">
+							<p class="description"><?php esc_html_e( 'خالی = پس‌زمینهٔ پیش‌فرض کارت.', 'nafas-chatbot' ); ?></p>
+						</td>
+					</tr>
 				</table>
+
+				<div class="nafas-preview">
+					<h3 class="nafas-section"><?php esc_html_e( 'پیش‌نمایش زنده', 'nafas-chatbot' ); ?></h3>
+					<p class="description"><?php esc_html_e( 'رنگ‌ها، فونت، اندازه و گردی گوشه‌ها بلافاصله اینجا نمایش داده می‌شوند. برای اعمال روی سایت، «ذخیره تنظیمات» را بزنید.', 'nafas-chatbot' ); ?></p>
+					<div id="nfx-preview" class="nfx-preview" data-theme="light">
+						<div class="nfx-preview__win">
+							<div class="nfx-preview__head">
+								<span class="nfx-preview__ava">🤖</span>
+								<div class="nfx-preview__titles">
+									<strong class="nfx-preview__title"><?php esc_html_e( 'دستیار هوشمند', 'nafas-chatbot' ); ?></strong>
+									<small class="nfx-preview__status"><?php esc_html_e( 'آنلاین', 'nafas-chatbot' ); ?></small>
+								</div>
+							</div>
+							<div class="nfx-preview__body">
+								<div class="nfx-preview__msg nfx-preview__msg--bot"><?php esc_html_e( 'سلام! 👋 چطور می‌تونم کمکتون کنم؟', 'nafas-chatbot' ); ?></div>
+								<div class="nfx-preview__msg nfx-preview__msg--user"><?php esc_html_e( 'سلام، یک سوال داشتم.', 'nafas-chatbot' ); ?></div>
+								<div class="nfx-preview__msg nfx-preview__msg--bot"><?php esc_html_e( 'بله، در خدمتم. بفرمایید.', 'nafas-chatbot' ); ?></div>
+							</div>
+						</div>
+						<div class="nfx-preview__btn">💬</div>
+					</div>
+				</div>
 			</div>
 
 			<!-- هوش مصنوعی -->

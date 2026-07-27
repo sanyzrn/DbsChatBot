@@ -73,7 +73,6 @@ class Nafas_Chatbot_Frontend {
 	 * @param array $overrides تنظیمات سفارشی از ویجت المنتور.
 	 */
 	public function enqueue_with_config( $overrides = array() ) {
-		wp_enqueue_style( 'nafas-chatbot-font' );
 		wp_enqueue_style( 'nafas-chatbot' );
 		wp_enqueue_script( 'nafas-chatbot' );
 
@@ -83,6 +82,9 @@ class Nafas_Chatbot_Frontend {
 		$this->assets_done = true;
 
 		$s = Nafas_Chatbot_Settings::all();
+
+		// بارگذاری فونت انتخاب‌شده (فقط در صورت نیاز — از بارگذاری بی‌مورد جلوگیری می‌شود).
+		$font_stack = $this->enqueue_font( $s );
 
 		// ساخت دادهٔ محصولات برای کارت محصول (تصویر + خلاصهٔ کوتاه).
 		$knowledge_map = (array) $s['product_knowledge'];
@@ -141,6 +143,14 @@ class Nafas_Chatbot_Frontend {
 			'iconSize'       => $s['icon_size'],
 			'buttonRadius'   => $s['button_radius'],
 			'buttonIconUrl'  => $s['button_icon_url'],
+			// فونت و استایل پنجره (مبتنی بر متغیرهای CSS).
+			'fontStack'      => $font_stack,
+			'fontSize'       => (int) $s['font_size'],
+			'windowWidth'    => (int) $s['window_width'],
+			'windowRadius'   => (int) $s['window_radius'],
+			'bubbleRadius'   => (int) $s['bubble_radius'],
+			'userBubble'     => $s['user_bubble_color'],
+			'botBubble'      => $s['bot_bubble_color'],
 			'quickRepliesEnabled' => ( 'yes' === $s['quick_replies_enabled'] ),
 			'quickReplies'   => array_values( (array) $s['quick_replies'] ),
 			'brochureLabel'  => 'مشاهده بروشور',
@@ -192,6 +202,51 @@ class Nafas_Chatbot_Frontend {
 	}
 
 	/**
+	 * بارگذاری فونت انتخاب‌شده و بازگرداندن رشتهٔ font-family برای متغیر CSS.
+	 * فقط فونت لازم بارگذاری می‌شود (system هیچ درخواست خارجی ندارد).
+	 *
+	 * @param array $s تنظیمات.
+	 * @return string رشتهٔ font-family (خالی = پیش‌فرض شیوه‌نامه).
+	 */
+	protected function enqueue_font( $s ) {
+		$family = isset( $s['font_family'] ) ? $s['font_family'] : 'vazirmatn';
+
+		$stacks = array(
+			'vazirmatn' => "'Vazirmatn', 'Vazir', Tahoma, sans-serif",
+			'system'    => "system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+			'inter'     => "'Inter', system-ui, sans-serif",
+			'roboto'    => "'Roboto', system-ui, sans-serif",
+		);
+
+		switch ( $family ) {
+			case 'system':
+				// بدون بارگذاری فونت خارجی.
+				return $stacks['system'];
+
+			case 'inter':
+				wp_enqueue_style( 'nafas-chatbot-font-google', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap', array(), NAFAS_CHATBOT_VERSION );
+				return $stacks['inter'];
+
+			case 'roboto':
+				wp_enqueue_style( 'nafas-chatbot-font-google', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap', array(), NAFAS_CHATBOT_VERSION );
+				return $stacks['roboto'];
+
+			case 'custom':
+				$url  = isset( $s['font_url'] ) ? $s['font_url'] : '';
+				$name = isset( $s['font_name'] ) ? trim( (string) $s['font_name'] ) : '';
+				if ( $url ) {
+					wp_enqueue_style( 'nafas-chatbot-font-custom', $url, array(), NAFAS_CHATBOT_VERSION );
+				}
+				return $name ? "'" . $name . "', sans-serif" : '';
+
+			case 'vazirmatn':
+			default:
+				wp_enqueue_style( 'nafas-chatbot-font' );
+				return $stacks['vazirmatn'];
+		}
+	}
+
+	/**
 	 * اعمال تنظیمات سفارشی ویجت روی پیکربندی.
 	 *
 	 * @param array $config    پیکربندی پایه.
@@ -212,6 +267,13 @@ class Nafas_Chatbot_Frontend {
 			'primary_hover' => 'primaryHover',
 			'theme_mode'    => 'themeMode',
 			'disclaimer'    => 'disclaimer',
+			// استایل پنجره (override اختیاری المنتور).
+			'font_size'         => 'fontSize',
+			'window_width'      => 'windowWidth',
+			'window_radius'     => 'windowRadius',
+			'bubble_radius'     => 'bubbleRadius',
+			'user_bubble_color' => 'userBubble',
+			'bot_bubble_color'  => 'botBubble',
 		);
 		foreach ( $map as $from => $to ) {
 			if ( isset( $overrides[ $from ] ) && '' !== $overrides[ $from ] ) {
