@@ -897,14 +897,21 @@ class SSC_Chatbot_DB {
 
 	/**
 	 * ثبت امتیاز بازخورد یک پاسخ (1 = مفید، -1 = نامفید).
+	 * فقط ردیف‌هایی که هنوز رأی نخورده‌اند (rating = 0) به‌روزرسانی می‌شوند تا
+	 * رأی مجدد/انبوه نتواند آمار بازخورد را جابه‌جا کند.
 	 *
 	 * @param int $id     شناسه ردیف تاریخچه.
 	 * @param int $rating امتیاز.
+	 * @return bool آیا رأی ثبت شد.
 	 */
 	public static function set_chatlog_rating( $id, $rating ) {
 		global $wpdb;
+		$table  = self::chatlog_table_name();
 		$rating = ( $rating > 0 ) ? 1 : -1;
-		$wpdb->update( self::chatlog_table_name(), array( 'rating' => $rating ), array( 'id' => (int) $id ), array( '%d' ), array( '%d' ) ); // phpcs:ignore
+		// phpcs:ignore WordPress.DB
+		return (bool) $wpdb->query(
+			$wpdb->prepare( "UPDATE {$table} SET rating = %d WHERE id = %d AND rating = 0", $rating, (int) $id )
+		);
 	}
 
 	/**

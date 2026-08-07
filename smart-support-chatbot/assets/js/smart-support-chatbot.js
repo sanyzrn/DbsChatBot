@@ -589,10 +589,11 @@
 			history: JSON.stringify( history )
 		} ).then( function ( res ) {
 			state.isLoading = false;
-			var reply, logId = 0, suggestions = [], handoff = false;
+			var reply, logId = 0, logToken = '', suggestions = [], handoff = false;
 			if ( res.ok && res.json && res.json.success ) {
 				reply = res.json.data.reply || 'متاسفانه مشکلی در دریافت پاسخ پیش آمد.';
 				logId = res.json.data.log_id || 0;
+				logToken = res.json.data.log_token || '';
 				suggestions = res.json.data.suggestions || [];
 				handoff = ! ! res.json.data.handoff;
 			} else {
@@ -602,7 +603,7 @@
 			// تنظیم بازخورد و افکت تایپ روی همین پیام.
 			var botItem = state.items[ state.items.length - 1 ];
 			botItem.userQuestion = text; // برای تشخیص ارتباط پاسخ با عوارض.
-			if ( logId && cfg.feedbackEnabled ) { botItem.logId = logId; }
+			if ( logId && cfg.feedbackEnabled ) { botItem.logId = logId; botItem.logToken = logToken; }
 			if ( cfg.typewriter ) { botItem.animate = true; state.pendingAnimate = botItem; }
 
 			// انتخاب چیپس‌های پس از پاسخ: واگذاری به کارشناس > پیگیری هوشمند > پاسخ‌های آماده محصول.
@@ -807,7 +808,7 @@
 	}
 	function sendFeedback( it, rating ) {
 		it.rated = true;
-		ajax( 'ssc_chatbot_feedback', { log_id: it.logId, rating: rating } );
+		ajax( 'ssc_chatbot_feedback', { log_id: it.logId, log_token: it.logToken || '', rating: rating } );
 		render();
 	}
 
