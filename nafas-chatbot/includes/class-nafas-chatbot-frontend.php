@@ -113,8 +113,9 @@ class Nafas_Chatbot_Frontend {
 		$config = array(
 			'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
 			'nonce'          => wp_create_nonce( 'nafas_chatbot_nonce' ),
+			'businessMode'   => isset( $s['business_mode'] ) ? $s['business_mode'] : 'general',
 			'companyId'      => $s['company_id'],
-			'companyName'    => $s['company_name'],
+			'companyName'    => '' !== trim( (string) $s['company_name'] ) ? $s['company_name'] : get_bloginfo( 'name' ),
 			'headerTitle'    => $s['header_title'],
 			'welcomeTitle'   => $s['welcome_title'],
 			'welcomeText'    => $s['welcome_text'],

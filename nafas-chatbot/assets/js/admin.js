@@ -75,9 +75,31 @@
 			var tm = fieldVal( 'theme_mode' );
 			p.setAttribute( 'data-theme', tm === 'dark' ? 'dark' : 'light' );
 
+			// موقعیت دکمه (راست/چپ).
+			p.classList.toggle( 'is-left', fieldVal( 'position' ) === 'left' );
+
+			// عنوان هدر.
 			var head = p.querySelector( '.nfx-preview__title' );
-			var ht = document.getElementById( 'header_title' );
-			if ( head && ht && ht.value ) { head.textContent = ht.value; }
+			var ht = fieldVal( 'header_title' );
+			if ( head && ht ) { head.textContent = ht; }
+
+			// پیام خوش‌آمد (عنوان + متن).
+			var welcome = p.querySelector( '.nfx-preview__welcome' );
+			if ( welcome ) {
+				var wt = document.getElementById( 'welcome_title' );
+				var wx = document.getElementById( 'welcome_text' );
+				var title = wt ? String( wt.value || '' ).trim() : '';
+				var body = wx ? String( wx.value || '' ) : '';
+				// حذف تگ‌های ساده و تبدیل <br> به فاصله.
+				body = body.replace( /<br\s*\/?>/gi, ' ' ).replace( /<[^>]*>/g, '' ).trim();
+				var text = ( title ? title + ' ' : '' ) + body;
+				if ( text ) { welcome.textContent = text; }
+			}
+
+			// سلب مسئولیت.
+			var disc = p.querySelector( '.nfx-preview__disc' );
+			var dv = fieldVal( 'disclaimer' );
+			if ( disc ) { disc.textContent = dv; disc.parentNode.style.display = dv ? '' : 'none'; }
 		}
 		window.NafasUpdatePreview = updatePreview;
 
@@ -94,10 +116,10 @@
 			} );
 		}
 
-		// رویدادهای زندهٔ کنترل‌های ظاهر.
+		// رویدادهای زندهٔ کنترل‌های ظاهر + محتوای مرتبط با پیش‌نمایش (از تب‌های دیگر).
 		$( '#tab-appearance' ).on( 'input change', 'input, select', updatePreview );
 		$( '#font_family' ).on( 'change', toggleFontCustom );
-		$( '#header_title' ).on( 'input', updatePreview );
+		$( '#header_title, #welcome_title, #welcome_text, #disclaimer' ).on( 'input', updatePreview );
 		toggleFontCustom();
 		updatePreview();
 

@@ -549,6 +549,8 @@ class Nafas_Chatbot_Admin {
 			$new[ $f ] = ( isset( $in[ $f ] ) && ( '1' === (string) $in[ $f ] || 'yes' === $in[ $f ] || 'on' === $in[ $f ] ) ) ? 'yes' : 'no';
 		}
 
+		$biz_mode               = isset( $in['business_mode'] ) ? sanitize_text_field( $in['business_mode'] ) : 'general';
+		$new['business_mode']   = in_array( $biz_mode, array( 'general', 'pharma' ), true ) ? $biz_mode : 'general';
 		$new['email_to']        = isset( $in['email_to'] ) ? sanitize_email( $in['email_to'] ) : '';
 		$new['ai_rate_limit']   = isset( $in['ai_rate_limit'] ) ? max( 0, (int) $in['ai_rate_limit'] ) : 100;
 		$rl_mode                = isset( $in['rate_limit_mode'] ) ? sanitize_text_field( $in['rate_limit_mode'] ) : 'ip';
@@ -679,6 +681,18 @@ class Nafas_Chatbot_Admin {
 	}
 
 	/**
+	 * خنثی‌سازی تزریق فرمول در CSV: هر سلولی که با =، +، -، @، Tab یا CR شروع شود،
+	 * با یک آپاستروف ابتدایی بی‌اثر می‌شود (طبق راهنمای OWASP) تا در Excel/LibreOffice اجرا نشود.
+	 *
+	 * @param mixed $v مقدار سلول.
+	 * @return string
+	 */
+	private static function csv_safe( $v ) {
+		$v = (string) $v;
+		return preg_match( '/^[=+\-@\t\r]/', $v ) ? "'" . $v : $v;
+	}
+
+	/**
 	 * خروجی CSV درخواست‌ها.
 	 */
 	public function export_csv() {
@@ -713,18 +727,16 @@ class Nafas_Chatbot_Admin {
 			)
 		);
 		foreach ( $rows as $r ) {
-			fputcsv(
-				$out,
-				array(
-					$r['id'], $r['type'], $r['name'], $r['phone'], $r['product'], $r['description'],
-					isset( $r['reporter_type'] ) ? $r['reporter_type'] : '',
-					isset( $r['severity'] ) ? $r['severity'] : '',
-					isset( $r['outcome'] ) ? $r['outcome'] : '',
-					isset( $r['batch_number'] ) ? $r['batch_number'] : '',
-					isset( $r['concomitant_drugs'] ) ? $r['concomitant_drugs'] : '',
-					$r['status'], $r['ip'], $r['created_at'],
-				)
+			$cells = array(
+				$r['id'], $r['type'], $r['name'], $r['phone'], $r['product'], $r['description'],
+				isset( $r['reporter_type'] ) ? $r['reporter_type'] : '',
+				isset( $r['severity'] ) ? $r['severity'] : '',
+				isset( $r['outcome'] ) ? $r['outcome'] : '',
+				isset( $r['batch_number'] ) ? $r['batch_number'] : '',
+				isset( $r['concomitant_drugs'] ) ? $r['concomitant_drugs'] : '',
+				$r['status'], $r['ip'], $r['created_at'],
 			);
+			fputcsv( $out, array_map( array( __CLASS__, 'csv_safe' ), $cells ) );
 		}
 		fclose( $out ); // phpcs:ignore
 		exit;

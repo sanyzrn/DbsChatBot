@@ -92,6 +92,8 @@ final class Nafas_Chatbot {
 		// نگهداری/کمینه‌سازی دادهٔ درخواست‌ها.
 		$sub_days = (int) Nafas_Chatbot_Settings::get( 'submissions_retention_days', 0 );
 		Nafas_Chatbot_DB::purge_old_submissions( $sub_days );
+		// پاک‌سازی شمارنده‌های محدودیت نرخ قدیمی.
+		Nafas_Chatbot_DB::purge_rate_limits( 2 );
 	}
 
 	/**
@@ -102,9 +104,9 @@ final class Nafas_Chatbot {
 			return;
 		}
 		$content = wp_kses_post(
-			'<p>' . __( 'این سایت از «دستیار هوشمند نفس» برای پاسخ‌گویی، ثبت گزارش عوارض دارویی و درخواست مشاوره استفاده می‌کند. هنگام ارسال فرم، نام، شماره تماس و شرح واردشده به‌همراه نشانی IP ذخیره می‌شود. متن گفتگوها نیز ممکن است برای بهبود کیفیت پاسخ‌ها نگهداری شود. مدت نگهداری از پنل مدیریت قابل‌تنظیم است و داده‌های قدیمی به‌صورت خودکار حذف می‌شوند.', 'nafas-chatbot' ) . '</p>'
+			'<p>' . __( 'این سایت از یک «دستیار هوشمند گفتگو» برای پاسخ‌گویی، ثبت درخواست و مشاوره استفاده می‌کند. هنگام ارسال فرم، نام، شماره تماس و شرح واردشده به‌همراه نشانی IP ذخیره می‌شود. متن گفتگوها نیز ممکن است برای بهبود کیفیت پاسخ‌ها نگهداری شود. مدت نگهداری از پنل مدیریت قابل‌تنظیم است و داده‌های قدیمی به‌صورت خودکار حذف می‌شوند.', 'nafas-chatbot' ) . '</p>'
 		);
-		wp_add_privacy_policy_content( 'Nafas Smart Chatbot', $content );
+		wp_add_privacy_policy_content( get_bloginfo( 'name' ), $content );
 	}
 
 	/**
@@ -126,9 +128,9 @@ final class Nafas_Chatbot {
 	 */
 	public function register_elementor_category( $elements_manager ) {
 		$elements_manager->add_category(
-			'nafas',
+			'nafas_chatbot',
 			array(
-				'title' => esc_html__( 'نفس فارمد', 'nafas-chatbot' ),
+				'title' => esc_html__( 'دستیار هوشمند گفتگو', 'nafas-chatbot' ),
 				'icon'  => 'fa fa-comments',
 			)
 		);

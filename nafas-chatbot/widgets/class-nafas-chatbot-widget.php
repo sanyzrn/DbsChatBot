@@ -33,7 +33,7 @@ class Nafas_Chatbot_Elementor_Widget extends Widget_Base {
 	 * @return string
 	 */
 	public function get_title() {
-		return esc_html__( 'دستیار هوشمند نفس', 'nafas-chatbot' );
+		return esc_html__( 'دستیار هوشمند گفتگو', 'nafas-chatbot' );
 	}
 
 	/**
@@ -51,7 +51,7 @@ class Nafas_Chatbot_Elementor_Widget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_categories() {
-		return array( 'nafas', 'general' );
+		return array( 'nafas_chatbot', 'general' );
 	}
 
 	/**
@@ -60,7 +60,7 @@ class Nafas_Chatbot_Elementor_Widget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_keywords() {
-		return array( 'chat', 'chatbot', 'bot', 'نفس', 'دستیار', 'پشتیبانی', 'مشاوره', 'عوارض' );
+		return array( 'chat', 'chatbot', 'bot', 'ai', 'دستیار', 'پشتیبانی', 'مشاوره', 'گفتگو' );
 	}
 
 	/**

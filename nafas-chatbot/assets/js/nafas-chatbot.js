@@ -1,5 +1,5 @@
 /**
- * چت‌بات نفس فارمد — منطق فرانت‌اند (وانیلا جاوااسکریپت).
+ * دستیار هوشمند گفتگو — منطق فرانت‌اند (وانیلا جاوااسکریپت).
  * معماری تک‌صفحه‌ای گفتگو‌محور: همه‌چیز در یک رشته چت (حباب‌ها + چیپس گزینه‌ها + کارت فرم + ورودی ثابت).
  */
 ( function () {
@@ -1061,7 +1061,9 @@
 		form.appendChild( field( 'name', ICON.user( 14 ) + ' نام و نام خانوادگی', 'text', 'مثلا: علی احمدی', false, true ) );
 		form.appendChild( field( 'phone', ICON.phone( 14 ) + ' شماره تماس', 'tel', '0912...', true, true ) );
 
-		if ( isAdr && adrOptions.reporter_type && adrOptions.reporter_type.length ) {
+		// فیلدهای استاندارد عوارض دارویی فقط در حالت «داروسازی».
+		var pharma = ( cfg.businessMode === 'pharma' );
+		if ( isAdr && pharma && adrOptions.reporter_type && adrOptions.reporter_type.length ) {
 			form.appendChild( selectField( 'reporterType', ICON.user( 14 ) + ' نوع گزارش‌دهنده', adrOptions.reporter_type, 'انتخاب کنید...' ) );
 		}
 
@@ -1075,7 +1077,7 @@
 		fDesc.appendChild( ta );
 		form.appendChild( fDesc );
 
-		if ( isAdr ) {
+		if ( isAdr && pharma ) {
 			var grid = el( 'div', 'nfx-grid2' );
 			if ( adrOptions.severity && adrOptions.severity.length ) {
 				grid.appendChild( selectField( 'severity', ICON.activity( 14 ) + ' شدت', adrOptions.severity, 'انتخاب...' ) );
@@ -1084,7 +1086,7 @@
 				grid.appendChild( selectField( 'outcome', ICON.check( 14 ) + ' پیامد', adrOptions.outcome, 'انتخاب...' ) );
 			}
 			if ( grid.children.length ) { form.appendChild( grid ); }
-			form.appendChild( field( 'batchNumber', ICON.fileText( 14 ) + ' شماره سری ساخت — اختیاری', 'text', 'روی بسته دارو', true, false ) );
+			form.appendChild( field( 'batchNumber', ICON.fileText( 14 ) + ' شماره سری ساخت — اختیاری', 'text', 'روی بسته محصول', true, false ) );
 		}
 
 		// موافقت با حریم خصوصی (اختیاری/قابل‌فعال‌سازی از پنل).
@@ -1204,10 +1206,9 @@
 		wrap.appendChild( sendBtn );
 		wrap.appendChild( ac );
 		foot.appendChild( wrap );
-		// نوار پایین: جملهٔ سلب مسئولیت (راست) + اعتبار توسعه‌دهنده انگلیسی کوچک و کم‌رنگ (چپ).
+		// نوار پایین: جملهٔ سلب مسئولیت.
 		var meta = el( 'div', 'nfx-foot-meta' );
 		meta.appendChild( el( 'span', 'nfx-disclaimer', cfg.disclaimer ? escapeHtml( cfg.disclaimer ) : '' ) );
-		meta.appendChild( el( 'span', 'nfx-credit-en', 'Developed by Saeed &amp; Claude' ) );
 		foot.appendChild( meta );
 
 		if ( cfg.autocompleteEnabled ) {

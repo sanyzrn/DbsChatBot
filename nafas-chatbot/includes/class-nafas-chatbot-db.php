@@ -562,6 +562,47 @@ class Nafas_Chatbot_DB {
 	}
 
 	/**
+	 * افزایش اتمیک شمارندهٔ محدودیت نرخ و بازگرداندن مقدار امروز (race-safe).
+	 * به‌جای read-modify-write روی transient از جدول اتمیک استفاده می‌شود.
+	 *
+	 * @param string $metric کلید متریک (مثلاً rl:chat:ip:<hash>).
+	 * @return int مقدار شمارنده پس از افزایش.
+	 */
+	public static function rl_hit( $metric ) {
+		global $wpdb;
+		$table = self::stats_table_name();
+		$date  = current_time( 'Y-m-d' );
+		// phpcs:ignore WordPress.DB
+		$wpdb->query(
+			$wpdb->prepare(
+				"INSERT INTO {$table} (stat_date, metric, cnt) VALUES (%s, %s, 1) ON DUPLICATE KEY UPDATE cnt = cnt + 1",
+				$date,
+				$metric
+			)
+		);
+		// phpcs:ignore WordPress.DB
+		return (int) $wpdb->get_var(
+			$wpdb->prepare( "SELECT cnt FROM {$table} WHERE stat_date = %s AND metric = %s", $date, $metric )
+		);
+	}
+
+	/**
+	 * حذف شمارنده‌های محدودیت نرخِ قدیمی (نگهداری کوتاه‌مدت — برای WP-Cron).
+	 *
+	 * @param int $days تعداد روز نگهداری.
+	 * @return int تعداد ردیف‌های حذف‌شده.
+	 */
+	public static function purge_rate_limits( $days = 2 ) {
+		global $wpdb;
+		$table = self::stats_table_name();
+		$cut   = ( new DateTimeImmutable( '-' . max( 1, (int) $days ) . ' days', wp_timezone() ) )->format( 'Y-m-d' );
+		// phpcs:ignore WordPress.DB
+		return (int) $wpdb->query(
+			$wpdb->prepare( "DELETE FROM {$table} WHERE metric LIKE %s AND stat_date < %s", $wpdb->esc_like( 'rl:' ) . '%', $cut )
+		);
+	}
+
+	/**
 	 * جمع کل یک متریک در همهٔ تاریخ‌ها.
 	 *
 	 * @param string $metric متریک.
