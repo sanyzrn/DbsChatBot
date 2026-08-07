@@ -25,7 +25,7 @@ $secret_ph = function ( $key ) {
 <div class="wrap nafas-admin" dir="rtl">
 	<h1 class="nafas-admin__title">
 		<span class="dashicons dashicons-format-chat"></span>
-		<?php esc_html_e( 'دستیار هوشمند نفس فارمد', 'nafas-chatbot' ); ?>
+		<?php esc_html_e( 'دستیار هوشمند گفتگو', 'nafas-chatbot' ); ?>
 		<span class="nafas-admin__ver">v<?php echo esc_html( NAFAS_CHATBOT_VERSION ); ?></span>
 	</h1>
 
