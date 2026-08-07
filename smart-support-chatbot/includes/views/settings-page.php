@@ -1,0 +1,720 @@
+<?php
+/**
+ * نمای صفحه تنظیمات.
+ *
+ * @package SmartSupportChatbot
+ * @var array $s تنظیمات.
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * placeholder فیلد حساس: اگر مقداری ذخیره شده، به‌جای نمایش کلید، وضعیت «ذخیره‌شده» را نشان می‌دهد.
+ *
+ * @param string $key کلید.
+ * @return string
+ */
+$secret_ph = function ( $key ) {
+	return SSC_Chatbot_Settings::has_secret( $key )
+		? '•••••••••• (ذخیره‌شده — برای تغییر، مقدار جدید وارد کنید)'
+		: 'وارد کنید...';
+};
+?>
+<div class="wrap ssc-admin" dir="rtl">
+	<h1 class="ssc-admin__title">
+		<span class="dashicons dashicons-format-chat"></span>
+		<?php esc_html_e( 'دستیار هوشمند گفتگو', 'smart-support-chatbot' ); ?>
+		<span class="ssc-admin__ver">v<?php echo esc_html( SSC_CHATBOT_VERSION ); ?></span>
+	</h1>
+
+	<form method="post" action="" class="ssc-settings-form">
+		<?php wp_nonce_field( 'ssc_chatbot_settings' ); ?>
+
+		<div class="ssc-tabs">
+			<nav class="ssc-tabs__nav">
+				<a href="#tab-general" class="ssc-tab is-active"><?php esc_html_e( 'عمومی', 'smart-support-chatbot' ); ?></a>
+				<a href="#tab-menu" class="ssc-tab"><?php esc_html_e( 'منو و متن‌ها', 'smart-support-chatbot' ); ?></a>
+				<a href="#tab-products" class="ssc-tab"><?php esc_html_e( 'محصولات', 'smart-support-chatbot' ); ?></a>
+				<a href="#tab-appearance" class="ssc-tab"><?php esc_html_e( 'ظاهر', 'smart-support-chatbot' ); ?></a>
+				<a href="#tab-ai" class="ssc-tab"><?php esc_html_e( 'هوش مصنوعی', 'smart-support-chatbot' ); ?></a>
+				<a href="#tab-advanced" class="ssc-tab"><?php esc_html_e( 'تجربه کاربری', 'smart-support-chatbot' ); ?></a>
+				<a href="#tab-notify" class="ssc-tab"><?php esc_html_e( 'اعلان‌ها', 'smart-support-chatbot' ); ?></a>
+			</nav>
+
+			<!-- عمومی -->
+			<div id="tab-general" class="ssc-tab-panel is-active">
+				<table class="form-table">
+					<tr>
+						<th><?php esc_html_e( 'فعال‌سازی دکمه شناور', 'smart-support-chatbot' ); ?></th>
+						<td>
+							<label class="ssc-switch">
+								<input type="checkbox" name="enabled" value="yes" <?php checked( $s['enabled'], 'yes' ); ?>>
+								<span class="ssc-switch__slider"></span>
+							</label>
+							<p class="description"><?php esc_html_e( 'نمایش خودکار دکمه چت‌بات در تمام صفحات سایت.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="business_mode"><?php esc_html_e( 'حالت کسب‌وکار', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<select name="business_mode" id="business_mode">
+								<option value="general" <?php selected( $s['business_mode'], 'general' ); ?>><?php esc_html_e( 'عمومی (هر کسب‌وکاری)', 'smart-support-chatbot' ); ?></option>
+								<option value="pharma" <?php selected( $s['business_mode'], 'pharma' ); ?>><?php esc_html_e( 'داروسازی (فرم استاندارد عوارض دارویی)', 'smart-support-chatbot' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'در حالت «داروسازی»، فیلدهای استاندارد گزارش عوارض دارویی (شدت، پیامد، شماره سری ساخت و…) در فرم نمایش داده می‌شوند. در حالت «عمومی» فرم ساده و بدون فیلدهای دارویی است.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="company_name"><?php esc_html_e( 'نام شرکت / کسب‌وکار', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="company_name" name="company_name" value="<?php echo esc_attr( $s['company_name'] ); ?>" class="regular-text" placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
+							<p class="description"><?php esc_html_e( 'در صورت خالی بودن، از نام سایت استفاده می‌شود.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="company_id"><?php esc_html_e( 'شناسه شرکت', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="company_id" name="company_id" value="<?php echo esc_attr( $s['company_id'] ); ?>" class="regular-text" dir="ltr">
+							<p class="description"><?php esc_html_e( 'یک شناسه انگلیسی یکتا برای حالت گفتگو درباره شرکت.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="header_title"><?php esc_html_e( 'عنوان هدر پیش‌فرض', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="header_title" name="header_title" value="<?php echo esc_attr( $s['header_title'] ); ?>" class="regular-text"></td>
+					</tr>
+					<tr>
+						<th><label for="support_phone"><?php esc_html_e( 'شماره تماس پشتیبانی', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="support_phone" name="support_phone" value="<?php echo esc_attr( $s['support_phone'] ); ?>" class="regular-text" dir="ltr" placeholder="021...">
+							<p class="description"><?php esc_html_e( 'در صورت تکمیل، دکمهٔ «تماس با ما» زیر پاسخ‌های چت‌بات نمایش داده می‌شود.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr><th colspan="2"><h3 class="ssc-section"><?php esc_html_e( 'محدودیت استفاده', 'smart-support-chatbot' ); ?></h3></th></tr>
+					<tr>
+						<th><label for="rate_limit_mode"><?php esc_html_e( 'روش محدودسازی', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<select name="rate_limit_mode" id="rate_limit_mode">
+								<option value="ip" <?php selected( $s['rate_limit_mode'], 'ip' ); ?>><?php esc_html_e( 'بر اساس IP (مناسب سایت عمومی)', 'smart-support-chatbot' ); ?></option>
+								<option value="session" <?php selected( $s['rate_limit_mode'], 'session' ); ?>><?php esc_html_e( 'بر اساس نشست/مرورگر (مناسب IP مشترک شرکت)', 'smart-support-chatbot' ); ?></option>
+								<option value="both" <?php selected( $s['rate_limit_mode'], 'both' ); ?>><?php esc_html_e( 'ترکیبی: هم نشست هم IP (پیشنهادی)', 'smart-support-chatbot' ); ?></option>
+								<option value="off" <?php selected( $s['rate_limit_mode'], 'off' ); ?>><?php esc_html_e( 'نامحدود (خاموش)', 'smart-support-chatbot' ); ?></option>
+							</select>
+							<p class="description">
+								<?php esc_html_e( 'حالت «نشست» به هر مرورگر سهمیهٔ جداگانه می‌دهد؛ برای شرکت‌هایی که همه پشت یک IP مشترک هستند مناسب است. حالت «ترکیبی» سهمیهٔ منصفانهٔ نشست را با یک سقف IP برای جلوگیری از سوءاستفاده ترکیب می‌کند.', 'smart-support-chatbot' ); ?>
+							</p>
+						</td>
+					</tr>
+					<tr class="ssc-rl-ip">
+						<th><label for="ai_rate_limit"><?php esc_html_e( 'محدودیت روزانه هر IP', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="number" id="ai_rate_limit" name="ai_rate_limit" value="<?php echo esc_attr( $s['ai_rate_limit'] ); ?>" min="0" class="small-text">
+							<p class="description"><?php esc_html_e( 'حداکثر درخواست در روز برای هر IP. صفر = بدون سقف IP.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-rl-session">
+						<th><label for="session_rate_limit"><?php esc_html_e( 'محدودیت روزانه هر نشست', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="number" id="session_rate_limit" name="session_rate_limit" value="<?php echo esc_attr( $s['session_rate_limit'] ); ?>" min="0" class="small-text">
+							<p class="description"><?php esc_html_e( 'حداکثر درخواست در روز برای هر مرورگر. صفر = بدون سقف نشست.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- منو -->
+			<div id="tab-menu" class="ssc-tab-panel">
+				<table class="form-table">
+					<tr>
+						<th><label for="welcome_title"><?php esc_html_e( 'عنوان خوش‌آمد', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="welcome_title" name="welcome_title" value="<?php echo esc_attr( $s['welcome_title'] ); ?>" class="regular-text"></td>
+					</tr>
+					<tr>
+						<th><label for="welcome_text"><?php esc_html_e( 'متن خوش‌آمد', 'smart-support-chatbot' ); ?></label></th>
+						<td><textarea id="welcome_text" name="welcome_text" rows="2" class="large-text"><?php echo esc_textarea( $s['welcome_text'] ); ?></textarea>
+						<p class="description"><?php esc_html_e( 'می‌توانید از تگ <br> استفاده کنید.', 'smart-support-chatbot' ); ?></p></td>
+					</tr>
+					<tr><th colspan="2"><h3 class="ssc-section"><?php esc_html_e( 'گزینه‌های منو', 'smart-support-chatbot' ); ?></h3></th></tr>
+
+					<tr>
+						<th><?php esc_html_e( 'سوال درباره شرکت', 'smart-support-chatbot' ); ?></th>
+						<td>
+							<label class="ssc-switch"><input type="checkbox" name="show_company" value="yes" <?php checked( $s['show_company'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+							<input type="text" name="company_btn_title" value="<?php echo esc_attr( $s['company_btn_title'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'عنوان', 'smart-support-chatbot' ); ?>">
+							<input type="text" name="company_btn_desc" value="<?php echo esc_attr( $s['company_btn_desc'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'توضیح کوتاه', 'smart-support-chatbot' ); ?>">
+						</td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'سوال درباره محصولات', 'smart-support-chatbot' ); ?></th>
+						<td>
+							<label class="ssc-switch"><input type="checkbox" name="show_products" value="yes" <?php checked( $s['show_products'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+							<input type="text" name="products_btn_title" value="<?php echo esc_attr( $s['products_btn_title'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'عنوان', 'smart-support-chatbot' ); ?>">
+							<input type="text" name="products_btn_desc" value="<?php echo esc_attr( $s['products_btn_desc'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'توضیح کوتاه', 'smart-support-chatbot' ); ?>">
+						</td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'ثبت عوارض', 'smart-support-chatbot' ); ?></th>
+						<td>
+							<label class="ssc-switch"><input type="checkbox" name="show_adr" value="yes" <?php checked( $s['show_adr'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+							<input type="text" name="adr_btn_title" value="<?php echo esc_attr( $s['adr_btn_title'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'عنوان', 'smart-support-chatbot' ); ?>">
+						</td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'درخواست مشاوره', 'smart-support-chatbot' ); ?></th>
+						<td>
+							<label class="ssc-switch"><input type="checkbox" name="show_consult" value="yes" <?php checked( $s['show_consult'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+							<input type="text" name="consult_btn_title" value="<?php echo esc_attr( $s['consult_btn_title'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'عنوان', 'smart-support-chatbot' ); ?>">
+						</td>
+					</tr>
+					<tr>
+						<th><label for="disclaimer"><?php esc_html_e( 'متن سلب مسئولیت', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="disclaimer" name="disclaimer" value="<?php echo esc_attr( $s['disclaimer'] ); ?>" class="large-text"></td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- محصولات -->
+			<div id="tab-products" class="ssc-tab-panel">
+				<h3 class="ssc-section"><?php esc_html_e( 'مدیریت محصولات', 'smart-support-chatbot' ); ?></h3>
+				<p class="description"><?php esc_html_e( 'محصولاتی که در منوی چت‌بات و فرم گزارش عوارض نمایش داده می‌شوند. می‌توانید برای هر محصول یک «پایگاه دانش» وارد کنید تا هوش مصنوعی بر اساس آن پاسخ دهد.', 'smart-support-chatbot' ); ?></p>
+
+				<table class="ssc-products-table widefat" id="ssc-products">
+					<thead>
+						<tr>
+							<th style="width:130px"><?php esc_html_e( 'شناسه (انگلیسی)', 'smart-support-chatbot' ); ?></th>
+							<th style="width:150px"><?php esc_html_e( 'نام نمایشی', 'smart-support-chatbot' ); ?></th>
+							<th><?php esc_html_e( 'پایگاه دانش (اختیاری)', 'smart-support-chatbot' ); ?></th>
+							<th style="width:180px"><?php esc_html_e( 'تصویر محصول (URL)', 'smart-support-chatbot' ); ?></th>
+							<th style="width:180px"><?php esc_html_e( 'لینک بروشور', 'smart-support-chatbot' ); ?></th>
+							<th style="width:40px"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						$products  = (array) $s['products'];
+						$knowledge = (array) $s['product_knowledge'];
+						foreach ( $products as $p ) :
+							$pid   = isset( $p['id'] ) ? $p['id'] : '';
+							$pname = isset( $p['name'] ) ? $p['name'] : '';
+							$pbr   = isset( $p['brochure'] ) ? $p['brochure'] : '';
+							$pimg  = isset( $p['image'] ) ? $p['image'] : '';
+							$pk    = isset( $knowledge[ $pid ] ) ? $knowledge[ $pid ] : '';
+							?>
+							<tr class="ssc-product-row">
+								<td><input type="text" name="product_id[]" value="<?php echo esc_attr( $pid ); ?>" dir="ltr" class="widefat"></td>
+								<td><input type="text" name="product_name[]" value="<?php echo esc_attr( $pname ); ?>" class="widefat"></td>
+								<td><textarea name="product_knowledge[]" rows="2" class="widefat"><?php echo esc_textarea( $pk ); ?></textarea></td>
+								<td><input type="url" name="product_image[]" value="<?php echo esc_attr( $pimg ); ?>" dir="ltr" class="widefat" placeholder="https://..."></td>
+								<td><input type="url" name="product_brochure[]" value="<?php echo esc_attr( $pbr ); ?>" dir="ltr" class="widefat" placeholder="https://..."></td>
+								<td><button type="button" class="button ssc-remove-product">&times;</button></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+				<p><button type="button" class="button button-secondary" id="ssc-add-product"><?php esc_html_e( '+ افزودن محصول', 'smart-support-chatbot' ); ?></button></p>
+
+				<h3 class="ssc-section" style="margin-top:32px"><?php esc_html_e( 'پاسخ‌های پیشنهادی (Quick Replies)', 'smart-support-chatbot' ); ?></h3>
+				<p class="description"><?php esc_html_e( 'دکمه‌های پیشنهادی که هنگام گفتگو درباره یک محصول نمایش داده می‌شوند. کاربر با یک کلیک، سوال آماده را می‌پرسد. دکمه «بروشور» در صورت تنظیم لینک، به‌صورت خودکار به محصول اضافه می‌شود.', 'smart-support-chatbot' ); ?></p>
+
+				<table class="form-table">
+					<tr>
+						<th><?php esc_html_e( 'فعال‌سازی', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="quick_replies_enabled" value="yes" <?php checked( $s['quick_replies_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label></td>
+					</tr>
+				</table>
+
+				<table class="ssc-products-table widefat" id="ssc-quick-replies">
+					<thead>
+						<tr>
+							<th style="width:200px"><?php esc_html_e( 'برچسب دکمه', 'smart-support-chatbot' ); ?></th>
+							<th><?php esc_html_e( 'سوالی که ارسال می‌شود', 'smart-support-chatbot' ); ?></th>
+							<th style="width:40px"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( (array) $s['quick_replies'] as $qr ) : ?>
+							<tr class="ssc-quick-row">
+								<td><input type="text" name="quick_reply_label[]" value="<?php echo esc_attr( isset( $qr['label'] ) ? $qr['label'] : '' ); ?>" class="widefat"></td>
+								<td><input type="text" name="quick_reply_question[]" value="<?php echo esc_attr( isset( $qr['question'] ) ? $qr['question'] : '' ); ?>" class="widefat"></td>
+								<td><button type="button" class="button ssc-remove-quick">&times;</button></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+				<p><button type="button" class="button button-secondary" id="ssc-add-quick"><?php esc_html_e( '+ افزودن پاسخ پیشنهادی', 'smart-support-chatbot' ); ?></button></p>
+			</div>
+
+			<!-- ظاهر -->
+			<div id="tab-appearance" class="ssc-tab-panel">
+				<table class="form-table">
+					<tr>
+						<th><label for="position"><?php esc_html_e( 'موقعیت دکمه', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<select name="position" id="position">
+								<option value="right" <?php selected( $s['position'], 'right' ); ?>><?php esc_html_e( 'پایین راست', 'smart-support-chatbot' ); ?></option>
+								<option value="left" <?php selected( $s['position'], 'left' ); ?>><?php esc_html_e( 'پایین چپ', 'smart-support-chatbot' ); ?></option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="primary_color"><?php esc_html_e( 'رنگ اصلی', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="primary_color" name="primary_color" value="<?php echo esc_attr( $s['primary_color'] ); ?>" class="ssc-color-picker" data-default-color="#b61615"></td>
+					</tr>
+					<tr>
+						<th><label for="primary_hover"><?php esc_html_e( 'رنگ اصلی (هاور)', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="primary_hover" name="primary_hover" value="<?php echo esc_attr( $s['primary_hover'] ); ?>" class="ssc-color-picker" data-default-color="#991211"></td>
+						</tr>
+						<tr><th colspan="2"><h3 class="ssc-section" style="margin:8px 0 0"><?php esc_html_e( 'آیکون شناور', 'smart-support-chatbot' ); ?></h3></th></tr>
+						<tr>
+							<th><label for="button_size"><?php esc_html_e( 'اندازه دکمه (پیکسل)', 'smart-support-chatbot' ); ?></label></th>
+							<td>
+								<input type="number" id="button_size" name="button_size" value="<?php echo esc_attr( $s['button_size'] ); ?>" min="40" max="120" class="small-text">
+								<p class="description"><?php esc_html_e( 'قطر دکمه گرد شناور. پیش‌فرض: ۶۰', 'smart-support-chatbot' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="icon_size"><?php esc_html_e( 'اندازه آیکون (پیکسل)', 'smart-support-chatbot' ); ?></label></th>
+							<td>
+								<input type="number" id="icon_size" name="icon_size" value="<?php echo esc_attr( $s['icon_size'] ); ?>" min="16" max="80" class="small-text">
+								<p class="description"><?php esc_html_e( 'اندازه آیکون داخل دکمه؛ فاصله (پدینگ) از تفاوت اندازه دکمه و آیکون به‌صورت خودکار محاسبه می‌شود. پیش‌فرض: ۲۸', 'smart-support-chatbot' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="button_radius"><?php esc_html_e( 'گردی گوشه‌های دکمه (٪)', 'smart-support-chatbot' ); ?></label></th>
+							<td>
+								<input type="number" id="button_radius" name="button_radius" value="<?php echo esc_attr( $s['button_radius'] ); ?>" min="0" max="50" class="small-text">
+								<p class="description"><?php esc_html_e( '۵۰ = دایره کامل (پیش‌فرض)، ۰ = مربع، مقادیر میانی = گوشه‌گرد.', 'smart-support-chatbot' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="button_icon_url"><?php esc_html_e( 'تصویر آیکون سفارشی', 'smart-support-chatbot' ); ?></label></th>
+							<td>
+								<input type="url" id="button_icon_url" name="button_icon_url" value="<?php echo esc_attr( $s['button_icon_url'] ); ?>" class="large-text" dir="ltr" placeholder="https://...">
+								<p class="description"><?php esc_html_e( 'در صورت وارد کردن لینک تصویر، به‌جای آیکون پیش‌فرض نمایش داده می‌شود.', 'smart-support-chatbot' ); ?></p>
+							</td>
+					</tr>
+					<tr>
+						<th><label for="theme_mode"><?php esc_html_e( 'حالت تم', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<select name="theme_mode" id="theme_mode">
+								<option value="auto" <?php selected( $s['theme_mode'], 'auto' ); ?>><?php esc_html_e( 'خودکار (تبعیت از پوسته سایت)', 'smart-support-chatbot' ); ?></option>
+								<option value="light" <?php selected( $s['theme_mode'], 'light' ); ?>><?php esc_html_e( 'روشن', 'smart-support-chatbot' ); ?></option>
+								<option value="dark" <?php selected( $s['theme_mode'], 'dark' ); ?>><?php esc_html_e( 'تیره', 'smart-support-chatbot' ); ?></option>
+							</select>
+						</td>
+					</tr>
+
+					<tr><th colspan="2"><h3 class="ssc-section" style="margin:8px 0 0"><?php esc_html_e( 'فونت و استایل پنجره', 'smart-support-chatbot' ); ?></h3></th></tr>
+					<tr>
+						<th><label for="font_family"><?php esc_html_e( 'فونت', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<select name="font_family" id="font_family">
+								<option value="vazirmatn" <?php selected( $s['font_family'], 'vazirmatn' ); ?>><?php esc_html_e( 'وزیرمتن (فارسی)', 'smart-support-chatbot' ); ?></option>
+								<option value="system" <?php selected( $s['font_family'], 'system' ); ?>><?php esc_html_e( 'فونت سیستمی (بدون بارگذاری خارجی)', 'smart-support-chatbot' ); ?></option>
+								<option value="inter" <?php selected( $s['font_family'], 'inter' ); ?>>Inter (Google)</option>
+								<option value="roboto" <?php selected( $s['font_family'], 'roboto' ); ?>>Roboto (Google)</option>
+								<option value="custom" <?php selected( $s['font_family'], 'custom' ); ?>><?php esc_html_e( 'سفارشی (آدرس فونت)', 'smart-support-chatbot' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'برای بازار فارسی «وزیرمتن» و برای سایت‌های چندزبانه «سیستمی» یا Google پیشنهاد می‌شود.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-font-custom">
+						<th><label for="font_name"><?php esc_html_e( 'نام خانوادهٔ فونت', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="font_name" name="font_name" value="<?php echo esc_attr( $s['font_name'] ); ?>" class="regular-text" dir="ltr" placeholder="e.g. IRANSans">
+							<p class="description"><?php esc_html_e( 'نام font-family که در فایل فونت سفارشی تعریف شده است.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-font-custom">
+						<th><label for="font_url"><?php esc_html_e( 'آدرس شیوه‌نامهٔ فونت', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="url" id="font_url" name="font_url" value="<?php echo esc_attr( $s['font_url'] ); ?>" class="large-text" dir="ltr" placeholder="https://...font.css"></td>
+					</tr>
+					<tr>
+						<th><label for="font_size"><?php esc_html_e( 'اندازهٔ متن پیام (px)', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="number" id="font_size" name="font_size" value="<?php echo esc_attr( $s['font_size'] ); ?>" min="10" max="24" class="small-text"></td>
+					</tr>
+					<tr>
+						<th><label for="window_width"><?php esc_html_e( 'عرض پنجرهٔ چت (px)', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="number" id="window_width" name="window_width" value="<?php echo esc_attr( $s['window_width'] ); ?>" min="300" max="520" class="small-text"></td>
+					</tr>
+					<tr>
+						<th><label for="window_radius"><?php esc_html_e( 'گردی گوشه‌های پنجره (px)', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="number" id="window_radius" name="window_radius" value="<?php echo esc_attr( $s['window_radius'] ); ?>" min="0" max="40" class="small-text"></td>
+					</tr>
+					<tr>
+						<th><label for="bubble_radius"><?php esc_html_e( 'گردی گوشه‌های حباب پیام (px)', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="number" id="bubble_radius" name="bubble_radius" value="<?php echo esc_attr( $s['bubble_radius'] ); ?>" min="0" max="30" class="small-text"></td>
+					</tr>
+					<tr>
+						<th><label for="user_bubble_color"><?php esc_html_e( 'رنگ حباب کاربر', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="user_bubble_color" name="user_bubble_color" value="<?php echo esc_attr( $s['user_bubble_color'] ); ?>" class="ssc-color-picker">
+							<p class="description"><?php esc_html_e( 'خالی = استفاده از رنگ اصلی.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="bot_bubble_color"><?php esc_html_e( 'رنگ حباب ربات', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="bot_bubble_color" name="bot_bubble_color" value="<?php echo esc_attr( $s['bot_bubble_color'] ); ?>" class="ssc-color-picker">
+							<p class="description"><?php esc_html_e( 'خالی = پس‌زمینهٔ پیش‌فرض کارت.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+				</table>
+
+				<div class="ssc-preview">
+					<h3 class="ssc-section"><?php esc_html_e( 'پیش‌نمایش زنده', 'smart-support-chatbot' ); ?></h3>
+					<p class="description"><?php esc_html_e( 'رنگ‌ها، فونت، اندازه و گردی گوشه‌ها بلافاصله اینجا نمایش داده می‌شوند. برای اعمال روی سایت، «ذخیره تنظیمات» را بزنید.', 'smart-support-chatbot' ); ?></p>
+					<div id="nfx-preview" class="nfx-preview" data-theme="light">
+						<div class="nfx-preview__win">
+							<div class="nfx-preview__head">
+								<span class="nfx-preview__ava">🤖</span>
+								<div class="nfx-preview__titles">
+									<strong class="nfx-preview__title"><?php esc_html_e( 'دستیار هوشمند', 'smart-support-chatbot' ); ?></strong>
+									<small class="nfx-preview__status"><?php esc_html_e( 'آنلاین', 'smart-support-chatbot' ); ?></small>
+								</div>
+							</div>
+							<div class="nfx-preview__body">
+								<div class="nfx-preview__msg nfx-preview__msg--bot nfx-preview__welcome"><?php esc_html_e( 'سلام! 👋 چطور می‌تونم کمکتون کنم؟', 'smart-support-chatbot' ); ?></div>
+								<div class="nfx-preview__msg nfx-preview__msg--user"><?php esc_html_e( 'سلام، یک سوال داشتم.', 'smart-support-chatbot' ); ?></div>
+								<div class="nfx-preview__msg nfx-preview__msg--bot"><?php esc_html_e( 'بله، در خدمتم. بفرمایید.', 'smart-support-chatbot' ); ?></div>
+							</div>
+							<div class="nfx-preview__foot"><span class="nfx-preview__disc"><?php esc_html_e( 'هوش مصنوعی ممکن است اشتباه کند.', 'smart-support-chatbot' ); ?></span></div>
+						</div>
+						<div class="nfx-preview__btn">💬</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- هوش مصنوعی -->
+			<div id="tab-ai" class="ssc-tab-panel">
+				<table class="form-table">
+					<tr>
+						<th><label for="ai_provider"><?php esc_html_e( 'موتور پاسخ‌گویی', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<select name="ai_provider" id="ai_provider">
+								<option value="fallback" <?php selected( $s['ai_provider'], 'fallback' ); ?>><?php esc_html_e( 'پیام ثابت (بدون AI)', 'smart-support-chatbot' ); ?></option>
+								<option value="gemini" <?php selected( $s['ai_provider'], 'gemini' ); ?>><?php esc_html_e( 'Google Gemini', 'smart-support-chatbot' ); ?></option>
+								<option value="openai" <?php selected( $s['ai_provider'], 'openai' ); ?>><?php esc_html_e( 'OpenAI (ChatGPT)', 'smart-support-chatbot' ); ?></option>
+								<option value="claude" <?php selected( $s['ai_provider'], 'claude' ); ?>><?php esc_html_e( 'Anthropic Claude', 'smart-support-chatbot' ); ?></option>
+								<option value="custom" <?php selected( $s['ai_provider'], 'custom' ); ?>><?php esc_html_e( 'سفارشی (سازگار با OpenAI)', 'smart-support-chatbot' ); ?></option>
+								<option value="webhook" <?php selected( $s['ai_provider'], 'webhook' ); ?>><?php esc_html_e( 'Webhook سفارشی', 'smart-support-chatbot' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'موتور هوش مصنوعی برای پاسخ‌گویی به سوالات. حالت «سفارشی» امکان اتصال به هر سرویس سازگار با OpenAI را با وارد کردن آدرس می‌دهد.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+
+					<!-- Gemini -->
+					<tr class="ssc-ai-gemini">
+						<th><label for="gemini_api_key"><?php esc_html_e( 'کلید API جمینای', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="password" id="gemini_api_key" name="gemini_api_key" value="" placeholder="<?php echo esc_attr( $secret_ph( 'gemini_api_key' ) ); ?>" class="regular-text" dir="ltr" autocomplete="off">
+							<p class="description"><?php esc_html_e( 'کلید را از Google AI Studio دریافت کنید.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-gemini">
+						<th><label for="gemini_model"><?php esc_html_e( 'مدل جمینای', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="gemini_model" name="gemini_model" value="<?php echo esc_attr( $s['gemini_model'] ); ?>" class="regular-text" dir="ltr" placeholder="gemini-2.0-flash"></td>
+					</tr>
+
+					<!-- OpenAI -->
+					<tr class="ssc-ai-openai">
+						<th><label for="openai_api_key"><?php esc_html_e( 'کلید API اوپن‌ای‌آی', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="password" id="openai_api_key" name="openai_api_key" value="" placeholder="<?php echo esc_attr( $secret_ph( 'openai_api_key' ) ); ?>" class="regular-text" dir="ltr" autocomplete="off">
+							<p class="description"><?php esc_html_e( 'کلید را از platform.openai.com دریافت کنید.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-openai">
+						<th><label for="openai_model"><?php esc_html_e( 'مدل OpenAI', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="openai_model" name="openai_model" value="<?php echo esc_attr( $s['openai_model'] ); ?>" class="regular-text" dir="ltr" placeholder="gpt-4o-mini"></td>
+					</tr>
+
+					<!-- Claude -->
+					<tr class="ssc-ai-claude">
+						<th><label for="claude_api_key"><?php esc_html_e( 'کلید API کلود', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="password" id="claude_api_key" name="claude_api_key" value="" placeholder="<?php echo esc_attr( $secret_ph( 'claude_api_key' ) ); ?>" class="regular-text" dir="ltr" autocomplete="off">
+							<p class="description"><?php esc_html_e( 'کلید را از console.anthropic.com دریافت کنید.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-claude">
+						<th><label for="claude_model"><?php esc_html_e( 'مدل کلود', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="claude_model" name="claude_model" value="<?php echo esc_attr( $s['claude_model'] ); ?>" class="regular-text" dir="ltr" placeholder="claude-opus-4-8">
+							<p class="description"><?php esc_html_e( 'مثال‌ها: claude-opus-4-8 (قوی‌ترین) · claude-haiku-4-5 (سریع و مقرون‌به‌صرفه).', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+
+					<!-- Custom -->
+					<tr class="ssc-ai-custom">
+						<th><label for="custom_endpoint"><?php esc_html_e( 'آدرس Endpoint سفارشی', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="url" id="custom_endpoint" name="custom_endpoint" value="<?php echo esc_attr( $s['custom_endpoint'] ); ?>" class="large-text" dir="ltr" placeholder="https://api.example.com/v1/chat/completions">
+							<p class="description"><?php esc_html_e( 'آدرس کامل endpoint سازگار با OpenAI (مثلاً OpenRouter، Groq، DeepSeek، Together، Ollama و ...).', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-custom">
+						<th><label for="custom_api_key"><?php esc_html_e( 'کلید API سفارشی', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="password" id="custom_api_key" name="custom_api_key" value="" placeholder="<?php echo esc_attr( $secret_ph( 'custom_api_key' ) ); ?>" class="regular-text" dir="ltr" autocomplete="off"></td>
+					</tr>
+					<tr class="ssc-ai-custom">
+						<th><label for="custom_model"><?php esc_html_e( 'نام مدل سفارشی', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="custom_model" name="custom_model" value="<?php echo esc_attr( $s['custom_model'] ); ?>" class="regular-text" dir="ltr" placeholder="مثلاً: llama-3.3-70b"></td>
+					</tr>
+
+					<!-- Webhook -->
+					<tr class="ssc-ai-webhook">
+						<th><label for="ai_webhook_url"><?php esc_html_e( 'آدرس Webhook', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="url" id="ai_webhook_url" name="ai_webhook_url" value="<?php echo esc_attr( $s['ai_webhook_url'] ); ?>" class="large-text" dir="ltr">
+							<p class="description"><?php esc_html_e( 'یک درخواست POST با فیلدهای message، product و history ارسال و پاسخ JSON با کلید reply انتظار می‌رود.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-webhook">
+						<th><label for="ai_webhook_secret"><?php esc_html_e( 'کلید امضای Webhook (اختیاری)', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="password" id="ai_webhook_secret" name="ai_webhook_secret" value="" placeholder="<?php echo esc_attr( $secret_ph( 'ai_webhook_secret' ) ); ?>" class="regular-text" dir="ltr" autocomplete="off">
+							<p class="description"><?php esc_html_e( 'در صورت تنظیم، درخواست با هدر امضای HMAC-SHA256 ارسال و امضای پاسخ بررسی می‌شود.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+
+					<!-- مشترک -->
+					<tr class="ssc-ai-shared">
+						<th><label for="ai_system_prompt"><?php esc_html_e( 'دستورالعمل سیستمی', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<textarea id="ai_system_prompt" name="ai_system_prompt" rows="4" class="large-text"><?php echo esc_textarea( $s['ai_system_prompt'] ); ?></textarea>
+							<p class="description"><?php esc_html_e( 'شخصیت و قوانین رفتاری دستیار. برای همه موتورها (به‌جز Webhook) اعمال می‌شود.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-shared">
+						<th><label for="ai_history_limit"><?php esc_html_e( 'حافظه مکالمه', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="number" id="ai_history_limit" name="ai_history_limit" value="<?php echo esc_attr( $s['ai_history_limit'] ); ?>" min="0" max="20" class="small-text">
+							<p class="description"><?php esc_html_e( 'تعداد پیام‌های اخیر گفتگو که برای حفظ زمینه به مدل ارسال می‌شود (۰ = بدون حافظه). مقدار بیشتر = پاسخ‌های دقیق‌تر اما مصرف توکن بالاتر.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-shared">
+						<th><label for="ai_temperature"><?php esc_html_e( 'میزان خلاقیت پاسخ', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<select name="ai_temperature" id="ai_temperature">
+								<option value="0.1" <?php selected( (string) $s['ai_temperature'], '0.1' ); ?>><?php esc_html_e( 'دقیق و محافظه‌کار (مناسب اطلاعات دارویی)', 'smart-support-chatbot' ); ?></option>
+								<option value="0.4" <?php selected( (string) $s['ai_temperature'], '0.4' ); ?>><?php esc_html_e( 'متعادل (پیش‌فرض)', 'smart-support-chatbot' ); ?></option>
+								<option value="0.7" <?php selected( (string) $s['ai_temperature'], '0.7' ); ?>><?php esc_html_e( 'خلاق', 'smart-support-chatbot' ); ?></option>
+								<option value="1" <?php selected( (string) $s['ai_temperature'], '1' ); ?>><?php esc_html_e( 'بسیار خلاق', 'smart-support-chatbot' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'مقدار کمتر = پاسخ‌های دقیق‌تر و قابل‌اتکاتر؛ مقدار بیشتر = خلاقانه‌تر اما با احتمال خطای بیشتر. (روی مدل‌های Claude اعمال نمی‌شود.)', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-shared">
+						<th><label for="ai_max_tokens"><?php esc_html_e( 'حداکثر طول پاسخ', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="number" id="ai_max_tokens" name="ai_max_tokens" value="<?php echo esc_attr( $s['ai_max_tokens'] ); ?>" min="100" max="4000" step="50" class="small-text">
+							<p class="description"><?php esc_html_e( 'حداکثر تعداد توکن خروجی (طول پاسخ). پیش‌فرض: ۸۰۰', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-shared">
+						<th><?php esc_html_e( 'پاسخ فقط بر اساس پایگاه دانش', 'smart-support-chatbot' ); ?></th>
+						<td>
+							<label class="ssc-switch"><input type="checkbox" name="ai_strict_knowledge" value="yes" <?php checked( $s['ai_strict_knowledge'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+							<p class="description"><?php esc_html_e( 'در صورت فعال بودن، دستیار فقط از «پایگاه دانش» هر محصول پاسخ می‌دهد و اگر اطلاعاتی نبود، کاربر را به تماس/مشاوره ارجاع می‌دهد (از دانش عمومی استفاده نمی‌کند).', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-shared">
+						<th><?php esc_html_e( 'کش پاسخ هوش مصنوعی', 'smart-support-chatbot' ); ?></th>
+						<td>
+							<label class="ssc-switch"><input type="checkbox" name="ai_cache_enabled" value="yes" <?php checked( $s['ai_cache_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+							<p class="description"><?php esc_html_e( 'پاسخ سوال‌های تکراری (بدون تاریخچه) برای ۶ ساعت کش می‌شود تا فوری و بدون هزینه مجدد پاسخ داده شود.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="ai_fallback_msg"><?php esc_html_e( 'پیام پیش‌فرض/جایگزین', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<textarea id="ai_fallback_msg" name="ai_fallback_msg" rows="3" class="large-text"><?php echo esc_textarea( $s['ai_fallback_msg'] ); ?></textarea>
+							<p class="description"><?php esc_html_e( 'وقتی موتور AI غیرفعال است یا پاسخی دریافت نشود، این پیام نمایش داده می‌شود.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr class="ssc-ai-shared">
+						<th><?php esc_html_e( 'تست اتصال', 'smart-support-chatbot' ); ?></th>
+						<td>
+							<button type="button" class="button button-secondary" id="ssc-test-ai">
+								<span class="dashicons dashicons-admin-plugins" style="margin-top:4px"></span>
+								<?php esc_html_e( 'تست اتصال به موتور AI', 'smart-support-chatbot' ); ?>
+							</button>
+							<span id="ssc-test-ai-result" class="ssc-test-result"></span>
+							<p class="description"><?php esc_html_e( 'ابتدا تنظیمات را ذخیره کنید، سپس این دکمه را بزنید تا صحت کلید، نام مدل و دسترسی سرور بررسی شود. پیام خطای واقعی سرویس نمایش داده می‌شود.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- تجربه کاربری / پیشرفته -->
+			<div id="tab-advanced" class="ssc-tab-panel">
+				<table class="form-table">
+					<tr>
+						<th><?php esc_html_e( 'بازخورد پاسخ (👍/👎)', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="feedback_enabled" value="yes" <?php checked( $s['feedback_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+						<p class="description"><?php esc_html_e( 'نمایش دکمه‌های مفید بود/نبود زیر پاسخ‌ها و ثبت در داشبورد.', 'smart-support-chatbot' ); ?></p></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'افکت تایپ تدریجی پاسخ', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="typewriter_enabled" value="yes" <?php checked( $s['typewriter_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label></td>
+					</tr>
+
+					<tr><th colspan="2"><h3 class="ssc-section"><?php esc_html_e( 'هوشمندسازی گفتگو (نسخه ۲.۵)', 'smart-support-chatbot' ); ?></h3></th></tr>
+					<tr>
+						<th><?php esc_html_e( 'چیپس‌های پیگیری هوشمند', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="suggestions_enabled" value="yes" <?php checked( $s['suggestions_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+						<p class="description"><?php esc_html_e( 'پس از هر پاسخ، چند سوال مرتبط از بانک به‌صورت پیشنهاد نمایش داده می‌شود.', 'smart-support-chatbot' ); ?></p></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'تکمیل خودکار هنگام تایپ', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="autocomplete_enabled" value="yes" <?php checked( $s['autocomplete_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+						<p class="description"><?php esc_html_e( 'هنگام نوشتن، سوال‌های مشابه از بانک به‌صورت لیست پیشنهاد می‌شوند (سریع و بدون مصرف هوش مصنوعی).', 'smart-support-chatbot' ); ?></p></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'حالت صوتی (میکروفون + خواندن پاسخ)', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="voice_enabled" value="yes" <?php checked( $s['voice_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+						<p class="description"><?php esc_html_e( 'دکمه میکروفون برای گفتن سوال و دکمه بلندگو برای شنیدن پاسخ — کاملاً سمت مرورگر کاربر (Web Speech API) و رایگان. در مرورگرهای ناسازگار به‌صورت خودکار پنهان می‌شود.', 'smart-support-chatbot' ); ?></p></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'نظرسنجی رضایت پایان گفتگو (CSAT)', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="csat_enabled" value="yes" <?php checked( $s['csat_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+						<p class="description"><?php esc_html_e( 'هنگام بازگشت به منوی اصلی پس از یک گفتگوی واقعی، از کاربر امتیاز ۱ تا ۵ ستاره پرسیده می‌شود (نمایش میانگین در داشبورد).', 'smart-support-chatbot' ); ?></p></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'واگذاری به کارشناس انسانی', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="handoff_enabled" value="yes" <?php checked( $s['handoff_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+						<p class="description"><?php esc_html_e( 'وقتی نه هوش مصنوعی و نه بانک پاسخی نداشتند، گزینهٔ «گفتگو با کارشناس» (ثبت درخواست مشاوره) به کاربر پیشنهاد می‌شود.', 'smart-support-chatbot' ); ?></p></td>
+					</tr>
+					<tr>
+						<th><label for="handoff_text"><?php esc_html_e( 'متن پیشنهاد واگذاری', 'smart-support-chatbot' ); ?></label></th>
+						<td><textarea id="handoff_text" name="handoff_text" rows="2" class="large-text"><?php echo esc_textarea( $s['handoff_text'] ); ?></textarea></td>
+					</tr>
+
+					<tr><th colspan="2"><h3 class="ssc-section"><?php esc_html_e( 'حریم خصوصی', 'smart-support-chatbot' ); ?></h3></th></tr>
+					<tr>
+						<th><?php esc_html_e( 'الزام موافقت در فرم‌ها', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="consent_enabled" value="yes" <?php checked( $s['consent_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+						<p class="description"><?php esc_html_e( 'نمایش یک تیک موافقت با حریم خصوصی در فرم‌های عوارض/مشاوره (ثبت بدون تأیید آن ممکن نیست).', 'smart-support-chatbot' ); ?></p></td>
+					</tr>
+					<tr>
+						<th><label for="consent_text"><?php esc_html_e( 'متن موافقت', 'smart-support-chatbot' ); ?></label></th>
+						<td><textarea id="consent_text" name="consent_text" rows="2" class="large-text"><?php echo esc_textarea( $s['consent_text'] ); ?></textarea></td>
+					</tr>
+					<tr>
+						<th><label for="consent_link"><?php esc_html_e( 'لینک سیاست حریم خصوصی', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="url" id="consent_link" name="consent_link" value="<?php echo esc_attr( $s['consent_link'] ); ?>" class="large-text" dir="ltr" placeholder="https://..."></td>
+					</tr>
+					<tr>
+						<th><label for="submissions_retention_days"><?php esc_html_e( 'نگهداری درخواست‌ها (روز)', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="number" id="submissions_retention_days" name="submissions_retention_days" value="<?php echo esc_attr( $s['submissions_retention_days'] ); ?>" min="0" max="3650" class="small-text">
+							<p class="description"><?php esc_html_e( 'درخواست‌های (عوارض/مشاوره) قدیمی‌تر از این تعداد روز به‌صورت خودکار حذف می‌شوند. ۰ = نگهداری همیشگی. (برای کمینه‌سازی دادهٔ شخصی.)', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+
+					<tr><th colspan="2"><h3 class="ssc-section"><?php esc_html_e( 'پیام دعوت هوشمند', 'smart-support-chatbot' ); ?></h3></th></tr>
+					<tr>
+						<th><?php esc_html_e( 'فعال‌سازی', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="proactive_enabled" value="yes" <?php checked( $s['proactive_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+						<p class="description"><?php esc_html_e( 'نمایش یک حباب دعوت کنار دکمه پس از چند ثانیه (یا هنگام قصد خروج).', 'smart-support-chatbot' ); ?></p></td>
+					</tr>
+					<tr>
+						<th><label for="proactive_delay"><?php esc_html_e( 'تاخیر نمایش (ثانیه)', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="number" id="proactive_delay" name="proactive_delay" value="<?php echo esc_attr( $s['proactive_delay'] ); ?>" min="2" max="120" class="small-text"></td>
+					</tr>
+					<tr>
+						<th><label for="proactive_text"><?php esc_html_e( 'متن دعوت', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="proactive_text" name="proactive_text" value="<?php echo esc_attr( $s['proactive_text'] ); ?>" class="regular-text"></td>
+					</tr>
+
+					<tr><th colspan="2"><h3 class="ssc-section"><?php esc_html_e( 'ساعات کاری / وضعیت آنلاین', 'smart-support-chatbot' ); ?></h3></th></tr>
+					<tr>
+						<th><?php esc_html_e( 'محدود به ساعات کاری', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="office_enabled" value="yes" <?php checked( $s['office_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label>
+						<p class="description"><?php esc_html_e( 'اگر فعال باشد، خارج از ساعات کاری وضعیت هدر «خارج از ساعت کاری» نمایش داده می‌شود.', 'smart-support-chatbot' ); ?></p></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'ساعت کاری (از - تا)', 'smart-support-chatbot' ); ?></th>
+						<td>
+							<?php esc_html_e( 'از', 'smart-support-chatbot' ); ?>
+							<input type="number" name="office_start" value="<?php echo esc_attr( $s['office_start'] ); ?>" min="0" max="23" class="small-text">
+							<?php esc_html_e( 'تا', 'smart-support-chatbot' ); ?>
+							<input type="number" name="office_end" value="<?php echo esc_attr( $s['office_end'] ); ?>" min="1" max="24" class="small-text">
+						</td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'روزهای کاری', 'smart-support-chatbot' ); ?></th>
+						<td>
+							<?php
+							$days_labels = array( 6 => 'شنبه', 0 => 'یکشنبه', 1 => 'دوشنبه', 2 => 'سه‌شنبه', 3 => 'چهارشنبه', 4 => 'پنجشنبه', 5 => 'جمعه' );
+							$office_days = array_map( 'intval', (array) $s['office_days'] );
+							foreach ( $days_labels as $dnum => $dlabel ) :
+								?>
+								<label style="margin-left:12px;display:inline-block"><input type="checkbox" name="office_days[]" value="<?php echo esc_attr( $dnum ); ?>" <?php checked( in_array( $dnum, $office_days, true ) ); ?>> <?php echo esc_html( $dlabel ); ?></label>
+							<?php endforeach; ?>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="online_text"><?php esc_html_e( 'متن وضعیت آنلاین', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="online_text" name="online_text" value="<?php echo esc_attr( $s['online_text'] ); ?>" class="regular-text"></td>
+					</tr>
+					<tr>
+						<th><label for="offline_text"><?php esc_html_e( 'متن خارج از ساعت کاری', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="offline_text" name="offline_text" value="<?php echo esc_attr( $s['offline_text'] ); ?>" class="regular-text"></td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- اعلان‌ها -->
+			<div id="tab-notify" class="ssc-tab-panel">
+				<h3 class="ssc-section"><?php esc_html_e( 'اعلان پیام‌رسان (بله / تلگرام)', 'smart-support-chatbot' ); ?></h3>
+				<table class="form-table">
+					<tr>
+						<th><?php esc_html_e( 'فعال‌سازی', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="notify_enabled" value="yes" <?php checked( $s['notify_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label></td>
+					</tr>
+					<tr>
+						<th><label for="notify_platform"><?php esc_html_e( 'پلتفرم', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<select name="notify_platform" id="notify_platform">
+								<option value="bale" <?php selected( $s['notify_platform'], 'bale' ); ?>><?php esc_html_e( 'بله (Bale)', 'smart-support-chatbot' ); ?></option>
+								<option value="telegram" <?php selected( $s['notify_platform'], 'telegram' ); ?>><?php esc_html_e( 'تلگرام', 'smart-support-chatbot' ); ?></option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="notify_token"><?php esc_html_e( 'توکن بات', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="password" id="notify_token" name="notify_token" value="" placeholder="<?php echo esc_attr( $secret_ph( 'notify_token' ) ); ?>" class="regular-text" dir="ltr" autocomplete="off"></td>
+					</tr>
+					<tr>
+						<th><label for="notify_chat_id"><?php esc_html_e( 'شناسه چت (Chat ID)', 'smart-support-chatbot' ); ?></label></th>
+						<td><input type="text" id="notify_chat_id" name="notify_chat_id" value="<?php echo esc_attr( $s['notify_chat_id'] ); ?>" class="regular-text" dir="ltr"></td>
+					</tr>
+				</table>
+
+				<h3 class="ssc-section"><?php esc_html_e( 'اعلان ایمیلی', 'smart-support-chatbot' ); ?></h3>
+				<table class="form-table">
+					<tr>
+						<th><?php esc_html_e( 'فعال‌سازی', 'smart-support-chatbot' ); ?></th>
+						<td><label class="ssc-switch"><input type="checkbox" name="email_enabled" value="yes" <?php checked( $s['email_enabled'], 'yes' ); ?>><span class="ssc-switch__slider"></span></label></td>
+					</tr>
+					<tr>
+						<th><label for="email_to"><?php esc_html_e( 'ایمیل دریافت‌کننده', 'smart-support-chatbot' ); ?></label></th>
+						<td>
+							<input type="email" id="email_to" name="email_to" value="<?php echo esc_attr( $s['email_to'] ); ?>" class="regular-text" dir="ltr">
+							<p class="description"><?php esc_html_e( 'در صورت خالی بودن، به ایمیل مدیر سایت ارسال می‌شود.', 'smart-support-chatbot' ); ?></p>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<p class="submit">
+			<button type="submit" name="ssc_chatbot_save_settings" class="button button-primary button-hero">
+				<?php esc_html_e( 'ذخیره تنظیمات', 'smart-support-chatbot' ); ?>
+			</button>
+		</p>
+	</form>
+</div>

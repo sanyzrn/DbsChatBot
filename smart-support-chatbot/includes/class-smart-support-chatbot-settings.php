@@ -2,7 +2,7 @@
 /**
  * مدیریت تنظیمات و گزینه‌های افزونه.
  *
- * @package NafasChatbot
+ * @package SmartSupportChatbot
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * کلاس تنظیمات.
  */
-class Nafas_Chatbot_Settings {
+class SSC_Chatbot_Settings {
 
 	/**
 	 * کلید گزینه در دیتابیس.
 	 */
-	const OPTION_KEY = 'nafas_chatbot_settings';
+	const OPTION_KEY = 'ssc_chatbot_settings';
 
 	/**
 	 * کش تنظیمات.
@@ -347,7 +347,7 @@ class Nafas_Chatbot_Settings {
 	 */
 	public static function adr_options() {
 		return apply_filters(
-			'nafas_chatbot_adr_options',
+			'ssc_chatbot_adr_options',
 			array(
 				'severity'      => array( 'خفیف', 'متوسط', 'شدید', 'تهدیدکننده حیات' ),
 				'outcome'       => array(

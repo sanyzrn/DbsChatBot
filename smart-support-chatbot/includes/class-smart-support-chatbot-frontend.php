@@ -2,7 +2,7 @@
 /**
  * بخش نمایش در سایت (Frontend).
  *
- * @package NafasChatbot
+ * @package SmartSupportChatbot
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * کلاس Frontend.
  */
-class Nafas_Chatbot_Frontend {
+class SSC_Chatbot_Frontend {
 
 	/**
 	 * آیا اسکریپت‌ها بارگذاری شده‌اند.
@@ -33,7 +33,7 @@ class Nafas_Chatbot_Frontend {
 	 */
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ) );
-		add_shortcode( 'nafas_chatbot', array( $this, 'shortcode' ) );
+		add_shortcode( 'ssc_chatbot', array( $this, 'shortcode' ) );
 
 		// در صورت فعال بودن نمایش خودکار شناور.
 		add_action( 'wp_footer', array( $this, 'maybe_render_floating' ) );
@@ -44,25 +44,25 @@ class Nafas_Chatbot_Frontend {
 	 */
 	public function register_assets() {
 		wp_register_style(
-			'nafas-chatbot',
-			NAFAS_CHATBOT_URL . 'assets/css/nafas-chatbot.css',
+			'smart-support-chatbot',
+			SSC_CHATBOT_URL . 'assets/css/smart-support-chatbot.css',
 			array(),
-			NAFAS_CHATBOT_VERSION
+			SSC_CHATBOT_VERSION
 		);
 
 		// فونت وزیر متن.
 		wp_register_style(
-			'nafas-chatbot-font',
+			'smart-support-chatbot-font',
 			'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css',
 			array(),
-			NAFAS_CHATBOT_VERSION
+			SSC_CHATBOT_VERSION
 		);
 
 		wp_register_script(
-			'nafas-chatbot',
-			NAFAS_CHATBOT_URL . 'assets/js/nafas-chatbot.js',
+			'smart-support-chatbot',
+			SSC_CHATBOT_URL . 'assets/js/smart-support-chatbot.js',
 			array(),
-			NAFAS_CHATBOT_VERSION,
+			SSC_CHATBOT_VERSION,
 			true
 		);
 	}
@@ -73,15 +73,15 @@ class Nafas_Chatbot_Frontend {
 	 * @param array $overrides تنظیمات سفارشی از ویجت المنتور.
 	 */
 	public function enqueue_with_config( $overrides = array() ) {
-		wp_enqueue_style( 'nafas-chatbot' );
-		wp_enqueue_script( 'nafas-chatbot' );
+		wp_enqueue_style( 'smart-support-chatbot' );
+		wp_enqueue_script( 'smart-support-chatbot' );
 
 		if ( $this->assets_done ) {
 			return;
 		}
 		$this->assets_done = true;
 
-		$s = Nafas_Chatbot_Settings::all();
+		$s = SSC_Chatbot_Settings::all();
 
 		// بارگذاری فونت انتخاب‌شده (فقط در صورت نیاز — از بارگذاری بی‌مورد جلوگیری می‌شود).
 		$font_stack = $this->enqueue_font( $s );
@@ -112,7 +112,7 @@ class Nafas_Chatbot_Frontend {
 		// ادغام تنظیمات سراسری با تنظیمات ویجت.
 		$config = array(
 			'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
-			'nonce'          => wp_create_nonce( 'nafas_chatbot_nonce' ),
+			'nonce'          => wp_create_nonce( 'ssc_chatbot_nonce' ),
 			'businessMode'   => isset( $s['business_mode'] ) ? $s['business_mode'] : 'general',
 			'companyId'      => $s['company_id'],
 			'companyName'    => '' !== trim( (string) $s['company_name'] ) ? $s['company_name'] : get_bloginfo( 'name' ),
@@ -155,14 +155,14 @@ class Nafas_Chatbot_Frontend {
 			'quickRepliesEnabled' => ( 'yes' === $s['quick_replies_enabled'] ),
 			'quickReplies'   => array_values( (array) $s['quick_replies'] ),
 			'brochureLabel'  => 'مشاهده بروشور',
-			'adrOptions'     => Nafas_Chatbot_Settings::adr_options(),
+			'adrOptions'     => SSC_Chatbot_Settings::adr_options(),
 			'feedbackEnabled'   => ( 'yes' === $s['feedback_enabled'] ),
 			'typewriter'        => ( 'yes' === $s['typewriter_enabled'] ),
 			'proactiveEnabled'  => ( 'yes' === $s['proactive_enabled'] ),
 			'proactiveDelay'    => (int) $s['proactive_delay'],
 			'proactiveText'     => $s['proactive_text'],
-			'online'            => Nafas_Chatbot_Settings::is_online(),
-			'statusText'        => Nafas_Chatbot_Settings::is_online() ? $s['online_text'] : $s['offline_text'],
+			'online'            => SSC_Chatbot_Settings::is_online(),
+			'statusText'        => SSC_Chatbot_Settings::is_online() ? $s['online_text'] : $s['offline_text'],
 
 			// قابلیت‌های نسخه ۲.۵.
 			'suggestionsEnabled'  => ( 'yes' === $s['suggestions_enabled'] ),
@@ -175,31 +175,31 @@ class Nafas_Chatbot_Frontend {
 			'consentText'         => $s['consent_text'],
 			'consentLink'         => $s['consent_link'],
 			'i18n'                => array(
-				'handoffBtn'      => __( 'گفتگو با کارشناس انسانی', 'nafas-chatbot' ),
-				'csatTitle'       => __( 'گفتگوی ما چطور بود؟', 'nafas-chatbot' ),
-				'csatThanks'      => __( 'سپاس از امتیاز شما 🙏', 'nafas-chatbot' ),
-				'csatSkip'        => __( 'رد کردن', 'nafas-chatbot' ),
-				'mainMenu'        => __( 'منوی اصلی', 'nafas-chatbot' ),
-				'speak'           => __( 'شنیدن پاسخ', 'nafas-chatbot' ),
-				'speakStop'       => __( 'توقف صدا', 'nafas-chatbot' ),
-				'mic'             => __( 'گفتن با صدا', 'nafas-chatbot' ),
-				'micListening'    => __( 'در حال شنیدن…', 'nafas-chatbot' ),
-				'suggestionsHint' => __( 'سوالات مرتبط:', 'nafas-chatbot' ),
-				'consentRequired' => __( 'برای ادامه، موافقت با حریم خصوصی الزامی است.', 'nafas-chatbot' ),
-				'privacy'         => __( 'سیاست حریم خصوصی', 'nafas-chatbot' ),
-				'copy'            => __( 'کپی پاسخ', 'nafas-chatbot' ),
-				'copied'          => __( 'کپی شد ✓', 'nafas-chatbot' ),
-				'callUs'          => __( 'تماس با ما', 'nafas-chatbot' ),
-				'brochureBtn'     => __( 'بروشور', 'nafas-chatbot' ),
-				'urgentReport'    => __( 'گزارش فوری عارضه', 'nafas-chatbot' ),
-				'sent'            => __( 'ارسال شد', 'nafas-chatbot' ),
+				'handoffBtn'      => __( 'گفتگو با کارشناس انسانی', 'smart-support-chatbot' ),
+				'csatTitle'       => __( 'گفتگوی ما چطور بود؟', 'smart-support-chatbot' ),
+				'csatThanks'      => __( 'سپاس از امتیاز شما 🙏', 'smart-support-chatbot' ),
+				'csatSkip'        => __( 'رد کردن', 'smart-support-chatbot' ),
+				'mainMenu'        => __( 'منوی اصلی', 'smart-support-chatbot' ),
+				'speak'           => __( 'شنیدن پاسخ', 'smart-support-chatbot' ),
+				'speakStop'       => __( 'توقف صدا', 'smart-support-chatbot' ),
+				'mic'             => __( 'گفتن با صدا', 'smart-support-chatbot' ),
+				'micListening'    => __( 'در حال شنیدن…', 'smart-support-chatbot' ),
+				'suggestionsHint' => __( 'سوالات مرتبط:', 'smart-support-chatbot' ),
+				'consentRequired' => __( 'برای ادامه، موافقت با حریم خصوصی الزامی است.', 'smart-support-chatbot' ),
+				'privacy'         => __( 'سیاست حریم خصوصی', 'smart-support-chatbot' ),
+				'copy'            => __( 'کپی پاسخ', 'smart-support-chatbot' ),
+				'copied'          => __( 'کپی شد ✓', 'smart-support-chatbot' ),
+				'callUs'          => __( 'تماس با ما', 'smart-support-chatbot' ),
+				'brochureBtn'     => __( 'بروشور', 'smart-support-chatbot' ),
+				'urgentReport'    => __( 'گزارش فوری عارضه', 'smart-support-chatbot' ),
+				'sent'            => __( 'ارسال شد', 'smart-support-chatbot' ),
 			),
 		);
 
 		// اعمال overrides از ویجت.
 		$config = $this->apply_overrides( $config, $overrides );
 
-		wp_localize_script( 'nafas-chatbot', 'NafasChatbotConfig', $config );
+		wp_localize_script( 'smart-support-chatbot', 'SSCChatbotConfig', $config );
 	}
 
 	/**
@@ -225,24 +225,24 @@ class Nafas_Chatbot_Frontend {
 				return $stacks['system'];
 
 			case 'inter':
-				wp_enqueue_style( 'nafas-chatbot-font-google', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap', array(), NAFAS_CHATBOT_VERSION );
+				wp_enqueue_style( 'smart-support-chatbot-font-google', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap', array(), SSC_CHATBOT_VERSION );
 				return $stacks['inter'];
 
 			case 'roboto':
-				wp_enqueue_style( 'nafas-chatbot-font-google', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap', array(), NAFAS_CHATBOT_VERSION );
+				wp_enqueue_style( 'smart-support-chatbot-font-google', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap', array(), SSC_CHATBOT_VERSION );
 				return $stacks['roboto'];
 
 			case 'custom':
 				$url  = isset( $s['font_url'] ) ? $s['font_url'] : '';
 				$name = isset( $s['font_name'] ) ? trim( (string) $s['font_name'] ) : '';
 				if ( $url ) {
-					wp_enqueue_style( 'nafas-chatbot-font-custom', $url, array(), NAFAS_CHATBOT_VERSION );
+					wp_enqueue_style( 'smart-support-chatbot-font-custom', $url, array(), SSC_CHATBOT_VERSION );
 				}
 				return $name ? "'" . $name . "', sans-serif" : '';
 
 			case 'vazirmatn':
 			default:
-				wp_enqueue_style( 'nafas-chatbot-font' );
+				wp_enqueue_style( 'smart-support-chatbot-font' );
 				return $stacks['vazirmatn'];
 		}
 	}
@@ -308,7 +308,7 @@ class Nafas_Chatbot_Frontend {
 		$this->rendered = true;
 		$this->enqueue_with_config( $overrides );
 
-		return '<div id="nafas-chatbot-root" class="nfx-root" dir="rtl" aria-live="polite"></div>';
+		return '<div id="smart-support-chatbot-root" class="nfx-root" dir="rtl" aria-live="polite"></div>';
 	}
 
 	/**
@@ -323,7 +323,7 @@ class Nafas_Chatbot_Frontend {
 				'position' => '',
 			),
 			$atts,
-			'nafas_chatbot'
+			'ssc_chatbot'
 		);
 		return $this->render( array_filter( $atts ) );
 	}
@@ -332,7 +332,7 @@ class Nafas_Chatbot_Frontend {
 	 * نمایش خودکار دکمه شناور اگر در تنظیمات فعال باشد.
 	 */
 	public function maybe_render_floating() {
-		if ( 'yes' !== Nafas_Chatbot_Settings::get( 'enabled', 'yes' ) ) {
+		if ( 'yes' !== SSC_Chatbot_Settings::get( 'enabled', 'yes' ) ) {
 			return;
 		}
 		// اگر قبلاً توسط ویجت یا شورت‌کد رندر شده، دوباره رندر نکن.

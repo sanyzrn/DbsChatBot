@@ -2,7 +2,7 @@
 /**
  * پنل مدیریت وردپرس.
  *
- * @package NafasChatbot
+ * @package SmartSupportChatbot
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * کلاس Admin.
  */
-class Nafas_Chatbot_Admin {
+class SSC_Chatbot_Admin {
 
 	/**
 	 * راه‌اندازی.
@@ -21,93 +21,93 @@ class Nafas_Chatbot_Admin {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_init', array( $this, 'handle_actions' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'admin_post_nafas_chatbot_export', array( $this, 'export_csv' ) );
+		add_action( 'admin_post_ssc_chatbot_export', array( $this, 'export_csv' ) );
 	}
 
 	/**
 	 * ثبت منوی مدیریت.
 	 */
 	public function register_menu() {
-		$counts   = Nafas_Chatbot_DB::counts();
+		$counts   = SSC_Chatbot_DB::counts();
 		$new_count = 0;
 		// شمارش درخواست‌های جدید برای نشان (badge).
 		global $wpdb;
-		$table     = Nafas_Chatbot_DB::table_name();
+		$table     = SSC_Chatbot_DB::table_name();
 		// phpcs:ignore WordPress.DB
 		$new_count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE status = %s", 'new' ) );
 
 		$badge = $new_count > 0 ? ' <span class="awaiting-mod">' . esc_html( number_format_i18n( $new_count ) ) . '</span>' : '';
 
 		add_menu_page(
-			esc_html__( 'دستیار هوشمند', 'nafas-chatbot' ),
-			esc_html__( 'دستیار هوشمند', 'nafas-chatbot' ) . $badge,
+			esc_html__( 'دستیار هوشمند', 'smart-support-chatbot' ),
+			esc_html__( 'دستیار هوشمند', 'smart-support-chatbot' ) . $badge,
 			'manage_options',
-			'nafas-chatbot',
+			'smart-support-chatbot',
 			array( $this, 'render_dashboard_page' ),
 			'dashicons-format-chat',
 			58
 		);
 
 		add_submenu_page(
-			'nafas-chatbot',
-			esc_html__( 'داشبورد', 'nafas-chatbot' ),
-			esc_html__( 'داشبورد', 'nafas-chatbot' ),
+			'smart-support-chatbot',
+			esc_html__( 'داشبورد', 'smart-support-chatbot' ),
+			esc_html__( 'داشبورد', 'smart-support-chatbot' ),
 			'manage_options',
-			'nafas-chatbot',
+			'smart-support-chatbot',
 			array( $this, 'render_dashboard_page' )
 		);
 
 		add_submenu_page(
-			'nafas-chatbot',
-			esc_html__( 'درخواست‌ها', 'nafas-chatbot' ),
-			esc_html__( 'درخواست‌ها', 'nafas-chatbot' ) . $badge,
+			'smart-support-chatbot',
+			esc_html__( 'درخواست‌ها', 'smart-support-chatbot' ),
+			esc_html__( 'درخواست‌ها', 'smart-support-chatbot' ) . $badge,
 			'manage_options',
-			'nafas-chatbot-submissions',
+			'smart-support-chatbot-submissions',
 			array( $this, 'render_submissions_page' )
 		);
 
 		add_submenu_page(
-			'nafas-chatbot',
-			esc_html__( 'بانک پاسخ‌ها', 'nafas-chatbot' ),
-			esc_html__( 'بانک پاسخ‌ها', 'nafas-chatbot' ),
+			'smart-support-chatbot',
+			esc_html__( 'بانک پاسخ‌ها', 'smart-support-chatbot' ),
+			esc_html__( 'بانک پاسخ‌ها', 'smart-support-chatbot' ),
 			'manage_options',
-			'nafas-chatbot-qa',
+			'smart-support-chatbot-qa',
 			array( $this, 'render_qa_page' )
 		);
 
 		add_submenu_page(
-			'nafas-chatbot',
-			esc_html__( 'پایگاه دانش', 'nafas-chatbot' ),
-			esc_html__( 'پایگاه دانش', 'nafas-chatbot' ),
+			'smart-support-chatbot',
+			esc_html__( 'پایگاه دانش', 'smart-support-chatbot' ),
+			esc_html__( 'پایگاه دانش', 'smart-support-chatbot' ),
 			'manage_options',
-			'nafas-chatbot-kb',
+			'smart-support-chatbot-kb',
 			array( $this, 'render_kb_page' )
 		);
 
 		add_submenu_page(
-			'nafas-chatbot',
-			esc_html__( 'تاریخچه گفتگو', 'nafas-chatbot' ),
-			esc_html__( 'تاریخچه گفتگو', 'nafas-chatbot' ),
+			'smart-support-chatbot',
+			esc_html__( 'تاریخچه گفتگو', 'smart-support-chatbot' ),
+			esc_html__( 'تاریخچه گفتگو', 'smart-support-chatbot' ),
 			'manage_options',
-			'nafas-chatbot-chatlog',
+			'smart-support-chatbot-chatlog',
 			array( $this, 'render_chatlog_page' )
 		);
 
 		add_submenu_page(
-			'nafas-chatbot',
-			esc_html__( 'تنظیمات', 'nafas-chatbot' ),
-			esc_html__( 'تنظیمات', 'nafas-chatbot' ),
+			'smart-support-chatbot',
+			esc_html__( 'تنظیمات', 'smart-support-chatbot' ),
+			esc_html__( 'تنظیمات', 'smart-support-chatbot' ),
 			'manage_options',
-			'nafas-chatbot-settings',
+			'smart-support-chatbot-settings',
 			array( $this, 'render_settings_page' )
 		);
 
 		add_submenu_page(
-			'nafas-chatbot',
-			esc_html__( 'درباره و توسعه‌دهندگان', 'nafas-chatbot' ),
-			'💎 ' . esc_html__( 'درباره', 'nafas-chatbot' ),
+			'smart-support-chatbot',
+			esc_html__( 'درباره و توسعه‌دهندگان', 'smart-support-chatbot' ),
+			'💎 ' . esc_html__( 'درباره', 'smart-support-chatbot' ),
 			'manage_options',
-			'nafas-chatbot-about',
+			'smart-support-chatbot-about',
 			array( $this, 'render_about_page' )
 		);
 	}
@@ -117,33 +117,33 @@ class Nafas_Chatbot_Admin {
 	 */
 	public function render_about_page() {
 		$insights = array(
-			'qa'   => Nafas_Chatbot_DB::qa_count(),
-			'kb'   => Nafas_Chatbot_DB::kb_count(),
-			'chat' => isset( Nafas_Chatbot_DB::get_chat_stats()['total'] ) ? (int) Nafas_Chatbot_DB::get_chat_stats()['total'] : 0,
+			'qa'   => SSC_Chatbot_DB::qa_count(),
+			'kb'   => SSC_Chatbot_DB::kb_count(),
+			'chat' => isset( SSC_Chatbot_DB::get_chat_stats()['total'] ) ? (int) SSC_Chatbot_DB::get_chat_stats()['total'] : 0,
 		);
-		require NAFAS_CHATBOT_DIR . 'includes/views/about-page.php';
+		require SSC_CHATBOT_DIR . 'includes/views/about-page.php';
 	}
 
 	/**
 	 * رندر صفحه بانک پاسخ‌ها.
 	 */
 	public function render_qa_page() {
-		$s            = Nafas_Chatbot_Settings::all();
-		$products_map = Nafas_Chatbot_Settings::products_map();
-		$sample_url   = NAFAS_CHATBOT_URL . 'sample-qa.csv';
-		$bank         = Nafas_Chatbot_DB::qa_get_all(); // ردیف‌ها با کلید product_id.
-		require NAFAS_CHATBOT_DIR . 'includes/views/qa-bank-page.php';
+		$s            = SSC_Chatbot_Settings::all();
+		$products_map = SSC_Chatbot_Settings::products_map();
+		$sample_url   = SSC_CHATBOT_URL . 'sample-qa.csv';
+		$bank         = SSC_Chatbot_DB::qa_get_all(); // ردیف‌ها با کلید product_id.
+		require SSC_CHATBOT_DIR . 'includes/views/qa-bank-page.php';
 	}
 
 	/**
 	 * رندر صفحه پایگاه دانش.
 	 */
 	public function render_kb_page() {
-		$s            = Nafas_Chatbot_Settings::all();
-		$products_map = Nafas_Chatbot_Settings::products_map();
-		$docs         = Nafas_Chatbot_DB::kb_get_documents();
-		$kb_count     = Nafas_Chatbot_DB::kb_count();
-		require NAFAS_CHATBOT_DIR . 'includes/views/kb-page.php';
+		$s            = SSC_Chatbot_Settings::all();
+		$products_map = SSC_Chatbot_Settings::products_map();
+		$docs         = SSC_Chatbot_DB::kb_get_documents();
+		$kb_count     = SSC_Chatbot_DB::kb_count();
+		require SSC_CHATBOT_DIR . 'includes/views/kb-page.php';
 	}
 
 	/**
@@ -156,7 +156,7 @@ class Nafas_Chatbot_Admin {
 		$new = array();
 		$new['kb_enabled']    = ( isset( $in['kb_enabled'] ) && ( '1' === (string) $in['kb_enabled'] || 'yes' === $in['kb_enabled'] || 'on' === $in['kb_enabled'] ) ) ? 'yes' : 'no';
 		$new['kb_max_chunks'] = isset( $in['kb_max_chunks'] ) ? max( 1, min( 8, (int) $in['kb_max_chunks'] ) ) : 3;
-		Nafas_Chatbot_Settings::update( $new );
+		SSC_Chatbot_Settings::update( $new );
 
 		// محتوای سند: متن واردشده + فایل txt آپلودی.
 		$product = isset( $in['kb_product'] ) ? sanitize_text_field( $in['kb_product'] ) : 'general';
@@ -164,9 +164,9 @@ class Nafas_Chatbot_Admin {
 		$content = isset( $in['kb_content'] ) ? sanitize_textarea_field( $in['kb_content'] ) : '';
 
 		if ( ! empty( $_FILES['kb_file']['tmp_name'] ) && is_uploaded_file( $_FILES['kb_file']['tmp_name'] ) ) { // phpcs:ignore
-			$max_bytes = (int) apply_filters( 'nafas_chatbot_max_upload_bytes', 2 * 1024 * 1024 );
+			$max_bytes = (int) apply_filters( 'ssc_chatbot_max_upload_bytes', 2 * 1024 * 1024 );
 			if ( (int) $_FILES['kb_file']['size'] > $max_bytes ) { // phpcs:ignore WordPress.Security
-				return __( 'فایل بیش از حد بزرگ است (حداکثر ۲ مگابایت).', 'nafas-chatbot' );
+				return __( 'فایل بیش از حد بزرگ است (حداکثر ۲ مگابایت).', 'smart-support-chatbot' );
 			}
 			$raw      = file_get_contents( $_FILES['kb_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 			$raw      = sanitize_textarea_field( (string) $raw );
@@ -177,12 +177,12 @@ class Nafas_Chatbot_Admin {
 		}
 
 		if ( '' === trim( $content ) ) {
-			return __( 'تنظیمات پایگاه دانش ذخیره شد.', 'nafas-chatbot' );
+			return __( 'تنظیمات پایگاه دانش ذخیره شد.', 'smart-support-chatbot' );
 		}
 
-		$n = Nafas_Chatbot_DB::kb_insert_document( $product, $title, $content );
+		$n = SSC_Chatbot_DB::kb_insert_document( $product, $title, $content );
 		/* translators: %d: تعداد تکه‌ها. */
-		return sprintf( __( 'سند افزوده شد و به %d تکه تقسیم شد.', 'nafas-chatbot' ), $n );
+		return sprintf( __( 'سند افزوده شد و به %d تکه تقسیم شد.', 'smart-support-chatbot' ), $n );
 	}
 
 	/**
@@ -192,7 +192,7 @@ class Nafas_Chatbot_Admin {
 		$source = isset( $_GET['source'] ) ? sanitize_text_field( wp_unslash( $_GET['source'] ) ) : '';
 		$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 		$paged  = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
-		$result = Nafas_Chatbot_DB::get_chatlog(
+		$result = SSC_Chatbot_DB::get_chatlog(
 			array(
 				'source'   => $source,
 				'search'   => $search,
@@ -200,28 +200,28 @@ class Nafas_Chatbot_Admin {
 				'per_page' => 20,
 			)
 		);
-		$products_map = Nafas_Chatbot_Settings::products_map();
-		require NAFAS_CHATBOT_DIR . 'includes/views/chatlog-page.php';
+		$products_map = SSC_Chatbot_Settings::products_map();
+		require SSC_CHATBOT_DIR . 'includes/views/chatlog-page.php';
 	}
 
 	/**
 	 * رندر صفحه داشبورد.
 	 */
 	public function render_dashboard_page() {
-		$counts       = Nafas_Chatbot_DB::counts();
-		$chat_stats   = Nafas_Chatbot_DB::get_chat_stats();
-		$product_subs = Nafas_Chatbot_DB::product_submission_counts();
-		$recent       = Nafas_Chatbot_DB::get_recent( 6 );
-		$adr_opts     = Nafas_Chatbot_Settings::adr_options();
-		$serious_list = apply_filters( 'nafas_chatbot_serious_severities', array( 'شدید', 'تهدیدکننده حیات', 'منجر به بستری شد', 'فوت' ) );
+		$counts       = SSC_Chatbot_DB::counts();
+		$chat_stats   = SSC_Chatbot_DB::get_chat_stats();
+		$product_subs = SSC_Chatbot_DB::product_submission_counts();
+		$recent       = SSC_Chatbot_DB::get_recent( 6 );
+		$adr_opts     = SSC_Chatbot_Settings::adr_options();
+		$serious_list = apply_filters( 'ssc_chatbot_serious_severities', array( 'شدید', 'تهدیدکننده حیات', 'منجر به بستری شد', 'فوت' ) );
 		$insights     = array(
-			'unanswered' => Nafas_Chatbot_DB::count_chatlog_source( 'unanswered' ),
-			'feedback'   => Nafas_Chatbot_DB::feedback_counts(),
-			'serious'    => Nafas_Chatbot_DB::serious_adr_count( $serious_list ),
-			'qa_count'   => Nafas_Chatbot_DB::qa_count(),
-			'csat'       => Nafas_Chatbot_DB::get_csat_stats(),
+			'unanswered' => SSC_Chatbot_DB::count_chatlog_source( 'unanswered' ),
+			'feedback'   => SSC_Chatbot_DB::feedback_counts(),
+			'serious'    => SSC_Chatbot_DB::serious_adr_count( $serious_list ),
+			'qa_count'   => SSC_Chatbot_DB::qa_count(),
+			'csat'       => SSC_Chatbot_DB::get_csat_stats(),
 		);
-		require NAFAS_CHATBOT_DIR . 'includes/views/dashboard-page.php';
+		require SSC_CHATBOT_DIR . 'includes/views/dashboard-page.php';
 	}
 
 	/**
@@ -230,30 +230,30 @@ class Nafas_Chatbot_Admin {
 	 * @param string $hook هوک صفحه.
 	 */
 	public function enqueue_assets( $hook ) {
-		if ( false === strpos( $hook, 'nafas-chatbot' ) ) {
+		if ( false === strpos( $hook, 'smart-support-chatbot' ) ) {
 			return;
 		}
 		wp_enqueue_style(
-			'nafas-chatbot-admin',
-			NAFAS_CHATBOT_URL . 'assets/css/admin.css',
+			'smart-support-chatbot-admin',
+			SSC_CHATBOT_URL . 'assets/css/admin.css',
 			array(),
-			NAFAS_CHATBOT_VERSION
+			SSC_CHATBOT_VERSION
 		);
 		wp_enqueue_script(
-			'nafas-chatbot-admin',
-			NAFAS_CHATBOT_URL . 'assets/js/admin.js',
+			'smart-support-chatbot-admin',
+			SSC_CHATBOT_URL . 'assets/js/admin.js',
 			array( 'jquery', 'wp-color-picker' ),
-			NAFAS_CHATBOT_VERSION,
+			SSC_CHATBOT_VERSION,
 			true
 		);
 		wp_enqueue_style( 'wp-color-picker' );
 
 		wp_localize_script(
-			'nafas-chatbot-admin',
-			'NafasAdmin',
+			'smart-support-chatbot-admin',
+			'SSCAdmin',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'nafas_chatbot_admin' ),
+				'nonce'   => wp_create_nonce( 'ssc_chatbot_admin' ),
 			)
 		);
 	}
@@ -267,35 +267,35 @@ class Nafas_Chatbot_Admin {
 		}
 
 		// ذخیره تنظیمات.
-		if ( isset( $_POST['nafas_chatbot_save_settings'] ) ) {
-			check_admin_referer( 'nafas_chatbot_settings' );
+		if ( isset( $_POST['ssc_chatbot_save_settings'] ) ) {
+			check_admin_referer( 'ssc_chatbot_settings' );
 			$this->save_settings();
 			add_action( 'admin_notices', function () {
-				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'تنظیمات با موفقیت ذخیره شد.', 'nafas-chatbot' ) . '</p></div>';
+				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'تنظیمات با موفقیت ذخیره شد.', 'smart-support-chatbot' ) . '</p></div>';
 			} );
 		}
 
 		// تغییر وضعیت درخواست.
-		if ( isset( $_GET['nafas_action'], $_GET['sid'] ) && 'status' === $_GET['nafas_action'] ) {
-			check_admin_referer( 'nafas_sub_action' );
+		if ( isset( $_GET['ssc_action'], $_GET['sid'] ) && 'status' === $_GET['ssc_action'] ) {
+			check_admin_referer( 'ssc_sub_action' );
 			$sid    = (int) $_GET['sid'];
 			$status = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : 'new';
-			Nafas_Chatbot_DB::update_status( $sid, $status );
-			wp_safe_redirect( remove_query_arg( array( 'nafas_action', 'sid', 'status', '_wpnonce' ) ) );
+			SSC_Chatbot_DB::update_status( $sid, $status );
+			wp_safe_redirect( remove_query_arg( array( 'ssc_action', 'sid', 'status', '_wpnonce' ) ) );
 			exit;
 		}
 
 		// حذف درخواست.
-		if ( isset( $_GET['nafas_action'], $_GET['sid'] ) && 'delete' === $_GET['nafas_action'] ) {
-			check_admin_referer( 'nafas_sub_action' );
-			Nafas_Chatbot_DB::delete( (int) $_GET['sid'] );
-			wp_safe_redirect( remove_query_arg( array( 'nafas_action', 'sid', '_wpnonce' ) ) );
+		if ( isset( $_GET['ssc_action'], $_GET['sid'] ) && 'delete' === $_GET['ssc_action'] ) {
+			check_admin_referer( 'ssc_sub_action' );
+			SSC_Chatbot_DB::delete( (int) $_GET['sid'] );
+			wp_safe_redirect( remove_query_arg( array( 'ssc_action', 'sid', '_wpnonce' ) ) );
 			exit;
 		}
 
 		// ذخیره بانک پاسخ‌ها (شامل ایمپورت فایل).
-		if ( isset( $_POST['nafas_chatbot_save_qa'] ) ) {
-			check_admin_referer( 'nafas_chatbot_qa' );
+		if ( isset( $_POST['ssc_chatbot_save_qa'] ) ) {
+			check_admin_referer( 'ssc_chatbot_qa' );
 			$msg = $this->save_qa_bank();
 			add_action( 'admin_notices', function () use ( $msg ) {
 				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
@@ -303,8 +303,8 @@ class Nafas_Chatbot_Admin {
 		}
 
 		// ذخیره پایگاه دانش (تنظیمات + افزودن سند).
-		if ( isset( $_POST['nafas_chatbot_save_kb'] ) ) {
-			check_admin_referer( 'nafas_chatbot_kb' );
+		if ( isset( $_POST['ssc_chatbot_save_kb'] ) ) {
+			check_admin_referer( 'ssc_chatbot_kb' );
 			$msg = $this->save_kb();
 			add_action( 'admin_notices', function () use ( $msg ) {
 				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
@@ -312,29 +312,29 @@ class Nafas_Chatbot_Admin {
 		}
 
 		// حذف یک سند از پایگاه دانش.
-		if ( isset( $_GET['nafas_action'], $_GET['doc'] ) && 'delkb' === $_GET['nafas_action'] ) {
-			check_admin_referer( 'nafas_kb_action' );
-			Nafas_Chatbot_DB::kb_delete_document( sanitize_text_field( wp_unslash( $_GET['doc'] ) ) );
-			wp_safe_redirect( remove_query_arg( array( 'nafas_action', 'doc', '_wpnonce' ) ) );
+		if ( isset( $_GET['ssc_action'], $_GET['doc'] ) && 'delkb' === $_GET['ssc_action'] ) {
+			check_admin_referer( 'ssc_kb_action' );
+			SSC_Chatbot_DB::kb_delete_document( sanitize_text_field( wp_unslash( $_GET['doc'] ) ) );
+			wp_safe_redirect( remove_query_arg( array( 'ssc_action', 'doc', '_wpnonce' ) ) );
 			exit;
 		}
 
 		// پاک‌سازی کامل پایگاه دانش.
-		if ( isset( $_POST['nafas_chatbot_clear_kb'] ) ) {
-			check_admin_referer( 'nafas_kb_clear' );
-			Nafas_Chatbot_DB::kb_clear();
-			wp_safe_redirect( admin_url( 'admin.php?page=nafas-chatbot-kb' ) );
+		if ( isset( $_POST['ssc_chatbot_clear_kb'] ) ) {
+			check_admin_referer( 'ssc_kb_clear' );
+			SSC_Chatbot_DB::kb_clear();
+			wp_safe_redirect( admin_url( 'admin.php?page=smart-support-chatbot-kb' ) );
 			exit;
 		}
 
 		// افزودن یک گفتگو به بانک.
-		if ( isset( $_GET['nafas_action'], $_GET['cid'] ) && 'tobank' === $_GET['nafas_action'] ) {
-			check_admin_referer( 'nafas_chatlog_action' );
-			$entry = Nafas_Chatbot_DB::get_chatlog_entry( (int) $_GET['cid'] );
+		if ( isset( $_GET['ssc_action'], $_GET['cid'] ) && 'tobank' === $_GET['ssc_action'] ) {
+			check_admin_referer( 'ssc_chatlog_action' );
+			$entry = SSC_Chatbot_DB::get_chatlog_entry( (int) $_GET['cid'] );
 			if ( $entry ) {
 				// برای سوال‌های بی‌پاسخ، پاسخ خالی می‌گذاریم تا مدیر در صفحه بانک تکمیل کند.
 				$ans = ( 'unanswered' === $entry->source ) ? '' : $entry->answer;
-				Nafas_Chatbot_DB::qa_insert(
+				SSC_Chatbot_DB::qa_insert(
 					array(
 						'product_id' => $entry->product ? $entry->product : 'general',
 						'question'   => $entry->question,
@@ -342,25 +342,25 @@ class Nafas_Chatbot_Admin {
 						'answer'     => $ans,
 					)
 				);
-				Nafas_Chatbot_DB::mark_chatlog_in_bank( (int) $_GET['cid'] );
+				SSC_Chatbot_DB::mark_chatlog_in_bank( (int) $_GET['cid'] );
 			}
-			wp_safe_redirect( add_query_arg( 'added', '1', remove_query_arg( array( 'nafas_action', 'cid', '_wpnonce' ) ) ) );
+			wp_safe_redirect( add_query_arg( 'added', '1', remove_query_arg( array( 'ssc_action', 'cid', '_wpnonce' ) ) ) );
 			exit;
 		}
 
 		// حذف یک ردیف تاریخچه.
-		if ( isset( $_GET['nafas_action'], $_GET['cid'] ) && 'dellog' === $_GET['nafas_action'] ) {
-			check_admin_referer( 'nafas_chatlog_action' );
-			Nafas_Chatbot_DB::delete_chatlog_entry( (int) $_GET['cid'] );
-			wp_safe_redirect( remove_query_arg( array( 'nafas_action', 'cid', '_wpnonce' ) ) );
+		if ( isset( $_GET['ssc_action'], $_GET['cid'] ) && 'dellog' === $_GET['ssc_action'] ) {
+			check_admin_referer( 'ssc_chatlog_action' );
+			SSC_Chatbot_DB::delete_chatlog_entry( (int) $_GET['cid'] );
+			wp_safe_redirect( remove_query_arg( array( 'ssc_action', 'cid', '_wpnonce' ) ) );
 			exit;
 		}
 
 		// پاک‌سازی کل تاریخچه.
-		if ( isset( $_POST['nafas_chatbot_clear_log'] ) ) {
-			check_admin_referer( 'nafas_chatlog_clear' );
-			Nafas_Chatbot_DB::clear_chatlog();
-			wp_safe_redirect( admin_url( 'admin.php?page=nafas-chatbot-chatlog' ) );
+		if ( isset( $_POST['ssc_chatbot_clear_log'] ) ) {
+			check_admin_referer( 'ssc_chatlog_clear' );
+			SSC_Chatbot_DB::clear_chatlog();
+			wp_safe_redirect( admin_url( 'admin.php?page=smart-support-chatbot-chatlog' ) );
 			exit;
 		}
 	}
@@ -403,7 +403,7 @@ class Nafas_Chatbot_Admin {
 
 		// ایمپورت فایل (CSV یا JSON).
 		$imported  = 0;
-		$max_bytes = (int) apply_filters( 'nafas_chatbot_max_upload_bytes', 2 * 1024 * 1024 );
+		$max_bytes = (int) apply_filters( 'ssc_chatbot_max_upload_bytes', 2 * 1024 * 1024 );
 		if ( ! empty( $_FILES['qa_import']['tmp_name'] ) && is_uploaded_file( $_FILES['qa_import']['tmp_name'] ) && (int) $_FILES['qa_import']['size'] <= $max_bytes ) { // phpcs:ignore WordPress.Security
 			$content  = file_get_contents( $_FILES['qa_import']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 			$fname    = isset( $_FILES['qa_import']['name'] ) ? sanitize_file_name( $_FILES['qa_import']['name'] ) : '';
@@ -418,7 +418,7 @@ class Nafas_Chatbot_Admin {
 		}
 
 		// ذخیره تنظیمات (qa_mode، chatlog_*).
-		Nafas_Chatbot_Settings::update( $new );
+		SSC_Chatbot_Settings::update( $new );
 
 		// نگاشت کلید product → product_id و جایگزینی کامل جدول بانک.
 		$table_rows = array();
@@ -430,7 +430,7 @@ class Nafas_Chatbot_Admin {
 				'answer'     => isset( $r['answer'] ) ? $r['answer'] : '',
 			);
 		}
-		Nafas_Chatbot_DB::qa_replace_all( $table_rows );
+		SSC_Chatbot_DB::qa_replace_all( $table_rows );
 
 		$msg = sprintf( 'بانک پاسخ‌ها ذخیره شد (%d ردیف).', count( $table_rows ) );
 		if ( $imported ) {
@@ -565,9 +565,9 @@ class Nafas_Chatbot_Admin {
 		$new['consent_link']    = isset( $in['consent_link'] ) ? esc_url_raw( $in['consent_link'] ) : '';
 
 		// فیلدهای حساس: فقط در صورت ورود مقدار جدید، رمزنگاری و ذخیره می‌شوند (وگرنه مقدار قبلی حفظ می‌شود).
-		foreach ( Nafas_Chatbot_Settings::secret_fields() as $sf ) {
+		foreach ( SSC_Chatbot_Settings::secret_fields() as $sf ) {
 			if ( isset( $in[ $sf ] ) && '' !== trim( $in[ $sf ] ) ) {
-				$new[ $sf ] = Nafas_Chatbot_Settings::encrypt( sanitize_text_field( $in[ $sf ] ) );
+				$new[ $sf ] = SSC_Chatbot_Settings::encrypt( sanitize_text_field( $in[ $sf ] ) );
 			}
 		}
 
@@ -642,15 +642,15 @@ class Nafas_Chatbot_Admin {
 			$new['quick_replies'] = $quick;
 		}
 
-		Nafas_Chatbot_Settings::update( $new );
+		SSC_Chatbot_Settings::update( $new );
 	}
 
 	/**
 	 * رندر صفحه تنظیمات.
 	 */
 	public function render_settings_page() {
-		$s = Nafas_Chatbot_Settings::all();
-		require NAFAS_CHATBOT_DIR . 'includes/views/settings-page.php';
+		$s = SSC_Chatbot_Settings::all();
+		require SSC_CHATBOT_DIR . 'includes/views/settings-page.php';
 	}
 
 	/**
@@ -664,7 +664,7 @@ class Nafas_Chatbot_Admin {
 		$date_to   = isset( $_GET['date_to'] ) ? sanitize_text_field( wp_unslash( $_GET['date_to'] ) ) : '';
 		$paged     = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
 
-		$result = Nafas_Chatbot_DB::get_submissions(
+		$result = SSC_Chatbot_DB::get_submissions(
 			array(
 				'type'      => $type,
 				'status'    => $status,
@@ -675,9 +675,9 @@ class Nafas_Chatbot_Admin {
 				'per_page'  => 20,
 			)
 		);
-		$counts = Nafas_Chatbot_DB::counts();
+		$counts = SSC_Chatbot_DB::counts();
 
-		require NAFAS_CHATBOT_DIR . 'includes/views/submissions-page.php';
+		require SSC_CHATBOT_DIR . 'includes/views/submissions-page.php';
 	}
 
 	/**
@@ -697,9 +697,9 @@ class Nafas_Chatbot_Admin {
 	 */
 	public function export_csv() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'دسترسی غیرمجاز', 'nafas-chatbot' ) );
+			wp_die( esc_html__( 'دسترسی غیرمجاز', 'smart-support-chatbot' ) );
 		}
-		check_admin_referer( 'nafas_export' );
+		check_admin_referer( 'ssc_export' );
 
 		// خروجی بر اساس فیلترهای فعلی صفحه (نوع/وضعیت/جستجو/بازهٔ تاریخ).
 		$filters = array(
@@ -710,10 +710,10 @@ class Nafas_Chatbot_Admin {
 			'date_to'   => isset( $_GET['date_to'] ) ? sanitize_text_field( wp_unslash( $_GET['date_to'] ) ) : '',
 		);
 		$has_filter = (bool) array_filter( $filters );
-		$rows       = $has_filter ? Nafas_Chatbot_DB::get_filtered_for_export( $filters ) : Nafas_Chatbot_DB::get_all_for_export();
+		$rows       = $has_filter ? SSC_Chatbot_DB::get_filtered_for_export( $filters ) : SSC_Chatbot_DB::get_all_for_export();
 
 		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename=nafas-submissions-' . gmdate( 'Y-m-d' ) . '.csv' );
+		header( 'Content-Disposition: attachment; filename=ssc-submissions-' . gmdate( 'Y-m-d' ) . '.csv' );
 
 		$out = fopen( 'php://output', 'w' );
 		// BOM برای پشتیبانی فارسی در اکسل.
