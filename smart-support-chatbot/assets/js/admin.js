@@ -202,8 +202,18 @@
 				$( '#ssc-qa-table tbody' ).append( document.importNode( tpl.content, true ) );
 			}
 		} );
+		// حذف ردیف بانک: شناسهٔ ردیف‌های موجود ثبت می‌شود تا سرور فقط همان‌ها را حذف کند
+		// (ذخیره‌سازی غیرمخرب است و ردیف‌های ارسال‌نشده دست‌نخورده می‌مانند).
 		$( '#ssc-qa-table' ).on( 'click', '.ssc-remove-qa', function () {
-			$( this ).closest( 'tr' ).remove();
+			var $row = $( this ).closest( 'tr' );
+			var id   = parseInt( $row.attr( 'data-qa-id' ) || '0', 10 );
+			if ( id > 0 ) {
+				var $del = $( '#ssc-qa-deleted' );
+				var cur  = $del.val() ? $del.val().split( ',' ) : [];
+				cur.push( String( id ) );
+				$del.val( cur.join( ',' ) );
+			}
+			$row.remove();
 		} );
 
 		/* ---------- تست اتصال هوش مصنوعی ---------- */

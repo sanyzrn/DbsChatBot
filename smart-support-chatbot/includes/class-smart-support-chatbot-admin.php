@@ -383,6 +383,7 @@ class SSC_Chatbot_Admin {
 		// ردیف‌های دستی.
 		$bank = array();
 		if ( isset( $in['qa_question'] ) && is_array( $in['qa_question'] ) ) {
+			$row_ids   = isset( $in['qa_id'] ) ? $in['qa_id'] : array();
 			$products  = isset( $in['qa_product'] ) ? $in['qa_product'] : array();
 			$keywords  = isset( $in['qa_keywords'] ) ? $in['qa_keywords'] : array();
 			$answers   = isset( $in['qa_answer'] ) ? $in['qa_answer'] : array();
@@ -393,6 +394,7 @@ class SSC_Chatbot_Admin {
 					continue;
 				}
 				$bank[] = array(
+					'id'       => isset( $row_ids[ $i ] ) ? (int) $row_ids[ $i ] : 0,
 					'product'  => isset( $products[ $i ] ) ? sanitize_text_field( $products[ $i ] ) : 'general',
 					'question' => $q,
 					'keywords' => isset( $keywords[ $i ] ) ? sanitize_text_field( $keywords[ $i ] ) : '',
@@ -401,8 +403,24 @@ class SSC_Chatbot_Admin {
 			}
 		}
 
+		// تشخیص بریده‌شدن POST توسط max_input_vars.
+		// هر ردیف ۵ فیلد آرایه‌ای دارد؛ با عبور از سقف، PHP بی‌صدا ورودی را می‌بُرد.
+		// در این حالت ذخیره متوقف می‌شود تا ردیف‌های ارسال‌نشده آسیب نبینند.
+		$rendered = isset( $in['qa_rendered'] ) ? (int) $in['qa_rendered'] : 0;
+		$received = isset( $in['qa_id'] ) && is_array( $in['qa_id'] ) ? count( $in['qa_id'] ) : 0;
+		if ( $rendered > 0 && $received > 0 && $received < $rendered ) {
+			return sprintf(
+				/* translators: 1: تعداد دریافت‌شده، 2: تعداد ارسالی، 3: مقدار max_input_vars */
+				__( '⚠️ ذخیره انجام نشد: فقط %1$d ردیف از %2$d ردیف به سرور رسید. مقدار max_input_vars در php.ini (فعلاً %3$s) برای این تعداد ردیف کافی نیست. آن را افزایش دهید یا بانک را در چند مرحله ذخیره کنید. هیچ داده‌ای تغییر نکرد.', 'smart-support-chatbot' ),
+				$received,
+				$rendered,
+				ini_get( 'max_input_vars' )
+			);
+		}
+
 		// ایمپورت فایل (CSV یا JSON).
 		$imported  = 0;
+		$replace   = false;
 		$max_bytes = (int) apply_filters( 'ssc_chatbot_max_upload_bytes', 2 * 1024 * 1024 );
 		if ( ! empty( $_FILES['qa_import']['tmp_name'] ) && is_uploaded_file( $_FILES['qa_import']['tmp_name'] ) && (int) $_FILES['qa_import']['size'] <= $max_bytes ) { // phpcs:ignore WordPress.Security
 			$content  = file_get_contents( $_FILES['qa_import']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions
@@ -420,21 +438,41 @@ class SSC_Chatbot_Admin {
 		// ذخیره تنظیمات (qa_mode، chatlog_*).
 		SSC_Chatbot_Settings::update( $new );
 
-		// نگاشت کلید product → product_id و جایگزینی کامل جدول بانک.
+		// نگاشت کلید product → product_id.
 		$table_rows = array();
 		foreach ( $bank as $r ) {
 			$table_rows[] = array(
+				'id'         => isset( $r['id'] ) ? (int) $r['id'] : 0,
 				'product_id' => isset( $r['product'] ) ? $r['product'] : 'general',
 				'question'   => isset( $r['question'] ) ? $r['question'] : '',
 				'keywords'   => isset( $r['keywords'] ) ? $r['keywords'] : '',
 				'answer'     => isset( $r['answer'] ) ? $r['answer'] : '',
 			);
 		}
-		SSC_Chatbot_DB::qa_replace_all( $table_rows );
 
-		$msg = sprintf( 'بانک پاسخ‌ها ذخیره شد (%d ردیف).', count( $table_rows ) );
+		if ( $replace ) {
+			// فقط ایمپورت با حالت «جایگزینی» اجازهٔ پاک‌کردن کل بانک را دارد.
+			SSC_Chatbot_DB::qa_replace_all( $table_rows );
+		} else {
+			// ذخیرهٔ غیرمخرب: به‌روزرسانی/درج + حذف صرفاً ردیف‌های علامت‌خوردهٔ کاربر.
+			$deleted_ids = array();
+			if ( ! empty( $in['qa_deleted'] ) ) {
+				$deleted_ids = array_filter( array_map( 'intval', explode( ',', (string) $in['qa_deleted'] ) ) );
+			}
+			SSC_Chatbot_DB::qa_save_bulk( $table_rows, $deleted_ids );
+		}
+
+		$msg = sprintf(
+			/* translators: %d: تعداد ردیف‌های بانک. */
+			__( 'بانک پاسخ‌ها ذخیره شد (%d ردیف).', 'smart-support-chatbot' ),
+			SSC_Chatbot_DB::qa_count()
+		);
 		if ( $imported ) {
-			$msg .= sprintf( ' %d ردیف از فایل وارد شد.', $imported );
+			$msg .= ' ' . sprintf(
+				/* translators: %d: تعداد ردیف‌های واردشده از فایل. */
+				__( '%d ردیف از فایل وارد شد.', 'smart-support-chatbot' ),
+				$imported
+			);
 		}
 		return $msg;
 	}
@@ -474,17 +512,26 @@ class SSC_Chatbot_Admin {
 		}
 
 		// CSV: ستون‌ها product,question,keywords,answer (با سرستون).
-		$lines  = preg_split( '/\r\n|\r|\n/', $content );
-		$first  = true;
-		foreach ( $lines as $line ) {
-			if ( '' === trim( $line ) ) {
+		// نکته: تجزیه روی استریم انجام می‌شود نه خط‌به‌خط، چون پاسخ‌های چندخطیِ داخل
+		// نقل‌قول ("...\n...") با تقسیم بر اساس خط می‌شکنند و ردیف خراب می‌شود.
+		$stream = fopen( 'php://temp', 'r+' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		if ( false === $stream ) {
+			return $rows;
+		}
+		fwrite( $stream, $content ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		rewind( $stream );
+
+		$first = true;
+		// phpcs:ignore WordPress.WP.AlternativeFunctions
+		while ( false !== ( $cols = fgetcsv( $stream ) ) ) {
+			// ردیف خالی.
+			if ( null === $cols || ( 1 === count( $cols ) && ( null === $cols[0] || '' === trim( (string) $cols[0] ) ) ) ) {
 				continue;
 			}
-			$cols = str_getcsv( $line );
 			if ( $first ) {
 				$first = false;
 				// رد کردن سرستون در صورت وجود.
-				$joined = mb_strtolower( implode( ',', $cols ) );
+				$joined = mb_strtolower( implode( ',', array_map( 'strval', $cols ) ) );
 				if ( false !== strpos( $joined, 'question' ) || false !== strpos( $joined, 'سوال' ) ) {
 					continue;
 				}
@@ -492,7 +539,7 @@ class SSC_Chatbot_Admin {
 			if ( count( $cols ) < 4 ) {
 				continue;
 			}
-			if ( '' === trim( $cols[1] ) || '' === trim( $cols[3] ) ) {
+			if ( '' === trim( (string) $cols[1] ) || '' === trim( (string) $cols[3] ) ) {
 				continue;
 			}
 			$rows[] = array(
@@ -502,7 +549,50 @@ class SSC_Chatbot_Admin {
 				'answer'   => sanitize_textarea_field( $cols[3] ),
 			);
 		}
+		fclose( $stream ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 		return $rows;
+	}
+
+	/**
+	 * ساخت شناسهٔ پایدار محصول.
+	 *
+	 * sanitize_key() هر کاراکتر غیرلاتین را حذف می‌کند، بنابراین شناسهٔ فارسی
+	 * («کپسول») بی‌صدا به رشتهٔ خالی تبدیل و کل محصول دور ریخته می‌شد.
+	 * اینجا ابتدا شناسهٔ واردشده و سپس نام محصول به slug یونیکد تبدیل می‌شود
+	 * (sanitize_title حروف فارسی را حفظ می‌کند) و در نهایت یکتاسازی انجام می‌گیرد.
+	 *
+	 * @param string $raw_id ورودی خام شناسه.
+	 * @param string $name   نام نمایشی محصول (به‌عنوان منبع جایگزین slug).
+	 * @param array  $taken  شناسه‌های استفاده‌شده تا این لحظه.
+	 * @return string شناسهٔ معتبر یا رشتهٔ خالی اگر هیچ منبعی موجود نباشد.
+	 */
+	protected static function make_product_id( $raw_id, $name, $taken ) {
+		$raw_id = trim( (string) $raw_id );
+		$name   = trim( (string) $name );
+
+		// ۱) شناسهٔ لاتینِ معتبر همان‌طور که هست حفظ می‌شود (سازگاری با نصب‌های قبلی).
+		$latin = sanitize_key( $raw_id );
+		$id    = '' !== $latin ? $latin : '';
+
+		// ۲) در غیر این صورت از خود شناسه و سپس از نام، slug یونیکد می‌سازیم.
+		if ( '' === $id && '' !== $raw_id ) {
+			$id = sanitize_title( $raw_id );
+		}
+		if ( '' === $id && '' !== $name ) {
+			$id = sanitize_title( $name );
+		}
+		if ( '' === $id ) {
+			return '';
+		}
+
+		// ۳) یکتاسازی تا دو محصول شناسهٔ یکسان نگیرند.
+		$base = $id;
+		$n    = 2;
+		while ( isset( $taken[ $id ] ) ) {
+			$id = $base . '-' . $n;
+			++$n;
+		}
+		return $id;
 	}
 
 	/**
@@ -606,12 +696,17 @@ class SSC_Chatbot_Admin {
 			$brochures = isset( $in['product_brochure'] ) ? $in['product_brochure'] : array();
 			$images    = isset( $in['product_image'] ) ? $in['product_image'] : array();
 			$knowledge_map = array();
+			$seen_ids      = array();
 			foreach ( $ids as $i => $pid ) {
-				$pid = sanitize_key( $pid );
-				if ( empty( $pid ) ) {
+				$pname = isset( $names[ $i ] ) ? sanitize_text_field( $names[ $i ] ) : '';
+				$pid   = self::make_product_id( $pid, $pname, $seen_ids );
+				if ( '' === $pid ) {
 					continue;
 				}
-				$pname      = isset( $names[ $i ] ) ? sanitize_text_field( $names[ $i ] ) : $pid;
+				$seen_ids[ $pid ] = true;
+				if ( '' === $pname ) {
+					$pname = $pid;
+				}
 				$brochure   = isset( $brochures[ $i ] ) ? esc_url_raw( trim( $brochures[ $i ] ) ) : '';
 				$image      = isset( $images[ $i ] ) ? esc_url_raw( trim( $images[ $i ] ) ) : '';
 				$products[] = array( 'id' => $pid, 'name' => $pname, 'brochure' => $brochure, 'image' => $image );
