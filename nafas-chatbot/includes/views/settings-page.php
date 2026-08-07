@@ -375,10 +375,11 @@ $secret_ph = function ( $key ) {
 								</div>
 							</div>
 							<div class="nfx-preview__body">
-								<div class="nfx-preview__msg nfx-preview__msg--bot"><?php esc_html_e( 'سلام! 👋 چطور می‌تونم کمکتون کنم؟', 'nafas-chatbot' ); ?></div>
+								<div class="nfx-preview__msg nfx-preview__msg--bot nfx-preview__welcome"><?php esc_html_e( 'سلام! 👋 چطور می‌تونم کمکتون کنم؟', 'nafas-chatbot' ); ?></div>
 								<div class="nfx-preview__msg nfx-preview__msg--user"><?php esc_html_e( 'سلام، یک سوال داشتم.', 'nafas-chatbot' ); ?></div>
 								<div class="nfx-preview__msg nfx-preview__msg--bot"><?php esc_html_e( 'بله، در خدمتم. بفرمایید.', 'nafas-chatbot' ); ?></div>
 							</div>
+							<div class="nfx-preview__foot"><span class="nfx-preview__disc"><?php esc_html_e( 'هوش مصنوعی ممکن است اشتباه کند.', 'nafas-chatbot' ); ?></span></div>
 						</div>
 						<div class="nfx-preview__btn">💬</div>
 					</div>

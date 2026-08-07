@@ -720,6 +720,7 @@ a.nafas-insight:hover { transform: translateY(-3px); box-shadow: var(--nfx-shado
 .nfx-preview__win {
 	width: var(--nfx-win-width);
 	max-width: 100%;
+	order: 1;
 	background: var(--nfx-bg-card);
 	border: 1px solid var(--nfx-border);
 	border-radius: var(--nfx-win-radius);
@@ -776,6 +777,15 @@ a.nafas-insight:hover { transform: translateY(-3px); box-shadow: var(--nfx-shado
 	color: #fff;
 	border-bottom-left-radius: 4px;
 }
+.nfx-preview__foot {
+	padding: 8px 16px 12px;
+	background: color-mix( in srgb, var(--nfx-bg-base) 60%, var(--nfx-bg-card) );
+	border-top: 1px solid var(--nfx-border);
+}
+.nfx-preview__disc {
+	font-size: 11px;
+	color: var(--nfx-muted);
+}
 .nfx-preview__btn {
 	width: var(--nfx-btn-size);
 	height: var(--nfx-btn-size);
@@ -788,4 +798,7 @@ a.nafas-insight:hover { transform: translateY(-3px); box-shadow: var(--nfx-shado
 	font-size: calc( var(--nfx-btn-size) * 0.42 );
 	box-shadow: 0 10px 30px -10px color-mix( in srgb, var(--nfx-primary) 55%, transparent );
 	flex: none;
+	order: 0; /* پیش‌فرض (موقعیت راست): در RTL سمت راست پنجره قرار می‌گیرد. */
 }
+/* موقعیت «چپ»: دکمه سمت چپ پنجره. */
+.nfx-preview.is-left .nfx-preview__btn { order: 2; }
