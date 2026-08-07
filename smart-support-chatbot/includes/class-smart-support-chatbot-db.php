@@ -2,7 +2,7 @@
 /**
  * مدیریت دیتابیس و ذخیره درخواست‌ها.
  *
- * @package NafasChatbot
+ * @package SmartSupportChatbot
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,32 +12,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * کلاس دیتابیس.
  */
-class Nafas_Chatbot_DB {
+class SSC_Chatbot_DB {
 
 	/**
 	 * نام جدول (بدون پیشوند).
 	 */
-	const TABLE = 'nafas_chatbot_submissions';
+	const TABLE = 'ssc_chatbot_submissions';
 
 	/**
 	 * نام جدول تاریخچه گفتگو.
 	 */
-	const CHATLOG_TABLE = 'nafas_chatbot_chatlog';
+	const CHATLOG_TABLE = 'ssc_chatbot_chatlog';
 
 	/**
 	 * نام جدول بانک سوال/جواب.
 	 */
-	const QA_TABLE = 'nafas_chatbot_qa';
+	const QA_TABLE = 'ssc_chatbot_qa';
 
 	/**
 	 * نام جدول پایگاه دانش (تکه‌های اسناد).
 	 */
-	const KB_TABLE = 'nafas_chatbot_kb';
+	const KB_TABLE = 'ssc_chatbot_kb';
 
 	/**
 	 * نام جدول آمار/آنالیتیکس (شمارنده‌های اتمیک روزانه).
 	 */
-	const STATS_TABLE = 'nafas_chatbot_stats';
+	const STATS_TABLE = 'ssc_chatbot_stats';
 
 	/**
 	 * نسخه ساختار دیتابیس (برای مهاجرت).
@@ -191,14 +191,70 @@ class Nafas_Chatbot_DB {
 		dbDelta( $sql4 );
 		dbDelta( $sql5 );
 
-		update_option( 'nafas_chatbot_db_version', self::DB_VERSION );
+		update_option( 'ssc_chatbot_db_version', self::DB_VERSION );
+	}
+
+	/**
+	 * مهاجرت یک‌بارهٔ داده از نام‌فضای قدیمی (nafas_) به جدید (ssc_).
+	 * جداول قدیمی به نام جدید تغییر می‌کنند و گزینه‌ها کپی می‌شوند تا نصب‌های موجود داده‌شان را از دست ندهند.
+	 * قبل از create_table() اجرا می‌شود تا با ساختِ جدولِ خالیِ جدید، داده گم نشود.
+	 */
+	public static function migrate_legacy_namespace() {
+		if ( get_option( 'ssc_chatbot_ns_migrated' ) ) {
+			return;
+		}
+		global $wpdb;
+
+		// تغییر نام جداول قدیمی به جدید (فقط اگر قدیمی موجود و جدید غایب باشد).
+		$table_map = array(
+			'nafas_chatbot_submissions' => 'ssc_chatbot_submissions',
+			'nafas_chatbot_chatlog'     => 'ssc_chatbot_chatlog',
+			'nafas_chatbot_qa'          => 'ssc_chatbot_qa',
+			'nafas_chatbot_kb'          => 'ssc_chatbot_kb',
+			'nafas_chatbot_stats'       => 'ssc_chatbot_stats',
+		);
+		foreach ( $table_map as $old => $new ) {
+			$old_t = $wpdb->prefix . $old;
+			$new_t = $wpdb->prefix . $new;
+			// phpcs:ignore WordPress.DB
+			$has_old = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $old_t ) );
+			// phpcs:ignore WordPress.DB
+			$has_new = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $new_t ) );
+			if ( $has_old === $old_t && $has_new !== $new_t ) {
+				// نام جداول از پیشوند wpdb + ثابت‌های داخلی ساخته می‌شوند (ورودی کاربر نیست).
+				$wpdb->query( "RENAME TABLE `{$old_t}` TO `{$new_t}`" ); // phpcs:ignore WordPress.DB
+			}
+		}
+
+		// کپی گزینه‌های قدیمی به کلیدهای جدید (در صورت نبود کلید جدید) و حذف کلید قدیمی.
+		$opt_map = array(
+			'nafas_chatbot_settings'       => 'ssc_chatbot_settings',
+			'nafas_chatbot_db_version'     => 'ssc_chatbot_db_version',
+			'nafas_chatbot_qa_migrated'    => 'ssc_chatbot_qa_migrated',
+			'nafas_chatbot_stats_migrated' => 'ssc_chatbot_stats_migrated',
+			'nafas_chatbot_chat_stats'     => 'ssc_chatbot_chat_stats',
+			'nafas_chatbot_csat'           => 'ssc_chatbot_csat',
+		);
+		foreach ( $opt_map as $old => $new ) {
+			$val = get_option( $old, null );
+			if ( null !== $val && false === get_option( $new, false ) ) {
+				update_option( $new, $val, false );
+			}
+			delete_option( $old );
+		}
+
+		// پاک‌سازی کرون قدیمی.
+		wp_clear_scheduled_hook( 'nafas_chatbot_daily_cleanup' );
+
+		update_option( 'ssc_chatbot_ns_migrated', 1, false );
 	}
 
 	/**
 	 * در صورت نیاز ساختار دیتابیس را به‌روزرسانی می‌کند (افزودن ستون/جدول جدید + مهاجرت).
 	 */
 	public static function maybe_upgrade() {
-		if ( get_option( 'nafas_chatbot_db_version' ) !== self::DB_VERSION ) {
+		self::migrate_legacy_namespace();
+		if ( get_option( 'ssc_chatbot_db_version' ) !== self::DB_VERSION ) {
 			self::create_table();
 			self::migrate_qa_from_options();
 			self::migrate_stats_from_options();
@@ -209,10 +265,10 @@ class Nafas_Chatbot_DB {
 	 * مهاجرت یک‌بارهٔ آمار از options به جدول اتمیک (حفظ کل و روند روزانه + CSAT).
 	 */
 	public static function migrate_stats_from_options() {
-		if ( get_option( 'nafas_chatbot_stats_migrated' ) ) {
+		if ( get_option( 'ssc_chatbot_stats_migrated' ) ) {
 			return;
 		}
-		$stats = get_option( 'nafas_chatbot_chat_stats', array() );
+		$stats = get_option( 'ssc_chatbot_chat_stats', array() );
 		if ( is_array( $stats ) ) {
 			$daily_sum = 0;
 			if ( ! empty( $stats['daily'] ) && is_array( $stats['daily'] ) ) {
@@ -229,22 +285,22 @@ class Nafas_Chatbot_DB {
 				self::stat_bump( 'chat', $total - $daily_sum, '2020-01-01' );
 			}
 		}
-		$csat = get_option( 'nafas_chatbot_csat', array() );
+		$csat = get_option( 'ssc_chatbot_csat', array() );
 		if ( is_array( $csat ) && ! empty( $csat['count'] ) ) {
 			self::stat_bump( 'csat_count', (int) $csat['count'], '2020-01-01' );
 			self::stat_bump( 'csat_sum', (int) ( isset( $csat['sum'] ) ? $csat['sum'] : 0 ), '2020-01-01' );
 		}
-		update_option( 'nafas_chatbot_stats_migrated', 1, false );
+		update_option( 'ssc_chatbot_stats_migrated', 1, false );
 	}
 
 	/**
 	 * مهاجرت یک‌بارهٔ بانک Q&A از wp_options به جدول مستقل.
 	 */
 	public static function migrate_qa_from_options() {
-		if ( get_option( 'nafas_chatbot_qa_migrated' ) ) {
+		if ( get_option( 'ssc_chatbot_qa_migrated' ) ) {
 			return;
 		}
-		$opts = get_option( Nafas_Chatbot_Settings::OPTION_KEY, array() );
+		$opts = get_option( SSC_Chatbot_Settings::OPTION_KEY, array() );
 		$bank = ( is_array( $opts ) && ! empty( $opts['qa_bank'] ) && is_array( $opts['qa_bank'] ) ) ? $opts['qa_bank'] : array();
 		if ( $bank ) {
 			foreach ( $bank as $row ) {
@@ -263,10 +319,10 @@ class Nafas_Chatbot_DB {
 			// خالی کردن آرایه قدیمی برای جلوگیری از حجیم‌شدن options.
 			if ( is_array( $opts ) ) {
 				$opts['qa_bank'] = array();
-				update_option( Nafas_Chatbot_Settings::OPTION_KEY, $opts );
+				update_option( SSC_Chatbot_Settings::OPTION_KEY, $opts );
 			}
 		}
-		update_option( 'nafas_chatbot_qa_migrated', 1, false );
+		update_option( 'ssc_chatbot_qa_migrated', 1, false );
 	}
 
 	/**
@@ -664,9 +720,9 @@ class Nafas_Chatbot_DB {
 	 */
 	public static function get_chat_stats() {
 		// نگاشت شناسهٔ محصول به نام برای نمایش.
-		$company_id   = Nafas_Chatbot_Settings::get( 'company_id', 'nafas' );
-		$company_name = Nafas_Chatbot_Settings::get( 'company_name', '' );
-		$map          = Nafas_Chatbot_Settings::products_map();
+		$company_id   = SSC_Chatbot_Settings::get( 'company_id', 'company' );
+		$company_name = SSC_Chatbot_Settings::get( 'company_name', '' );
+		$map          = SSC_Chatbot_Settings::products_map();
 
 		$by_product = array();
 		foreach ( self::stat_by_prefix( 'product:' ) as $pid => $c ) {
@@ -984,7 +1040,7 @@ class Nafas_Chatbot_DB {
 	public static function qa_candidates( $product_id, $match = '' ) {
 		global $wpdb;
 		$table     = self::qa_table_name();
-		$threshold = (int) apply_filters( 'nafas_chatbot_fulltext_threshold', 300 );
+		$threshold = (int) apply_filters( 'ssc_chatbot_fulltext_threshold', 300 );
 		if ( '' !== $match && self::qa_count() > $threshold ) {
 			$rows = $wpdb->get_results( // phpcs:ignore WordPress.DB
 				$wpdb->prepare(
@@ -1131,7 +1187,7 @@ class Nafas_Chatbot_DB {
 		$doc_id = substr( md5( $title . microtime() . wp_rand() ), 0, 32 );
 		$now    = current_time( 'mysql' );
 		$pid    = $product_id ? $product_id : 'general';
-		$title  = '' !== trim( $title ) ? $title : __( 'سند بدون عنوان', 'nafas-chatbot' );
+		$title  = '' !== trim( $title ) ? $title : __( 'سند بدون عنوان', 'smart-support-chatbot' );
 		foreach ( $chunks as $c ) {
 			$wpdb->insert( // phpcs:ignore WordPress.DB
 				self::kb_table_name(),
@@ -1140,7 +1196,7 @@ class Nafas_Chatbot_DB {
 					'product_id'   => $pid,
 					'source_title' => $title,
 					'chunk'        => $c,
-					'search_text'  => Nafas_Chatbot_Ajax::normalize( $c ),
+					'search_text'  => SSC_Chatbot_Ajax::normalize( $c ),
 					'created_at'   => $now,
 				),
 				array( '%s', '%s', '%s', '%s', '%s', '%s' )
@@ -1158,7 +1214,7 @@ class Nafas_Chatbot_DB {
 	public static function kb_candidates( $product_id, $match = '' ) {
 		global $wpdb;
 		$table     = self::kb_table_name();
-		$threshold = (int) apply_filters( 'nafas_chatbot_fulltext_threshold', 300 );
+		$threshold = (int) apply_filters( 'ssc_chatbot_fulltext_threshold', 300 );
 		if ( '' !== $match && self::kb_count() > $threshold ) {
 			$rows = $wpdb->get_results( // phpcs:ignore WordPress.DB
 				$wpdb->prepare(

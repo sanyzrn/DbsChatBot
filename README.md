@@ -7,26 +7,26 @@
 ## ساختار افزونه
 
 ```
-nafas-chatbot/
-├── nafas-chatbot.php              # فایل اصلی (Bootstrap، ثابت‌ها، فعال‌سازی)
+smart-support-chatbot/
+├── smart-support-chatbot.php              # فایل اصلی (Bootstrap، ثابت‌ها، فعال‌سازی)
 ├── uninstall.php                  # پاکسازی هنگام حذف
 ├── readme.txt                     # readme استاندارد وردپرس
 ├── includes/
-│   ├── class-nafas-chatbot.php          # کلاس هسته (Singleton) + ثبت المنتور
-│   ├── class-nafas-chatbot-settings.php # مدیریت تنظیمات و پیش‌فرض‌ها
-│   ├── class-nafas-chatbot-db.php       # جدول دیتابیس درخواست‌ها
-│   ├── class-nafas-chatbot-ajax.php     # هندلر چت + ثبت فرم + AI + اعلان‌ها
-│   ├── class-nafas-chatbot-frontend.php # بارگذاری اسکریپت، شورت‌کد، رندر
-│   ├── class-nafas-chatbot-admin.php    # منوی مدیریت، ذخیره تنظیمات، CSV
+│   ├── class-smart-support-chatbot.php          # کلاس هسته (Singleton) + ثبت المنتور
+│   ├── class-smart-support-chatbot-settings.php # مدیریت تنظیمات و پیش‌فرض‌ها
+│   ├── class-smart-support-chatbot-db.php       # جدول دیتابیس درخواست‌ها
+│   ├── class-smart-support-chatbot-ajax.php     # هندلر چت + ثبت فرم + AI + اعلان‌ها
+│   ├── class-smart-support-chatbot-frontend.php # بارگذاری اسکریپت، شورت‌کد، رندر
+│   ├── class-smart-support-chatbot-admin.php    # منوی مدیریت، ذخیره تنظیمات، CSV
 │   └── views/
 │       ├── settings-page.php            # صفحه تنظیمات (۶ تب)
 │       └── submissions-page.php         # صفحه مدیریت درخواست‌ها
 ├── widgets/
-│   └── class-nafas-chatbot-widget.php   # ویجت المنتور با کنترل‌های سفارشی
+│   └── class-smart-support-chatbot-widget.php   # ویجت المنتور با کنترل‌های سفارشی
 ├── assets/
-│   ├── css/nafas-chatbot.css      # استایل چت‌بات (بازسازی دقیق Tailwind با CSS خالص)
+│   ├── css/smart-support-chatbot.css      # استایل چت‌بات (بازسازی دقیق Tailwind با CSS خالص)
 │   ├── css/admin.css              # استایل پنل مدیریت
-│   ├── js/nafas-chatbot.js        # منطق فرانت (وانیلا JS، بدون React)
+│   ├── js/smart-support-chatbot.js        # منطق فرانت (وانیلا JS، بدون React)
 │   └── js/admin.js                # اسکریپت پنل مدیریت
 └── languages/
 ```
@@ -35,8 +35,8 @@ nafas-chatbot/
 
 ## نصب
 
-1. پوشه `nafas-chatbot` را در `/wp-content/plugins/` کپی کنید
-   (یا از فایل `nafas-chatbot.zip` و منوی **افزونه‌ها ← افزودن ← بارگذاری** نصب کنید).
+1. پوشه `smart-support-chatbot` را در `/wp-content/plugins/` کپی کنید
+   (یا از فایل `smart-support-chatbot.zip` و منوی **افزونه‌ها ← افزودن ← بارگذاری** نصب کنید).
 2. افزونه را **فعال** کنید. هنگام فعال‌سازی جدول دیتابیس و تنظیمات پیش‌فرض ساخته می‌شود.
 3. به منوی **دستیار هوشمند** در پیشخوان بروید.
 
@@ -48,7 +48,7 @@ nafas-chatbot/
 |-----|-------|
 | **خودکار (شناور)** | در تب «عمومی» گزینه «فعال‌سازی دکمه شناور» را روشن کنید تا در همه صفحات نمایش داده شود. |
 | **ویجت المنتور** | در ویرایشگر المنتور ویجت «دستیار هوشمند نفس» (دسته «نفس فارمد») را در صفحه قرار دهید. |
-| **شورت‌کد** | درج `[nafas_chatbot]` در هر برگه یا نوشته. |
+| **شورت‌کد** | درج `[ssc_chatbot]` در هر برگه یا نوشته. |
 
 > اگر هم دکمه شناور فعال باشد و هم ویجت در صفحه باشد، فقط یک‌بار رندر می‌شود (بدون تکرار).
 
@@ -88,12 +88,12 @@ nafas-chatbot/
 
 ```php
 // جایگزینی کامل منطق پاسخ هوش مصنوعی
-add_filter( 'nafas_chatbot_pre_reply', function ( $reply, $message, $product_id, $product_name ) {
+add_filter( 'ssc_chatbot_pre_reply', function ( $reply, $message, $product_id, $product_name ) {
     return 'پاسخ سفارشی شما';
 }, 10, 4 );
 
 // اجرای کد پس از ثبت موفق فرم
-add_action( 'nafas_chatbot_after_submit', function ( $id, $row ) {
+add_action( 'ssc_chatbot_after_submit', function ( $id, $row ) {
     // مثلاً اتصال به CRM
 }, 10, 2 );
 ```

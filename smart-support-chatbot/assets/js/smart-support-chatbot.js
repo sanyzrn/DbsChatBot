@@ -5,7 +5,7 @@
 ( function () {
 	'use strict';
 
-	var cfg = window.NafasChatbotConfig || {};
+	var cfg = window.SSCChatbotConfig || {};
 	if ( ! cfg.ajaxUrl ) {
 		return;
 	}
@@ -45,7 +45,7 @@
 
 	/* ---------- پیکربندی ---------- */
 	var products    = ( cfg.products || [] ).filter( function ( p ) { return p && p.id; } );
-	var companyInfo = { id: cfg.companyId || 'nafas', name: cfg.companyName || '' };
+	var companyInfo = { id: cfg.companyId || 'company', name: cfg.companyName || '' };
 	var quickReplies = ( cfg.quickReplies || [] ).filter( function ( q ) { return q && q.label && q.question; } );
 	var adrOptions  = cfg.adrOptions || { severity: [], outcome: [], reporter_type: [] };
 	var labels      = cfg.labels || {};
@@ -210,10 +210,10 @@
 	}
 
 	/* ---------- ریشه و ظاهر ---------- */
-	var root = document.getElementById( 'nafas-chatbot-root' );
+	var root = document.getElementById( 'smart-support-chatbot-root' );
 	if ( ! root ) {
 		root = el( 'div', 'nfx-root' );
-		root.id = 'nafas-chatbot-root';
+		root.id = 'smart-support-chatbot-root';
 		root.setAttribute( 'dir', 'rtl' );
 		document.body.appendChild( root );
 	}
@@ -558,7 +558,7 @@
 	}
 	function sendCsat( it, score ) {
 		it.rated = true;
-		ajax( 'nafas_chatbot_csat', { score: score } );
+		ajax( 'ssc_chatbot_csat', { score: score } );
 		state.chips = [ chip( 'plain', ICON.refresh( 16 ), t( 'mainMenu', 'منوی اصلی' ), doRestart ) ];
 		render();
 	}
@@ -583,7 +583,7 @@
 		state.isLoading = true;
 		render();
 
-		ajax( 'nafas_chatbot_chat', {
+		ajax( 'ssc_chatbot_chat', {
 			message: text,
 			product: state.selectedProduct,
 			history: JSON.stringify( history )
@@ -650,7 +650,7 @@
 			payload.concomitant_drugs = state.form.concomitantDrugs;
 		}
 
-		ajax( 'nafas_chatbot_submit', payload ).then( function ( res ) {
+		ajax( 'ssc_chatbot_submit', payload ).then( function ( res ) {
 			state.isLoading = false;
 			if ( res.ok && res.json && res.json.success ) {
 				// حذف کارت فرم و نمایش کارت موفقیت.
@@ -807,7 +807,7 @@
 	}
 	function sendFeedback( it, rating ) {
 		it.rated = true;
-		ajax( 'nafas_chatbot_feedback', { log_id: it.logId, rating: rating } );
+		ajax( 'ssc_chatbot_feedback', { log_id: it.logId, rating: rating } );
 		render();
 	}
 
@@ -1217,7 +1217,7 @@
 				clearTimeout( acTimer );
 				if ( term.length < 2 ) { hideAc(); return; }
 				acTimer = setTimeout( function () {
-					ajax( 'nafas_chatbot_suggest', {
+					ajax( 'ssc_chatbot_suggest', {
 						term: term,
 						product: state.selectedProduct || companyInfo.id
 					} ).then( function ( res ) {
