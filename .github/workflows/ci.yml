@@ -113,6 +113,14 @@ jobs:
             exit 1
           fi
 
+      - name: REST routes match the frontend route map
+        run: |
+          # هر اکشنی که کلاینت صدا می‌زند باید یک مسیر REST متناظر داشته باشد.
+          grep -oP "^\t\t\t'/\K[a-z]+" smart-support-chatbot/includes/class-smart-support-chatbot-rest.php | sort -u > /tmp/php_routes
+          grep -oP "ssc_chatbot_[a-z]+: '\K[a-z]+" smart-support-chatbot/assets/js/smart-support-chatbot.js | sort -u > /tmp/js_routes
+          diff /tmp/php_routes /tmp/js_routes \
+            || { echo "::error::REST routes and the frontend route map disagree"; exit 1; }
+
       - name: readme.txt has the required sections
         run: |
           for section in "Description" "Installation" "Frequently Asked Questions" "Changelog" "Upgrade Notice"; do

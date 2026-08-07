@@ -43,6 +43,13 @@ final class SSC_Chatbot {
 	public $admin;
 
 	/**
+	 * نمونه REST.
+	 *
+	 * @var SSC_Chatbot_REST
+	 */
+	public $rest;
+
+	/**
 	 * دریافت نمونه یکتا.
 	 *
 	 * @return SSC_Chatbot
@@ -60,6 +67,8 @@ final class SSC_Chatbot {
 	private function __construct() {
 		$this->frontend = new SSC_Chatbot_Frontend();
 		$this->ajax     = new SSC_Chatbot_Ajax();
+		// REST روی همان لایهٔ سرویسِ کلاس AJAX سوار می‌شود تا رفتار هر دو مسیر یکسان بماند.
+		$this->rest     = new SSC_Chatbot_REST( $this->ajax );
 
 		if ( is_admin() ) {
 			$this->admin = new SSC_Chatbot_Admin();

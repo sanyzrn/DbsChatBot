@@ -35,6 +35,7 @@ define( 'SSC_CHATBOT_BASENAME', plugin_basename( __FILE__ ) );
 require_once SSC_CHATBOT_DIR . 'includes/class-smart-support-chatbot-settings.php';
 require_once SSC_CHATBOT_DIR . 'includes/class-smart-support-chatbot-db.php';
 require_once SSC_CHATBOT_DIR . 'includes/class-smart-support-chatbot-ajax.php';
+require_once SSC_CHATBOT_DIR . 'includes/class-smart-support-chatbot-rest.php';
 require_once SSC_CHATBOT_DIR . 'includes/class-smart-support-chatbot-frontend.php';
 require_once SSC_CHATBOT_DIR . 'includes/class-smart-support-chatbot-admin.php';
 require_once SSC_CHATBOT_DIR . 'includes/class-smart-support-chatbot.php';

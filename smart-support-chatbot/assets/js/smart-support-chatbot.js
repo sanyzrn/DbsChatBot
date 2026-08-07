@@ -172,7 +172,32 @@
 		toastTimer = setTimeout( function () { t.classList.remove( 'is-show' ); }, 4000 );
 	}
 
-	function ajax( action, data ) {
+	// نگاشت اکشن‌های قدیمی admin-ajax به مسیرهای REST.
+	var REST_ROUTE = {
+		ssc_chatbot_chat: 'chat',
+		ssc_chatbot_submit: 'submit',
+		ssc_chatbot_feedback: 'feedback',
+		ssc_chatbot_suggest: 'suggest',
+		ssc_chatbot_csat: 'csat'
+	};
+
+	function parseResponse( r ) {
+		return r.text().then( function ( txt ) {
+			var json = null;
+			try { json = JSON.parse( txt ); } catch ( e ) { json = null; }
+			// خطای REST شکل { code, message, data:{status} } دارد؛ به شکل مشترک AJAX تبدیل می‌شود.
+			if ( json && ! r.ok && json.message && ! json.data ) {
+				json = { success: false, data: { message: json.message } };
+			} else if ( json && ! r.ok && json.message && json.data && json.data.status ) {
+				json = { success: false, data: { message: json.message } };
+			}
+			return { ok: r.ok, status: r.status, json: json, raw: txt };
+		} );
+	}
+
+	// مسیر قدیمی admin-ajax — به‌عنوان fallback وقتی REST در دسترس نیست
+	// (برخی سایت‌ها REST را با افزونهٔ امنیتی می‌بندند).
+	function ajaxLegacy( action, data ) {
 		var body = new URLSearchParams();
 		body.append( 'action', action );
 		body.append( 'nonce', cfg.nonce );
@@ -182,12 +207,33 @@
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: body
+		} ).then( parseResponse );
+	}
+
+	function ajax( action, data ) {
+		var route = REST_ROUTE[ action ];
+		if ( ! cfg.restUrl || ! route ) {
+			return ajaxLegacy( action, data );
+		}
+		var body = new URLSearchParams();
+		body.append( 'cid', clientId );
+		Object.keys( data ).forEach( function ( k ) { body.append( k, data[ k ] ); } );
+
+		return fetch( cfg.restUrl + route, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'X-WP-Nonce': cfg.restNonce
+			},
+			body: body
 		} ).then( function ( r ) {
-			return r.text().then( function ( txt ) {
-				var json = null;
-				try { json = JSON.parse( txt ); } catch ( e ) { json = null; }
-				return { ok: r.ok, status: r.status, json: json, raw: txt };
-			} );
+			// اگر REST مسدود یا در دسترس نباشد، یک‌بار به admin-ajax برمی‌گردیم.
+			if ( 404 === r.status || 501 === r.status ) {
+				return ajaxLegacy( action, data );
+			}
+			return parseResponse( r );
+		} ).catch( function () {
+			return ajaxLegacy( action, data );
 		} );
 	}
 
@@ -196,9 +242,9 @@
 			return res.json.data.message;
 		}
 		if ( res && ( res.raw === '-1' || res.raw === '0' || res.status === 403 ) ) {
-			return 'نشست شما منقضی شده است. لطفاً صفحه را تازه‌سازی (Refresh) کنید و دوباره تلاش کنید.';
+			return t( 'sessionExpired', 'نشست شما منقضی شده است. لطفاً صفحه را تازه‌سازی (Refresh) کنید و دوباره تلاش کنید.' );
 		}
-		return 'خطا در ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.';
+		return t( 'connectionError', 'خطا در ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.' );
 	}
 
 	function productName( id ) {
