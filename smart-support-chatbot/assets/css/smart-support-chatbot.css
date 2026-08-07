@@ -1039,3 +1039,28 @@
 /* انیمیشن نرم ورود پیام‌ها */
 @keyframes nfx-msg-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .nfx-msg--enter { animation: nfx-msg-in 0.28s ease both; }
+
+/* ============ احترام به کاهش حرکت (WCAG 2.3.3) ============ */
+/* کاربرانی که در سیستم‌عامل «کاهش حرکت» را فعال کرده‌اند (حساسیت دهلیزی/میگرن)
+   نباید انیمیشن و ترنزیشن ببینند. تغییر وضعیت همچنان آنی و کامل اعمال می‌شود. */
+@media ( prefers-reduced-motion: reduce ) {
+	.nfx-root *,
+	.nfx-root *::before,
+	.nfx-root *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+	.nfx-toggle:hover { transform: none; }
+	.nfx-toggle.is-open { transform: none; }
+	.nfx-toggle__ping,
+	.nfx-toggle__dot span:first-child { animation: none; opacity: 0; }
+}
+
+/* ============ حلقهٔ فوکوس قابل‌مشاهده (WCAG 2.4.7) ============ */
+.nfx-root :focus-visible {
+	outline: 2px solid var(--nfx-primary);
+	outline-offset: 2px;
+	border-radius: 4px;
+}

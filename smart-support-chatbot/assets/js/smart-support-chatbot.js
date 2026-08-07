@@ -13,9 +13,10 @@
 	/* ---------- آیکون‌ها (Lucide, inline SVG) ---------- */
 	function svg( paths, size ) {
 		size = size || 24;
+		// آیکون‌ها تزئینی‌اند: از درخت دسترس‌پذیری پنهان می‌شوند تا صفحه‌خوان آن‌ها را نخواند.
 		return '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size +
 			'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
-			'stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
+			'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + paths + '</svg>';
 	}
 	var ICON = {
 		message: function ( s ) { return svg( '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>', s ); },
@@ -247,13 +248,27 @@
 		if ( cfg.botBubble ) { root.style.setProperty( '--nfx-bot-bubble', cfg.botBubble ); }
 	}
 	var iconPx = parseInt( cfg.iconSize, 10 ) || 28;
+	// عنصری که پیش از باز شدن دیالوگ فوکوس داشت (برای بازگرداندن فوکوس هنگام بستن).
+	var lastFocused = null;
 
 	/* ---------- اسکلت ---------- */
+	var WIN_ID = 'nfx-window-' + Math.random().toString( 36 ).slice( 2, 8 );
+	var TITLE_ID = WIN_ID + '-title';
+
 	var toggle = el( 'button', 'nfx-toggle' );
-	toggle.setAttribute( 'aria-label', 'باز کردن گفتگو' );
+	toggle.type = 'button';
+	toggle.setAttribute( 'aria-label', t( 'openChat', 'باز کردن گفتگو' ) );
+	toggle.setAttribute( 'aria-expanded', 'false' );
+	toggle.setAttribute( 'aria-controls', WIN_ID );
 	root.appendChild( toggle );
 
 	var win = el( 'div', 'nfx-window is-closed' );
+	// معناشناسی دیالوگ: صفحه‌خوان باید بداند این یک پنجرهٔ گفتگوی مودال است.
+	win.id = WIN_ID;
+	win.setAttribute( 'role', 'dialog' );
+	win.setAttribute( 'aria-modal', 'true' );
+	win.setAttribute( 'aria-labelledby', TITLE_ID );
+	win.setAttribute( 'aria-hidden', 'true' );
 	root.appendChild( win );
 
 	toggle.addEventListener( 'click', function () {
@@ -261,15 +276,56 @@
 		renderToggle();
 		win.classList.toggle( 'is-open', state.isOpen );
 		win.classList.toggle( 'is-closed', ! state.isOpen );
+		win.setAttribute( 'aria-hidden', state.isOpen ? 'false' : 'true' );
+		toggle.setAttribute( 'aria-expanded', state.isOpen ? 'true' : 'false' );
 		if ( state.isOpen ) {
+			lastFocused = document.activeElement;
 			if ( state.proactiveDismiss ) { state.proactiveDismiss(); }
 			if ( ! state.started ) { startConversation(); }
 			renderWindow();
+			focusFirst();
+		}
+	} );
+
+	/* ---------- مدیریت فوکوس (الگوی ARIA Dialog) ---------- */
+	var FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+	function focusables() {
+		return Array.prototype.filter.call(
+			win.querySelectorAll( FOCUSABLE ),
+			function ( n ) { return n.offsetParent !== null || n === document.activeElement; }
+		);
+	}
+
+	// با باز شدن، فوکوس وارد پنجره می‌شود تا کاربر کیبورد/صفحه‌خوان گم نشود.
+	function focusFirst() {
+		setTimeout( function () {
+			var list = focusables();
+			if ( list.length ) {
+				try { list[ 0 ].focus( { preventScroll: true } ); } catch ( e ) { list[ 0 ].focus(); }
+			}
+		}, 60 );
+	}
+
+	// تلهٔ فوکوس: Tab نباید از دیالوگ مودال بیرون برود.
+	win.addEventListener( 'keydown', function ( e ) {
+		if ( 'Tab' !== e.key || ! state.isOpen ) { return; }
+		var list = focusables();
+		if ( ! list.length ) { return; }
+		var first = list[ 0 ];
+		var last  = list[ list.length - 1 ];
+		if ( e.shiftKey && document.activeElement === first ) {
+			e.preventDefault();
+			last.focus();
+		} else if ( ! e.shiftKey && document.activeElement === last ) {
+			e.preventDefault();
+			first.focus();
 		}
 	} );
 
 	function renderToggle() {
 		toggle.classList.toggle( 'is-open', state.isOpen );
+		toggle.setAttribute( 'aria-label', state.isOpen ? t( 'closeChat', 'بستن گفتگو' ) : t( 'openChat', 'باز کردن گفتگو' ) );
 		if ( state.isOpen ) {
 			toggle.innerHTML = ICON.x( iconPx );
 		} else if ( cfg.buttonIconUrl ) {
@@ -291,6 +347,12 @@
 		renderToggle();
 		win.classList.add( 'is-closed' );
 		win.classList.remove( 'is-open' );
+		win.setAttribute( 'aria-hidden', 'true' );
+		toggle.setAttribute( 'aria-expanded', 'false' );
+		// بازگرداندن فوکوس به جایی که کاربر از آن آمده بود (الزام الگوی دیالوگ).
+		var back = lastFocused && document.contains( lastFocused ) ? lastFocused : toggle;
+		lastFocused = null;
+		try { back.focus( { preventScroll: true } ); } catch ( e ) { try { back.focus(); } catch ( e2 ) {} }
 		// توقف خواندن صوتی در حال اجرا.
 		if ( voiceOut ) { try { window.speechSynthesis.cancel(); resetSpeakBtn(); } catch ( e ) {} }
 	}
@@ -679,6 +741,10 @@
 
 		var body   = el( 'div', 'nfx-body' );
 		var thread = el( 'div', 'nfx-chat' );
+		// ناحیهٔ زنده روی خودِ رشتهٔ گفتگو (نه کل ریشه) تا فقط پیام‌های تازه اعلام شوند.
+		thread.setAttribute( 'role', 'log' );
+		thread.setAttribute( 'aria-live', 'polite' );
+		thread.setAttribute( 'aria-relevant', 'additions text' );
 
 		// آخرین پیام کاربر (برای نشان «ارسال شد»).
 		state._lastUser = null;
@@ -918,7 +984,9 @@
 		var h = el( 'div', 'nfx-header' );
 		h.appendChild( el( 'div', 'nfx-header__icon', ICON.bot( 24 ) ) );
 		var texts = el( 'div', 'nfx-header__texts' );
-		texts.appendChild( el( 'h3', 'nfx-header__title', escapeHtml( cfg.headerTitle || 'دستیار هوشمند' ) ) );
+		var hTitle = el( 'h3', 'nfx-header__title', escapeHtml( cfg.headerTitle || 'دستیار هوشمند' ) );
+		hTitle.id = TITLE_ID; // مرجع aria-labelledby دیالوگ.
+		texts.appendChild( hTitle );
 		var isOffline = ( cfg.online === false );
 		texts.appendChild( el( 'p', 'nfx-header__sub' + ( isOffline ? ' is-offline' : '' ), '<i></i>' + escapeHtml( cfg.statusText || 'آنلاین' ) ) );
 		h.appendChild( texts );
@@ -1070,9 +1138,14 @@
 
 		var descLabel = isAdr ? ' شرح عارضه مشاهده‌شده' : ' موضوع و خلاصه درخواست';
 		var descPh    = isAdr ? 'علائم و مشکلاتی که پس از مصرف دارو پیش آمد را با جزئیات بنویسید...' : 'به‌صورت خلاصه بنویسید در چه موردی نیاز به مشاوره دارید...';
-		var fDesc = el( 'div', 'nfx-field' );
-		fDesc.appendChild( el( 'label', 'nfx-field__label', ICON.fileText( 14 ) + escapeHtml( descLabel ) ) );
+		var fDesc   = el( 'div', 'nfx-field' );
+		var descId  = nextFieldId( 'description' );
+		var descLab = el( 'label', 'nfx-field__label', ICON.fileText( 14 ) + escapeHtml( descLabel ) );
+		descLab.setAttribute( 'for', descId );
+		fDesc.appendChild( descLab );
 		var ta = el( 'textarea', 'nfx-textarea' );
+		ta.id = descId;
+		ta.setAttribute( 'aria-required', 'true' );
 		ta.rows = 3; ta.required = true; ta.placeholder = descPh; ta.value = state.form.description;
 		ta.addEventListener( 'input', function () { state.form.description = ta.value; } );
 		fDesc.appendChild( ta );
@@ -1128,12 +1201,24 @@
 		return card;
 	}
 
+	// شناسهٔ یکتا برای پیوند برنامه‌ای label به کنترل (label/for) — لازمهٔ صفحه‌خوان.
+	var fieldSeq = 0;
+	function nextFieldId( key ) {
+		fieldSeq++;
+		return 'nfx-f-' + key + '-' + fieldSeq;
+	}
+
 	function field( key, labelHtml, type, ph, ltr, required ) {
-		var f = el( 'div', 'nfx-field' );
-		f.appendChild( el( 'label', 'nfx-field__label', labelHtml ) );
+		var f  = el( 'div', 'nfx-field' );
+		var id = nextFieldId( key );
+		var lab = el( 'label', 'nfx-field__label', labelHtml );
+		lab.setAttribute( 'for', id );
+		f.appendChild( lab );
 		var inp = el( 'input', 'nfx-input' + ( ltr ? ' nfx-input--ltr' : '' ) );
+		inp.id = id;
 		inp.type = type;
 		inp.required = ( required !== false );
+		if ( inp.required ) { inp.setAttribute( 'aria-required', 'true' ); }
 		inp.placeholder = ph;
 		inp.value = state.form[ key ];
 		inp.addEventListener( 'input', function () { state.form[ key ] = inp.value; } );
@@ -1142,9 +1227,13 @@
 	}
 
 	function selectField( key, labelHtml, options, ph ) {
-		var f = el( 'div', 'nfx-field' );
-		f.appendChild( el( 'label', 'nfx-field__label', labelHtml ) );
+		var f  = el( 'div', 'nfx-field' );
+		var id = nextFieldId( key );
+		var lab = el( 'label', 'nfx-field__label', labelHtml );
+		lab.setAttribute( 'for', id );
+		f.appendChild( lab );
 		var sel = el( 'select', 'nfx-input nfx-select' );
+		sel.id = id;
 		var o0 = el( 'option' ); o0.value = ''; o0.textContent = ph || 'انتخاب کنید...'; sel.appendChild( o0 );
 		options.forEach( function ( opt ) {
 			var o = el( 'option' ); o.value = opt; o.textContent = opt;
@@ -1175,12 +1264,16 @@
 		var wrap = el( 'div', 'nfx-input-wrap' );
 		var input = el( 'input' );
 		input.type = 'text';
-		input.placeholder = 'پیام خود را بنویسید...';
+		input.placeholder = t( 'inputPlaceholder', 'پیام خود را بنویسید...' );
 		input.disabled = state.isLoading;
 		input.setAttribute( 'autocomplete', 'off' );
+		// placeholder جایگزین label نیست؛ برچسب برنامه‌ای صریح لازم است.
+		input.setAttribute( 'aria-label', t( 'inputLabel', 'متن پیام' ) );
 
-		// لیست تکمیل خودکار (از بانک).
+		// لیست تکمیل خودکار (از بانک) — الگوی combobox.
 		var ac = el( 'div', 'nfx-ac' );
+		ac.setAttribute( 'role', 'listbox' );
+		ac.setAttribute( 'aria-label', t( 'suggestionsHint', 'سوالات مرتبط:' ) );
 		ac.style.display = 'none';
 		function hideAc() { ac.style.display = 'none'; ac.innerHTML = ''; }
 		function chooseAc( q ) { hideAc(); input.value = ''; sendMessage( q ); }
@@ -1198,6 +1291,7 @@
 		}
 
 		var sendBtn = el( 'button', 'nfx-send' );
+		sendBtn.setAttribute( 'aria-label', t( 'send', 'ارسال پیام' ) );
 		sendBtn.type = 'submit';
 		sendBtn.disabled = state.isLoading;
 		sendBtn.innerHTML = state.isLoading ? '<span class="nfx-spin">' + ICON.loader( 18 ) + '</span>' : ICON.send( 18 );

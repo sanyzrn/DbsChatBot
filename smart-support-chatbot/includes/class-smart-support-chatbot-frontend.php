@@ -175,6 +175,11 @@ class SSC_Chatbot_Frontend {
 			'consentText'         => $s['consent_text'],
 			'consentLink'         => $s['consent_link'],
 			'i18n'                => array(
+				'openChat'        => __( 'باز کردن گفتگو', 'smart-support-chatbot' ),
+				'closeChat'       => __( 'بستن گفتگو', 'smart-support-chatbot' ),
+				'send'            => __( 'ارسال پیام', 'smart-support-chatbot' ),
+				'inputLabel'      => __( 'متن پیام', 'smart-support-chatbot' ),
+				'inputPlaceholder' => __( 'پیام خود را بنویسید...', 'smart-support-chatbot' ),
 				'handoffBtn'      => __( 'گفتگو با کارشناس انسانی', 'smart-support-chatbot' ),
 				'csatTitle'       => __( 'گفتگوی ما چطور بود؟', 'smart-support-chatbot' ),
 				'csatThanks'      => __( 'سپاس از امتیاز شما 🙏', 'smart-support-chatbot' ),
@@ -324,7 +329,9 @@ class SSC_Chatbot_Frontend {
 		$this->rendered = true;
 		$this->enqueue_with_config( $overrides );
 
-		return '<div id="smart-support-chatbot-root" class="nfx-root" dir="rtl" aria-live="polite"></div>';
+		// ناحیهٔ زنده روی رشتهٔ گفتگو تنظیم می‌شود (در JS)، نه روی کل ریشه —
+		// در غیر این صورت هر رندر دوباره به‌طور کامل برای صفحه‌خوان خوانده می‌شد.
+		return '<div id="smart-support-chatbot-root" class="nfx-root" dir="rtl"></div>';
 	}
 
 	/**
