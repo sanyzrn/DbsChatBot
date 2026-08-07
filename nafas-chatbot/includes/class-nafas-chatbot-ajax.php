@@ -137,36 +137,43 @@ class Nafas_Chatbot_Ajax {
 		if ( 'off' === $mode ) {
 			return true;
 		}
-		$day    = gmdate( 'Y-m-d' );
+		$ip     = $this->get_ip();
 		$checks = array();
 
 		if ( 'ip' === $mode || 'both' === $mode ) {
 			$checks[] = array(
-				'key'   => 'nafas_rl_ip_' . $bucket . '_' . md5( $this->get_ip() . $day ),
-				'limit' => (int) Nafas_Chatbot_Settings::get( 'ai_rate_limit', 100 ),
+				'metric' => 'rl:' . $bucket . ':ip:' . md5( $ip ),
+				'limit'  => (int) Nafas_Chatbot_Settings::get( 'ai_rate_limit', 100 ),
 			);
 		}
 		if ( 'session' === $mode || 'both' === $mode ) {
 			$cid = isset( $_POST['cid'] ) ? sanitize_text_field( wp_unslash( $_POST['cid'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification -- nonce در هندلر بررسی شده.
 			if ( '' === $cid ) {
-				$cid = $this->get_ip(); // در نبود شناسهٔ نشست، به IP برمی‌گردیم.
+				$cid = $ip; // در نبود شناسهٔ نشست، به IP برمی‌گردیم.
 			}
-			$checks[] = array(
-				'key'   => 'nafas_rl_sess_' . $bucket . '_' . md5( $cid . $day ),
-				'limit' => (int) Nafas_Chatbot_Settings::get( 'session_rate_limit', 50 ),
+			$sess_limit = (int) Nafas_Chatbot_Settings::get( 'session_rate_limit', 50 );
+			$checks[]   = array(
+				'metric' => 'rl:' . $bucket . ':sess:' . md5( $cid ),
+				'limit'  => $sess_limit,
 			);
+			// سقف پشتیبان IP در حالت «نشست»: شناسهٔ نشست سمت کلاینت ساخته و جعل‌پذیر است؛
+			// یک سقف بالاتر روی IP از تخلیهٔ بودجهٔ توکن API با cidهای تصادفی جلوگیری می‌کند.
+			if ( 'session' === $mode ) {
+				$ceiling  = (int) apply_filters( 'nafas_chatbot_session_ip_ceiling', max( 1, $sess_limit ) * 10 );
+				$checks[] = array(
+					'metric' => 'rl:' . $bucket . ':ipcap:' . md5( $ip ),
+					'limit'  => $ceiling,
+				);
+			}
 		}
 
-		// ابتدا بررسی (بدون افزایش): اگر هر کدام پر شده، رد کن.
+		// افزایش اتمیک (race-safe) و بررسی سقف.
 		foreach ( $checks as $c ) {
-			if ( $c['limit'] > 0 && (int) get_transient( $c['key'] ) >= $c['limit'] ) {
-				return false;
+			if ( $c['limit'] <= 0 ) {
+				continue; // ۰ = نامحدود.
 			}
-		}
-		// سپس افزایش شمارنده‌ها.
-		foreach ( $checks as $c ) {
-			if ( $c['limit'] > 0 ) {
-				set_transient( $c['key'], (int) get_transient( $c['key'] ) + 1, DAY_IN_SECONDS );
+			if ( Nafas_Chatbot_DB::rl_hit( $c['metric'] ) > $c['limit'] ) {
+				return false;
 			}
 		}
 		return true;

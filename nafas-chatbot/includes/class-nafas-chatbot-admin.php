@@ -681,6 +681,18 @@ class Nafas_Chatbot_Admin {
 	}
 
 	/**
+	 * خنثی‌سازی تزریق فرمول در CSV: هر سلولی که با =، +، -، @، Tab یا CR شروع شود،
+	 * با یک آپاستروف ابتدایی بی‌اثر می‌شود (طبق راهنمای OWASP) تا در Excel/LibreOffice اجرا نشود.
+	 *
+	 * @param mixed $v مقدار سلول.
+	 * @return string
+	 */
+	private static function csv_safe( $v ) {
+		$v = (string) $v;
+		return preg_match( '/^[=+\-@\t\r]/', $v ) ? "'" . $v : $v;
+	}
+
+	/**
 	 * خروجی CSV درخواست‌ها.
 	 */
 	public function export_csv() {
@@ -715,18 +727,16 @@ class Nafas_Chatbot_Admin {
 			)
 		);
 		foreach ( $rows as $r ) {
-			fputcsv(
-				$out,
-				array(
-					$r['id'], $r['type'], $r['name'], $r['phone'], $r['product'], $r['description'],
-					isset( $r['reporter_type'] ) ? $r['reporter_type'] : '',
-					isset( $r['severity'] ) ? $r['severity'] : '',
-					isset( $r['outcome'] ) ? $r['outcome'] : '',
-					isset( $r['batch_number'] ) ? $r['batch_number'] : '',
-					isset( $r['concomitant_drugs'] ) ? $r['concomitant_drugs'] : '',
-					$r['status'], $r['ip'], $r['created_at'],
-				)
+			$cells = array(
+				$r['id'], $r['type'], $r['name'], $r['phone'], $r['product'], $r['description'],
+				isset( $r['reporter_type'] ) ? $r['reporter_type'] : '',
+				isset( $r['severity'] ) ? $r['severity'] : '',
+				isset( $r['outcome'] ) ? $r['outcome'] : '',
+				isset( $r['batch_number'] ) ? $r['batch_number'] : '',
+				isset( $r['concomitant_drugs'] ) ? $r['concomitant_drugs'] : '',
+				$r['status'], $r['ip'], $r['created_at'],
 			);
+			fputcsv( $out, array_map( array( __CLASS__, 'csv_safe' ), $cells ) );
 		}
 		fclose( $out ); // phpcs:ignore
 		exit;

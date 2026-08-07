@@ -92,6 +92,8 @@ final class Nafas_Chatbot {
 		// نگهداری/کمینه‌سازی دادهٔ درخواست‌ها.
 		$sub_days = (int) Nafas_Chatbot_Settings::get( 'submissions_retention_days', 0 );
 		Nafas_Chatbot_DB::purge_old_submissions( $sub_days );
+		// پاک‌سازی شمارنده‌های محدودیت نرخ قدیمی.
+		Nafas_Chatbot_DB::purge_rate_limits( 2 );
 	}
 
 	/**
