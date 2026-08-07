@@ -172,7 +172,32 @@
 		toastTimer = setTimeout( function () { t.classList.remove( 'is-show' ); }, 4000 );
 	}
 
-	function ajax( action, data ) {
+	// نگاشت اکشن‌های قدیمی admin-ajax به مسیرهای REST.
+	var REST_ROUTE = {
+		ssc_chatbot_chat: 'chat',
+		ssc_chatbot_submit: 'submit',
+		ssc_chatbot_feedback: 'feedback',
+		ssc_chatbot_suggest: 'suggest',
+		ssc_chatbot_csat: 'csat'
+	};
+
+	function parseResponse( r ) {
+		return r.text().then( function ( txt ) {
+			var json = null;
+			try { json = JSON.parse( txt ); } catch ( e ) { json = null; }
+			// خطای REST شکل { code, message, data:{status} } دارد؛ به شکل مشترک AJAX تبدیل می‌شود.
+			if ( json && ! r.ok && json.message && ! json.data ) {
+				json = { success: false, data: { message: json.message } };
+			} else if ( json && ! r.ok && json.message && json.data && json.data.status ) {
+				json = { success: false, data: { message: json.message } };
+			}
+			return { ok: r.ok, status: r.status, json: json, raw: txt };
+		} );
+	}
+
+	// مسیر قدیمی admin-ajax — به‌عنوان fallback وقتی REST در دسترس نیست
+	// (برخی سایت‌ها REST را با افزونهٔ امنیتی می‌بندند).
+	function ajaxLegacy( action, data ) {
 		var body = new URLSearchParams();
 		body.append( 'action', action );
 		body.append( 'nonce', cfg.nonce );
@@ -182,12 +207,33 @@
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: body
+		} ).then( parseResponse );
+	}
+
+	function ajax( action, data ) {
+		var route = REST_ROUTE[ action ];
+		if ( ! cfg.restUrl || ! route ) {
+			return ajaxLegacy( action, data );
+		}
+		var body = new URLSearchParams();
+		body.append( 'cid', clientId );
+		Object.keys( data ).forEach( function ( k ) { body.append( k, data[ k ] ); } );
+
+		return fetch( cfg.restUrl + route, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'X-WP-Nonce': cfg.restNonce
+			},
+			body: body
 		} ).then( function ( r ) {
-			return r.text().then( function ( txt ) {
-				var json = null;
-				try { json = JSON.parse( txt ); } catch ( e ) { json = null; }
-				return { ok: r.ok, status: r.status, json: json, raw: txt };
-			} );
+			// اگر REST مسدود یا در دسترس نباشد، یک‌بار به admin-ajax برمی‌گردیم.
+			if ( 404 === r.status || 501 === r.status ) {
+				return ajaxLegacy( action, data );
+			}
+			return parseResponse( r );
+		} ).catch( function () {
+			return ajaxLegacy( action, data );
 		} );
 	}
 
@@ -196,9 +242,9 @@
 			return res.json.data.message;
 		}
 		if ( res && ( res.raw === '-1' || res.raw === '0' || res.status === 403 ) ) {
-			return 'نشست شما منقضی شده است. لطفاً صفحه را تازه‌سازی (Refresh) کنید و دوباره تلاش کنید.';
+			return t( 'sessionExpired', 'نشست شما منقضی شده است. لطفاً صفحه را تازه‌سازی (Refresh) کنید و دوباره تلاش کنید.' );
 		}
-		return 'خطا در ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.';
+		return t( 'connectionError', 'خطا در ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.' );
 	}
 
 	function productName( id ) {
@@ -281,7 +327,8 @@
 		if ( state.isOpen ) {
 			lastFocused = document.activeElement;
 			if ( state.proactiveDismiss ) { state.proactiveDismiss(); }
-			if ( ! state.started ) { startConversation(); }
+			// ابتدا تلاش برای ادامهٔ گفتگوی قبلی؛ در غیر این صورت شروع تازه.
+			if ( ! state.started && ! restoreThread() ) { startConversation(); }
 			renderWindow();
 			focusFirst();
 		}
@@ -371,6 +418,73 @@
 		if ( 'Escape' === e.key ) { closeChat(); }
 	} );
 
+	/* ---------- پایداری گفتگو بین صفحات ---------- */
+	// پیش‌تر با هر ناوبری، کل گفتگو پاک می‌شد. اکنون رشتهٔ گفتگو در sessionStorage
+	// نگه داشته می‌شود (فقط تا پایان نشست مرورگر و با انقضای زمانی).
+	var STORE_KEY = 'nfx_thread_v1';
+	var STORE_TTL = 2 * 60 * 60 * 1000; // ۲ ساعت.
+	var STORE_MAX = 50;                 // سقف پیام‌های ذخیره‌شده.
+
+	function saveThread() {
+		try {
+			// آیتم‌های گذرا ذخیره نمی‌شوند: کارت فرم (نیمه‌پرشده) و نظرسنجی.
+			var items = state.items.filter( function ( it ) {
+				return it.kind !== 'form' && it.kind !== 'csat';
+			} ).slice( -STORE_MAX ).map( function ( it ) {
+				return {
+					kind: it.kind,
+					content: it.content,
+					noHistory: !! it.noHistory,
+					logId: it.logId || 0,
+					logToken: it.logToken || '',
+					rated: !! it.rated,
+					userQuestion: it.userQuestion || '',
+					product: it.kind === 'product' ? it.product : undefined,
+					seen: true // پیام‌های بازیابی‌شده دوباره انیمیشن ورود نمی‌گیرند.
+				};
+			} );
+			if ( ! items.length ) { sessionStorage.removeItem( STORE_KEY ); return; }
+			sessionStorage.setItem( STORE_KEY, JSON.stringify( {
+				at: Date.now(),
+				product: state.selectedProduct,
+				csatDone: !! state.csatDone,
+				items: items
+			} ) );
+		} catch ( e ) { /* حافظه پر یا غیرفعال — پایداری اختیاری است. */ }
+	}
+
+	function clearThread() {
+		try { sessionStorage.removeItem( STORE_KEY ); } catch ( e ) {}
+	}
+
+	// تلاش برای بازیابی گفتگوی قبلی. در صورت موفقیت true برمی‌گرداند.
+	function restoreThread() {
+		try {
+			var raw = sessionStorage.getItem( STORE_KEY );
+			if ( ! raw ) { return false; }
+			var data = JSON.parse( raw );
+			if ( ! data || ! data.items || ! data.items.length ) { return false; }
+			if ( ! data.at || ( Date.now() - data.at ) > STORE_TTL ) { clearThread(); return false; }
+
+			state.items = data.items;
+			state.selectedProduct = data.product || null;
+			state.csatDone = !! data.csatDone;
+			state.started = true;
+			state.form = emptyForm();
+
+			// چیپس‌ها تابع دارند و ذخیره نمی‌شوند؛ متناسب با زمینه بازسازی می‌شوند.
+			if ( state.selectedProduct && state.selectedProduct !== companyInfo.id ) {
+				setProductQuickReplies();
+			} else {
+				state.chips = [];
+			}
+			return true;
+		} catch ( e ) {
+			clearThread();
+			return false;
+		}
+	}
+
 	/* ---------- پیام دعوت هوشمند ---------- */
 	( function setupProactive() {
 		if ( ! cfg.proactiveEnabled ) { return; }
@@ -428,7 +542,9 @@
 		state.started = true;
 		state.items = [];
 		state.selectedProduct = null;
+		state.csatDone = false;
 		state.form = emptyForm();
+		clearThread(); // «شروع دوباره» یعنی گفتگوی ذخیره‌شده هم پاک شود.
 		var wtext = stripTags( ( cfg.welcomeText || 'چطور می‌تونم کمکتون کنم؟' ).replace( /<br\s*\/?>/gi, '\n' ) );
 		pushBot( ( cfg.welcomeTitle ? cfg.welcomeTitle + '\n' : '' ) + wtext, { noHistory: true } );
 		showMainOptions();
@@ -761,6 +877,7 @@
 
 		scrollToBottom();
 		maybeTypewriter();
+		saveThread();
 	}
 
 	/* ---------- اکشن‌های پیام ربات: صدا (TTS) + بازخورد + اقدام‌های پاسخ ---------- */

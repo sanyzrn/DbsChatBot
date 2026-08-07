@@ -111,6 +111,9 @@ class SSC_Chatbot_Frontend {
 
 		// ادغام تنظیمات سراسری با تنظیمات ویجت.
 		$config = array(
+			// REST مسیر اصلی است؛ admin-ajax برای سازگاری عقب‌رو نگه داشته شده.
+			'restUrl'        => esc_url_raw( rest_url( SSC_Chatbot_REST::NS . '/' ) ),
+			'restNonce'      => wp_create_nonce( 'wp_rest' ),
 			'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
 			'nonce'          => wp_create_nonce( 'ssc_chatbot_nonce' ),
 			'businessMode'   => isset( $s['business_mode'] ) ? $s['business_mode'] : 'general',
@@ -175,6 +178,8 @@ class SSC_Chatbot_Frontend {
 			'consentText'         => $s['consent_text'],
 			'consentLink'         => $s['consent_link'],
 			'i18n'                => array(
+				'sessionExpired'  => __( 'نشست شما منقضی شده است. لطفاً صفحه را تازه‌سازی (Refresh) کنید و دوباره تلاش کنید.', 'smart-support-chatbot' ),
+				'connectionError' => __( 'خطا در ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.', 'smart-support-chatbot' ),
 				'openChat'        => __( 'باز کردن گفتگو', 'smart-support-chatbot' ),
 				'closeChat'       => __( 'بستن گفتگو', 'smart-support-chatbot' ),
 				'send'            => __( 'ارسال پیام', 'smart-support-chatbot' ),

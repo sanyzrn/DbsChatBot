@@ -126,6 +126,23 @@ class SSC_Chatbot_Ajax {
 	}
 
 	/**
+	 * شناسهٔ نشست کلاینت (برای محدودسازی نرخ per-session).
+	 * در مسیر AJAX از $_POST['cid'] خوانده می‌شود و در مسیر REST با set_client_id تزریق می‌گردد.
+	 *
+	 * @var string
+	 */
+	protected $client_id = '';
+
+	/**
+	 * تعیین شناسهٔ نشست کلاینت (مسیر REST).
+	 *
+	 * @param string $cid شناسه.
+	 */
+	public function set_client_id( $cid ) {
+		$this->client_id = (string) $cid;
+	}
+
+	/**
 	 * اعتبارسنجی شناسهٔ محصول در برابر فهرست واقعی محصولات.
 	 * هر مقدار ناشناخته به 'general' نگاشت می‌شود تا مهاجم نتواند جدول آمار را
 	 * با متریک‌های دلخواه و بی‌نهایت پر کند (و داشبورد را آلوده کند).
@@ -193,7 +210,10 @@ class SSC_Chatbot_Ajax {
 			);
 		}
 		if ( 'session' === $mode || 'both' === $mode ) {
-			$cid = isset( $_POST['cid'] ) ? sanitize_text_field( wp_unslash( $_POST['cid'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification -- nonce در هندلر بررسی شده.
+			$cid = $this->client_id;
+			if ( '' === $cid ) {
+				$cid = isset( $_POST['cid'] ) ? sanitize_text_field( wp_unslash( $_POST['cid'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification -- nonce در هندلر بررسی شده.
+			}
 			if ( '' === $cid ) {
 				$cid = $ip; // در نبود شناسهٔ نشست، به IP برمی‌گردیم.
 			}
@@ -225,27 +245,73 @@ class SSC_Chatbot_Ajax {
 	}
 
 	/**
-	 * هندلر چت.
+	 * ارسال نتیجهٔ یک سرویس به‌صورت پاسخ AJAX.
+	 * سرویس‌ها آرایه یا WP_Error برمی‌گردانند تا هم AJAX و هم REST از یک منطق استفاده کنند.
+	 *
+	 * @param array|WP_Error $res نتیجه.
+	 */
+	protected function send_json( $res ) {
+		if ( is_wp_error( $res ) ) {
+			$data   = $res->get_error_data();
+			$status = ( is_array( $data ) && isset( $data['status'] ) ) ? (int) $data['status'] : 400;
+			wp_send_json_error( array( 'message' => $res->get_error_message() ), $status );
+		}
+		wp_send_json_success( $res );
+	}
+
+	/**
+	 * هندلر AJAX چت (پوستهٔ نازک روی سرویس).
 	 */
 	public function handle_chat() {
 		check_ajax_referer( 'ssc_chatbot_nonce', 'nonce' );
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce بالا بررسی شد.
+		$this->send_json(
+			$this->chat(
+				array(
+					'message' => isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '',
+					'product' => isset( $_POST['product'] ) ? sanitize_text_field( wp_unslash( $_POST['product'] ) ) : 'general',
+					'history' => isset( $_POST['history'] ) ? wp_unslash( $_POST['history'] ) : '', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- در parse_history پاکسازی می‌شود.
+				)
+			)
+		);
+		// phpcs:enable
+	}
 
+	/**
+	 * سرویس چت — منطق مشترک AJAX و REST.
+	 *
+	 * @param array $args آرگومان‌ها (message, product, history).
+	 * @return array|WP_Error
+	 */
+	public function chat( $args ) {
 		if ( ! $this->check_rate_limit( 'chat' ) ) {
-			wp_send_json_error( array( 'message' => 'محدودیت روزانه درخواست پر شده. لطفاً فردا مجدداً تلاش کنید.' ), 429 );
+			return new WP_Error(
+				'ssc_rate_limited',
+				__( 'محدودیت روزانه درخواست پر شده. لطفاً فردا مجدداً تلاش کنید.', 'smart-support-chatbot' ),
+				array( 'status' => 429 )
+			);
 		}
 
-		$message    = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
-		$product_id = $this->sanitize_product_id( isset( $_POST['product'] ) ? sanitize_text_field( wp_unslash( $_POST['product'] ) ) : 'general' );
-		$history    = $this->parse_history( isset( $_POST['history'] ) ? wp_unslash( $_POST['history'] ) : '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- در parse_history پاکسازی می‌شود.
+		$message    = isset( $args['message'] ) ? (string) $args['message'] : '';
+		$product_id = $this->sanitize_product_id( isset( $args['product'] ) ? $args['product'] : 'general' );
+		$history    = $this->parse_history( isset( $args['history'] ) ? $args['history'] : '' );
 
 		if ( '' === trim( $message ) ) {
-			wp_send_json_error( array( 'message' => 'لطفاً سوال خود را بپرسید.' ), 400 );
+			return new WP_Error( 'ssc_empty_message', __( 'لطفاً سوال خود را بپرسید.', 'smart-support-chatbot' ), array( 'status' => 400 ) );
 		}
 
 		// سقف طول پیام ورودی برای جلوگیری از مصرف بی‌رویه توکن.
 		$max_len = (int) apply_filters( 'ssc_chatbot_max_message_length', 2000 );
 		if ( mb_strlen( $message ) > $max_len ) {
-			wp_send_json_error( array( 'message' => 'پیام شما بیش از حد طولانی است (حداکثر ' . $max_len . ' کاراکتر).' ), 400 );
+			return new WP_Error(
+				'ssc_message_too_long',
+				sprintf(
+					/* translators: %d: حداکثر تعداد کاراکتر مجاز. */
+					__( 'پیام شما بیش از حد طولانی است (حداکثر %d کاراکتر).', 'smart-support-chatbot' ),
+					$max_len
+				),
+				array( 'status' => 400 )
+			);
 		}
 
 		$reply = $this->generate_ai_reply( $message, $product_id, $history );
@@ -298,27 +364,47 @@ class SSC_Chatbot_Ajax {
 			$resp['handoff'] = true;
 		}
 
-		wp_send_json_success( $resp );
+		return $resp;
 	}
 
 	/**
-	 * هندلر بازخورد پاسخ (👍/👎).
+	 * هندلر AJAX بازخورد (پوستهٔ نازک روی سرویس).
 	 */
 	public function handle_feedback() {
 		check_ajax_referer( 'ssc_chatbot_nonce', 'nonce' );
-		$id     = isset( $_POST['log_id'] ) ? (int) $_POST['log_id'] : 0;
-		$rating = isset( $_POST['rating'] ) ? (int) $_POST['rating'] : 0;
-		$token  = isset( $_POST['log_token'] ) ? sanitize_text_field( wp_unslash( $_POST['log_token'] ) ) : '';
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce بالا بررسی شد.
+		$this->send_json(
+			$this->feedback(
+				array(
+					'log_id'    => isset( $_POST['log_id'] ) ? (int) $_POST['log_id'] : 0,
+					'rating'    => isset( $_POST['rating'] ) ? (int) $_POST['rating'] : 0,
+					'log_token' => isset( $_POST['log_token'] ) ? sanitize_text_field( wp_unslash( $_POST['log_token'] ) ) : '',
+				)
+			)
+		);
+		// phpcs:enable
+	}
+
+	/**
+	 * سرویس بازخورد پاسخ (👍/👎).
+	 *
+	 * @param array $args آرگومان‌ها (log_id, rating, log_token).
+	 * @return array|WP_Error
+	 */
+	public function feedback( $args ) {
+		$id     = isset( $args['log_id'] ) ? (int) $args['log_id'] : 0;
+		$rating = isset( $args['rating'] ) ? (int) $args['rating'] : 0;
+		$token  = isset( $args['log_token'] ) ? (string) $args['log_token'] : '';
 
 		// فقط کسی که خودِ این پاسخ را دریافت کرده می‌تواند رأی بدهد
 		// (شناسه‌های ترتیبی قابل‌شمارش‌اند؛ بدون این بررسی آمار بازخورد جعل‌پذیر است).
 		if ( $id <= 0 || 0 === $rating || ! hash_equals( $this->log_token( $id ), $token ) ) {
-			wp_send_json_error( array( 'message' => 'درخواست نامعتبر است.' ), 403 );
+			return new WP_Error( 'ssc_invalid_feedback', __( 'درخواست نامعتبر است.', 'smart-support-chatbot' ), array( 'status' => 403 ) );
 		}
 
 		// set_chatlog_rating فقط ردیف‌های بدون رأی را به‌روزرسانی می‌کند (رأی مجدد نادیده گرفته می‌شود).
 		SSC_Chatbot_DB::set_chatlog_rating( $id, $rating );
-		wp_send_json_success();
+		return array( 'ok' => true );
 	}
 
 	/**
@@ -900,22 +986,43 @@ class SSC_Chatbot_Ajax {
 	 */
 	public function handle_suggest() {
 		check_ajax_referer( 'ssc_chatbot_nonce', 'nonce' );
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce بالا بررسی شد.
+		$this->send_json(
+			$this->suggest(
+				array(
+					'term'    => isset( $_POST['term'] ) ? sanitize_text_field( wp_unslash( $_POST['term'] ) ) : '',
+					'product' => isset( $_POST['product'] ) ? sanitize_text_field( wp_unslash( $_POST['product'] ) ) : 'general',
+				)
+			)
+		);
+		// phpcs:enable
+	}
+
+	/**
+	 * سرویس تکمیل خودکار.
+	 *
+	 * @param array $args آرگومان‌ها (term, product).
+	 * @return array
+	 */
+	public function suggest( $args ) {
+		$empty = array( 'items' => array() );
+
 		if ( 'yes' !== SSC_Chatbot_Settings::get( 'autocomplete_enabled', 'yes' ) ) {
-			wp_send_json_success( array( 'items' => array() ) );
+			return $empty;
 		}
 		// هر keystroke یک واکشی و امتیازدهی کامل روی دیتابیس است؛ بدون سقف، اهرم ارزانِ DoS.
 		if ( ! $this->check_rate_limit( 'suggest' ) ) {
-			wp_send_json_success( array( 'items' => array() ) );
+			return $empty;
 		}
-		$term       = isset( $_POST['term'] ) ? sanitize_text_field( wp_unslash( $_POST['term'] ) ) : '';
-		$product_id = $this->sanitize_product_id( isset( $_POST['product'] ) ? sanitize_text_field( wp_unslash( $_POST['product'] ) ) : 'general' );
+		$term       = isset( $args['term'] ) ? (string) $args['term'] : '';
+		$product_id = $this->sanitize_product_id( isset( $args['product'] ) ? $args['product'] : 'general' );
 		if ( mb_strlen( trim( $term ) ) < 2 ) {
-			wp_send_json_success( array( 'items' => array() ) );
+			return $empty;
 		}
 
 		$rows = SSC_Chatbot_DB::qa_candidates( $product_id, $this->fulltext_against( $term ) );
 		if ( empty( $rows ) ) {
-			wp_send_json_success( array( 'items' => array() ) );
+			return $empty;
 		}
 
 		$norm_term = $this->normalize_fa( $term );
@@ -962,23 +1069,34 @@ class SSC_Chatbot_Ajax {
 				break;
 			}
 		}
-		wp_send_json_success( array( 'items' => $items ) );
+		return array( 'items' => $items );
 	}
 
 	/**
-	 * هندلر ثبت امتیاز رضایت پایان گفتگو (CSAT).
+	 * هندلر AJAX نظرسنجی رضایت (پوستهٔ نازک روی سرویس).
 	 */
 	public function handle_csat() {
 		check_ajax_referer( 'ssc_chatbot_nonce', 'nonce' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce بالا بررسی شد.
+		$this->send_json( $this->csat( array( 'score' => isset( $_POST['score'] ) ? (int) $_POST['score'] : 0 ) ) );
+	}
+
+	/**
+	 * سرویس ثبت امتیاز رضایت پایان گفتگو (CSAT).
+	 *
+	 * @param array $args آرگومان‌ها (score).
+	 * @return array|WP_Error
+	 */
+	public function csat( $args ) {
 		// بدون محدودسازی، میانگین رضایت با رأی انبوه کاملاً جعل‌پذیر است.
 		if ( ! $this->check_rate_limit( 'csat' ) ) {
-			wp_send_json_error( array( 'message' => 'امتیاز شما قبلاً ثبت شده است.' ), 429 );
+			return new WP_Error( 'ssc_csat_limited', __( 'امتیاز شما قبلاً ثبت شده است.', 'smart-support-chatbot' ), array( 'status' => 429 ) );
 		}
-		$score = isset( $_POST['score'] ) ? (int) $_POST['score'] : 0;
+		$score = isset( $args['score'] ) ? (int) $args['score'] : 0;
 		if ( $score >= 1 && $score <= 5 ) {
 			SSC_Chatbot_DB::record_csat( $score );
 		}
-		wp_send_json_success();
+		return array( 'ok' => true );
 	}
 
 	/**
@@ -1258,53 +1376,82 @@ class SSC_Chatbot_Ajax {
 	}
 
 	/**
-	 * هندلر ثبت فرم عوارض / مشاوره.
+	 * هندلر AJAX ثبت فرم (پوستهٔ نازک روی سرویس).
 	 */
 	public function handle_submit() {
 		check_ajax_referer( 'ssc_chatbot_nonce', 'nonce' );
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce بالا بررسی شد.
+		$keys = array(
+			'type', 'name', 'phone', 'description', 'product',
+			'severity', 'outcome', 'batch_number', 'concomitant_drugs', 'reporter_type',
+			'nfx_hp',
+		);
+		$args = array( 'nfx_elapsed' => isset( $_POST['nfx_elapsed'] ) ? (int) $_POST['nfx_elapsed'] : 99999 );
+		foreach ( $keys as $k ) {
+			$args[ $k ] = isset( $_POST[ $k ] ) ? wp_unslash( $_POST[ $k ] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- در سرویس پاکسازی می‌شود.
+		}
+		$this->send_json( $this->submit( $args ) );
+		// phpcs:enable
+	}
+
+	/**
+	 * سرویس ثبت فرم درخواست/عوارض.
+	 *
+	 * @param array $args آرگومان‌های خام (در همین متد پاکسازی می‌شوند).
+	 * @return array|WP_Error
+	 */
+	public function submit( $args ) {
+		$get = function ( $key, $textarea = false ) use ( $args ) {
+			$v = isset( $args[ $key ] ) ? (string) $args[ $key ] : '';
+			return $textarea ? sanitize_textarea_field( $v ) : sanitize_text_field( $v );
+		};
 
 		// ضد‌اسپم آفلاین (Honeypot + تله‌زمان) — بدون نیاز به سرویس خارجی (مناسب شرایط تحریم).
-		$honeypot = isset( $_POST['nfx_hp'] ) ? trim( (string) wp_unslash( $_POST['nfx_hp'] ) ) : ''; // phpcs:ignore WordPress.Security
-		$elapsed  = isset( $_POST['nfx_elapsed'] ) ? (int) $_POST['nfx_elapsed'] : 99999;
+		$honeypot = trim( isset( $args['nfx_hp'] ) ? (string) $args['nfx_hp'] : '' );
+		$elapsed  = isset( $args['nfx_elapsed'] ) ? (int) $args['nfx_elapsed'] : 99999;
 		$min_ms   = (int) apply_filters( 'ssc_chatbot_min_form_time', 1500 );
 		if ( '' !== $honeypot || $elapsed < $min_ms ) {
 			// پاسخ موفقیت تقلبی تا ربات متوجه فیلتر نشود (بدون ذخیره).
-			wp_send_json_success( array( 'message' => 'دریافت شد.' ) );
+			return array( 'message' => __( 'دریافت شد.', 'smart-support-chatbot' ) );
 		}
 
 		if ( ! $this->check_rate_limit( 'submit' ) ) {
-			wp_send_json_error( array( 'message' => 'محدودیت روزانه درخواست پر شده. لطفاً فردا مجدداً تلاش کنید.' ), 429 );
+			return new WP_Error(
+				'ssc_rate_limited',
+				__( 'محدودیت روزانه درخواست پر شده. لطفاً فردا مجدداً تلاش کنید.', 'smart-support-chatbot' ),
+				array( 'status' => 429 )
+			);
 		}
 
-		$type        = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : 'نامشخص';
-		$name        = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
-		$phone       = isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '';
-		$description = isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '';
-		$product     = isset( $_POST['product'] ) ? sanitize_text_field( wp_unslash( $_POST['product'] ) ) : '';
+		$type        = '' !== $get( 'type' ) ? $get( 'type' ) : __( 'نامشخص', 'smart-support-chatbot' );
+		$name        = $get( 'name' );
+		$phone       = $get( 'phone' );
+		$description = $get( 'description', true );
+		$product     = $get( 'product' );
 
 		// فیلدهای استاندارد گزارش عوارض دارویی (ADR).
-		$severity          = isset( $_POST['severity'] ) ? sanitize_text_field( wp_unslash( $_POST['severity'] ) ) : '';
-		$outcome           = isset( $_POST['outcome'] ) ? sanitize_text_field( wp_unslash( $_POST['outcome'] ) ) : '';
-		$batch_number      = isset( $_POST['batch_number'] ) ? sanitize_text_field( wp_unslash( $_POST['batch_number'] ) ) : '';
-		$concomitant_drugs = isset( $_POST['concomitant_drugs'] ) ? sanitize_textarea_field( wp_unslash( $_POST['concomitant_drugs'] ) ) : '';
-		$reporter_type     = isset( $_POST['reporter_type'] ) ? sanitize_text_field( wp_unslash( $_POST['reporter_type'] ) ) : '';
+		$severity          = $get( 'severity' );
+		$outcome           = $get( 'outcome' );
+		$batch_number      = $get( 'batch_number' );
+		$concomitant_drugs = $get( 'concomitant_drugs', true );
+		$reporter_type     = $get( 'reporter_type' );
 
 		// اعتبارسنجی پایه.
 		if ( mb_strlen( $name ) < 2 || mb_strlen( $name ) > 80 ) {
-			wp_send_json_error( array( 'message' => 'نام نامعتبر است.' ), 400 );
+			return new WP_Error( 'ssc_invalid_name', __( 'نام نامعتبر است.', 'smart-support-chatbot' ), array( 'status' => 400 ) );
 		}
 		/**
 		 * الگوی اعتبارسنجی شماره تماس. پیش‌فرض: پذیرش شمارهٔ بین‌المللی (E.164) و موبایل ایران.
 		 * برای محدودسازی به کشور خاص، این فیلتر را بازنویسی کنید.
 		 *
-		 * @param string $regex الگوی regex (بدون علائم مرزی نیازمند تطبیق کامل).
+		 * @param string $regex الگوی regex.
 		 */
 		$phone_regex = (string) apply_filters( 'ssc_chatbot_phone_regex', '/^(\+?\d[\d\s\-]{6,18}\d)$/' );
 		if ( ! preg_match( $phone_regex, $phone ) ) {
-			wp_send_json_error( array( 'message' => 'شماره تماس نامعتبر است.' ), 400 );
+			return new WP_Error( 'ssc_invalid_phone', __( 'شماره تماس نامعتبر است.', 'smart-support-chatbot' ), array( 'status' => 400 ) );
 		}
 		if ( mb_strlen( $description ) < 10 || mb_strlen( $description ) > 1000 ) {
-			wp_send_json_error( array( 'message' => 'طول توضیحات نامعتبر است.' ), 400 );
+			return new WP_Error( 'ssc_invalid_description', __( 'طول توضیحات نامعتبر است.', 'smart-support-chatbot' ), array( 'status' => 400 ) );
 		}
 
 		$is_adr = ( false !== mb_strpos( $type, 'عوارض' ) );
@@ -1339,7 +1486,11 @@ class SSC_Chatbot_Ajax {
 
 		$id = SSC_Chatbot_DB::insert( $row );
 		if ( ! $id ) {
-			wp_send_json_error( array( 'message' => 'خطا در ذخیره‌سازی اطلاعات. لطفاً مجدداً تلاش کنید.' ), 500 );
+			return new WP_Error(
+				'ssc_save_failed',
+				__( 'خطا در ذخیره‌سازی اطلاعات. لطفاً مجدداً تلاش کنید.', 'smart-support-chatbot' ),
+				array( 'status' => 500 )
+			);
 		}
 
 		// اعلان‌ها.
@@ -1351,7 +1502,7 @@ class SSC_Chatbot_Ajax {
 		 */
 		do_action( 'ssc_chatbot_after_submit', $id, $row );
 
-		wp_send_json_success( array( 'message' => 'اطلاعات با موفقیت ثبت و ارسال شد.' ) );
+		return array( 'message' => __( 'اطلاعات با موفقیت ثبت و ارسال شد.', 'smart-support-chatbot' ) );
 	}
 
 	/**
