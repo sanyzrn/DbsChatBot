@@ -57,8 +57,21 @@ $secret_ph = function ( $key ) {
 						</td>
 					</tr>
 					<tr>
-						<th><label for="company_name"><?php esc_html_e( 'نام شرکت', 'nafas-chatbot' ); ?></label></th>
-						<td><input type="text" id="company_name" name="company_name" value="<?php echo esc_attr( $s['company_name'] ); ?>" class="regular-text"></td>
+						<th><label for="business_mode"><?php esc_html_e( 'حالت کسب‌وکار', 'nafas-chatbot' ); ?></label></th>
+						<td>
+							<select name="business_mode" id="business_mode">
+								<option value="general" <?php selected( $s['business_mode'], 'general' ); ?>><?php esc_html_e( 'عمومی (هر کسب‌وکاری)', 'nafas-chatbot' ); ?></option>
+								<option value="pharma" <?php selected( $s['business_mode'], 'pharma' ); ?>><?php esc_html_e( 'داروسازی (فرم استاندارد عوارض دارویی)', 'nafas-chatbot' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'در حالت «داروسازی»، فیلدهای استاندارد گزارش عوارض دارویی (شدت، پیامد، شماره سری ساخت و…) در فرم نمایش داده می‌شوند. در حالت «عمومی» فرم ساده و بدون فیلدهای دارویی است.', 'nafas-chatbot' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="company_name"><?php esc_html_e( 'نام شرکت / کسب‌وکار', 'nafas-chatbot' ); ?></label></th>
+						<td>
+							<input type="text" id="company_name" name="company_name" value="<?php echo esc_attr( $s['company_name'] ); ?>" class="regular-text" placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
+							<p class="description"><?php esc_html_e( 'در صورت خالی بودن، از نام سایت استفاده می‌شود.', 'nafas-chatbot' ); ?></p>
+						</td>
 					</tr>
 					<tr>
 						<th><label for="company_id"><?php esc_html_e( 'شناسه شرکت', 'nafas-chatbot' ); ?></label></th>

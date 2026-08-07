@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name:       Nafas Smart Chatbot
- * Plugin URI:        https://patient.nafaspharmed.com/
- * Description:       دستیار هوشمند گفتگو، ثبت عوارض دارویی و درخواست مشاوره برای سایت‌های وردپرسی. کاملاً سازگار با المنتور و دارای پنل مدیریت اختصاصی.
+ * Plugin Name:       Smart Support Chatbot
+ * Plugin URI:        https://dbsgraphic.ir/
+ * Description:       دستیار هوشمند گفتگو، پشتیبانی و ثبت درخواست برای سایت‌های وردپرسی. چند موتور هوش مصنوعی، پایگاه دانش آفلاین، سازگار با المنتور و دارای پنل مدیریت کامل. حالت اختیاری «داروسازی» برای ثبت استاندارد عوارض دارویی.
  * Version:           3.2.0
- * Author:            Nafas Pharmed
- * Author URI:        https://nafaspharmed.com/
+ * Author:            DBS
+ * Author URI:        https://dbsgraphic.ir/
  * Text Domain:       nafas-chatbot
  * Domain Path:       /languages
  * License:           GPL-2.0-or-later

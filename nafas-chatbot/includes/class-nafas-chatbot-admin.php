@@ -549,6 +549,8 @@ class Nafas_Chatbot_Admin {
 			$new[ $f ] = ( isset( $in[ $f ] ) && ( '1' === (string) $in[ $f ] || 'yes' === $in[ $f ] || 'on' === $in[ $f ] ) ) ? 'yes' : 'no';
 		}
 
+		$biz_mode               = isset( $in['business_mode'] ) ? sanitize_text_field( $in['business_mode'] ) : 'general';
+		$new['business_mode']   = in_array( $biz_mode, array( 'general', 'pharma' ), true ) ? $biz_mode : 'general';
 		$new['email_to']        = isset( $in['email_to'] ) ? sanitize_email( $in['email_to'] ) : '';
 		$new['ai_rate_limit']   = isset( $in['ai_rate_limit'] ) ? max( 0, (int) $in['ai_rate_limit'] ) : 100;
 		$rl_mode                = isset( $in['rate_limit_mode'] ) ? sanitize_text_field( $in['rate_limit_mode'] ) : 'ip';

@@ -1218,8 +1218,15 @@ class Nafas_Chatbot_Ajax {
 		if ( mb_strlen( $name ) < 2 || mb_strlen( $name ) > 80 ) {
 			wp_send_json_error( array( 'message' => 'نام نامعتبر است.' ), 400 );
 		}
-		if ( ! preg_match( '/^(\+98|0)?9\d{9}$/', $phone ) ) {
-			wp_send_json_error( array( 'message' => 'شماره موبایل نامعتبر است.' ), 400 );
+		/**
+		 * الگوی اعتبارسنجی شماره تماس. پیش‌فرض: پذیرش شمارهٔ بین‌المللی (E.164) و موبایل ایران.
+		 * برای محدودسازی به کشور خاص، این فیلتر را بازنویسی کنید.
+		 *
+		 * @param string $regex الگوی regex (بدون علائم مرزی نیازمند تطبیق کامل).
+		 */
+		$phone_regex = (string) apply_filters( 'nafas_chatbot_phone_regex', '/^(\+?\d[\d\s\-]{6,18}\d)$/' );
+		if ( ! preg_match( $phone_regex, $phone ) ) {
+			wp_send_json_error( array( 'message' => 'شماره تماس نامعتبر است.' ), 400 );
 		}
 		if ( mb_strlen( $description ) < 10 || mb_strlen( $description ) > 1000 ) {
 			wp_send_json_error( array( 'message' => 'طول توضیحات نامعتبر است.' ), 400 );
@@ -1288,7 +1295,8 @@ class Nafas_Chatbot_Ajax {
 		if ( $this->is_serious_adr( $row ) ) {
 			$msg .= "🚨🚨🚨 هشدار فوری — گزارش عارضهٔ جدی 🚨🚨🚨\n\n";
 		}
-		$msg .= "📥 دریافت درخواست جدید از پورتال آموزش بیمار\n\n";
+		/* translators: %s: نام سایت. */
+		$msg .= '📥 ' . sprintf( __( 'دریافت درخواست جدید از %s', 'nafas-chatbot' ), get_bloginfo( 'name' ) ) . "\n\n";
 		$msg .= '📋 نوع فرم: ' . $row['type'] . "\n";
 		$msg .= '👤 نام کاربر: ' . $row['name'] . "\n";
 		$msg .= '📞 شماره تماس: ' . $row['phone'] . "\n";

@@ -26,7 +26,7 @@ $ins = isset( $insights ) ? $insights : array( 'qa' => 0, 'kb' => 0, 'chat' => 0
 				printf( esc_html__( 'توسعه با همکاری %1$s و %2$s', 'nafas-chatbot' ), '<b dir="ltr">Claude</b>', '<b>' . esc_html__( 'سعید', 'nafas-chatbot' ) . '</b>' ); // phpcs:ignore WordPress.Security.EscapeOutput
 				?>
 			</h1>
-			<p class="nafas-about__tagline"><?php esc_html_e( 'دستیار هوشمند نفس فارمد — ساخته‌شده با وسواس، برای شرایط واقعی ایران ❤️', 'nafas-chatbot' ); ?></p>
+			<p class="nafas-about__tagline"><?php esc_html_e( 'دستیار هوشمند گفتگو — ساخته‌شده با وسواس، برای شرایط واقعی ایران ❤️', 'nafas-chatbot' ); ?></p>
 			<div class="nafas-credit__contacts">
 				<a class="nafas-credit__chip" href="tel:09301221816" dir="ltr"><span class="dashicons dashicons-phone"></span> 0930 122 1816</a>
 				<a class="nafas-credit__chip" href="mailto:dbsgraphic.ir@gmail.com" dir="ltr"><span class="dashicons dashicons-email-alt"></span> dbsgraphic.ir@gmail.com</a>
@@ -51,7 +51,7 @@ $ins = isset( $insights ) ? $insights : array( 'qa' => 0, 'kb' => 0, 'chat' => 0
 				<li>🧠 <b><?php esc_html_e( 'سه مغز در یک بدن:', 'nafas-chatbot' ); ?></b> <?php esc_html_e( 'هوش مصنوعی + پایگاه دانش هیبریدی + بانک پاسخ آفلاین؛ اگر یکی نبود، بعدی جواب می‌دهد.', 'nafas-chatbot' ); ?></li>
 				<li>📚 <b><?php esc_html_e( 'پایگاه دانش (RAG آفلاین):', 'nafas-chatbot' ); ?></b> <?php esc_html_e( 'بروشورها را می‌خورد، تکه‌تکه می‌کند و فقط تکهٔ مرتبط را به مدل می‌دهد.', 'nafas-chatbot' ); ?></li>
 				<li>🎙️ <b><?php esc_html_e( 'حالت صوتی:', 'nafas-chatbot' ); ?></b> <?php esc_html_e( 'پرسیدن با میکروفون و شنیدن پاسخ — کاملاً سمت مرورگر و رایگان.', 'nafas-chatbot' ); ?></li>
-				<li>🚨 <b><?php esc_html_e( 'فارماکوویژیلانس:', 'nafas-chatbot' ); ?></b> <?php esc_html_e( 'فرم استاندارد عوارض دارویی + هشدار فوری عوارض جدی.', 'nafas-chatbot' ); ?></li>
+				<li>🚨 <b><?php esc_html_e( 'حالت داروسازی (اختیاری):', 'nafas-chatbot' ); ?></b> <?php esc_html_e( 'فرم استاندارد عوارض دارویی + هشدار فوری عوارض جدی — قابل فعال‌سازی برای کسب‌وکارهای دارویی.', 'nafas-chatbot' ); ?></li>
 				<li>💡 <b><?php esc_html_e( 'هوشمندی گفتگو:', 'nafas-chatbot' ); ?></b> <?php esc_html_e( 'پیشنهاد سوال مرتبط، تکمیل خودکار، کارت محصول، نظرسنجی رضایت و واگذاری به کارشناس.', 'nafas-chatbot' ); ?></li>
 				<li>📊 <b><?php esc_html_e( 'داشبورد و رادار:', 'nafas-chatbot' ); ?></b> <?php esc_html_e( 'سوالات بی‌پاسخ، بازخوردها و آمار — برای بهبود مستمر.', 'nafas-chatbot' ); ?></li>
 			</ul>
@@ -78,7 +78,7 @@ $ins = isset( $insights ) ? $insights : array( 'qa' => 0, 'kb' => 0, 'chat' => 0
 			<span>MySQL FULLTEXT</span><span>Web Speech API</span><span>Gemini / OpenAI / Claude</span><span>RTL / فارسی</span>
 		</div>
 		<p class="description" style="margin-top:14px">
-			<?php esc_html_e( 'این افزونه به‌صورت اختصاصی برای شرکت نفس زیست فارمد توسعه یافته است. برای سفارش پروژهٔ مشابه، طراحی، یا پشتیبانی با راه‌های بالا در تماس باشید.', 'nafas-chatbot' ); ?>
+			<?php esc_html_e( 'یک دستیار هوشمند گفتگو و پشتیبانی برای هر کسب‌وکار وردپرسی. برای سفارش پروژهٔ مشابه، طراحی، یا پشتیبانی با راه‌های بالا در تماس باشید.', 'nafas-chatbot' ); ?>
 		</p>
 	</div>
 </div>
