@@ -48,3 +48,6 @@ wp-config.php
 #/wp-content/themes
 # build artifacts
 *.zip
+
+dist/
+vendor/
