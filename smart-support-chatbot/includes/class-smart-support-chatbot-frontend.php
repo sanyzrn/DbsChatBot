@@ -34,6 +34,7 @@ class SSC_Chatbot_Frontend {
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ) );
 		add_shortcode( 'ssc_chatbot', array( $this, 'shortcode' ) );
+		add_action( 'init', array( $this, 'register_block' ) );
 
 		// در صورت فعال بودن نمایش خودکار شناور.
 		add_action( 'wp_footer', array( $this, 'maybe_render_floating' ) );
@@ -337,6 +338,42 @@ class SSC_Chatbot_Frontend {
 		// ناحیهٔ زنده روی رشتهٔ گفتگو تنظیم می‌شود (در JS)، نه روی کل ریشه —
 		// در غیر این صورت هر رندر دوباره به‌طور کامل برای صفحه‌خوان خوانده می‌شد.
 		return '<div id="smart-support-chatbot-root" class="nfx-root" dir="rtl"></div>';
+	}
+
+	/**
+	 * ثبت بلوک گوتنبرگ (بلوک پویا — رندر سمت سرور).
+	 * در نبود پشتیبانی بلوک (وردپرس قدیمی)، بی‌صدا رد می‌شود.
+	 */
+	public function register_block() {
+		if ( ! function_exists( 'register_block_type' ) ) {
+			return;
+		}
+		$dir = SSC_CHATBOT_DIR . 'blocks/chatbot';
+		if ( ! file_exists( $dir . '/block.json' ) ) {
+			return;
+		}
+		register_block_type(
+			$dir,
+			array( 'render_callback' => array( $this, 'render_block' ) )
+		);
+	}
+
+	/**
+	 * رندر بلوک.
+	 *
+	 * @param array $attributes ویژگی‌های بلوک.
+	 * @return string
+	 */
+	public function render_block( $attributes ) {
+		// در ویرایشگر، رندر واقعی لازم نیست (placeholder سمت JS نمایش داده می‌شود).
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return '';
+		}
+		$overrides = array();
+		if ( ! empty( $attributes['position'] ) ) {
+			$overrides['position'] = sanitize_text_field( $attributes['position'] );
+		}
+		return $this->render( $overrides );
 	}
 
 	/**

@@ -1,0 +1,31 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "ssc/chatbot",
+	"title": "دستیار هوشمند گفتگو",
+	"category": "widgets",
+	"icon": "format-chat",
+	"description": "ویجت چت هوشمند پشتیبانی. تنظیمات اصلی از پنل افزونه خوانده می‌شود.",
+	"keywords": [
+		"chat",
+		"chatbot",
+		"ai",
+		"گفتگو",
+		"پشتیبانی",
+		"دستیار"
+	],
+	"textdomain": "smart-support-chatbot",
+	"supports": {
+		"html": false,
+		"multiple": false,
+		"reusable": false,
+		"customClassName": false
+	},
+	"attributes": {
+		"position": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"editorScript": "file:./index.js"
+}
