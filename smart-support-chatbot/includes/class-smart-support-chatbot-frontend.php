@@ -50,10 +50,10 @@ class SSC_Chatbot_Frontend {
 			SSC_CHATBOT_VERSION
 		);
 
-		// فونت وزیر متن.
+		// فونت‌های میزبانی‌شدهٔ محلی (بدون CDN خارجی).
 		wp_register_style(
-			'smart-support-chatbot-font',
-			'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css',
+			'smart-support-chatbot-fonts',
+			SSC_CHATBOT_URL . 'assets/css/fonts.css',
 			array(),
 			SSC_CHATBOT_VERSION
 		);
@@ -175,6 +175,11 @@ class SSC_Chatbot_Frontend {
 			'consentText'         => $s['consent_text'],
 			'consentLink'         => $s['consent_link'],
 			'i18n'                => array(
+				'openChat'        => __( 'باز کردن گفتگو', 'smart-support-chatbot' ),
+				'closeChat'       => __( 'بستن گفتگو', 'smart-support-chatbot' ),
+				'send'            => __( 'ارسال پیام', 'smart-support-chatbot' ),
+				'inputLabel'      => __( 'متن پیام', 'smart-support-chatbot' ),
+				'inputPlaceholder' => __( 'پیام خود را بنویسید...', 'smart-support-chatbot' ),
 				'handoffBtn'      => __( 'گفتگو با کارشناس انسانی', 'smart-support-chatbot' ),
 				'csatTitle'       => __( 'گفتگوی ما چطور بود؟', 'smart-support-chatbot' ),
 				'csatThanks'      => __( 'سپاس از امتیاز شما 🙏', 'smart-support-chatbot' ),
@@ -212,39 +217,55 @@ class SSC_Chatbot_Frontend {
 	protected function enqueue_font( $s ) {
 		$family = isset( $s['font_family'] ) ? $s['font_family'] : 'vazirmatn';
 
-		$stacks = array(
-			'vazirmatn' => "'Vazirmatn', 'Vazir', Tahoma, sans-serif",
-			'system'    => "system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
-			'inter'     => "'Inter', system-ui, sans-serif",
-			'roboto'    => "'Roboto', system-ui, sans-serif",
+		// پشتهٔ سیستمی به‌عنوان fallback همهٔ حالت‌ها (بدون هیچ درخواست شبکه).
+		$system_stack = "system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif";
+
+		// فونت سفارشی: آدرس را خود مدیر سایت آگاهانه وارد کرده است.
+		if ( 'custom' === $family ) {
+			$url  = isset( $s['font_url'] ) ? $s['font_url'] : '';
+			$name = isset( $s['font_name'] ) ? trim( (string) $s['font_name'] ) : '';
+			if ( $url ) {
+				wp_enqueue_style( 'smart-support-chatbot-font-custom', $url, array(), SSC_CHATBOT_VERSION );
+			}
+			return $name ? "'" . $name . "', sans-serif" : $system_stack;
+		}
+
+		if ( 'system' === $family ) {
+			return $system_stack;
+		}
+
+		// فونت‌های همراه افزونه — فقط از فایل محلی.
+		$bundled = array(
+			'vazirmatn' => array(
+				'probe' => 'vazirmatn-400.woff2',
+				'stack' => "'Vazirmatn', 'Vazir', Tahoma, sans-serif",
+				// در نبود فایل، پشتهٔ امنِ فارسی بدون درخواست خارجی.
+				'fallback' => "Tahoma, 'Segoe UI', sans-serif",
+			),
+			'inter'     => array(
+				'probe'    => 'inter-400.woff2',
+				'stack'    => "'Inter', system-ui, sans-serif",
+				'fallback' => $system_stack,
+			),
+			'roboto'    => array(
+				'probe'    => 'roboto-400.woff2',
+				'stack'    => "'Roboto', system-ui, sans-serif",
+				'fallback' => $system_stack,
+			),
 		);
 
-		switch ( $family ) {
-			case 'system':
-				// بدون بارگذاری فونت خارجی.
-				return $stacks['system'];
-
-			case 'inter':
-				wp_enqueue_style( 'smart-support-chatbot-font-google', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap', array(), SSC_CHATBOT_VERSION );
-				return $stacks['inter'];
-
-			case 'roboto':
-				wp_enqueue_style( 'smart-support-chatbot-font-google', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap', array(), SSC_CHATBOT_VERSION );
-				return $stacks['roboto'];
-
-			case 'custom':
-				$url  = isset( $s['font_url'] ) ? $s['font_url'] : '';
-				$name = isset( $s['font_name'] ) ? trim( (string) $s['font_name'] ) : '';
-				if ( $url ) {
-					wp_enqueue_style( 'smart-support-chatbot-font-custom', $url, array(), SSC_CHATBOT_VERSION );
-				}
-				return $name ? "'" . $name . "', sans-serif" : '';
-
-			case 'vazirmatn':
-			default:
-				wp_enqueue_style( 'smart-support-chatbot-font' );
-				return $stacks['vazirmatn'];
+		if ( ! isset( $bundled[ $family ] ) ) {
+			return $system_stack;
 		}
+
+		// فایل فونت باید واقعاً همراه افزونه باشد؛ در غیر این صورت به فونت سیستمی برمی‌گردیم
+		// و هیچ درخواستی به CDN خارجی ارسال نمی‌شود (پایداری + حریم خصوصی).
+		if ( ! file_exists( SSC_CHATBOT_DIR . 'assets/fonts/' . $bundled[ $family ]['probe'] ) ) {
+			return $bundled[ $family ]['fallback'];
+		}
+
+		wp_enqueue_style( 'smart-support-chatbot-fonts' );
+		return $bundled[ $family ]['stack'];
 	}
 
 	/**
@@ -308,7 +329,9 @@ class SSC_Chatbot_Frontend {
 		$this->rendered = true;
 		$this->enqueue_with_config( $overrides );
 
-		return '<div id="smart-support-chatbot-root" class="nfx-root" dir="rtl" aria-live="polite"></div>';
+		// ناحیهٔ زنده روی رشتهٔ گفتگو تنظیم می‌شود (در JS)، نه روی کل ریشه —
+		// در غیر این صورت هر رندر دوباره به‌طور کامل برای صفحه‌خوان خوانده می‌شد.
+		return '<div id="smart-support-chatbot-root" class="nfx-root" dir="rtl"></div>';
 	}
 
 	/**

@@ -3,7 +3,7 @@
  * Plugin Name:       Smart Support Chatbot
  * Plugin URI:        https://dbsgraphic.ir/
  * Description:       دستیار هوشمند گفتگو، پشتیبانی و ثبت درخواست برای سایت‌های وردپرسی. چند موتور هوش مصنوعی، پایگاه دانش آفلاین، سازگار با المنتور و دارای پنل مدیریت کامل. حالت اختیاری «داروسازی» برای ثبت استاندارد عوارض دارویی.
- * Version:           3.2.0
+ * Version:           4.0.0
  * Author:            DBS
  * Author URI:        https://dbsgraphic.ir/
  * Text Domain:       smart-support-chatbot
@@ -11,7 +11,7 @@
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Requires at least: 5.6
- * Requires PHP:      7.2
+ * Requires PHP:      7.4
  *
  * @package SmartSupportChatbot
  */
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * ثابت‌های افزونه.
  */
-define( 'SSC_CHATBOT_VERSION', '3.2.0' );
+define( 'SSC_CHATBOT_VERSION', '4.0.0' );
 define( 'SSC_CHATBOT_FILE', __FILE__ );
 define( 'SSC_CHATBOT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SSC_CHATBOT_URL', plugin_dir_url( __FILE__ ) );

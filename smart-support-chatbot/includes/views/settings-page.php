@@ -311,12 +311,25 @@ $secret_ph = function ( $key ) {
 						<td>
 							<select name="font_family" id="font_family">
 								<option value="vazirmatn" <?php selected( $s['font_family'], 'vazirmatn' ); ?>><?php esc_html_e( 'وزیرمتن (فارسی)', 'smart-support-chatbot' ); ?></option>
-								<option value="system" <?php selected( $s['font_family'], 'system' ); ?>><?php esc_html_e( 'فونت سیستمی (بدون بارگذاری خارجی)', 'smart-support-chatbot' ); ?></option>
-								<option value="inter" <?php selected( $s['font_family'], 'inter' ); ?>>Inter (Google)</option>
-								<option value="roboto" <?php selected( $s['font_family'], 'roboto' ); ?>>Roboto (Google)</option>
+								<option value="system" <?php selected( $s['font_family'], 'system' ); ?>><?php esc_html_e( 'فونت سیستمی', 'smart-support-chatbot' ); ?></option>
+								<option value="inter" <?php selected( $s['font_family'], 'inter' ); ?>>Inter</option>
+								<option value="roboto" <?php selected( $s['font_family'], 'roboto' ); ?>>Roboto</option>
 								<option value="custom" <?php selected( $s['font_family'], 'custom' ); ?>><?php esc_html_e( 'سفارشی (آدرس فونت)', 'smart-support-chatbot' ); ?></option>
 							</select>
-							<p class="description"><?php esc_html_e( 'برای بازار فارسی «وزیرمتن» و برای سایت‌های چندزبانه «سیستمی» یا Google پیشنهاد می‌شود.', 'smart-support-chatbot' ); ?></p>
+							<p class="description">
+								<?php esc_html_e( 'همهٔ فونت‌ها از روی سرور خودتان بارگذاری می‌شوند؛ هیچ درخواستی به سرویس خارجی ارسال نمی‌شود.', 'smart-support-chatbot' ); ?>
+								<?php
+								$ssc_font_probe = array(
+									'vazirmatn' => 'vazirmatn-400.woff2',
+									'inter'     => 'inter-400.woff2',
+									'roboto'    => 'roboto-400.woff2',
+								);
+								$ssc_font_cur   = isset( $s['font_family'] ) ? $s['font_family'] : 'vazirmatn';
+								if ( isset( $ssc_font_probe[ $ssc_font_cur ] ) && ! file_exists( SSC_CHATBOT_DIR . 'assets/fonts/' . $ssc_font_probe[ $ssc_font_cur ] ) ) :
+									?>
+									<br><strong><?php esc_html_e( '⚠️ فایل این فونت همراه افزونه نیست؛ فعلاً فونت سیستمی استفاده می‌شود.', 'smart-support-chatbot' ); ?></strong>
+								<?php endif; ?>
+							</p>
 						</td>
 					</tr>
 					<tr class="ssc-font-custom">

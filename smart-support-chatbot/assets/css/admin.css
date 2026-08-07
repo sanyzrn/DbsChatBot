@@ -802,3 +802,14 @@ a.ssc-insight:hover { transform: translateY(-3px); box-shadow: var(--nfx-shadow-
 }
 /* موقعیت «چپ»: دکمه سمت چپ پنجره. */
 .nfx-preview.is-left .nfx-preview__btn { order: 2; }
+
+/* احترام به «کاهش حرکت» سیستم‌عامل. */
+@media ( prefers-reduced-motion: reduce ) {
+	.ssc-admin *,
+	.ssc-admin *::before,
+	.ssc-admin *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}

@@ -83,7 +83,10 @@ $render_product_options = function ( $selected, $map ) {
 			<tbody>
 				<?php if ( empty( $bank ) ) : ?>
 					<tr class="ssc-qa-row">
-						<td><select name="qa_product[]" class="widefat"><?php $render_product_options( 'general', $products_map ); ?></select></td>
+						<td>
+							<input type="hidden" name="qa_id[]" value="0">
+							<select name="qa_product[]" class="widefat"><?php $render_product_options( 'general', $products_map ); ?></select>
+						</td>
 						<td><textarea name="qa_question[]" rows="2" class="widefat"></textarea></td>
 						<td><textarea name="qa_keywords[]" rows="2" class="widefat"></textarea></td>
 						<td><textarea name="qa_answer[]" rows="2" class="widefat"></textarea></td>
@@ -91,8 +94,11 @@ $render_product_options = function ( $selected, $map ) {
 					</tr>
 				<?php else : ?>
 					<?php foreach ( $bank as $row ) : ?>
-						<tr class="ssc-qa-row">
-							<td><select name="qa_product[]" class="widefat"><?php $render_product_options( isset( $row['product_id'] ) ? $row['product_id'] : 'general', $products_map ); ?></select></td>
+						<tr class="ssc-qa-row" data-qa-id="<?php echo esc_attr( isset( $row['id'] ) ? $row['id'] : 0 ); ?>">
+							<td>
+								<input type="hidden" name="qa_id[]" value="<?php echo esc_attr( isset( $row['id'] ) ? $row['id'] : 0 ); ?>">
+								<select name="qa_product[]" class="widefat"><?php $render_product_options( isset( $row['product_id'] ) ? $row['product_id'] : 'general', $products_map ); ?></select>
+							</td>
 							<td><textarea name="qa_question[]" rows="2" class="widefat"><?php echo esc_textarea( isset( $row['question'] ) ? $row['question'] : '' ); ?></textarea></td>
 							<td><textarea name="qa_keywords[]" rows="2" class="widefat"><?php echo esc_textarea( isset( $row['keywords'] ) ? $row['keywords'] : '' ); ?></textarea></td>
 							<td><textarea name="qa_answer[]" rows="2" class="widefat"><?php echo esc_textarea( isset( $row['answer'] ) ? $row['answer'] : '' ); ?></textarea></td>
@@ -102,6 +108,9 @@ $render_product_options = function ( $selected, $map ) {
 				<?php endif; ?>
 			</tbody>
 		</table>
+		<?php // شناسهٔ ردیف‌های حذف‌شده + تعداد کل ردیف‌های رندرشده (برای تشخیص بریده‌شدن POST). ?>
+		<input type="hidden" name="qa_deleted" id="ssc-qa-deleted" value="">
+		<input type="hidden" name="qa_rendered" value="<?php echo esc_attr( count( (array) $bank ) ); ?>">
 		<p><button type="button" class="button button-secondary" id="ssc-add-qa"><?php esc_html_e( '+ افزودن سوال/جواب', 'smart-support-chatbot' ); ?></button></p>
 
 		<!-- قالب ردیف خالی برای JS -->

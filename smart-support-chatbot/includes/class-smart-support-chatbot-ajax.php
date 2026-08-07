@@ -126,6 +126,38 @@ class SSC_Chatbot_Ajax {
 	}
 
 	/**
+	 * اعتبارسنجی شناسهٔ محصول در برابر فهرست واقعی محصولات.
+	 * هر مقدار ناشناخته به 'general' نگاشت می‌شود تا مهاجم نتواند جدول آمار را
+	 * با متریک‌های دلخواه و بی‌نهایت پر کند (و داشبورد را آلوده کند).
+	 *
+	 * @param string $product_id ورودی خام.
+	 * @return string شناسهٔ معتبر.
+	 */
+	protected function sanitize_product_id( $product_id ) {
+		$product_id = (string) $product_id;
+		if ( '' === $product_id || 'general' === $product_id ) {
+			return 'general';
+		}
+		if ( $product_id === (string) SSC_Chatbot_Settings::get( 'company_id', 'company' ) ) {
+			return $product_id;
+		}
+		$map = SSC_Chatbot_Settings::products_map();
+		return isset( $map[ $product_id ] ) ? $product_id : 'general';
+	}
+
+	/**
+	 * ساخت توکن امضاشده برای یک ردیف تاریخچه.
+	 * بدون این توکن، هر بازدیدکننده می‌تواند روی هر log_id (که عددی ترتیبی و
+	 * قابل‌شمارش است) رأی بدهد و آمار بازخورد را مسموم کند.
+	 *
+	 * @param int $log_id شناسهٔ ردیف.
+	 * @return string
+	 */
+	protected function log_token( $log_id ) {
+		return hash_hmac( 'sha256', 'ssc_log_' . (int) $log_id, wp_salt( 'nonce' ) );
+	}
+
+	/**
 	 * کنترل محدودیت تعداد درخواست روزانه.
 	 * روش محدودسازی قابل‌انتخاب است: بر اساس IP، نشست (per-session)، هر دو، یا خاموش.
 	 *
@@ -140,10 +172,24 @@ class SSC_Chatbot_Ajax {
 		$ip     = $this->get_ip();
 		$checks = array();
 
+		// سقف‌های پیش‌فرض هر سطل. chat/submit از تنظیمات کاربر می‌آیند؛
+		// csat و suggest ماهیت متفاوتی دارند و سقف اختصاصی می‌گیرند.
+		$ip_limit   = (int) SSC_Chatbot_Settings::get( 'ai_rate_limit', 100 );
+		$sess_limit = (int) SSC_Chatbot_Settings::get( 'session_rate_limit', 50 );
+		if ( 'csat' === $bucket ) {
+			// نظرسنجی رضایت: چند رأی در روز کافی است.
+			$ip_limit   = (int) apply_filters( 'ssc_chatbot_csat_ip_limit', 20 );
+			$sess_limit = (int) apply_filters( 'ssc_chatbot_csat_session_limit', 3 );
+		} elseif ( 'suggest' === $bucket ) {
+			// تکمیل خودکار حین تایپ: پرتکرار است، پس سقف سخاوتمند اما محدود.
+			$ip_limit   = (int) apply_filters( 'ssc_chatbot_suggest_ip_limit', 1000 );
+			$sess_limit = (int) apply_filters( 'ssc_chatbot_suggest_session_limit', 600 );
+		}
+
 		if ( 'ip' === $mode || 'both' === $mode ) {
 			$checks[] = array(
 				'metric' => 'rl:' . $bucket . ':ip:' . md5( $ip ),
-				'limit'  => (int) SSC_Chatbot_Settings::get( 'ai_rate_limit', 100 ),
+				'limit'  => $ip_limit,
 			);
 		}
 		if ( 'session' === $mode || 'both' === $mode ) {
@@ -151,8 +197,7 @@ class SSC_Chatbot_Ajax {
 			if ( '' === $cid ) {
 				$cid = $ip; // در نبود شناسهٔ نشست، به IP برمی‌گردیم.
 			}
-			$sess_limit = (int) SSC_Chatbot_Settings::get( 'session_rate_limit', 50 );
-			$checks[]   = array(
+			$checks[] = array(
 				'metric' => 'rl:' . $bucket . ':sess:' . md5( $cid ),
 				'limit'  => $sess_limit,
 			);
@@ -190,7 +235,7 @@ class SSC_Chatbot_Ajax {
 		}
 
 		$message    = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
-		$product_id = isset( $_POST['product'] ) ? sanitize_text_field( wp_unslash( $_POST['product'] ) ) : 'general';
+		$product_id = $this->sanitize_product_id( isset( $_POST['product'] ) ? sanitize_text_field( wp_unslash( $_POST['product'] ) ) : 'general' );
 		$history    = $this->parse_history( isset( $_POST['history'] ) ? wp_unslash( $_POST['history'] ) : '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- در parse_history پاکسازی می‌شود.
 
 		if ( '' === trim( $message ) ) {
@@ -232,9 +277,10 @@ class SSC_Chatbot_Ajax {
 		}
 
 		$resp = array( 'reply' => $reply );
-		// شناسهٔ لاگ فقط برای پاسخ‌های واقعی (برای بازخورد 👍/👎).
+		// شناسهٔ لاگ فقط برای پاسخ‌های واقعی (برای بازخورد 👍/👎) + توکن امضاشدهٔ مالکیت.
 		if ( $log_id && in_array( $this->last_source, array( 'ai', 'bank' ), true ) ) {
-			$resp['log_id'] = $log_id;
+			$resp['log_id']    = $log_id;
+			$resp['log_token'] = $this->log_token( $log_id );
 		}
 
 		// چیپس‌های پیگیری هوشمند (سوالات مرتبط از بانک) پس از پاسخ‌های واقعی.
@@ -262,9 +308,16 @@ class SSC_Chatbot_Ajax {
 		check_ajax_referer( 'ssc_chatbot_nonce', 'nonce' );
 		$id     = isset( $_POST['log_id'] ) ? (int) $_POST['log_id'] : 0;
 		$rating = isset( $_POST['rating'] ) ? (int) $_POST['rating'] : 0;
-		if ( $id > 0 && 0 !== $rating ) {
-			SSC_Chatbot_DB::set_chatlog_rating( $id, $rating );
+		$token  = isset( $_POST['log_token'] ) ? sanitize_text_field( wp_unslash( $_POST['log_token'] ) ) : '';
+
+		// فقط کسی که خودِ این پاسخ را دریافت کرده می‌تواند رأی بدهد
+		// (شناسه‌های ترتیبی قابل‌شمارش‌اند؛ بدون این بررسی آمار بازخورد جعل‌پذیر است).
+		if ( $id <= 0 || 0 === $rating || ! hash_equals( $this->log_token( $id ), $token ) ) {
+			wp_send_json_error( array( 'message' => 'درخواست نامعتبر است.' ), 403 );
 		}
+
+		// set_chatlog_rating فقط ردیف‌های بدون رأی را به‌روزرسانی می‌کند (رأی مجدد نادیده گرفته می‌شود).
+		SSC_Chatbot_DB::set_chatlog_rating( $id, $rating );
 		wp_send_json_success();
 	}
 
@@ -850,8 +903,12 @@ class SSC_Chatbot_Ajax {
 		if ( 'yes' !== SSC_Chatbot_Settings::get( 'autocomplete_enabled', 'yes' ) ) {
 			wp_send_json_success( array( 'items' => array() ) );
 		}
+		// هر keystroke یک واکشی و امتیازدهی کامل روی دیتابیس است؛ بدون سقف، اهرم ارزانِ DoS.
+		if ( ! $this->check_rate_limit( 'suggest' ) ) {
+			wp_send_json_success( array( 'items' => array() ) );
+		}
 		$term       = isset( $_POST['term'] ) ? sanitize_text_field( wp_unslash( $_POST['term'] ) ) : '';
-		$product_id = isset( $_POST['product'] ) ? sanitize_text_field( wp_unslash( $_POST['product'] ) ) : 'general';
+		$product_id = $this->sanitize_product_id( isset( $_POST['product'] ) ? sanitize_text_field( wp_unslash( $_POST['product'] ) ) : 'general' );
 		if ( mb_strlen( trim( $term ) ) < 2 ) {
 			wp_send_json_success( array( 'items' => array() ) );
 		}
@@ -913,6 +970,10 @@ class SSC_Chatbot_Ajax {
 	 */
 	public function handle_csat() {
 		check_ajax_referer( 'ssc_chatbot_nonce', 'nonce' );
+		// بدون محدودسازی، میانگین رضایت با رأی انبوه کاملاً جعل‌پذیر است.
+		if ( ! $this->check_rate_limit( 'csat' ) ) {
+			wp_send_json_error( array( 'message' => 'امتیاز شما قبلاً ثبت شده است.' ), 429 );
+		}
 		$score = isset( $_POST['score'] ) ? (int) $_POST['score'] : 0;
 		if ( $score >= 1 && $score <= 5 ) {
 			SSC_Chatbot_DB::record_csat( $score );
@@ -943,10 +1004,10 @@ class SSC_Chatbot_Ajax {
 			);
 		}
 
+		// کلید در هدر ارسال می‌شود، نه در query string — تا در لاگ سرور/پروکسی/CDN ثبت نشود.
 		$endpoint = sprintf(
-			'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s',
-			rawurlencode( $model ),
-			rawurlencode( $api_key )
+			'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent',
+			rawurlencode( $model )
 		);
 
 		$body = array(
@@ -958,7 +1019,14 @@ class SSC_Chatbot_Ajax {
 			),
 		);
 
-		$data = $this->remote_json( $endpoint, array( 'Content-Type' => 'application/json' ), $body );
+		$data = $this->remote_json(
+			$endpoint,
+			array(
+				'Content-Type'     => 'application/json',
+				'x-goog-api-key'   => $api_key,
+			),
+			$body
+		);
 		if ( isset( $data['candidates'][0]['content']['parts'][0]['text'] ) ) {
 			return trim( $data['candidates'][0]['content']['parts'][0]['text'] );
 		}

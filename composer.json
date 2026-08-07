@@ -1,7 +1,25 @@
 {
+    "name": "dbs/smart-support-chatbot",
+    "description": "دستیار هوشمند گفتگو و پشتیبانی برای وردپرس — چند موتور هوش مصنوعی، پایگاه دانش آفلاین و پنل مدیریت کامل.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=7.4"
+    },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.13",
         "wp-coding-standards/wpcs": "^3.3",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "scripts": {
+        "lint": "phpcs",
+        "lint:fix": "phpcbf",
+        "build": "bash bin/build-zip.sh",
+        "fonts": "bash bin/fetch-fonts.sh"
     }
 }

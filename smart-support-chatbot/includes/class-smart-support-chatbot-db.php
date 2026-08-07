@@ -42,7 +42,7 @@ class SSC_Chatbot_DB {
 	/**
 	 * نسخه ساختار دیتابیس (برای مهاجرت).
 	 */
-	const DB_VERSION = '6';
+	const DB_VERSION = '7';
 
 	/**
 	 * دریافت نام کامل جدول.
@@ -116,7 +116,7 @@ class SSC_Chatbot_DB {
 			reporter_type VARCHAR(50) NULL,
 			status VARCHAR(20) NOT NULL DEFAULT 'new',
 			ip VARCHAR(100) NULL,
-			created_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			created_at DATETIME NULL DEFAULT NULL,
 			PRIMARY KEY  (id),
 			KEY type (type),
 			KEY status (status),
@@ -134,7 +134,7 @@ class SSC_Chatbot_DB {
 			in_bank TINYINT(1) NOT NULL DEFAULT 0,
 			rating TINYINT(1) NOT NULL DEFAULT 0,
 			ip VARCHAR(100) NULL,
-			created_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			created_at DATETIME NULL DEFAULT NULL,
 			PRIMARY KEY  (id),
 			KEY source (source),
 			KEY created_at (created_at)
@@ -149,7 +149,7 @@ class SSC_Chatbot_DB {
 			keywords TEXT NULL,
 			answer LONGTEXT NOT NULL,
 			usage_count INT UNSIGNED NOT NULL DEFAULT 0,
-			created_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			created_at DATETIME NULL DEFAULT NULL,
 			PRIMARY KEY  (id),
 			KEY product_id (product_id),
 			FULLTEXT KEY ft_qa (question, keywords)
@@ -164,7 +164,7 @@ class SSC_Chatbot_DB {
 			source_title VARCHAR(191) NOT NULL DEFAULT '',
 			chunk LONGTEXT NOT NULL,
 			search_text LONGTEXT NULL,
-			created_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			created_at DATETIME NULL DEFAULT NULL,
 			PRIMARY KEY  (id),
 			KEY product_id (product_id),
 			KEY doc_id (doc_id),
@@ -897,14 +897,21 @@ class SSC_Chatbot_DB {
 
 	/**
 	 * ثبت امتیاز بازخورد یک پاسخ (1 = مفید، -1 = نامفید).
+	 * فقط ردیف‌هایی که هنوز رأی نخورده‌اند (rating = 0) به‌روزرسانی می‌شوند تا
+	 * رأی مجدد/انبوه نتواند آمار بازخورد را جابه‌جا کند.
 	 *
 	 * @param int $id     شناسه ردیف تاریخچه.
 	 * @param int $rating امتیاز.
+	 * @return bool آیا رأی ثبت شد.
 	 */
 	public static function set_chatlog_rating( $id, $rating ) {
 		global $wpdb;
+		$table  = self::chatlog_table_name();
 		$rating = ( $rating > 0 ) ? 1 : -1;
-		$wpdb->update( self::chatlog_table_name(), array( 'rating' => $rating ), array( 'id' => (int) $id ), array( '%d' ), array( '%d' ) ); // phpcs:ignore
+		// phpcs:ignore WordPress.DB
+		return (bool) $wpdb->query(
+			$wpdb->prepare( "UPDATE {$table} SET rating = %d WHERE id = %d AND rating = 0", $rating, (int) $id )
+		);
 	}
 
 	/**
@@ -999,9 +1006,72 @@ class SSC_Chatbot_DB {
 	}
 
 	/**
-	 * جایگزینی کامل بانک با مجموعهٔ جدید (برای ذخیرهٔ پنل).
+	 * ذخیرهٔ غیرمخرب بانک: به‌روزرسانی ردیف‌های موجود بر اساس شناسه، درج ردیف‌های جدید،
+	 * و حذف فقط ردیف‌هایی که کاربر صراحتاً حذفشان کرده است.
+	 *
+	 * جایگزین qa_replace_all قدیمی (DELETE ALL + INSERT) که دو مشکل داشت:
+	 *  ۱) usage_count هر ردیف در هر ذخیره صفر می‌شد،
+	 *  ۲) اگر POST به‌خاطر max_input_vars بریده می‌شد، ردیف‌های ارسال‌نشده برای همیشه حذف می‌شدند.
+	 *
+	 * @param array $rows       ردیف‌ها (هر کدام با کلید اختیاری id).
+	 * @param array $delete_ids شناسه‌هایی که باید حذف شوند.
+	 * @return bool
+	 */
+	public static function qa_save_bulk( $rows, $delete_ids = array() ) {
+		global $wpdb;
+		$table = self::qa_table_name();
+
+		$wpdb->query( 'START TRANSACTION' ); // phpcs:ignore WordPress.DB
+		$ok = true;
+
+		// حذف صریح.
+		foreach ( (array) $delete_ids as $del_id ) {
+			$del_id = (int) $del_id;
+			if ( $del_id <= 0 ) {
+				continue;
+			}
+			if ( false === $wpdb->delete( $table, array( 'id' => $del_id ), array( '%d' ) ) ) { // phpcs:ignore WordPress.DB
+				$ok = false;
+				break;
+			}
+		}
+
+		if ( $ok ) {
+			foreach ( (array) $rows as $r ) {
+				if ( empty( $r['question'] ) || empty( $r['answer'] ) ) {
+					continue;
+				}
+				$id   = isset( $r['id'] ) ? (int) $r['id'] : 0;
+				$data = array(
+					'product_id' => isset( $r['product_id'] ) ? $r['product_id'] : 'general',
+					'question'   => $r['question'],
+					'keywords'   => isset( $r['keywords'] ) ? $r['keywords'] : '',
+					'answer'     => $r['answer'],
+				);
+
+				if ( $id > 0 ) {
+					// به‌روزرسانی — usage_count و created_at دست‌نخورده می‌مانند.
+					$res = $wpdb->update( $table, $data, array( 'id' => $id ), array( '%s', '%s', '%s', '%s' ), array( '%d' ) ); // phpcs:ignore WordPress.DB
+					if ( false === $res ) {
+						$ok = false;
+						break;
+					}
+				} elseif ( false === self::qa_insert( $data ) ) {
+					$ok = false;
+					break;
+				}
+			}
+		}
+
+		$wpdb->query( $ok ? 'COMMIT' : 'ROLLBACK' ); // phpcs:ignore WordPress.DB
+		return $ok;
+	}
+
+	/**
+	 * جایگزینی کامل بانک (فقط برای ایمپورت با حالت «جایگزینی»).
 	 *
 	 * @param array $rows ردیف‌ها.
+	 * @return bool
 	 */
 	public static function qa_replace_all( $rows ) {
 		global $wpdb;

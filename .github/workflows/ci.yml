@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php-lint:
+    name: PHP syntax (${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # پایین‌ترین نسخهٔ پشتیبانی‌شده تا جدیدترین پایدار.
+        php: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Lint every PHP file
+        run: |
+          err=0
+          while IFS= read -r -d '' f; do
+            php -l "$f" > /dev/null || { echo "::error file=$f::PHP syntax error"; err=1; }
+          done < <(find smart-support-chatbot -name '*.php' -print0)
+          exit $err
+
+  phpcs:
+    name: WordPress coding standards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: composer
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.json') }}
+          restore-keys: composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Run PHPCS
+        run: vendor/bin/phpcs --report=full --report-summary
+
+  js-lint:
+    name: JavaScript syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check every JS file parses
+        run: |
+          err=0
+          for f in $(find smart-support-chatbot -name '*.js'); do
+            node --check "$f" || { echo "::error file=$f::JS syntax error"; err=1; }
+          done
+          exit $err
+
+  plugin-checks:
+    name: Plugin sanity checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version numbers agree
+        run: |
+          header=$(grep -oP '^\s*\*\s*Version:\s*\K[0-9.]+' smart-support-chatbot/smart-support-chatbot.php)
+          const=$(grep -oP "SSC_CHATBOT_VERSION',\s*'\K[0-9.]+" smart-support-chatbot/smart-support-chatbot.php)
+          stable=$(grep -oP '^Stable tag:\s*\K[0-9.]+' smart-support-chatbot/readme.txt)
+          echo "header=$header const=$const stable=$stable"
+          test "$header" = "$const" && test "$header" = "$stable" \
+            || { echo "::error::Version mismatch between plugin header, constant and readme Stable tag"; exit 1; }
+
+      - name: Text domain matches plugin slug
+        run: |
+          td=$(grep -oP '^\s*\*\s*Text Domain:\s*\K[a-z0-9-]+' smart-support-chatbot/smart-support-chatbot.php)
+          test "$td" = "smart-support-chatbot" \
+            || { echo "::error::Text Domain '$td' does not match the plugin slug"; exit 1; }
+
+      - name: No external CDN assets
+        run: |
+          # افزونه نباید فونت/اسکریپت از CDN خارجی بارگذاری کند (پایداری + حریم خصوصی).
+          if grep -rn "cdn.jsdelivr.net\|fonts.googleapis.com\|fonts.gstatic.com\|cdnjs.cloudflare.com" \
+               smart-support-chatbot --include='*.php' --include='*.css' --include='*.js'; then
+            echo "::error::External CDN reference found"
+            exit 1
+          fi
+
+      - name: readme.txt has the required sections
+        run: |
+          for section in "Description" "Installation" "Frequently Asked Questions" "Changelog" "Upgrade Notice"; do
+            grep -q "^== $section ==" smart-support-chatbot/readme.txt \
+              || { echo "::error::readme.txt is missing '== $section =='"; exit 1; }
+          done
+
+      - name: No leftover legacy prefix outside the migration path
+        run: |
+          # ارجاع به nafas_ فقط در کد مهاجرت و حذف افزونه مجاز است.
+          hits=$(grep -rn "nafas" smart-support-chatbot --include='*.php' --include='*.js' --include='*.css' \
+                 | grep -v "class-smart-support-chatbot-db.php" \
+                 | grep -v "uninstall.php" \
+                 | grep -v "smart-support-chatbot.php:" || true)
+          if [ -n "$hits" ]; then
+            echo "$hits"
+            echo "::error::Legacy 'nafas' prefix found outside the migration path"
+            exit 1
+          fi
