@@ -42,7 +42,7 @@ class SSC_Chatbot_DB {
 	/**
 	 * نسخه ساختار دیتابیس (برای مهاجرت).
 	 */
-	const DB_VERSION = '7';
+	const DB_VERSION = '8';
 
 	/**
 	 * دریافت نام کامل جدول.
@@ -114,6 +114,7 @@ class SSC_Chatbot_DB {
 			batch_number VARCHAR(100) NULL,
 			concomitant_drugs TEXT NULL,
 			reporter_type VARCHAR(50) NULL,
+			extra_fields LONGTEXT NULL,
 			status VARCHAR(20) NOT NULL DEFAULT 'new',
 			ip VARCHAR(100) NULL,
 			created_at DATETIME NULL DEFAULT NULL,
@@ -346,11 +347,12 @@ class SSC_Chatbot_DB {
 				'batch_number'      => isset( $data['batch_number'] ) ? $data['batch_number'] : null,
 				'concomitant_drugs' => isset( $data['concomitant_drugs'] ) ? $data['concomitant_drugs'] : null,
 				'reporter_type'     => isset( $data['reporter_type'] ) ? $data['reporter_type'] : null,
+				'extra_fields'      => isset( $data['extra_fields'] ) ? $data['extra_fields'] : null,
 				'status'            => 'new',
 				'ip'                => isset( $data['ip'] ) ? $data['ip'] : '',
 				'created_at'        => current_time( 'mysql' ),
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
+			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
 		);
 		return $inserted ? $wpdb->insert_id : false;
 	}

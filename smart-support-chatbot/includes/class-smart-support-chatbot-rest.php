@@ -298,6 +298,7 @@ class SSC_Chatbot_REST {
 			'concomitant_drugs',
 			'reporter_type',
 			'nfx_hp',
+			'extra',
 		);
 		// نبود این مقدار نباید تلهٔ زمانیِ ضداسپم را فعال کند (مثل مسیر AJAX).
 		$elapsed = $request->get_param( 'nfx_elapsed' );

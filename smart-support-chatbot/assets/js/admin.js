@@ -165,6 +165,37 @@
 			$( this ).closest( 'tr' ).remove();
 		} );
 
+		/* ---------- مدیریت فیلدهای سفارشی فرم‌ساز (افزودن/حذف ردیف) ---------- */
+		$( '#ssc-add-field' ).on( 'click', function () {
+			var $tbody = $( '#ssc-form-fields tbody' );
+			var row =
+				'<tr class="ssc-field-row">' +
+					'<td><input type="hidden" name="form_field_key[]" value=""><input type="text" name="form_field_label[]" value="" class="widefat"></td>' +
+					'<td><select name="form_field_type[]" class="widefat">' +
+						'<option value="text">متن کوتاه</option>' +
+						'<option value="textarea">متن بلند</option>' +
+						'<option value="tel">شماره تماس</option>' +
+						'<option value="email">ایمیل</option>' +
+						'<option value="number">عدد</option>' +
+						'<option value="select">انتخابی (Select)</option>' +
+						'<option value="radio">رادیویی (تک‌انتخابی)</option>' +
+						'<option value="checkbox">چک‌باکس (بله/خیر)</option>' +
+					'</select></td>' +
+					'<td><select name="form_field_required[]" class="widefat">' +
+						'<option value="no">خیر</option>' +
+						'<option value="yes">بله</option>' +
+					'</select></td>' +
+					'<td><textarea name="form_field_options[]" rows="2" class="widefat"></textarea></td>' +
+					'<td><input type="text" name="form_field_placeholder[]" value="" class="widefat"></td>' +
+					'<td><button type="button" class="button ssc-remove-field">&times;</button></td>' +
+				'</tr>';
+			$tbody.append( row );
+		} );
+
+		$( '#ssc-form-fields' ).on( 'click', '.ssc-remove-field', function () {
+			$( this ).closest( 'tr' ).remove();
+		} );
+
 		/* ---------- تغییر وضعیت سریع درخواست ---------- */
 		$( '.ssc-status-select' ).on( 'change', function () {
 			var url = $( this ).data( 'url' );

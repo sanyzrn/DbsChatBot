@@ -160,6 +160,7 @@ class SSC_Chatbot_Frontend {
 			'quickReplies'   => array_values( (array) $s['quick_replies'] ),
 			'brochureLabel'  => 'مشاهده بروشور',
 			'adrOptions'     => SSC_Chatbot_Settings::adr_options(),
+			'formFields'     => SSC_Chatbot_Settings::form_fields(),
 			'feedbackEnabled'   => ( 'yes' === $s['feedback_enabled'] ),
 			'typewriter'        => ( 'yes' === $s['typewriter_enabled'] ),
 			'proactiveEnabled'  => ( 'yes' === $s['proactive_enabled'] ),

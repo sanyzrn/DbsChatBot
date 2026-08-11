@@ -999,6 +999,11 @@
 .nfx-consent__cb { margin-top: 3px; flex-shrink: 0; accent-color: var(--nfx-primary); }
 .nfx-consent__link { color: var(--nfx-primary); text-decoration: underline; margin-right: 22px; display: inline-block; }
 
+/* ============ فیلدهای سفارشی فرم‌ساز پویا: گروه رادیویی ============ */
+.nfx-radio-group { display: flex; flex-direction: column; gap: 6px; }
+.nfx-radio-option { display: flex; align-items: center; gap: 7px; font-size: 13px; cursor: pointer; }
+.nfx-radio-option input { accent-color: var(--nfx-primary); flex-shrink: 0; }
+
 /* ============ نسخهٔ ۲.۷: کارت محصول، اقدام‌های پاسخ، پولیش ============ */
 .nfx-prodcard {
 	border: 1px solid var(--nfx-border);

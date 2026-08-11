@@ -768,6 +768,46 @@ class SSC_Chatbot_Admin {
 			$new['products'] = $products;
 		}
 
+		// فیلدهای سفارشی فرم‌ساز پویا.
+		$form_fields = array();
+		if ( isset( $in['form_field_label'] ) && is_array( $in['form_field_label'] ) ) {
+			$types     = SSC_Chatbot_Settings::form_field_types();
+			$labels    = $in['form_field_label'];
+			$keys_in   = isset( $in['form_field_key'] ) ? $in['form_field_key'] : array();
+			$types_in  = isset( $in['form_field_type'] ) ? $in['form_field_type'] : array();
+			$req_in    = isset( $in['form_field_required'] ) ? $in['form_field_required'] : array();
+			$opts_in   = isset( $in['form_field_options'] ) ? $in['form_field_options'] : array();
+			$ph_in     = isset( $in['form_field_placeholder'] ) ? $in['form_field_placeholder'] : array();
+			$seen_keys = array();
+			foreach ( $labels as $i => $label ) {
+				$label = sanitize_text_field( $label );
+				if ( '' === $label ) {
+					continue;
+				}
+				$key = self::make_product_id( isset( $keys_in[ $i ] ) ? $keys_in[ $i ] : '', $label, $seen_keys );
+				if ( '' === $key ) {
+					continue;
+				}
+				$seen_keys[ $key ] = true;
+				$type              = isset( $types_in[ $i ] ) ? sanitize_text_field( $types_in[ $i ] ) : 'text';
+				$type              = in_array( $type, $types, true ) ? $type : 'text';
+				$options           = array();
+				if ( in_array( $type, array( 'select', 'radio' ), true ) && isset( $opts_in[ $i ] ) ) {
+					$lines   = preg_split( '/[\r\n]+/', (string) $opts_in[ $i ] );
+					$options = array_values( array_filter( array_map( 'sanitize_text_field', array_map( 'trim', (array) $lines ) ), 'strlen' ) );
+				}
+				$form_fields[] = array(
+					'key'         => $key,
+					'label'       => $label,
+					'type'        => $type,
+					'required'    => ! empty( $req_in[ $i ] ) && 'yes' === $req_in[ $i ],
+					'options'     => $options,
+					'placeholder' => isset( $ph_in[ $i ] ) ? sanitize_text_field( $ph_in[ $i ] ) : '',
+				);
+			}
+		}
+		$new['form_fields'] = $form_fields;
+
 		// پاسخ‌های پیشنهادی.
 		$new['quick_replies_enabled'] = ( isset( $in['quick_replies_enabled'] ) && ( '1' === (string) $in['quick_replies_enabled'] || 'yes' === $in['quick_replies_enabled'] || 'on' === $in['quick_replies_enabled'] ) ) ? 'yes' : 'no';
 		$quick                        = array();
@@ -879,12 +919,28 @@ class SSC_Chatbot_Admin {
 				'پیامد',
 				'شماره سری ساخت',
 				'داروهای همزمان',
+				'فیلدهای سفارشی',
 				'وضعیت',
 				'IP',
 				'تاریخ',
 			)
 		);
+		$field_labels = wp_list_pluck( SSC_Chatbot_Settings::form_fields(), 'label', 'key' );
 		foreach ( $rows as $r ) {
+			$extra_txt = '';
+			if ( ! empty( $r['extra_fields'] ) ) {
+				$decoded = json_decode( $r['extra_fields'], true );
+				if ( is_array( $decoded ) ) {
+					$parts = array();
+					foreach ( $decoded as $ek => $ev ) {
+						if ( '' === trim( (string) $ev ) ) {
+							continue;
+						}
+						$parts[] = ( isset( $field_labels[ $ek ] ) ? $field_labels[ $ek ] : $ek ) . ': ' . $ev;
+					}
+					$extra_txt = implode( '; ', $parts );
+				}
+			}
 			$cells = array(
 				$r['id'],
 				$r['type'],
@@ -897,6 +953,7 @@ class SSC_Chatbot_Admin {
 				isset( $r['outcome'] ) ? $r['outcome'] : '',
 				isset( $r['batch_number'] ) ? $r['batch_number'] : '',
 				isset( $r['concomitant_drugs'] ) ? $r['concomitant_drugs'] : '',
+				$extra_txt,
 				$r['status'],
 				$r['ip'],
 				$r['created_at'],

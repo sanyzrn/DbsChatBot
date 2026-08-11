@@ -136,6 +136,24 @@ $base_url = admin_url( 'admin.php?page=smart-support-chatbot-submissions' );
 							break;
 						}
 					}
+
+					// فیلدهای سفارشی فرم‌ساز پویا.
+					$custom_values = array();
+					if ( ! empty( $row->extra_fields ) ) {
+						$decoded_extra = json_decode( $row->extra_fields, true );
+						if ( is_array( $decoded_extra ) ) {
+							$field_labels = wp_list_pluck( SSC_Chatbot_Settings::form_fields(), 'label', 'key' );
+							foreach ( $decoded_extra as $ek => $ev ) {
+								if ( '' === trim( (string) $ev ) ) {
+									continue;
+								}
+								$custom_values[] = array(
+									'label' => isset( $field_labels[ $ek ] ) ? $field_labels[ $ek ] : $ek,
+									'value' => $ev,
+								);
+							}
+						}
+					}
 					?>
 					<tr>
 						<td><?php echo esc_html( $row->id ); ?></td>
@@ -181,6 +199,17 @@ $base_url = admin_url( 'admin.php?page=smart-support-chatbot-submissions' );
 													<dt><?php echo esc_html( $fl ); ?></dt>
 													<dd><?php echo esc_html( $row->$fk ); ?></dd>
 												<?php endif; ?>
+											<?php endforeach; ?>
+										</dl>
+									</div>
+								<?php endif; ?>
+								<?php if ( $custom_values ) : ?>
+									<div class="ssc-detail__block">
+										<h4><?php esc_html_e( 'فیلدهای سفارشی', 'smart-support-chatbot' ); ?></h4>
+										<dl class="ssc-detail__grid">
+											<?php foreach ( $custom_values as $cv ) : ?>
+												<dt><?php echo esc_html( $cv['label'] ); ?></dt>
+												<dd><?php echo esc_html( $cv['value'] ); ?></dd>
 											<?php endforeach; ?>
 										</dl>
 									</div>
