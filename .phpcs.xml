@@ -11,6 +11,7 @@
     <exclude-pattern>*\.min\.js$</exclude-pattern>
     <!-- فایل‌های JS (phpcs نباید آن‌ها را بررسی کند) -->
     <exclude-pattern>*/assets/js/*</exclude-pattern>
+    <exclude-pattern>*/blocks/*/*.js</exclude-pattern>
 
     <!-- استاندارد اصلی وردپرس -->
     <rule ref="WordPress">
@@ -30,16 +31,29 @@
         <exclude-pattern>*/class-smart-support-chatbot-db.php</exclude-pattern>
     </rule>
 
+    <!--
+      نام فایل کلاس‌ها عمداً از اسلاگ کامل افزونه (smart-support-chatbot-*) پیروی می‌کند
+      نه از پیش‌وند کوتاه کلاس (SSC_*) — برای یکدستی با نام دارایی‌ها/آدرس‌ها.
+      index.asset.php هم پسوند اجباری wp-scripts برای مانیفست وابستگی بلوک است.
+    -->
+    <rule ref="WordPress.Files.FileName.InvalidClassFileName">
+        <exclude-pattern>*/includes/*.php</exclude-pattern>
+        <exclude-pattern>*/widgets/*.php</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+        <exclude-pattern>*/blocks/*/index.asset.php</exclude-pattern>
+    </rule>
+
     <!-- حداقل نسخه PHP -->
     <config name="minimum_supported_wp_version" value="5.9"/>
     <config name="testVersion" value="7.4-"/>
 
-    <!-- پیش‌وند متغیر افزونه -->
+    <!-- پیش‌وند متغیر افزونه (حداقل ۴ کاراکتر لازم است) -->
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
         <properties>
             <property name="prefixes" type="array">
-                <element value="ssc"/>
-                <element value="SSC"/>
+                <element value="ssc_chatbot"/>
+                <element value="SSC_CHATBOT"/>
                 <element value="SSC_Chatbot"/>
             </property>
         </properties>

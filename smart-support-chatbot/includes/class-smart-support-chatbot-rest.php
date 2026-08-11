@@ -287,8 +287,16 @@ class SSC_Chatbot_REST {
 	public function submit( $request ) {
 		$this->bridge_cid( $request );
 		$keys = array(
-			'type', 'name', 'phone', 'description', 'product',
-			'severity', 'outcome', 'batch_number', 'concomitant_drugs', 'reporter_type',
+			'type',
+			'name',
+			'phone',
+			'description',
+			'product',
+			'severity',
+			'outcome',
+			'batch_number',
+			'concomitant_drugs',
+			'reporter_type',
 			'nfx_hp',
 		);
 		// نبود این مقدار نباید تلهٔ زمانیِ ضداسپم را فعال کند (مثل مسیر AJAX).
