@@ -434,12 +434,3 @@ class SSC_Chatbot_Elementor_Widget extends Widget_Base {
 		echo SSC_Chatbot()->frontend->render( $overrides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- خروجی امن HTML کانتینر.
 	}
 }
-
-/**
- * دسترسی کوتاه به نمونه افزونه.
- *
- * @return SSC_Chatbot
- */
-function SSC_Chatbot() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals,WordPress.NamingConventions.ValidFunctionName
-	return SSC_Chatbot::instance();
-}

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * placeholder فیلد حساس: اگر مقداری ذخیره شده، به‌جای نمایش کلید، وضعیت «ذخیره‌شده» را نشان می‌دهد.
+ * Placeholder فیلد حساس: اگر مقداری ذخیره شده، به‌جای نمایش کلید، وضعیت «ذخیره‌شده» را نشان می‌دهد.
  *
  * @param string $key کلید.
  * @return string
@@ -661,7 +661,15 @@ $secret_ph = function ( $key ) {
 						<th><?php esc_html_e( 'روزهای کاری', 'smart-support-chatbot' ); ?></th>
 						<td>
 							<?php
-							$days_labels = array( 6 => 'شنبه', 0 => 'یکشنبه', 1 => 'دوشنبه', 2 => 'سه‌شنبه', 3 => 'چهارشنبه', 4 => 'پنجشنبه', 5 => 'جمعه' );
+							$days_labels = array(
+								6 => 'شنبه',
+								0 => 'یکشنبه',
+								1 => 'دوشنبه',
+								2 => 'سه‌شنبه',
+								3 => 'چهارشنبه',
+								4 => 'پنجشنبه',
+								5 => 'جمعه',
+							);
 							$office_days = array_map( 'intval', (array) $s['office_days'] );
 							foreach ( $days_labels as $dnum => $dlabel ) :
 								?>

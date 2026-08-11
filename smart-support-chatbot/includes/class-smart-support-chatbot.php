@@ -68,7 +68,7 @@ final class SSC_Chatbot {
 		$this->frontend = new SSC_Chatbot_Frontend();
 		$this->ajax     = new SSC_Chatbot_Ajax();
 		// REST روی همان لایهٔ سرویسِ کلاس AJAX سوار می‌شود تا رفتار هر دو مسیر یکسان بماند.
-		$this->rest     = new SSC_Chatbot_REST( $this->ajax );
+		$this->rest = new SSC_Chatbot_REST( $this->ajax );
 
 		if ( is_admin() ) {
 			$this->admin = new SSC_Chatbot_Admin();

@@ -376,7 +376,7 @@ class SSC_Chatbot_DB {
 			'orderby'   => 'created_at',
 			'order'     => 'DESC',
 		);
-		$args = wp_parse_args( $args, $defaults );
+		$args     = wp_parse_args( $args, $defaults );
 
 		$where  = array( '1=1' );
 		$params = array();
@@ -421,8 +421,8 @@ class SSC_Chatbot_DB {
 		$total     = $params ? $wpdb->get_var( $wpdb->prepare( $count_sql, $params ) ) : $wpdb->get_var( $count_sql ); // phpcs:ignore
 
 		// واکشی ردیف‌ها.
-		$query     = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d";
-		$q_params  = array_merge( $params, array( $per_page, $offset ) );
+		$query    = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d";
+		$q_params = array_merge( $params, array( $per_page, $offset ) );
 		$rows      = $wpdb->get_results( $wpdb->prepare( $query, $q_params ) ); // phpcs:ignore
 
 		return array(
@@ -506,7 +506,13 @@ class SSC_Chatbot_DB {
 		$table = self::table_name();
 		$args  = wp_parse_args(
 			$args,
-			array( 'type' => '', 'status' => '', 'search' => '', 'date_from' => '', 'date_to' => '' )
+			array(
+				'type' => '',
+				'status' => '',
+				'search' => '',
+				'date_from' => '',
+				'date_to' => '',
+			)
 		);
 
 		$where  = array( '1=1' );
@@ -583,10 +589,9 @@ class SSC_Chatbot_DB {
 	/**
 	 * ثبت یک گفتگوی چت در آمار (افزایش شمارنده کل و به تفکیک محصول).
 	 *
-	 * @param string $product_id   شناسه محصول.
-	 * @param string $product_name نام محصول.
+	 * @param string $product_id شناسه محصول.
 	 */
-	public static function record_chat( $product_id, $product_name = '' ) {
+	public static function record_chat( $product_id ) {
 		self::stat_bump( 'chat' );
 		if ( ! empty( $product_id ) ) {
 			self::stat_bump( 'product:' . $product_id );
@@ -685,7 +690,7 @@ class SSC_Chatbot_DB {
 			$wpdb->prepare( "SELECT stat_date, cnt FROM {$table} WHERE metric = %s AND stat_date >= %s", $metric, $start ),
 			ARRAY_A
 		);
-		$out = array();
+		$out   = array();
 		foreach ( (array) $rows as $r ) {
 			$out[ $r['stat_date'] ] = (int) $r['cnt'];
 		}
@@ -706,7 +711,7 @@ class SSC_Chatbot_DB {
 			$wpdb->prepare( "SELECT metric, SUM(cnt) AS c FROM {$table} WHERE metric LIKE %s GROUP BY metric ORDER BY c DESC", $like ),
 			ARRAY_A
 		);
-		$out = array();
+		$out   = array();
 		foreach ( (array) $rows as $r ) {
 			$out[ substr( $r['metric'], strlen( $prefix ) ) ] = (int) $r['c'];
 		}
@@ -1103,20 +1108,20 @@ class SSC_Chatbot_DB {
 	 * در داده‌های بزرگ، ابتدا با ایندکس FULLTEXT پیش‌فیلتر می‌شود؛
 	 * در داده‌های کوچک یا نبود نتیجه، کل ردیف‌ها بارگذاری می‌شوند (حفظ دقت کامل).
 	 *
-	 * @param string $product_id شناسه محصول.
-	 * @param string $match      رشتهٔ جستجوی FULLTEXT (توکن‌های نرمال‌شده + مترادف).
+	 * @param string $product_id  شناسه محصول.
+	 * @param string $match_query رشتهٔ جستجوی FULLTEXT (توکن‌های نرمال‌شده + مترادف).
 	 * @return array
 	 */
-	public static function qa_candidates( $product_id, $match = '' ) {
+	public static function qa_candidates( $product_id, $match_query = '' ) {
 		global $wpdb;
 		$table     = self::qa_table_name();
 		$threshold = (int) apply_filters( 'ssc_chatbot_fulltext_threshold', 300 );
-		if ( '' !== $match && self::qa_count() > $threshold ) {
+		if ( '' !== $match_query && self::qa_count() > $threshold ) {
 			$rows = $wpdb->get_results( // phpcs:ignore WordPress.DB
 				$wpdb->prepare(
 					"SELECT * FROM {$table} WHERE ( product_id = %s OR product_id = 'general' ) AND MATCH( question, keywords ) AGAINST ( %s IN BOOLEAN MODE ) LIMIT 100",
 					$product_id,
-					$match
+					$match_query
 				),
 				ARRAY_A
 			);
@@ -1278,19 +1283,20 @@ class SSC_Chatbot_DB {
 	/**
 	 * ردیف‌های کاندید پایگاه دانش (محصول جاری یا عمومی) برای بازیابی.
 	 *
-	 * @param string $product_id شناسه محصول.
+	 * @param string $product_id  شناسه محصول.
+	 * @param string $match_query رشتهٔ جستجوی FULLTEXT (توکن‌های نرمال‌شده + مترادف).
 	 * @return array
 	 */
-	public static function kb_candidates( $product_id, $match = '' ) {
+	public static function kb_candidates( $product_id, $match_query = '' ) {
 		global $wpdb;
 		$table     = self::kb_table_name();
 		$threshold = (int) apply_filters( 'ssc_chatbot_fulltext_threshold', 300 );
-		if ( '' !== $match && self::kb_count() > $threshold ) {
+		if ( '' !== $match_query && self::kb_count() > $threshold ) {
 			$rows = $wpdb->get_results( // phpcs:ignore WordPress.DB
 				$wpdb->prepare(
 					"SELECT id, source_title, chunk, search_text FROM {$table} WHERE ( product_id = %s OR product_id = 'general' ) AND MATCH( search_text ) AGAINST ( %s IN BOOLEAN MODE ) LIMIT 100",
 					$product_id,
-					$match
+					$match_query
 				),
 				ARRAY_A
 			);

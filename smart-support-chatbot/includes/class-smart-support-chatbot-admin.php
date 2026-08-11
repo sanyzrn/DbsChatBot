@@ -28,11 +28,11 @@ class SSC_Chatbot_Admin {
 	 * ثبت منوی مدیریت.
 	 */
 	public function register_menu() {
-		$counts   = SSC_Chatbot_DB::counts();
+		$counts    = SSC_Chatbot_DB::counts();
 		$new_count = 0;
 		// شمارش درخواست‌های جدید برای نشان (badge).
 		global $wpdb;
-		$table     = SSC_Chatbot_DB::table_name();
+		$table = SSC_Chatbot_DB::table_name();
 		// phpcs:ignore WordPress.DB
 		$new_count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE status = %s", 'new' ) );
 
@@ -152,8 +152,8 @@ class SSC_Chatbot_Admin {
 	 * @return string پیام نتیجه.
 	 */
 	protected function save_kb() {
-		$in  = wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification -- بررسی شده.
-		$new = array();
+		$in                   = wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification -- بررسی شده.
+		$new                  = array();
 		$new['kb_enabled']    = ( isset( $in['kb_enabled'] ) && ( '1' === (string) $in['kb_enabled'] || 'yes' === $in['kb_enabled'] || 'on' === $in['kb_enabled'] ) ) ? 'yes' : 'no';
 		$new['kb_max_chunks'] = isset( $in['kb_max_chunks'] ) ? max( 1, min( 8, (int) $in['kb_max_chunks'] ) ) : 3;
 		SSC_Chatbot_Settings::update( $new );
@@ -168,11 +168,11 @@ class SSC_Chatbot_Admin {
 			if ( (int) $_FILES['kb_file']['size'] > $max_bytes ) { // phpcs:ignore WordPress.Security
 				return __( 'فایل بیش از حد بزرگ است (حداکثر ۲ مگابایت).', 'smart-support-chatbot' );
 			}
-			$raw      = file_get_contents( $_FILES['kb_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+			$raw      = file_get_contents( $_FILES['kb_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions, WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce توسط فراخوان (check_admin_referer در register_menu) بررسی شده؛ tmp_name توسط is_uploaded_file اعتبارسنجی شده است.
 			$raw      = sanitize_textarea_field( (string) $raw );
 			$content .= ( '' !== $content ? "\n\n" : '' ) . $raw;
-			if ( '' === trim( $title ) && isset( $_FILES['kb_file']['name'] ) ) {
-				$title = sanitize_file_name( $_FILES['kb_file']['name'] );
+			if ( '' === trim( $title ) && isset( $_FILES['kb_file']['name'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce توسط فراخوان بررسی شده.
+				$title = sanitize_file_name( $_FILES['kb_file']['name'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- نام فایل با sanitize_file_name پاکسازی می‌شود.
 			}
 		}
 
@@ -189,10 +189,11 @@ class SSC_Chatbot_Admin {
 	 * رندر صفحه تاریخچه گفتگو.
 	 */
 	public function render_chatlog_page() {
-		$source = isset( $_GET['source'] ) ? sanitize_text_field( wp_unslash( $_GET['source'] ) ) : '';
-		$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
-		$paged  = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
-		$result = SSC_Chatbot_DB::get_chatlog(
+		// فیلترهای فقط-خواندنی صفحه لیست (بدون تغییر وضعیت)؛ مطابق الگوی WP_List_Table نیازی به nonce نیست.
+		$source       = isset( $_GET['source'] ) ? sanitize_text_field( wp_unslash( $_GET['source'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$search       = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$paged        = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$result       = SSC_Chatbot_DB::get_chatlog(
 			array(
 				'source'   => $source,
 				'search'   => $search,
@@ -270,9 +271,12 @@ class SSC_Chatbot_Admin {
 		if ( isset( $_POST['ssc_chatbot_save_settings'] ) ) {
 			check_admin_referer( 'ssc_chatbot_settings' );
 			$this->save_settings();
-			add_action( 'admin_notices', function () {
-				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'تنظیمات با موفقیت ذخیره شد.', 'smart-support-chatbot' ) . '</p></div>';
-			} );
+			add_action(
+				'admin_notices',
+				function () {
+					echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'تنظیمات با موفقیت ذخیره شد.', 'smart-support-chatbot' ) . '</p></div>';
+				}
+			);
 		}
 
 		// تغییر وضعیت درخواست.
@@ -297,18 +301,24 @@ class SSC_Chatbot_Admin {
 		if ( isset( $_POST['ssc_chatbot_save_qa'] ) ) {
 			check_admin_referer( 'ssc_chatbot_qa' );
 			$msg = $this->save_qa_bank();
-			add_action( 'admin_notices', function () use ( $msg ) {
-				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
-			} );
+			add_action(
+				'admin_notices',
+				function () use ( $msg ) {
+					echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
+				}
+			);
 		}
 
 		// ذخیره پایگاه دانش (تنظیمات + افزودن سند).
 		if ( isset( $_POST['ssc_chatbot_save_kb'] ) ) {
 			check_admin_referer( 'ssc_chatbot_kb' );
 			$msg = $this->save_kb();
-			add_action( 'admin_notices', function () use ( $msg ) {
-				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
-			} );
+			add_action(
+				'admin_notices',
+				function () use ( $msg ) {
+					echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
+				}
+			);
 		}
 
 		// حذف یک سند از پایگاه دانش.
@@ -375,18 +385,18 @@ class SSC_Chatbot_Admin {
 		$new = array();
 
 		// حالت و فعال‌سازی لاگ.
-		$mode             = isset( $in['qa_mode'] ) ? sanitize_text_field( $in['qa_mode'] ) : 'ai_first';
-		$new['qa_mode']   = in_array( $mode, array( 'ai_first', 'bank_first', 'bank_only' ), true ) ? $mode : 'ai_first';
-		$new['chatlog_enabled'] = ( isset( $in['chatlog_enabled'] ) && ( '1' === (string) $in['chatlog_enabled'] || 'yes' === $in['chatlog_enabled'] || 'on' === $in['chatlog_enabled'] ) ) ? 'yes' : 'no';
+		$mode                          = isset( $in['qa_mode'] ) ? sanitize_text_field( $in['qa_mode'] ) : 'ai_first';
+		$new['qa_mode']                = in_array( $mode, array( 'ai_first', 'bank_first', 'bank_only' ), true ) ? $mode : 'ai_first';
+		$new['chatlog_enabled']        = ( isset( $in['chatlog_enabled'] ) && ( '1' === (string) $in['chatlog_enabled'] || 'yes' === $in['chatlog_enabled'] || 'on' === $in['chatlog_enabled'] ) ) ? 'yes' : 'no';
 		$new['chatlog_retention_days'] = isset( $in['chatlog_retention_days'] ) ? max( 0, min( 3650, (int) $in['chatlog_retention_days'] ) ) : 90;
 
 		// ردیف‌های دستی.
 		$bank = array();
 		if ( isset( $in['qa_question'] ) && is_array( $in['qa_question'] ) ) {
-			$row_ids   = isset( $in['qa_id'] ) ? $in['qa_id'] : array();
-			$products  = isset( $in['qa_product'] ) ? $in['qa_product'] : array();
-			$keywords  = isset( $in['qa_keywords'] ) ? $in['qa_keywords'] : array();
-			$answers   = isset( $in['qa_answer'] ) ? $in['qa_answer'] : array();
+			$row_ids  = isset( $in['qa_id'] ) ? $in['qa_id'] : array();
+			$products = isset( $in['qa_product'] ) ? $in['qa_product'] : array();
+			$keywords = isset( $in['qa_keywords'] ) ? $in['qa_keywords'] : array();
+			$answers  = isset( $in['qa_answer'] ) ? $in['qa_answer'] : array();
 			foreach ( $in['qa_question'] as $i => $q ) {
 				$q = sanitize_textarea_field( $q );
 				$a = isset( $answers[ $i ] ) ? sanitize_textarea_field( $answers[ $i ] ) : '';
@@ -422,9 +432,10 @@ class SSC_Chatbot_Admin {
 		$imported  = 0;
 		$replace   = false;
 		$max_bytes = (int) apply_filters( 'ssc_chatbot_max_upload_bytes', 2 * 1024 * 1024 );
-		if ( ! empty( $_FILES['qa_import']['tmp_name'] ) && is_uploaded_file( $_FILES['qa_import']['tmp_name'] ) && (int) $_FILES['qa_import']['size'] <= $max_bytes ) { // phpcs:ignore WordPress.Security
-			$content  = file_get_contents( $_FILES['qa_import']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions
-			$fname    = isset( $_FILES['qa_import']['name'] ) ? sanitize_file_name( $_FILES['qa_import']['name'] ) : '';
+		// nonce توسط فراخوان (check_admin_referer در register_menu) بررسی شده؛ tmp_name توسط is_uploaded_file اعتبارسنجی و نام فایل با sanitize_file_name پاکسازی می‌شود.
+		if ( ! empty( $_FILES['qa_import']['tmp_name'] ) && is_uploaded_file( $_FILES['qa_import']['tmp_name'] ) && (int) $_FILES['qa_import']['size'] <= $max_bytes ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+			$content  = file_get_contents( $_FILES['qa_import']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions, WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$fname    = isset( $_FILES['qa_import']['name'] ) ? sanitize_file_name( $_FILES['qa_import']['name'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$rows     = $this->parse_qa_import( $content, $fname );
 			$imported = count( $rows );
 			$replace  = ( isset( $in['import_mode'] ) && 'replace' === $in['import_mode'] );
@@ -485,7 +496,7 @@ class SSC_Chatbot_Admin {
 	 * @return array
 	 */
 	protected function parse_qa_import( $content, $fname ) {
-		$rows = array();
+		$rows    = array();
 		$content = trim( (string) $content );
 		if ( '' === $content ) {
 			return $rows;
@@ -522,7 +533,7 @@ class SSC_Chatbot_Admin {
 		rewind( $stream );
 
 		$first = true;
-		// phpcs:ignore WordPress.WP.AlternativeFunctions
+		// phpcs:ignore WordPress.WP.AlternativeFunctions, Generic.CodeAnalysis.AssignmentInCondition -- الگوی متداول خواندن ردیف‌به‌ردیف CSV.
 		while ( false !== ( $cols = fgetcsv( $stream ) ) ) {
 			// ردیف خالی.
 			if ( null === $cols || ( 1 === count( $cols ) && ( null === $cols[0] || '' === trim( (string) $cols[0] ) ) ) ) {
@@ -556,7 +567,7 @@ class SSC_Chatbot_Admin {
 	/**
 	 * ساخت شناسهٔ پایدار محصول.
 	 *
-	 * sanitize_key() هر کاراکتر غیرلاتین را حذف می‌کند، بنابراین شناسهٔ فارسی
+	 * تابع sanitize_key() هر کاراکتر غیرلاتین را حذف می‌کند، بنابراین شناسهٔ فارسی
 	 * («کپسول») بی‌صدا به رشتهٔ خالی تبدیل و کل محصول دور ریخته می‌شد.
 	 * اینجا ابتدا شناسهٔ واردشده و سپس نام محصول به slug یونیکد تبدیل می‌شود
 	 * (sanitize_title حروف فارسی را حفظ می‌کند) و در نهایت یکتاسازی انجام می‌گیرد.
@@ -601,24 +612,56 @@ class SSC_Chatbot_Admin {
 	protected function save_settings() {
 		$in = wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification -- بررسی شده در handle_actions.
 
-		$fields_text = array(
-			'company_name', 'company_id', 'header_title', 'company_btn_title', 'company_btn_desc',
-			'products_btn_title', 'products_btn_desc', 'adr_btn_title', 'consult_btn_title',
-			'position', 'theme_mode', 'ai_provider', 'gemini_model', 'openai_model',
-			'claude_model', 'custom_model', 'notify_platform',
-			'proactive_text', 'online_text', 'offline_text', 'support_phone',
+		$fields_text     = array(
+			'company_name',
+			'company_id',
+			'header_title',
+			'company_btn_title',
+			'company_btn_desc',
+			'products_btn_title',
+			'products_btn_desc',
+			'adr_btn_title',
+			'consult_btn_title',
+			'position',
+			'theme_mode',
+			'ai_provider',
+			'gemini_model',
+			'openai_model',
+			'claude_model',
+			'custom_model',
+			'notify_platform',
+			'proactive_text',
+			'online_text',
+			'offline_text',
+			'support_phone',
 		);
 		$fields_textarea = array( 'welcome_text', 'disclaimer', 'ai_system_prompt', 'ai_fallback_msg', 'welcome_title', 'handoff_text', 'consent_text' );
 		$fields_raw      = array(
-			'ai_webhook_url', 'notify_chat_id', 'email_to',
+			'ai_webhook_url',
+			'notify_chat_id',
+			'email_to',
 		);
 		$fields_color    = array( 'primary_color', 'primary_hover' );
 		$fields_toggle   = array(
-			'enabled', 'show_company', 'show_products', 'show_adr', 'show_consult',
-			'notify_enabled', 'email_enabled', 'ai_strict_knowledge', 'ai_cache_enabled',
-			'feedback_enabled', 'typewriter_enabled', 'proactive_enabled', 'office_enabled',
-			'suggestions_enabled', 'autocomplete_enabled', 'voice_enabled', 'csat_enabled',
-			'handoff_enabled', 'consent_enabled',
+			'enabled',
+			'show_company',
+			'show_products',
+			'show_adr',
+			'show_consult',
+			'notify_enabled',
+			'email_enabled',
+			'ai_strict_knowledge',
+			'ai_cache_enabled',
+			'feedback_enabled',
+			'typewriter_enabled',
+			'proactive_enabled',
+			'office_enabled',
+			'suggestions_enabled',
+			'autocomplete_enabled',
+			'voice_enabled',
+			'csat_enabled',
+			'handoff_enabled',
+			'consent_enabled',
 		);
 
 		$new = array();
@@ -639,20 +682,20 @@ class SSC_Chatbot_Admin {
 			$new[ $f ] = ( isset( $in[ $f ] ) && ( '1' === (string) $in[ $f ] || 'yes' === $in[ $f ] || 'on' === $in[ $f ] ) ) ? 'yes' : 'no';
 		}
 
-		$biz_mode               = isset( $in['business_mode'] ) ? sanitize_text_field( $in['business_mode'] ) : 'general';
-		$new['business_mode']   = in_array( $biz_mode, array( 'general', 'pharma' ), true ) ? $biz_mode : 'general';
-		$new['email_to']        = isset( $in['email_to'] ) ? sanitize_email( $in['email_to'] ) : '';
-		$new['ai_rate_limit']   = isset( $in['ai_rate_limit'] ) ? max( 0, (int) $in['ai_rate_limit'] ) : 100;
-		$rl_mode                = isset( $in['rate_limit_mode'] ) ? sanitize_text_field( $in['rate_limit_mode'] ) : 'ip';
-		$new['rate_limit_mode'] = in_array( $rl_mode, array( 'ip', 'session', 'both', 'off' ), true ) ? $rl_mode : 'ip';
-		$new['session_rate_limit'] = isset( $in['session_rate_limit'] ) ? max( 0, (int) $in['session_rate_limit'] ) : 50;
+		$biz_mode                          = isset( $in['business_mode'] ) ? sanitize_text_field( $in['business_mode'] ) : 'general';
+		$new['business_mode']              = in_array( $biz_mode, array( 'general', 'pharma' ), true ) ? $biz_mode : 'general';
+		$new['email_to']                   = isset( $in['email_to'] ) ? sanitize_email( $in['email_to'] ) : '';
+		$new['ai_rate_limit']              = isset( $in['ai_rate_limit'] ) ? max( 0, (int) $in['ai_rate_limit'] ) : 100;
+		$rl_mode                           = isset( $in['rate_limit_mode'] ) ? sanitize_text_field( $in['rate_limit_mode'] ) : 'ip';
+		$new['rate_limit_mode']            = in_array( $rl_mode, array( 'ip', 'session', 'both', 'off' ), true ) ? $rl_mode : 'ip';
+		$new['session_rate_limit']         = isset( $in['session_rate_limit'] ) ? max( 0, (int) $in['session_rate_limit'] ) : 50;
 		$new['submissions_retention_days'] = isset( $in['submissions_retention_days'] ) ? max( 0, min( 3650, (int) $in['submissions_retention_days'] ) ) : 0;
-		$new['ai_history_limit'] = isset( $in['ai_history_limit'] ) ? max( 0, min( 20, (int) $in['ai_history_limit'] ) ) : 8;
-		$new['ai_temperature']  = isset( $in['ai_temperature'] ) ? (string) max( 0, min( 1, (float) $in['ai_temperature'] ) ) : '0.4';
-		$new['ai_max_tokens']   = isset( $in['ai_max_tokens'] ) ? max( 100, min( 4000, (int) $in['ai_max_tokens'] ) ) : 800;
-		$new['ai_webhook_url']  = isset( $in['ai_webhook_url'] ) ? esc_url_raw( $in['ai_webhook_url'] ) : '';
-		$new['custom_endpoint'] = isset( $in['custom_endpoint'] ) ? esc_url_raw( $in['custom_endpoint'] ) : '';
-		$new['consent_link']    = isset( $in['consent_link'] ) ? esc_url_raw( $in['consent_link'] ) : '';
+		$new['ai_history_limit']           = isset( $in['ai_history_limit'] ) ? max( 0, min( 20, (int) $in['ai_history_limit'] ) ) : 8;
+		$new['ai_temperature']             = isset( $in['ai_temperature'] ) ? (string) max( 0, min( 1, (float) $in['ai_temperature'] ) ) : '0.4';
+		$new['ai_max_tokens']              = isset( $in['ai_max_tokens'] ) ? max( 100, min( 4000, (int) $in['ai_max_tokens'] ) ) : 800;
+		$new['ai_webhook_url']             = isset( $in['ai_webhook_url'] ) ? esc_url_raw( $in['ai_webhook_url'] ) : '';
+		$new['custom_endpoint']            = isset( $in['custom_endpoint'] ) ? esc_url_raw( $in['custom_endpoint'] ) : '';
+		$new['consent_link']               = isset( $in['consent_link'] ) ? esc_url_raw( $in['consent_link'] ) : '';
 
 		// فیلدهای حساس: فقط در صورت ورود مقدار جدید، رمزنگاری و ذخیره می‌شوند (وگرنه مقدار قبلی حفظ می‌شود).
 		foreach ( SSC_Chatbot_Settings::secret_fields() as $sf ) {
@@ -662,19 +705,19 @@ class SSC_Chatbot_Admin {
 		}
 
 		// آیکون شناور.
-		$new['button_size']     = isset( $in['button_size'] ) ? max( 40, min( 120, (int) $in['button_size'] ) ) : 60;
-		$new['icon_size']       = isset( $in['icon_size'] ) ? max( 16, min( 80, (int) $in['icon_size'] ) ) : 28;
-		$new['button_radius']   = isset( $in['button_radius'] ) ? max( 0, min( 50, (int) $in['button_radius'] ) ) : 50;
+		$new['button_size']   = isset( $in['button_size'] ) ? max( 40, min( 120, (int) $in['button_size'] ) ) : 60;
+		$new['icon_size']     = isset( $in['icon_size'] ) ? max( 16, min( 80, (int) $in['icon_size'] ) ) : 28;
+		$new['button_radius'] = isset( $in['button_radius'] ) ? max( 0, min( 50, (int) $in['button_radius'] ) ) : 50;
 
 		// فونت و استایل پنجرهٔ چت.
-		$font_family            = isset( $in['font_family'] ) ? sanitize_text_field( $in['font_family'] ) : 'vazirmatn';
-		$new['font_family']     = in_array( $font_family, array( 'vazirmatn', 'system', 'inter', 'roboto', 'custom' ), true ) ? $font_family : 'vazirmatn';
-		$new['font_name']       = isset( $in['font_name'] ) ? sanitize_text_field( $in['font_name'] ) : '';
-		$new['font_url']        = isset( $in['font_url'] ) ? esc_url_raw( $in['font_url'] ) : '';
-		$new['font_size']       = isset( $in['font_size'] ) ? max( 10, min( 24, (int) $in['font_size'] ) ) : 14;
-		$new['window_width']    = isset( $in['window_width'] ) ? max( 300, min( 520, (int) $in['window_width'] ) ) : 384;
-		$new['window_radius']   = isset( $in['window_radius'] ) ? max( 0, min( 40, (int) $in['window_radius'] ) ) : 24;
-		$new['bubble_radius']   = isset( $in['bubble_radius'] ) ? max( 0, min( 30, (int) $in['bubble_radius'] ) ) : 16;
+		$font_family              = isset( $in['font_family'] ) ? sanitize_text_field( $in['font_family'] ) : 'vazirmatn';
+		$new['font_family']       = in_array( $font_family, array( 'vazirmatn', 'system', 'inter', 'roboto', 'custom' ), true ) ? $font_family : 'vazirmatn';
+		$new['font_name']         = isset( $in['font_name'] ) ? sanitize_text_field( $in['font_name'] ) : '';
+		$new['font_url']          = isset( $in['font_url'] ) ? esc_url_raw( $in['font_url'] ) : '';
+		$new['font_size']         = isset( $in['font_size'] ) ? max( 10, min( 24, (int) $in['font_size'] ) ) : 14;
+		$new['window_width']      = isset( $in['window_width'] ) ? max( 300, min( 520, (int) $in['window_width'] ) ) : 384;
+		$new['window_radius']     = isset( $in['window_radius'] ) ? max( 0, min( 40, (int) $in['window_radius'] ) ) : 24;
+		$new['bubble_radius']     = isset( $in['bubble_radius'] ) ? max( 0, min( 30, (int) $in['bubble_radius'] ) ) : 16;
 		$new['user_bubble_color'] = isset( $in['user_bubble_color'] ) ? (string) sanitize_hex_color( $in['user_bubble_color'] ) : '';
 		$new['bot_bubble_color']  = isset( $in['bot_bubble_color'] ) ? (string) sanitize_hex_color( $in['bot_bubble_color'] ) : '';
 
@@ -690,11 +733,11 @@ class SSC_Chatbot_Admin {
 		// محصولات.
 		$products = array();
 		if ( isset( $in['product_id'] ) && is_array( $in['product_id'] ) ) {
-			$ids       = $in['product_id'];
-			$names     = isset( $in['product_name'] ) ? $in['product_name'] : array();
-			$know      = isset( $in['product_knowledge'] ) ? $in['product_knowledge'] : array();
-			$brochures = isset( $in['product_brochure'] ) ? $in['product_brochure'] : array();
-			$images    = isset( $in['product_image'] ) ? $in['product_image'] : array();
+			$ids           = $in['product_id'];
+			$names         = isset( $in['product_name'] ) ? $in['product_name'] : array();
+			$know          = isset( $in['product_knowledge'] ) ? $in['product_knowledge'] : array();
+			$brochures     = isset( $in['product_brochure'] ) ? $in['product_brochure'] : array();
+			$images        = isset( $in['product_image'] ) ? $in['product_image'] : array();
 			$knowledge_map = array();
 			$seen_ids      = array();
 			foreach ( $ids as $i => $pid ) {
@@ -709,7 +752,12 @@ class SSC_Chatbot_Admin {
 				}
 				$brochure   = isset( $brochures[ $i ] ) ? esc_url_raw( trim( $brochures[ $i ] ) ) : '';
 				$image      = isset( $images[ $i ] ) ? esc_url_raw( trim( $images[ $i ] ) ) : '';
-				$products[] = array( 'id' => $pid, 'name' => $pname, 'brochure' => $brochure, 'image' => $image );
+				$products[] = array(
+					'id' => $pid,
+					'name' => $pname,
+					'brochure' => $brochure,
+					'image' => $image,
+				);
 				if ( isset( $know[ $i ] ) && '' !== trim( $know[ $i ] ) ) {
 					$knowledge_map[ $pid ] = sanitize_textarea_field( $know[ $i ] );
 				}
@@ -722,7 +770,7 @@ class SSC_Chatbot_Admin {
 
 		// پاسخ‌های پیشنهادی.
 		$new['quick_replies_enabled'] = ( isset( $in['quick_replies_enabled'] ) && ( '1' === (string) $in['quick_replies_enabled'] || 'yes' === $in['quick_replies_enabled'] || 'on' === $in['quick_replies_enabled'] ) ) ? 'yes' : 'no';
-		$quick = array();
+		$quick                        = array();
 		if ( isset( $in['quick_reply_label'] ) && is_array( $in['quick_reply_label'] ) ) {
 			$labels    = $in['quick_reply_label'];
 			$questions = isset( $in['quick_reply_question'] ) ? $in['quick_reply_question'] : array();
@@ -732,7 +780,10 @@ class SSC_Chatbot_Admin {
 				if ( '' === $label || '' === $q ) {
 					continue;
 				}
-				$quick[] = array( 'label' => $label, 'question' => $q );
+				$quick[] = array(
+					'label' => $label,
+					'question' => $q,
+				);
 			}
 			$new['quick_replies'] = $quick;
 		}
@@ -752,12 +803,13 @@ class SSC_Chatbot_Admin {
 	 * رندر صفحه درخواست‌ها.
 	 */
 	public function render_submissions_page() {
-		$type      = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : '';
-		$status    = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : '';
-		$search    = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
-		$date_from = isset( $_GET['date_from'] ) ? sanitize_text_field( wp_unslash( $_GET['date_from'] ) ) : '';
-		$date_to   = isset( $_GET['date_to'] ) ? sanitize_text_field( wp_unslash( $_GET['date_to'] ) ) : '';
-		$paged     = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
+		// فیلترهای فقط-خواندنی صفحه لیست (بدون تغییر وضعیت)؛ مطابق الگوی WP_List_Table نیازی به nonce نیست.
+		$type      = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$status    = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$search    = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$date_from = isset( $_GET['date_from'] ) ? sanitize_text_field( wp_unslash( $_GET['date_from'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$date_to   = isset( $_GET['date_to'] ) ? sanitize_text_field( wp_unslash( $_GET['date_to'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$paged     = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		$result = SSC_Chatbot_DB::get_submissions(
 			array(
@@ -797,7 +849,7 @@ class SSC_Chatbot_Admin {
 		check_admin_referer( 'ssc_export' );
 
 		// خروجی بر اساس فیلترهای فعلی صفحه (نوع/وضعیت/جستجو/بازهٔ تاریخ).
-		$filters = array(
+		$filters    = array(
 			'type'      => isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : '',
 			'status'    => isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : '',
 			'search'    => isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '',
@@ -816,20 +868,38 @@ class SSC_Chatbot_Admin {
 		fputcsv(
 			$out,
 			array(
-				'شناسه', 'نوع', 'نام', 'تلفن', 'محصول', 'شرح',
-				'نوع گزارش‌دهنده', 'شدت', 'پیامد', 'شماره سری ساخت', 'داروهای همزمان',
-				'وضعیت', 'IP', 'تاریخ',
+				'شناسه',
+				'نوع',
+				'نام',
+				'تلفن',
+				'محصول',
+				'شرح',
+				'نوع گزارش‌دهنده',
+				'شدت',
+				'پیامد',
+				'شماره سری ساخت',
+				'داروهای همزمان',
+				'وضعیت',
+				'IP',
+				'تاریخ',
 			)
 		);
 		foreach ( $rows as $r ) {
 			$cells = array(
-				$r['id'], $r['type'], $r['name'], $r['phone'], $r['product'], $r['description'],
+				$r['id'],
+				$r['type'],
+				$r['name'],
+				$r['phone'],
+				$r['product'],
+				$r['description'],
 				isset( $r['reporter_type'] ) ? $r['reporter_type'] : '',
 				isset( $r['severity'] ) ? $r['severity'] : '',
 				isset( $r['outcome'] ) ? $r['outcome'] : '',
 				isset( $r['batch_number'] ) ? $r['batch_number'] : '',
 				isset( $r['concomitant_drugs'] ) ? $r['concomitant_drugs'] : '',
-				$r['status'], $r['ip'], $r['created_at'],
+				$r['status'],
+				$r['ip'],
+				$r['created_at'],
 			);
 			fputcsv( $out, array_map( array( __CLASS__, 'csv_safe' ), $cells ) );
 		}

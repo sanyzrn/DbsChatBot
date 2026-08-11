@@ -79,3 +79,12 @@ function ssc_chatbot_run() {
 	return SSC_Chatbot::instance();
 }
 add_action( 'plugins_loaded', 'ssc_chatbot_run' );
+
+/**
+ * دسترسی کوتاه به نمونه افزونه.
+ *
+ * @return SSC_Chatbot
+ */
+function SSC_Chatbot() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals, WordPress.NamingConventions.ValidFunctionName, Universal.NamingConventions.NoReservedKeywordParameterNames -- نام تابع عمداً هم‌نام کلاس اصلی برای دسترسی سریع.
+	return SSC_Chatbot::instance();
+}

@@ -65,9 +65,18 @@ class SSC_Chatbot_Settings {
 			// پاسخ‌های پیشنهادی (Quick Replies) در گفتگوی محصول.
 			'quick_replies_enabled' => 'yes',
 			'quick_replies'         => array(
-				array( 'label' => 'قیمت', 'question' => 'قیمت این محصول چقدر است؟' ),
-				array( 'label' => 'نحوه استفاده', 'question' => 'نحوه استفاده از این محصول چگونه است؟' ),
-				array( 'label' => 'گارانتی', 'question' => 'شرایط گارانتی یا پشتیبانی این محصول چیست؟' ),
+				array(
+					'label' => 'قیمت',
+					'question' => 'قیمت این محصول چقدر است؟',
+				),
+				array(
+					'label' => 'نحوه استفاده',
+					'question' => 'نحوه استفاده از این محصول چگونه است؟',
+				),
+				array(
+					'label' => 'گارانتی',
+					'question' => 'شرایط گارانتی یا پشتیبانی این محصول چیست؟',
+				),
 			),
 
 			// ظاهر.
@@ -187,25 +196,25 @@ class SSC_Chatbot_Settings {
 		if ( null !== self::$cache ) {
 			return self::$cache;
 		}
-		$saved        = get_option( self::OPTION_KEY, array() );
-		$saved        = is_array( $saved ) ? $saved : array();
-		self::$cache  = wp_parse_args( $saved, self::defaults() );
+		$saved       = get_option( self::OPTION_KEY, array() );
+		$saved       = is_array( $saved ) ? $saved : array();
+		self::$cache = wp_parse_args( $saved, self::defaults() );
 		return self::$cache;
 	}
 
 	/**
 	 * دریافت یک گزینه.
 	 *
-	 * @param string $key     کلید.
-	 * @param mixed  $default مقدار پیش‌فرض.
+	 * @param string $key           کلید.
+	 * @param mixed  $default_value مقدار پیش‌فرض.
 	 * @return mixed
 	 */
-	public static function get( $key, $default = null ) {
+	public static function get( $key, $default_value = null ) {
 		$all = self::all();
 		if ( isset( $all[ $key ] ) ) {
 			return $all[ $key ];
 		}
-		return $default;
+		return $default_value;
 	}
 
 	/**
@@ -256,7 +265,7 @@ class SSC_Chatbot_Settings {
 		if ( false === $encrypted ) {
 			return $value;
 		}
-		return 'enc::v1::' . base64_encode( $iv . $encrypted );
+		return 'enc::v1::' . base64_encode( $iv . $encrypted ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- کدگذاری باینری رمزشده برای ذخیره در گزینه؛ نه پنهان‌سازی کد.
 	}
 
 	/**
@@ -273,7 +282,7 @@ class SSC_Chatbot_Settings {
 		if ( ! function_exists( 'openssl_decrypt' ) || ! defined( 'AUTH_KEY' ) ) {
 			return '';
 		}
-		$raw = base64_decode( substr( $value, 9 ) );
+		$raw = base64_decode( substr( $value, 9 ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- رمزگشایی داده باینری رمزشده (نه اجرای کد پنهان).
 		if ( false === $raw || strlen( $raw ) < 17 ) {
 			return '';
 		}

@@ -73,7 +73,7 @@ $base_url = admin_url( 'admin.php?page=smart-support-chatbot-submissions' );
 				'date_to'   => isset( $date_to ) ? $date_to : '',
 			)
 		);
-		$export_url = wp_nonce_url( add_query_arg( array_merge( array( 'action' => 'ssc_chatbot_export' ), $export_args ), admin_url( 'admin-post.php' ) ), 'ssc_export' );
+		$export_url  = wp_nonce_url( add_query_arg( array_merge( array( 'action' => 'ssc_chatbot_export' ), $export_args ), admin_url( 'admin-post.php' ) ), 'ssc_export' );
 		?>
 		<a href="<?php echo esc_url( $export_url ); ?>" class="button button-secondary ssc-export-btn">
 			<span class="dashicons dashicons-download"></span> <?php echo $export_args ? esc_html__( 'خروجی CSV (فیلترشده)', 'smart-support-chatbot' ) : esc_html__( 'خروجی CSV', 'smart-support-chatbot' ); ?>
@@ -100,9 +100,27 @@ $base_url = admin_url( 'admin.php?page=smart-support-chatbot-submissions' );
 			<?php else : ?>
 				<?php foreach ( $result['items'] as $row ) : ?>
 					<?php
-					$is_adr      = ( false !== mb_strpos( $row->type, 'عوارض' ) );
-					$status_url  = wp_nonce_url( add_query_arg( array( 'ssc_action' => 'status', 'sid' => $row->id ), $base_url ), 'ssc_sub_action' );
-					$delete_url  = wp_nonce_url( add_query_arg( array( 'ssc_action' => 'delete', 'sid' => $row->id ), $base_url ), 'ssc_sub_action' );
+					$is_adr     = ( false !== mb_strpos( $row->type, 'عوارض' ) );
+					$status_url = wp_nonce_url(
+						add_query_arg(
+							array(
+								'ssc_action' => 'status',
+								'sid' => $row->id,
+							),
+							$base_url
+						),
+						'ssc_sub_action'
+					);
+					$delete_url = wp_nonce_url(
+						add_query_arg(
+							array(
+								'ssc_action' => 'delete',
+								'sid' => $row->id,
+							),
+							$base_url
+						),
+						'ssc_sub_action'
+					);
 
 					$adr_fields = array(
 						'reporter_type'     => __( 'نوع گزارش‌دهنده', 'smart-support-chatbot' ),
@@ -111,7 +129,7 @@ $base_url = admin_url( 'admin.php?page=smart-support-chatbot-submissions' );
 						'batch_number'      => __( 'شماره سری ساخت (Batch)', 'smart-support-chatbot' ),
 						'concomitant_drugs' => __( 'داروهای مصرفی همزمان', 'smart-support-chatbot' ),
 					);
-					$has_extra = false;
+					$has_extra  = false;
 					foreach ( $adr_fields as $fk => $fl ) {
 						if ( ! empty( $row->$fk ) ) {
 							$has_extra = true;

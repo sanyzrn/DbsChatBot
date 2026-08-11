@@ -31,9 +31,9 @@ $popular     = array_slice( $popular, 0, 6, true );
 $popular_max = $popular ? max( $popular ) : 0;
 
 // روند گفتگوها در ۱۴ روز اخیر.
-$daily      = isset( $chat_stats['daily'] ) && is_array( $chat_stats['daily'] ) ? $chat_stats['daily'] : array();
-$trend      = array();
-$today_dt   = new DateTimeImmutable( 'now', wp_timezone() ); // تاریخ محلی، هم‌راستا با کلیدهای روزانهٔ record_chat.
+$daily    = isset( $chat_stats['daily'] ) && is_array( $chat_stats['daily'] ) ? $chat_stats['daily'] : array();
+$trend    = array();
+$today_dt = new DateTimeImmutable( 'now', wp_timezone() ); // تاریخ محلی، هم‌راستا با کلیدهای روزانهٔ record_chat.
 for ( $i = 13; $i >= 0; $i-- ) {
 	$d           = $today_dt->modify( "-{$i} days" )->format( 'Y-m-d' );
 	$trend[ $d ] = isset( $daily[ $d ] ) ? (int) $daily[ $d ] : 0;
@@ -93,7 +93,12 @@ $status_labels = array(
 			<span class="ssc-insight__num">👍 <?php echo esc_html( number_format_i18n( isset( $ins['feedback']['up'] ) ? $ins['feedback']['up'] : 0 ) ); ?> &nbsp; 👎 <?php echo esc_html( number_format_i18n( isset( $ins['feedback']['down'] ) ? $ins['feedback']['down'] : 0 ) ); ?></span>
 			<span class="ssc-insight__label">💬 <?php esc_html_e( 'بازخورد پاسخ‌ها', 'smart-support-chatbot' ); ?></span>
 		</div>
-		<?php $csat = isset( $ins['csat'] ) ? $ins['csat'] : array( 'avg' => 0, 'count' => 0 ); ?>
+		<?php
+		$csat = isset( $ins['csat'] ) ? $ins['csat'] : array(
+			'avg' => 0,
+			'count' => 0,
+		);
+		?>
 		<div class="ssc-insight">
 			<span class="ssc-insight__num">⭐ <?php echo esc_html( $csat['count'] > 0 ? number_format_i18n( $csat['avg'], 1 ) : '—' ); ?></span>
 			<span class="ssc-insight__label"><?php esc_html_e( 'رضایت گفتگو', 'smart-support-chatbot' ); ?><?php echo $csat['count'] > 0 ? ' (' . esc_html( number_format_i18n( $csat['count'] ) ) . ' ' . esc_html__( 'رأی', 'smart-support-chatbot' ) . ')' : ''; ?></span>
