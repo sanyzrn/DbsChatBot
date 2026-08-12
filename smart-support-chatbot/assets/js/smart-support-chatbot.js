@@ -50,6 +50,7 @@
 	var quickReplies = ( cfg.quickReplies || [] ).filter( function ( q ) { return q && q.label && q.question; } );
 	var adrOptions  = cfg.adrOptions || { severity: [], outcome: [], reporter_type: [] };
 	var labels      = cfg.labels || {};
+	var formFields  = ( cfg.formFields || [] ).filter( function ( f ) { return f && f.key && f.label; } );
 	var show        = cfg.show || { company: true, products: true, adr: true, consult: true };
 	var i18n        = cfg.i18n || {};
 	function t( key, fallback ) { return ( i18n && i18n[ key ] ) ? i18n[ key ] : fallback; }
@@ -87,7 +88,8 @@
 		return {
 			kind: '', productName: '', hp: '',
 			name: '', phone: '', description: '',
-			reporterType: '', severity: '', outcome: '', batchNumber: '', concomitantDrugs: ''
+			reporterType: '', severity: '', outcome: '', batchNumber: '', concomitantDrugs: '',
+			extra: {}
 		};
 	}
 
@@ -818,7 +820,8 @@
 			phone: state.form.phone,
 			description: state.form.description,
 			nfx_hp: state.form.hp || '',
-			nfx_elapsed: Date.now() - ( state.formOpenedAt || 0 )
+			nfx_elapsed: Date.now() - ( state.formOpenedAt || 0 ),
+			extra: JSON.stringify( state.form.extra || {} )
 		};
 		if ( isAdr ) {
 			payload.product = state.form.productName;
@@ -1280,6 +1283,11 @@
 			form.appendChild( field( 'batchNumber', ICON.fileText( 14 ) + ' شماره سری ساخت — اختیاری', 'text', 'روی بسته محصول', true, false ) );
 		}
 
+		// فیلدهای سفارشی تعریف‌شده از پنل مدیریت (فرم‌ساز پویا).
+		formFields.forEach( function ( fdef ) {
+			form.appendChild( extraField( fdef ) );
+		} );
+
 		// موافقت با حریم خصوصی (اختیاری/قابل‌فعال‌سازی از پنل).
 		if ( cfg.consentEnabled ) {
 			var cf  = el( 'div', 'nfx-consent' );
@@ -1358,6 +1366,102 @@
 			sel.appendChild( o );
 		} );
 		sel.addEventListener( 'change', function () { state.form[ key ] = sel.value; } );
+		f.appendChild( sel );
+		return f;
+	}
+
+	// رندر یک فیلد سفارشی فرم‌ساز بر اساس نوع آن؛ مقدار در state.form.extra[key] نگه داشته می‌شود.
+	function extraField( fdef ) {
+		var key   = fdef.key;
+		var label = escapeHtml( fdef.label );
+		var f     = el( 'div', 'nfx-field' );
+		var id    = nextFieldId( 'extra-' + key );
+
+		if ( 'checkbox' === fdef.type ) {
+			var lab = el( 'label', 'nfx-consent__main' );
+			var cb  = el( 'input' );
+			cb.type = 'checkbox';
+			cb.id = id;
+			cb.className = 'nfx-consent__cb';
+			cb.required = ! ! fdef.required;
+			cb.checked = ! ! state.form.extra[ key ];
+			cb.addEventListener( 'change', function () { state.form.extra[ key ] = cb.checked; } );
+			var sp = el( 'span', '', label );
+			lab.appendChild( cb );
+			lab.appendChild( sp );
+			f.className = 'nfx-consent';
+			f.appendChild( lab );
+			return f;
+		}
+
+		if ( 'radio' === fdef.type ) {
+			f.appendChild( el( 'div', 'nfx-field__label', label ) );
+			var opts = fdef.options || [];
+			var grp  = el( 'div', 'nfx-radio-group' );
+			opts.forEach( function ( opt, idx ) {
+				var rlab = el( 'label', 'nfx-radio-option' );
+				var r    = el( 'input' );
+				r.type = 'radio';
+				r.name = id;
+				r.required = ! ! fdef.required && 0 === idx;
+				r.checked = ( state.form.extra[ key ] === opt );
+				r.addEventListener( 'change', function () { state.form.extra[ key ] = opt; } );
+				rlab.appendChild( r );
+				rlab.appendChild( el( 'span', '', escapeHtml( opt ) ) );
+				grp.appendChild( rlab );
+			} );
+			f.appendChild( grp );
+			return f;
+		}
+
+		if ( 'select' === fdef.type ) {
+			return selectFieldFor( state.form.extra, key, label, fdef.options || [], fdef.placeholder );
+		}
+
+		var lab2 = el( 'label', 'nfx-field__label', label );
+		lab2.setAttribute( 'for', id );
+		f.appendChild( lab2 );
+
+		if ( 'textarea' === fdef.type ) {
+			var ta = el( 'textarea', 'nfx-textarea' );
+			ta.id = id;
+			ta.rows = 3;
+			ta.required = ! ! fdef.required;
+			ta.placeholder = fdef.placeholder || '';
+			ta.value = state.form.extra[ key ] || '';
+			ta.addEventListener( 'input', function () { state.form.extra[ key ] = ta.value; } );
+			f.appendChild( ta );
+			return f;
+		}
+
+		var inputType = ( 'tel' === fdef.type || 'email' === fdef.type || 'number' === fdef.type ) ? fdef.type : 'text';
+		var inp = el( 'input', 'nfx-input' + ( 'tel' === inputType || 'number' === inputType ? ' nfx-input--ltr' : '' ) );
+		inp.id = id;
+		inp.type = inputType;
+		inp.required = ! ! fdef.required;
+		inp.placeholder = fdef.placeholder || '';
+		inp.value = state.form.extra[ key ] || '';
+		inp.addEventListener( 'input', function () { state.form.extra[ key ] = inp.value; } );
+		f.appendChild( inp );
+		return f;
+	}
+
+	// مثل selectField ولی مقدار را در یک شیء دلخواه (state.form.extra) به‌جای state.form می‌نویسد.
+	function selectFieldFor( store, key, labelHtml, options, ph ) {
+		var f  = el( 'div', 'nfx-field' );
+		var id = nextFieldId( 'extra-' + key );
+		var lab = el( 'label', 'nfx-field__label', labelHtml );
+		lab.setAttribute( 'for', id );
+		f.appendChild( lab );
+		var sel = el( 'select', 'nfx-input nfx-select' );
+		sel.id = id;
+		var o0 = el( 'option' ); o0.value = ''; o0.textContent = ph || 'انتخاب کنید...'; sel.appendChild( o0 );
+		options.forEach( function ( opt ) {
+			var o = el( 'option' ); o.value = opt; o.textContent = opt;
+			if ( store[ key ] === opt ) { o.selected = true; }
+			sel.appendChild( o );
+		} );
+		sel.addEventListener( 'change', function () { store[ key ] = sel.value; } );
 		f.appendChild( sel );
 		return f;
 	}

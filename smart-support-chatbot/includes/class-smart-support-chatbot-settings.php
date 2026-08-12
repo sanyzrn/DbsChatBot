@@ -171,6 +171,9 @@ class SSC_Chatbot_Settings {
 			// دانش محصولات (per-product knowledge base).
 			'product_knowledge'  => array(),
 
+			// فیلدهای سفارشی فرم درخواست (فرم‌ساز پویا). هر فیلد: key, label, type, required, options, placeholder.
+			'form_fields'        => array(),
+
 			// پایگاه دانش هیبریدی (KB Engine سبک — نسخهٔ ۲.۶).
 			'kb_enabled'         => 'yes', // تزریق تکه‌های مرتبط پایگاه دانش به پرامپت هوش مصنوعی.
 			'kb_max_chunks'      => 3,      // حداکثر تعداد تکه‌های تزریق‌شده در هر پاسخ.
@@ -326,6 +329,41 @@ class SSC_Chatbot_Settings {
 			}
 		}
 		return $map;
+	}
+
+	/**
+	 * انواع مجاز فیلد سفارشی فرم.
+	 *
+	 * @return array
+	 */
+	public static function form_field_types() {
+		return array( 'text', 'textarea', 'tel', 'email', 'number', 'select', 'checkbox', 'radio' );
+	}
+
+	/**
+	 * فیلدهای سفارشی فرم درخواست (فرم‌ساز پویا)، اعتبارسنجی‌شده و آمادهٔ استفاده.
+	 * هم برای رندر فرانت (JS) و هم برای اعتبارسنجی سرور و نمایش ادمین به کار می‌رود.
+	 *
+	 * @return array
+	 */
+	public static function form_fields() {
+		$types = self::form_field_types();
+		$out   = array();
+		foreach ( (array) self::get( 'form_fields', array() ) as $f ) {
+			if ( empty( $f['key'] ) || empty( $f['label'] ) ) {
+				continue;
+			}
+			$type  = isset( $f['type'] ) && in_array( $f['type'], $types, true ) ? $f['type'] : 'text';
+			$out[] = array(
+				'key'         => $f['key'],
+				'label'       => $f['label'],
+				'type'        => $type,
+				'required'    => ! empty( $f['required'] ),
+				'options'     => ( in_array( $type, array( 'select', 'radio' ), true ) && ! empty( $f['options'] ) ) ? array_values( (array) $f['options'] ) : array(),
+				'placeholder' => isset( $f['placeholder'] ) ? $f['placeholder'] : '',
+			);
+		}
+		return $out;
 	}
 
 	/**

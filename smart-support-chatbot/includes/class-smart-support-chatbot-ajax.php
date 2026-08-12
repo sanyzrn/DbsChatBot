@@ -1406,6 +1406,7 @@ class SSC_Chatbot_Ajax {
 			'concomitant_drugs',
 			'reporter_type',
 			'nfx_hp',
+			'extra',
 		);
 		$args = array( 'nfx_elapsed' => isset( $_POST['nfx_elapsed'] ) ? (int) $_POST['nfx_elapsed'] : 99999 );
 		foreach ( $keys as $k ) {
@@ -1491,6 +1492,12 @@ class SSC_Chatbot_Ajax {
 			}
 		}
 
+		// فیلدهای سفارشی فرم‌ساز پویا (تعریف‌شده در تنظیمات).
+		$extra = $this->validate_extra_fields( isset( $args['extra'] ) ? (string) $args['extra'] : '' );
+		if ( is_wp_error( $extra ) ) {
+			return $extra;
+		}
+
 		$row = array(
 			'type'              => $type,
 			'name'              => $name,
@@ -1502,6 +1509,7 @@ class SSC_Chatbot_Ajax {
 			'batch_number'      => $is_adr && $batch_number ? $batch_number : null,
 			'concomitant_drugs' => $is_adr && $concomitant_drugs ? $concomitant_drugs : null,
 			'reporter_type'     => $is_adr && $reporter_type ? $reporter_type : null,
+			'extra_fields'      => $extra ? wp_json_encode( $extra ) : null,
 			'ip'                => $this->get_ip(),
 		);
 
@@ -1524,6 +1532,67 @@ class SSC_Chatbot_Ajax {
 		do_action( 'ssc_chatbot_after_submit', $id, $row );
 
 		return array( 'message' => __( 'اطلاعات با موفقیت ثبت و ارسال شد.', 'smart-support-chatbot' ) );
+	}
+
+	/**
+	 * اعتبارسنجی و پاکسازی پاسخ‌های فیلدهای سفارشی فرم‌ساز پویا در برابر تعریف تنظیمات.
+	 *
+	 * @param string $raw_json رشتهٔ JSON دریافتی از کلاینت ({ key: value, ... }).
+	 * @return array|WP_Error نگاشت key => مقدار پاکسازی‌شده.
+	 */
+	protected function validate_extra_fields( $raw_json ) {
+		$fields = SSC_Chatbot_Settings::form_fields();
+		if ( empty( $fields ) ) {
+			return array();
+		}
+		$raw = array();
+		if ( '' !== trim( $raw_json ) ) {
+			$decoded = json_decode( $raw_json, true );
+			if ( is_array( $decoded ) ) {
+				$raw = $decoded;
+			}
+		}
+
+		$out = array();
+		foreach ( $fields as $f ) {
+			$key   = $f['key'];
+			$value = isset( $raw[ $key ] ) ? $raw[ $key ] : '';
+
+			if ( 'checkbox' === $f['type'] ) {
+				$checked = ! empty( $value ) && 'false' !== $value && '0' !== (string) $value;
+				if ( $f['required'] && ! $checked ) {
+					/* translators: %s: برچسب فیلد. */
+					return new WP_Error( 'ssc_field_required', sprintf( __( 'تکمیل فیلد «%s» الزامی است.', 'smart-support-chatbot' ), $f['label'] ), array( 'status' => 400 ) );
+				}
+				if ( $checked ) {
+					$out[ $key ] = __( 'بله', 'smart-support-chatbot' );
+				}
+				continue;
+			}
+
+			$value = is_scalar( $value ) ? trim( (string) $value ) : '';
+			$value = ( 'textarea' === $f['type'] ) ? sanitize_textarea_field( $value ) : sanitize_text_field( $value );
+
+			if ( in_array( $f['type'], array( 'select', 'radio' ), true ) && '' !== $value && ! in_array( $value, $f['options'], true ) ) {
+				$value = ''; // مقدار خارج از گزینه‌های مجاز، نادیده گرفته می‌شود.
+			}
+
+			if ( '' === $value ) {
+				if ( $f['required'] ) {
+					/* translators: %s: برچسب فیلد. */
+					return new WP_Error( 'ssc_field_required', sprintf( __( 'تکمیل فیلد «%s» الزامی است.', 'smart-support-chatbot' ), $f['label'] ), array( 'status' => 400 ) );
+				}
+				continue;
+			}
+
+			if ( 'email' === $f['type'] && ! is_email( $value ) ) {
+				/* translators: %s: برچسب فیلد. */
+				return new WP_Error( 'ssc_field_invalid', sprintf( __( 'مقدار فیلد «%s» معتبر نیست.', 'smart-support-chatbot' ), $f['label'] ), array( 'status' => 400 ) );
+			}
+
+			$out[ $key ] = $value;
+		}
+		return $out;
 	}
 
 	/**
@@ -1575,6 +1644,19 @@ class SSC_Chatbot_Ajax {
 			}
 			if ( ! empty( $row['concomitant_drugs'] ) ) {
 				$msg .= '💊 داروهای مصرفی همزمان: ' . $row['concomitant_drugs'] . "\n";
+			}
+		}
+
+		// فیلدهای سفارشی فرم‌ساز پویا.
+		if ( ! empty( $row['extra_fields'] ) ) {
+			$extra = json_decode( (string) $row['extra_fields'], true );
+			if ( is_array( $extra ) && $extra ) {
+				$labels = wp_list_pluck( SSC_Chatbot_Settings::form_fields(), 'label', 'key' );
+				$msg   .= "\n— — — فیلدهای سفارشی — — —\n";
+				foreach ( $extra as $key => $value ) {
+					$label = isset( $labels[ $key ] ) ? $labels[ $key ] : $key;
+					$msg  .= '▫️ ' . $label . ': ' . $value . "\n";
+				}
 			}
 		}
 

@@ -37,6 +37,7 @@ $secret_ph = function ( $key ) {
 				<a href="#tab-general" class="ssc-tab is-active"><?php esc_html_e( 'عمومی', 'smart-support-chatbot' ); ?></a>
 				<a href="#tab-menu" class="ssc-tab"><?php esc_html_e( 'منو و متن‌ها', 'smart-support-chatbot' ); ?></a>
 				<a href="#tab-products" class="ssc-tab"><?php esc_html_e( 'محصولات', 'smart-support-chatbot' ); ?></a>
+				<a href="#tab-form-fields" class="ssc-tab"><?php esc_html_e( 'فرم‌ساز', 'smart-support-chatbot' ); ?></a>
 				<a href="#tab-appearance" class="ssc-tab"><?php esc_html_e( 'ظاهر', 'smart-support-chatbot' ); ?></a>
 				<a href="#tab-ai" class="ssc-tab"><?php esc_html_e( 'هوش مصنوعی', 'smart-support-chatbot' ); ?></a>
 				<a href="#tab-advanced" class="ssc-tab"><?php esc_html_e( 'تجربه کاربری', 'smart-support-chatbot' ); ?></a>
@@ -243,6 +244,70 @@ $secret_ph = function ( $key ) {
 					</tbody>
 				</table>
 				<p><button type="button" class="button button-secondary" id="ssc-add-quick"><?php esc_html_e( '+ افزودن پاسخ پیشنهادی', 'smart-support-chatbot' ); ?></button></p>
+			</div>
+
+			<!-- فرم‌ساز پویا -->
+			<div id="tab-form-fields" class="ssc-tab-panel">
+				<h3 class="ssc-section"><?php esc_html_e( 'فیلدهای سفارشی فرم درخواست', 'smart-support-chatbot' ); ?></h3>
+				<p class="description"><?php esc_html_e( 'این فیلدها علاوه بر «نام»، «شماره تماس» و «توضیحات» (که همیشه ثابت هستند) در فرم درخواست/مشاوره نمایش داده می‌شوند. برای هر کسب‌وکاری قابل تنظیم است — نیازی به فیلدهای از پیش تعیین‌شده نیست.', 'smart-support-chatbot' ); ?></p>
+
+				<table class="ssc-products-table widefat" id="ssc-form-fields">
+					<thead>
+						<tr>
+							<th style="width:160px"><?php esc_html_e( 'برچسب', 'smart-support-chatbot' ); ?></th>
+							<th style="width:130px"><?php esc_html_e( 'نوع', 'smart-support-chatbot' ); ?></th>
+							<th style="width:100px"><?php esc_html_e( 'الزامی', 'smart-support-chatbot' ); ?></th>
+							<th><?php esc_html_e( 'گزینه‌ها (هرکدام یک خط — فقط برای «انتخابی» و «رادیویی»)', 'smart-support-chatbot' ); ?></th>
+							<th style="width:150px"><?php esc_html_e( 'متن راهنما (Placeholder)', 'smart-support-chatbot' ); ?></th>
+							<th style="width:40px"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						$field_types = array(
+							'text'     => __( 'متن کوتاه', 'smart-support-chatbot' ),
+							'textarea' => __( 'متن بلند', 'smart-support-chatbot' ),
+							'tel'      => __( 'شماره تماس', 'smart-support-chatbot' ),
+							'email'    => __( 'ایمیل', 'smart-support-chatbot' ),
+							'number'   => __( 'عدد', 'smart-support-chatbot' ),
+							'select'   => __( 'انتخابی (Select)', 'smart-support-chatbot' ),
+							'radio'    => __( 'رادیویی (تک‌انتخابی)', 'smart-support-chatbot' ),
+							'checkbox' => __( 'چک‌باکس (بله/خیر)', 'smart-support-chatbot' ),
+						);
+						foreach ( (array) $s['form_fields'] as $ff ) :
+							$fkey  = isset( $ff['key'] ) ? $ff['key'] : '';
+							$flbl  = isset( $ff['label'] ) ? $ff['label'] : '';
+							$ftype = isset( $ff['type'] ) ? $ff['type'] : 'text';
+							$freq  = ! empty( $ff['required'] );
+							$fopts = isset( $ff['options'] ) ? implode( "\n", (array) $ff['options'] ) : '';
+							$fph   = isset( $ff['placeholder'] ) ? $ff['placeholder'] : '';
+							?>
+							<tr class="ssc-field-row">
+								<td>
+									<input type="hidden" name="form_field_key[]" value="<?php echo esc_attr( $fkey ); ?>">
+									<input type="text" name="form_field_label[]" value="<?php echo esc_attr( $flbl ); ?>" class="widefat">
+								</td>
+								<td>
+									<select name="form_field_type[]" class="widefat">
+										<?php foreach ( $field_types as $tval => $tlabel ) : ?>
+											<option value="<?php echo esc_attr( $tval ); ?>" <?php selected( $ftype, $tval ); ?>><?php echo esc_html( $tlabel ); ?></option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+								<td>
+									<select name="form_field_required[]" class="widefat">
+										<option value="yes" <?php selected( $freq, true ); ?>><?php esc_html_e( 'بله', 'smart-support-chatbot' ); ?></option>
+										<option value="no" <?php selected( $freq, false ); ?>><?php esc_html_e( 'خیر', 'smart-support-chatbot' ); ?></option>
+									</select>
+								</td>
+								<td><textarea name="form_field_options[]" rows="2" class="widefat"><?php echo esc_textarea( $fopts ); ?></textarea></td>
+								<td><input type="text" name="form_field_placeholder[]" value="<?php echo esc_attr( $fph ); ?>" class="widefat"></td>
+								<td><button type="button" class="button ssc-remove-field">&times;</button></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+				<p><button type="button" class="button button-secondary" id="ssc-add-field"><?php esc_html_e( '+ افزودن فیلد', 'smart-support-chatbot' ); ?></button></p>
 			</div>
 
 			<!-- ظاهر -->
