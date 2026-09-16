@@ -6,7 +6,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+        exit;
 }
 
 /**
@@ -14,400 +14,483 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class SSC_Chatbot_Settings {
 
-	/**
-	 * کلید گزینه در دیتابیس.
-	 */
-	const OPTION_KEY = 'ssc_chatbot_settings';
+        /**
+         * کلید گزینه در دیتابیس.
+         */
+        const OPTION_KEY = 'ssc_chatbot_settings';
 
-	/**
-	 * کش تنظیمات.
-	 *
-	 * @var array|null
-	 */
-	protected static $cache = null;
+        /**
+         * کش تنظیمات.
+         *
+         * @var array|null
+         */
+        protected static $cache = null;
 
-	/**
-	 * مقادیر پیش‌فرض تنظیمات.
-	 *
-	 * @return array
-	 */
-	public static function defaults() {
-		return array(
-			// عمومی.
-			'enabled'            => 'yes',
-			// حالت کسب‌وکار: general (عمومی) | pharma (داروسازی — فرم استاندارد عوارض دارویی فعال می‌شود).
-			'business_mode'      => 'general',
-			'company_name'       => '',
-			'company_id'         => 'company',
-			'welcome_title'      => 'سلام! 👋',
-			'welcome_text'       => 'به پشتیبانی آنلاین ما خوش آمدید.<br>چطور می‌تونم کمکتون کنم؟',
-			'header_title'       => 'دستیار هوشمند',
-			'disclaimer'         => 'هوش مصنوعی ممکن است اشتباه کند.',
-			'support_phone'      => '', // شماره تماس پشتیبانی برای دکمهٔ «تماس با ما» داخل پاسخ‌ها.
+        /**
+         * مقادیر پیش‌فرض تنظیمات.
+         *
+         * @return array
+         */
+        public static function defaults() {
+                return array(
+                        // عمومی.
+                        'enabled'            => 'yes',
+                        // حالت کسب‌وکار: general (عمومی) | pharma (داروسازی — فرم استاندارد عوارض دارویی فعال می‌شود).
+                        'business_mode'      => 'general',
+                        'company_name'       => '',
+                        'company_id'         => 'company',
+                        'welcome_title'      => 'سلام! 👋',
+                        'welcome_text'       => 'به پشتیبانی آنلاین ما خوش آمدید.<br>چطور می‌تونم کمکتون کنم؟',
+                        'header_title'       => 'دستیار هوشمند',
+                        'disclaimer'         => 'هوش مصنوعی ممکن است اشتباه کند.',
+                        'support_phone'      => '', // شماره تماس پشتیبانی برای دکمهٔ «تماس با ما» داخل پاسخ‌ها.
 
-			// نمایش گزینه‌های منو (پیش‌فرض عمومی: سوال از ما + درخواست مشاوره).
-			'show_company'       => 'yes',
-			'show_products'      => 'no',
-			'show_adr'           => 'no',
-			'show_consult'       => 'yes',
+                        // نمایش گزینه‌های منو (پیش‌فرض عمومی: سوال از ما + درخواست مشاوره).
+                        'show_company'       => 'yes',
+                        'show_products'      => 'no',
+                        'show_adr'           => 'no',
+                        'show_consult'       => 'yes',
 
-			// متن دکمه‌های منو.
-			'company_btn_title'  => 'سوال از ما',
-			'company_btn_desc'   => 'دربارهٔ ما، خدمات و اطلاعات تماس',
-			'products_btn_title' => 'سوال در مورد محصولات',
-			'products_btn_desc'  => 'اطلاعات محصولات و خدمات',
-			'adr_btn_title'      => 'ثبت عوارض',
-			'consult_btn_title'  => 'درخواست مشاوره',
+                        // متن دکمه‌های منو.
+                        'company_btn_title'  => 'سوال از ما',
+                        'company_btn_desc'   => 'دربارهٔ ما، خدمات و اطلاعات تماس',
+                        'products_btn_title' => 'سوال در مورد محصولات',
+                        'products_btn_desc'  => 'اطلاعات محصولات و خدمات',
+                        'adr_btn_title'      => 'ثبت عوارض',
+                        'consult_btn_title'  => 'درخواست مشاوره',
 
-			// محصولات (هر محصول می‌تواند لینک بروشور/تصویر داشته باشد). پیش‌فرض خالی — کاربر خودش اضافه می‌کند.
-			'products'           => array(),
+                        // محصولات (هر محصول می‌تواند لینک بروشور/تصویر داشته باشد). پیش‌فرض خالی — کاربر خودش اضافه می‌کند.
+                        'products'           => array(),
 
-			// پاسخ‌های پیشنهادی (Quick Replies) در گفتگوی محصول.
-			'quick_replies_enabled' => 'yes',
-			'quick_replies'         => array(
-				array(
-					'label' => 'قیمت',
-					'question' => 'قیمت این محصول چقدر است؟',
-				),
-				array(
-					'label' => 'نحوه استفاده',
-					'question' => 'نحوه استفاده از این محصول چگونه است؟',
-				),
-				array(
-					'label' => 'گارانتی',
-					'question' => 'شرایط گارانتی یا پشتیبانی این محصول چیست؟',
-				),
-			),
+                        // پاسخ‌های پیشنهادی (Quick Replies) در گفتگوی محصول.
+                        'quick_replies_enabled' => 'yes',
+                        'quick_replies'         => array(
+                                array(
+                                        'label' => 'قیمت',
+                                        'question' => 'قیمت این محصول چقدر است؟',
+                                ),
+                                array(
+                                        'label' => 'نحوه استفاده',
+                                        'question' => 'نحوه استفاده از این محصول چگونه است؟',
+                                ),
+                                array(
+                                        'label' => 'گارانتی',
+                                        'question' => 'شرایط گارانتی یا پشتیبانی این محصول چیست؟',
+                                ),
+                        ),
 
-			// ظاهر.
-			'position'           => 'right', // right | left.
-			'primary_color'      => '#b61615',
-			'primary_hover'      => '#991211',
-			'theme_mode'         => 'light', // light | dark | auto.
+                        // ظاهر.
+                        'position'           => 'right', // right | left.
+                        'primary_color'      => '#b61615',
+                        'primary_hover'      => '#991211',
+                        'theme_mode'         => 'light', // light | dark | auto.
 
-			// فونت و استایل پنجرهٔ چت (مبتنی بر متغیرهای CSS).
-			'font_family'        => 'vazirmatn', // vazirmatn | system | inter | roboto | custom.
-			'font_name'          => '',   // نام خانوادهٔ فونت سفارشی (وقتی font_family = custom).
-			'font_url'           => '',   // آدرس شیوه‌نامهٔ فونت سفارشی (@font-face).
-			'font_size'          => 14,   // اندازهٔ پایهٔ متن پیام‌ها (px).
-			'window_width'       => 384,  // عرض پنجرهٔ چت (px).
-			'window_radius'      => 24,   // گردی گوشه‌های پنجره (px).
-			'bubble_radius'      => 16,   // گردی گوشه‌های حباب پیام (px).
-			'user_bubble_color'  => '',   // رنگ حباب کاربر (خالی = رنگ اصلی).
-			'bot_bubble_color'   => '',   // رنگ حباب ربات (خالی = پس‌زمینهٔ کارت).
+                        // فونت و استایل پنجرهٔ چت (مبتنی بر متغیرهای CSS).
+                        'font_family'        => 'vazirmatn', // vazirmatn | system | inter | roboto | custom.
+                        'font_name'          => '',   // نام خانوادهٔ فونت سفارشی (وقتی font_family = custom).
+                        'font_url'           => '',   // آدرس شیوه‌نامهٔ فونت سفارشی (@font-face).
+                        'font_size'          => 14,   // اندازهٔ پایهٔ متن پیام‌ها (px).
+                        'window_width'       => 384,  // عرض پنجرهٔ چت (px).
+                        'window_radius'      => 24,   // گردی گوشه‌های پنجره (px).
+                        'bubble_radius'      => 16,   // گردی گوشه‌های حباب پیام (px).
+                        'user_bubble_color'  => '',   // رنگ حباب کاربر (خالی = رنگ اصلی).
+                        'bot_bubble_color'   => '',   // رنگ حباب ربات (خالی = پس‌زمینهٔ کارت).
 
-			// آیکون شناور (سفارشی‌سازی).
-			'button_size'        => 60, // قطر دکمه بر حسب پیکسل.
-			'icon_size'          => 28, // اندازه آیکون بر حسب پیکسل.
-			'button_radius'      => 50, // گردی گوشه‌های دکمه (درصد؛ ۵۰ = دایره کامل).
-			'button_icon_url'    => '', // تصویر اختصاصی آیکون (اختیاری).
+                        // آیکون شناور (سفارشی‌سازی).
+                        'button_size'        => 60, // قطر دکمه بر حسب پیکسل.
+                        'icon_size'          => 28, // اندازه آیکون بر حسب پیکسل.
+                        'button_radius'      => 50, // گردی گوشه‌های دکمه (درصد؛ ۵۰ = دایره کامل).
+                        'button_icon_url'    => '', // تصویر اختصاصی آیکون (اختیاری).
 
-			// هوش مصنوعی.
-			'ai_provider'        => 'fallback', // fallback | gemini | openai | claude | custom | webhook.
-			'gemini_api_key'     => '',
-			'gemini_model'       => 'gemini-2.0-flash',
+                        // هوش مصنوعی.
+                        'ai_provider'        => 'fallback', // fallback | gemini | openai | claude | custom | webhook.
+                        'gemini_api_key'     => '',
+                        'gemini_model'       => 'gemini-2.0-flash',
 
-			// OpenAI.
-			'openai_api_key'     => '',
-			'openai_model'       => 'gpt-4o-mini',
+                        // OpenAI.
+                        'openai_api_key'     => '',
+                        'openai_model'       => 'gpt-4o-mini',
 
-			// Anthropic Claude.
-			'claude_api_key'     => '',
-			'claude_model'       => 'claude-opus-4-8',
+                        // Anthropic Claude.
+                        'claude_api_key'     => '',
+                        'claude_model'       => 'claude-opus-4-8',
 
-			// Custom (سازگار با OpenAI — هر شرکتی با لینک اختصاصی).
-			'custom_api_key'     => '',
-			'custom_endpoint'    => '',
-			'custom_model'       => '',
+                        // Custom (سازگار با OpenAI — هر شرکتی با لینک اختصاصی).
+                        'custom_api_key'     => '',
+                        'custom_endpoint'    => '',
+                        'custom_model'       => '',
 
-			'ai_webhook_url'     => '',
-			'ai_webhook_secret'  => '',
-			'ai_system_prompt'   => 'شما دستیار هوشمند پشتیبانی این کسب‌وکار هستید. به سوالات کاربران به زبان فارسی، دقیق، کوتاه و محترمانه پاسخ دهید. اگر پاسخ سوالی را نمی‌دانید، کاربر را به ثبت «درخواست مشاوره» یا تماس با پشتیبانی راهنمایی کنید.',
-			'ai_fallback_msg'    => 'سپاس از پیام شما. اکنون امکان پاسخ‌گویی خودکار به این سوال وجود ندارد. برای دریافت اطلاعات دقیق‌تر می‌توانید با پشتیبانی تماس بگیرید یا از بخش «درخواست مشاوره» استفاده کنید.',
-			'ai_rate_limit'      => 100, // درخواست در روز برای هر IP.
-			'rate_limit_mode'    => 'ip', // ip | session | both | off — روش محدودسازی استفاده.
-			'session_rate_limit' => 50,  // درخواست در روز برای هر نشست (مرورگر).
-			'ai_history_limit'   => 8,   // حداکثر پیام‌های تاریخچه ارسالی به مدل (حافظه مکالمه).
-			'ai_temperature'     => '0.4', // میزان خلاقیت (۰ = دقیق، ۱ = خلاق). برای Claude اعمال نمی‌شود.
-			'ai_max_tokens'      => 800,   // حداکثر طول پاسخ.
-			'ai_strict_knowledge' => 'no', // فقط بر اساس پایگاه دانش پاسخ بده.
+                        'ai_webhook_url'     => '',
+                        'ai_webhook_secret'  => '',
+                        'ai_system_prompt'   => 'شما دستیار هوشمند پشتیبانی این کسب‌وکار هستید. به سوالات کاربران به زبان فارسی، دقیق، کوتاه و محترمانه پاسخ دهید. اگر پاسخ سوالی را نمی‌دانید، کاربر را به ثبت «درخواست مشاوره» یا تماس با پشتیبانی راهنمایی کنید.',
+                        'ai_fallback_msg'    => 'سپاس از پیام شما. اکنون امکان پاسخ‌گویی خودکار به این سوال وجود ندارد. برای دریافت اطلاعات دقیق‌تر می‌توانید با پشتیبانی تماس بگیرید یا از بخش «درخواست مشاوره» استفاده کنید.',
+                        'ai_rate_limit'      => 100, // درخواست در روز برای هر IP.
+                        'rate_limit_mode'    => 'ip', // ip | session | both | off — روش محدودسازی استفاده.
+                        'session_rate_limit' => 50,  // درخواست در روز برای هر نشست (مرورگر).
+                        'ai_history_limit'   => 8,   // حداکثر پیام‌های تاریخچه ارسالی به مدل (حافظه مکالمه).
+                        'ai_temperature'     => '0.4', // میزان خلاقیت (۰ = دقیق، ۱ = خلاق). برای Claude اعمال نمی‌شود.
+                        'ai_max_tokens'      => 800,   // حداکثر طول پاسخ.
+                        'ai_strict_knowledge' => 'no', // فقط بر اساس پایگاه دانش پاسخ بده.
 
-			// بانک سوال/جواب آفلاین و تاریخچه گفتگو.
-			'qa_mode'            => 'ai_first', // ai_first | bank_first | bank_only.
-			'qa_bank'            => array(),    // آرایه‌ای از { product, question, keywords, answer }.
-			'chatlog_enabled'    => 'yes',      // ذخیره گفتگوها برای افزودن به بانک.
-			'chatlog_retention_days' => 90,     // پاک‌سازی خودکار تاریخچه قدیمی‌تر از این تعداد روز (۰ = بدون پاک‌سازی).
-			'submissions_retention_days' => 0,  // پاک‌سازی خودکار درخواست‌های قدیمی (۰ = نگهداری همیشگی).
-			'ai_cache_enabled'   => 'yes',      // کش پاسخ هوش مصنوعی برای سوال‌های بدون تاریخچه.
+                        // بانک سوال/جواب آفلاین و تاریخچه گفتگو.
+                        'qa_mode'            => 'ai_first', // ai_first | bank_first | bank_only.
+                        'qa_bank'            => array(),    // آرایه‌ای از { product, question, keywords, answer }.
+                        'chatlog_enabled'    => 'yes',      // ذخیره گفتگوها برای افزودن به بانک.
+                        'chatlog_retention_days' => 90,     // پاک‌سازی خودکار تاریخچه قدیمی‌تر از این تعداد روز (۰ = بدون پاک‌سازی).
+                        'submissions_retention_days' => 0,  // پاک‌سازی خودکار درخواست‌های قدیمی (۰ = نگهداری همیشگی).
+                        'ai_cache_enabled'   => 'yes',      // کش پاسخ هوش مصنوعی برای سوال‌های بدون تاریخچه.
 
-			// تجربه کاربری پیشرفته.
-			'feedback_enabled'   => 'yes',      // دکمه‌های بازخورد 👍/👎.
-			'typewriter_enabled' => 'yes',      // افکت تایپ تدریجی پاسخ.
+                        // تجربه کاربری پیشرفته.
+                        'feedback_enabled'   => 'yes',      // دکمه‌های بازخورد 👍/👎.
+                        'typewriter_enabled' => 'yes',      // افکت تایپ تدریجی پاسخ.
 
-			// قابلیت‌های نسخه ۲.۵.
-			'suggestions_enabled'  => 'yes',    // چیپس‌های پیگیری هوشمند پس از هر پاسخ.
-			'autocomplete_enabled' => 'yes',    // تکمیل خودکار سوال از بانک هنگام تایپ.
-			'voice_enabled'        => 'yes',    // ورودی/خروجی صوتی (Web Speech API، سمت کلاینت).
-			'csat_enabled'         => 'yes',    // نظرسنجی رضایت پایان گفتگو (CSAT).
-			'handoff_enabled'      => 'yes',    // واگذاری به کارشناس انسانی هنگام بی‌پاسخ ماندن.
-			'handoff_text'         => 'به نظر می‌رسد بهتر است این موضوع را با یک کارشناس انسانی در میان بگذارید. مایل هستید درخواست مشاوره ثبت کنید؟',
-			'consent_enabled'      => 'no',     // الزام موافقت با حریم خصوصی در فرم‌ها.
-			'consent_text'         => 'با ثبت این فرم، با ذخیره و پردازش اطلاعات تماس خود جهت پیگیری موافقت می‌کنم.',
-			'consent_link'         => '',       // لینک سیاست حریم خصوصی (اختیاری).
+                        // قابلیت‌های نسخه ۲.۵.
+                        'suggestions_enabled'  => 'yes',    // چیپس‌های پیگیری هوشمند پس از هر پاسخ.
+                        'autocomplete_enabled' => 'yes',    // تکمیل خودکار سوال از بانک هنگام تایپ.
+                        'voice_enabled'        => 'yes',    // ورودی/خروجی صوتی (Web Speech API، سمت کلاینت).
+                        'csat_enabled'         => 'yes',    // نظرسنجی رضایت پایان گفتگو (CSAT).
+                        'handoff_enabled'      => 'yes',    // واگذاری به کارشناس انسانی هنگام بی‌پاسخ ماندن.
+                        'handoff_text'         => 'به نظر می‌رسد بهتر است این موضوع را با یک کارشناس انسانی در میان بگذارید. مایل هستید درخواست مشاوره ثبت کنید؟',
+                        'consent_enabled'      => 'no',     // الزام موافقت با حریم خصوصی در فرم‌ها.
+                        'consent_text'         => 'با ثبت این فرم، با ذخیره و پردازش اطلاعات تماس خود جهت پیگیری موافقت می‌کنم.',
+                        'consent_link'         => '',       // لینک سیاست حریم خصوصی (اختیاری).
 
-			// پیام دعوت هوشمند.
-			'proactive_enabled'  => 'yes',
-			'proactive_delay'    => 12,         // ثانیه.
-			'proactive_text'     => 'سوالی دارید؟ همین‌جا بپرسید 👋',
+                        // پیام دعوت هوشمند.
+                        'proactive_enabled'  => 'yes',
+                        'proactive_delay'    => 12,         // ثانیه.
+                        'proactive_text'     => 'سوالی دارید؟ همین‌جا بپرسید 👋',
 
-			// ساعات کاری / وضعیت آنلاین.
-			'office_enabled'     => 'no',
-			'office_start'       => 8,          // ساعت شروع (۰-۲۳).
-			'office_end'         => 16,         // ساعت پایان.
-			'office_days'        => array( 6, 0, 1, 2, 3 ), // شنبه=6 ... چهارشنبه=3 (شمارهٔ روز هفته PHP: یکشنبه=0).
-			'offline_text'       => 'خارج از ساعت کاری',
-			'online_text'        => 'آنلاین',
+                        // ساعات کاری / وضعیت آنلاین.
+                        'office_enabled'     => 'no',
+                        'office_start'       => 8,          // ساعت شروع (۰-۲۳).
+                        'office_end'         => 16,         // ساعت پایان.
+                        'office_days'        => array( 6, 0, 1, 2, 3 ), // شنبه=6 ... چهارشنبه=3 (شمارهٔ روز هفته PHP: یکشنبه=0).
+                        'offline_text'       => 'خارج از ساعت کاری',
+                        'online_text'        => 'آنلاین',
 
-			// دانش محصولات (per-product knowledge base).
-			'product_knowledge'  => array(),
+                        // دانش محصولات (per-product knowledge base).
+                        'product_knowledge'  => array(),
 
-			// فیلدهای سفارشی فرم درخواست (فرم‌ساز پویا). هر فیلد: key, label, type, required, options, placeholder.
-			'form_fields'        => array(),
+                        // فیلدهای سفارشی فرم درخواست (فرم‌ساز پویا). هر فیلد: key, label, type, required, options, placeholder.
+                        'form_fields'        => array(),
 
-			// پایگاه دانش هیبریدی (KB Engine سبک — نسخهٔ ۲.۶).
-			'kb_enabled'         => 'yes', // تزریق تکه‌های مرتبط پایگاه دانش به پرامپت هوش مصنوعی.
-			'kb_max_chunks'      => 3,      // حداکثر تعداد تکه‌های تزریق‌شده در هر پاسخ.
+                        // پایگاه دانش هیبریدی (KB Engine سبک — نسخهٔ ۲.۶).
+                        'kb_enabled'         => 'yes', // تزریق تکه‌های مرتبط پایگاه دانش به پرامپت هوش مصنوعی.
+                        'kb_max_chunks'      => 3,      // حداکثر تعداد تکه‌های تزریق‌شده در هر پاسخ.
 
-			// اعلان‌ها (بات بله / تلگرام).
-			'notify_enabled'     => 'no',
-			'notify_platform'    => 'bale', // bale | telegram.
-			'notify_token'       => '',
-			'notify_chat_id'     => '',
+                        // اعلان‌ها (بات بله / تلگرام).
+                        'notify_enabled'     => 'no',
+                        'notify_platform'    => 'bale', // bale | telegram.
+                        'notify_token'       => '',
+                        'notify_chat_id'     => '',
 
-			// اعلان ایمیل.
-			'email_enabled'      => 'no',
-			'email_to'           => '',
-		);
-	}
+                        // اعلان ایمیل.
+                        'email_enabled'      => 'no',
+                        'email_to'           => '',
+                );
+        }
 
-	/**
-	 * دریافت تمام تنظیمات (ادغام با پیش‌فرض‌ها).
-	 *
-	 * @return array
-	 */
-	public static function all() {
-		if ( null !== self::$cache ) {
-			return self::$cache;
-		}
-		$saved       = get_option( self::OPTION_KEY, array() );
-		$saved       = is_array( $saved ) ? $saved : array();
-		self::$cache = wp_parse_args( $saved, self::defaults() );
-		return self::$cache;
-	}
+        /**
+         * دریافت تمام تنظیمات (ادغام با پیش‌فرض‌ها).
+         *
+         * @return array
+         */
+        public static function all() {
+                if ( null !== self::$cache ) {
+                        return self::$cache;
+                }
+                $saved       = get_option( self::OPTION_KEY, array() );
+                $saved       = is_array( $saved ) ? $saved : array();
+                self::$cache = wp_parse_args( $saved, self::defaults() );
+                return self::$cache;
+        }
 
-	/**
-	 * دریافت یک گزینه.
-	 *
-	 * @param string $key           کلید.
-	 * @param mixed  $default_value مقدار پیش‌فرض.
-	 * @return mixed
-	 */
-	public static function get( $key, $default_value = null ) {
-		$all = self::all();
-		if ( isset( $all[ $key ] ) ) {
-			return $all[ $key ];
-		}
-		return $default_value;
-	}
+        /**
+         * دریافت یک گزینه.
+         *
+         * @param string $key           کلید.
+         * @param mixed  $default_value مقدار پیش‌فرض.
+         * @return mixed
+         */
+        public static function get( $key, $default_value = null ) {
+                $all = self::all();
+                if ( isset( $all[ $key ] ) ) {
+                        return $all[ $key ];
+                }
+                return $default_value;
+        }
 
-	/**
-	 * ذخیره تنظیمات.
-	 *
-	 * @param array $settings تنظیمات.
-	 */
-	public static function update( $settings ) {
-		$merged = wp_parse_args( $settings, self::all() );
-		// autoload = no: گزینه ممکن است با product_knowledge بزرگ شود؛ روی هر بارگذاری صفحه لازم نیست.
-		update_option( self::OPTION_KEY, $merged, false );
-		self::$cache = null;
-	}
+        /**
+         * ذخیره تنظیمات.
+         *
+         * @param array $settings تنظیمات.
+         */
+        public static function update( $settings ) {
+                $merged = wp_parse_args( $settings, self::all() );
+                // autoload = no: گزینه ممکن است با product_knowledge بزرگ شود؛ روی هر بارگذاری صفحه لازم نیست.
+                update_option( self::OPTION_KEY, $merged, false );
+                self::$cache = null;
+        }
 
-	/**
-	 * تنظیم مقادیر پیش‌فرض هنگام فعال‌سازی.
-	 */
-	public static function set_defaults() {
-		$existing = get_option( self::OPTION_KEY, false );
-		if ( false === $existing ) {
-			add_option( self::OPTION_KEY, self::defaults(), '', 'no' );
-		}
-	}
+        /**
+         * تنظیم مقادیر پیش‌فرض هنگام فعال‌سازی.
+         */
+        public static function set_defaults() {
+                $existing = get_option( self::OPTION_KEY, false );
+                if ( false === $existing ) {
+                        add_option( self::OPTION_KEY, self::defaults(), '', 'no' );
+                }
+        }
 
-	/**
-	 * فیلدهای حساس که رمزنگاری می‌شوند.
-	 *
-	 * @return array
-	 */
-	public static function secret_fields() {
-		return array( 'gemini_api_key', 'openai_api_key', 'claude_api_key', 'custom_api_key', 'notify_token', 'ai_webhook_secret' );
-	}
+        /**
+         * فیلدهای حساس که رمزنگاری می‌شوند.
+         *
+         * @return array
+         */
+        public static function secret_fields() {
+                return array( 'gemini_api_key', 'openai_api_key', 'claude_api_key', 'custom_api_key', 'notify_token', 'ai_webhook_secret' );
+        }
 
-	/**
-	 * رمزنگاری یک مقدار (AES-256-CBC با کلید AUTH_KEY وردپرس).
-	 *
-	 * @param string $value مقدار.
-	 * @return string
-	 */
-	public static function encrypt( $value ) {
-		$value = (string) $value;
-		if ( '' === $value || ! function_exists( 'openssl_encrypt' ) || ! defined( 'AUTH_KEY' ) ) {
-			return $value;
-		}
-		$key       = hash( 'sha256', AUTH_KEY, true );
-		$iv        = openssl_random_pseudo_bytes( 16 );
-		$encrypted = openssl_encrypt( $value, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv );
-		if ( false === $encrypted ) {
-			return $value;
-		}
-		return 'enc::v1::' . base64_encode( $iv . $encrypted ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- کدگذاری باینری رمزشده برای ذخیره در گزینه؛ نه پنهان‌سازی کد.
-	}
+        /**
+         * رمزنگاری یک مقدار (AES-256-CBC + HMAC-SHA256 با کلیدهای مشتق‌شده از AUTH_KEY).
+         *
+         * نکتهٔ امنیتی: نسخهٔ v1 قبلی CBC بدون MAC بود (قابل دستکاری با padding/bit-flipping).
+         * نسخهٔ v2 از الگوی Encrypt-then-MAC استفاده می‌کند: کل رمزنگاری با کلیدیِ جداگانه
+         * (مشتق از LOGGED_IN_KEY/SALT) امضا می‌شود و در رمزگشایی با hash_equals اعتبارسنجی.
+         * مقادیر v1 همچنان رمزگشایی می‌شوند (سازگاری) و در ذخیرهٔ بعدی به‌صورت خودکار v2 می‌شوند.
+         *
+         * @param string $value مقدار.
+         * @return string
+         */
+        public static function encrypt( $value ) {
+                $value = (string) $value;
+                if ( '' === $value || ! function_exists( 'openssl_encrypt' ) || ! defined( 'AUTH_KEY' ) ) {
+                        return $value;
+                }
+                $enc_key   = hash( 'sha256', AUTH_KEY, true );
+                $mac_key   = hash( 'sha256', ( defined( 'LOGGED_IN_KEY' ) ? LOGGED_IN_KEY : AUTH_KEY ) . '|ssc-mac', true );
+                $iv        = openssl_random_pseudo_bytes( 16 );
+                $encrypted = openssl_encrypt( $value, 'aes-256-cbc', $enc_key, OPENSSL_RAW_DATA, $iv );
+                if ( false === $encrypted ) {
+                        return $value;
+                }
+                $cipher = $iv . $encrypted;
+                $mac    = hash_hmac( 'sha256', $cipher, $mac_key, true );
+                return 'enc::v2::' . base64_encode( $mac . $cipher ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- کدگذاری باینری رمزشده برای ذخیره در گزینه؛ نه پنهان‌سازی کد.
+        }
 
-	/**
-	 * رمزگشایی یک مقدار (با پشتیبانی از مقادیر قدیمی plaintext).
-	 *
-	 * @param string $value مقدار ذخیره‌شده.
-	 * @return string
-	 */
-	public static function decrypt( $value ) {
-		$value = (string) $value;
-		if ( 0 !== strpos( $value, 'enc::v1::' ) ) {
-			return $value; // مقدار قدیمی plaintext.
-		}
-		if ( ! function_exists( 'openssl_decrypt' ) || ! defined( 'AUTH_KEY' ) ) {
-			return '';
-		}
-		$raw = base64_decode( substr( $value, 9 ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- رمزگشایی داده باینری رمزشده (نه اجرای کد پنهان).
-		if ( false === $raw || strlen( $raw ) < 17 ) {
-			return '';
-		}
-		$key       = hash( 'sha256', AUTH_KEY, true );
-		$iv        = substr( $raw, 0, 16 );
-		$encrypted = substr( $raw, 16 );
-		$dec       = openssl_decrypt( $encrypted, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv );
-		return ( false === $dec ) ? '' : $dec;
-	}
+        /**
+         * رمزگشایی یک مقدار (پشتیبانی از قالب v2 امضاشده، v1 قدیمی و plaintext).
+         *
+         * @param string $value مقدار ذخیره‌شده.
+         * @return string
+         */
+        public static function decrypt( $value ) {
+                $value = (string) $value;
 
-	/**
-	 * دریافت یک مقدار حساس به‌صورت رمزگشایی‌شده.
-	 *
-	 * @param string $key کلید.
-	 * @return string
-	 */
-	public static function get_secret( $key ) {
-		return self::decrypt( (string) self::get( $key, '' ) );
-	}
+                if ( 0 === strpos( $value, 'enc::v2::' ) ) {
+                        if ( ! function_exists( 'openssl_decrypt' ) || ! defined( 'AUTH_KEY' ) ) {
+                                return '';
+                        }
+                        $raw = base64_decode( substr( $value, 9 ), true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- رمزگشایی داده باینری رمزشده (نه اجرای کد پنهان).
+                        if ( false === $raw || strlen( $raw ) < 49 ) { // 32 بایت MAC + 16 بایت IV + حداقل یک بلوک.
+                                return '';
+                        }
+                        $mac_key = hash( 'sha256', ( defined( 'LOGGED_IN_KEY' ) ? LOGGED_IN_KEY : AUTH_KEY ) . '|ssc-mac', true );
+                        $mac     = substr( $raw, 0, 32 );
+                        $cipher  = substr( $raw, 32 );
+                        // بدون تطبیق MAC، هرگز رمزگشایی نکن (جلوگیری از دستکاری متن رمز).
+                        if ( ! hash_equals( hash_hmac( 'sha256', $cipher, $mac_key, true ), $mac ) ) {
+                                return '';
+                        }
+                        $enc_key = hash( 'sha256', AUTH_KEY, true );
+                        $iv      = substr( $cipher, 0, 16 );
+                        $data    = substr( $cipher, 16 );
+                        $dec     = openssl_decrypt( $data, 'aes-256-cbc', $enc_key, OPENSSL_RAW_DATA, $iv );
+                        return ( false === $dec ) ? '' : $dec;
+                }
 
-	/**
-	 * آیا یک مقدار حساس ذخیره شده است؟ (برای نمایش وضعیت در پنل بدون افشای مقدار)
-	 *
-	 * @param string $key کلید.
-	 * @return bool
-	 */
-	public static function has_secret( $key ) {
-		return '' !== trim( self::get_secret( $key ) );
-	}
+                if ( 0 === strpos( $value, 'enc::v1::' ) ) {
+                        // قالب قدیمی بدون MAC — فقط برای خواندن داده‌های موجود؛ در ذخیرهٔ بعدی به v2 ارتقا می‌یابد.
+                        if ( ! function_exists( 'openssl_decrypt' ) || ! defined( 'AUTH_KEY' ) ) {
+                                return '';
+                        }
+                        $raw = base64_decode( substr( $value, 9 ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+                        if ( false === $raw || strlen( $raw ) < 17 ) {
+                                return '';
+                        }
+                        $key       = hash( 'sha256', AUTH_KEY, true );
+                        $iv        = substr( $raw, 0, 16 );
+                        $encrypted = substr( $raw, 16 );
+                        $dec       = openssl_decrypt( $encrypted, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv );
+                        return ( false === $dec ) ? '' : $dec;
+                }
 
-	/**
-	 * دریافت لیست محصولات به صورت آرایه id => name.
-	 *
-	 * @return array
-	 */
-	public static function products_map() {
-		$map = array();
-		foreach ( (array) self::get( 'products', array() ) as $p ) {
-			if ( ! empty( $p['id'] ) ) {
-				$map[ $p['id'] ] = isset( $p['name'] ) ? $p['name'] : $p['id'];
-			}
-		}
-		return $map;
-	}
+                return $value; // مقدار قدیمی plaintext.
+        }
 
-	/**
-	 * انواع مجاز فیلد سفارشی فرم.
-	 *
-	 * @return array
-	 */
-	public static function form_field_types() {
-		return array( 'text', 'textarea', 'tel', 'email', 'number', 'select', 'checkbox', 'radio' );
-	}
+        /**
+         * دریافت یک مقدار حساس به‌صورت رمزگشایی‌شده.
+         *
+         * @param string $key کلید.
+         * @return string
+         */
+        public static function get_secret( $key ) {
+                return self::decrypt( (string) self::get( $key, '' ) );
+        }
 
-	/**
-	 * فیلدهای سفارشی فرم درخواست (فرم‌ساز پویا)، اعتبارسنجی‌شده و آمادهٔ استفاده.
-	 * هم برای رندر فرانت (JS) و هم برای اعتبارسنجی سرور و نمایش ادمین به کار می‌رود.
-	 *
-	 * @return array
-	 */
-	public static function form_fields() {
-		$types = self::form_field_types();
-		$out   = array();
-		foreach ( (array) self::get( 'form_fields', array() ) as $f ) {
-			if ( empty( $f['key'] ) || empty( $f['label'] ) ) {
-				continue;
-			}
-			$type  = isset( $f['type'] ) && in_array( $f['type'], $types, true ) ? $f['type'] : 'text';
-			$out[] = array(
-				'key'         => $f['key'],
-				'label'       => $f['label'],
-				'type'        => $type,
-				'required'    => ! empty( $f['required'] ),
-				'options'     => ( in_array( $type, array( 'select', 'radio' ), true ) && ! empty( $f['options'] ) ) ? array_values( (array) $f['options'] ) : array(),
-				'placeholder' => isset( $f['placeholder'] ) ? $f['placeholder'] : '',
-			);
-		}
-		return $out;
-	}
+        /**
+         * آیا یک مقدار حساس ذخیره شده است؟ (برای نمایش وضعیت در پنل بدون افشای مقدار)
+         *
+         * @param string $key کلید.
+         * @return bool
+         */
+        public static function has_secret( $key ) {
+                return '' !== trim( self::get_secret( $key ) );
+        }
 
-	/**
-	 * آیا اکنون در ساعات کاری (آنلاین) هستیم؟
-	 *
-	 * @return bool
-	 */
-	public static function is_online() {
-		if ( 'yes' !== self::get( 'office_enabled', 'no' ) ) {
-			return true;
-		}
-		$now   = (int) current_time( 'G' );        // ساعت ۰-۲۳.
-		$day   = (int) current_time( 'w' );        // روز هفته ۰=یکشنبه.
-		$days  = (array) self::get( 'office_days', array( 6, 0, 1, 2, 3 ) );
-		$start = (int) self::get( 'office_start', 8 );
-		$end   = (int) self::get( 'office_end', 16 );
-		if ( ! in_array( $day, array_map( 'intval', $days ), true ) ) {
-			return false;
-		}
-		return ( $now >= $start && $now < $end );
-	}
+        /**
+         * دریافت لیست محصولات به صورت آرایه id => name.
+         *
+         * @return array
+         */
+        public static function products_map() {
+                $map = array();
+                foreach ( (array) self::get( 'products', array() ) as $p ) {
+                        if ( ! empty( $p['id'] ) ) {
+                                $map[ $p['id'] ] = isset( $p['name'] ) ? $p['name'] : $p['id'];
+                        }
+                }
+                return $map;
+        }
 
-	/**
-	 * گزینه‌های استاندارد فرم گزارش عوارض دارویی (فارماکوویژیلانس).
-	 * قابل سفارشی‌سازی از طریق فیلتر.
-	 *
-	 * @return array
-	 */
-	public static function adr_options() {
-		return apply_filters(
-			'ssc_chatbot_adr_options',
-			array(
-				'severity'      => array( 'خفیف', 'متوسط', 'شدید', 'تهدیدکننده حیات' ),
-				'outcome'       => array(
-					'بهبود کامل یافت',
-					'در حال بهبود',
-					'بهبود نیافت',
-					'عارضه ماندگار/ناتوانی',
-					'منجر به بستری شد',
-					'فوت',
-					'نامشخص',
-				),
-				'reporter_type' => array( 'بیمار/مصرف‌کننده', 'پزشک', 'داروساز', 'پرستار', 'سایر کادر درمان' ),
-			)
-		);
-	}
+        /**
+         * انواع مجاز فیلد سفارشی فرم.
+         *
+         * @return array
+         */
+        public static function form_field_types() {
+                return array( 'text', 'textarea', 'tel', 'email', 'number', 'select', 'checkbox', 'radio' );
+        }
+
+        /**
+         * فیلدهای سفارشی فرم درخواست (فرم‌ساز پویا)، اعتبارسنجی‌شده و آمادهٔ استفاده.
+         * هم برای رندر فرانت (JS) و هم برای اعتبارسنجی سرور و نمایش ادمین به کار می‌رود.
+         *
+         * @return array
+         */
+        public static function form_fields() {
+                $types = self::form_field_types();
+                $out   = array();
+                foreach ( (array) self::get( 'form_fields', array() ) as $f ) {
+                        if ( empty( $f['key'] ) || empty( $f['label'] ) ) {
+                                continue;
+                        }
+                        $type  = isset( $f['type'] ) && in_array( $f['type'], $types, true ) ? $f['type'] : 'text';
+                        $out[] = array(
+                                'key'         => $f['key'],
+                                'label'       => $f['label'],
+                                'type'        => $type,
+                                'required'    => ! empty( $f['required'] ),
+                                'options'     => ( in_array( $type, array( 'select', 'radio' ), true ) && ! empty( $f['options'] ) ) ? array_values( (array) $f['options'] ) : array(),
+                                'placeholder' => isset( $f['placeholder'] ) ? $f['placeholder'] : '',
+                        );
+                }
+                return $out;
+        }
+
+        /**
+         * ساخت شناسهٔ یکتا و پایدار (برای محصول و فیلد سفارشی فرم).
+         *
+         * تابع sanitize_key() هر کاراکتر غیرلاتین را حذف می‌کند، بنابراین شناسهٔ فارسی
+         * («کپسول») بی‌صدا به رشتهٔ خالی تبدیل و کل ردیف دور ریخته می‌شد.
+         * ترتیب: ۱) شناسهٔ لاتین معتبر حفظ می‌شود، ۲) شناسهٔ واردشده و سپس نام به slug
+         * یونیکد تبدیل می‌شود (sanitize_title حروف فارسی را حفظ می‌کند)، ۳) یکتاسازی.
+         *
+         * @param string $raw_id ورودی خام شناسه.
+         * @param string $name   نام نمایشی (منبع جایگزین slug).
+         * @param array  $taken  شناسه‌های استفاده‌شده تا این لحظه (ref).
+         * @return string شناسهٔ معتبر یا رشتهٔ خالی اگر هیچ منبعی موجود نباشد.
+         */
+        public static function make_unique_id( $raw_id, $name, &$taken = array() ) {
+                $raw_id = trim( (string) $raw_id );
+                $name   = trim( (string) $name );
+
+                // ۱) شناسهٔ لاتینِ معتبر همان‌طور که هست حفظ می‌شود (سازگاری با نصب‌های قبلی).
+                $latin = sanitize_key( $raw_id );
+                $id    = '' !== $latin ? $latin : '';
+
+                // ۲) در غیر این صورت از خود شناسه و سپس از نام، slug یونیکد می‌سازیم.
+                if ( '' === $id && '' !== $raw_id ) {
+                        $id = sanitize_title( $raw_id );
+                }
+                if ( '' === $id && '' !== $name ) {
+                        $id = sanitize_title( $name );
+                }
+                if ( '' === $id ) {
+                        return '';
+                }
+
+                // ۳) یکتاسازی تا دو آیتم شناسهٔ یکسان نگیرند.
+                $base = $id;
+                $n    = 2;
+                while ( isset( $taken[ $id ] ) ) {
+                        $id = $base . '-' . $n;
+                        ++$n;
+                }
+                return $id;
+        }
+
+        /**
+         * آیا اکنون در ساعات کاری (آنلاین) هستیم؟
+         *
+         * پشتیبانی از بازهٔ شبانه (مثلاً ۲۲ تا ۶): وقتی پایان ≤ شروع باشد یعنی بازه
+         * از نیمه‌شب عبور می‌کند و شرط درستی «now >= start OR now < end» است.
+         * پیش‌تر چنین بازه‌ای همیشه false می‌شد و چت‌بات همیشه «خارج از ساعت کاری» نشان می‌داد.
+         *
+         * @return bool
+         */
+        public static function is_online() {
+                if ( 'yes' !== self::get( 'office_enabled', 'no' ) ) {
+                        return true;
+                }
+                $now   = (int) current_time( 'G' );        // ساعت ۰-۲۳.
+                $day   = (int) current_time( 'w' );        // روز هفته ۰=یکشنبه.
+                $days  = (array) self::get( 'office_days', array( 6, 0, 1, 2, 3 ) );
+                $start = (int) self::get( 'office_start', 8 );
+                $end   = (int) self::get( 'office_end', 16 );
+                if ( ! in_array( $day, array_map( 'intval', $days ), true ) ) {
+                        return false;
+                }
+                if ( $end <= $start ) {
+                        // بازهٔ شبانه (از نیمه‌شب عبور می‌کند).
+                        return ( $now >= $start || $now < $end );
+                }
+                return ( $now >= $start && $now < $end );
+        }
+
+        /**
+         * گزینه‌های استاندارد فرم گزارش عوارض دارویی (فارماکوویژیلانس).
+         * قابل سفارشی‌سازی از طریق فیلتر.
+         *
+         * @return array
+         */
+        public static function adr_options() {
+                return apply_filters(
+                        'ssc_chatbot_adr_options',
+                        array(
+                                'severity'      => array( 'خفیف', 'متوسط', 'شدید', 'تهدیدکننده حیات' ),
+                                'outcome'       => array(
+                                        'بهبود کامل یافت',
+                                        'در حال بهبود',
+                                        'بهبود نیافت',
+                                        'عارضه ماندگار/ناتوانی',
+                                        'منجر به بستری شد',
+                                        'فوت',
+                                        'نامشخص',
+                                ),
+                                'reporter_type' => array( 'بیمار/مصرف‌کننده', 'پزشک', 'داروساز', 'پرستار', 'سایر کادر درمان' ),
+                        )
+                );
+        }
 }
