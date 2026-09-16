@@ -567,8 +567,25 @@ class SSC_Chatbot_Ajax {
 			$cache_enabled = ( 'yes' === SSC_Chatbot_Settings::get( 'ai_cache_enabled', 'yes' ) ) && empty( $history );
 			$cache_key     = '';
 			if ( $cache_enabled ) {
-				$cache_key = 'ssc_ai_' . md5( $provider . '|' . $product_id . '|' . mb_strtolower( trim( $message ) ) . '|' . md5( $system ) );
-				$cached    = get_transient( $cache_key );
+				// اثر انگشت همهٔ تنظیمات مؤثر در پاسخ (مدل، دما، سقف توکن، حالت سخت‌گیرانه)
+				// در کلید کش لحاظ می‌شود تا با تغییر هر یک، پاسخ قدیمی برگردانده نشود.
+				$fingerprint = md5(
+					implode(
+						'|',
+						array(
+							$provider,
+							$product_id,
+							mb_strtolower( trim( $message ) ),
+							$this->dispatch_model_name( $provider ),
+							(string) $this->get_temperature(),
+							(string) $this->get_max_tokens(),
+							SSC_Chatbot_Settings::get( 'ai_strict_knowledge', 'no' ),
+							md5( $system ),
+						)
+					)
+				);
+				$cache_key   = 'ssc_ai_' . $fingerprint;
+				$cached      = get_transient( $cache_key );
 				if ( false !== $cached && '' !== $cached ) {
 					$this->last_source = 'cache';
 					return (string) $cached;
@@ -655,6 +672,28 @@ class SSC_Chatbot_Ajax {
 				);
 			case 'webhook':
 				return $this->webhook_reply( $message, $product_id, $product_name, $history );
+		}
+		return '';
+	}
+
+	/**
+	 * نام مدل فعلی هر ارائه‌دهنده (برای اثر انگشت کلید کش).
+	 *
+	 * @param string $provider ارائه‌دهنده.
+	 * @return string
+	 */
+	protected function dispatch_model_name( $provider ) {
+		switch ( $provider ) {
+			case 'gemini':
+				return (string) SSC_Chatbot_Settings::get( 'gemini_model', '' );
+			case 'openai':
+				return (string) SSC_Chatbot_Settings::get( 'openai_model', '' );
+			case 'claude':
+				return (string) SSC_Chatbot_Settings::get( 'claude_model', '' );
+			case 'custom':
+				return (string) SSC_Chatbot_Settings::get( 'custom_model', '' );
+			case 'webhook':
+				return (string) SSC_Chatbot_Settings::get( 'ai_webhook_url', '' );
 		}
 		return '';
 	}
@@ -1263,6 +1302,36 @@ class SSC_Chatbot_Ajax {
 	}
 
 	/**
+	 * آیا آدرس یک endpoint بیرونی برای درخواست امن است؟
+	 *
+	 * - فقط http/https؛ اگر درخواست حامل کلید/امضا باشد، HTTPS الزامی است.
+	 * - آدرس‌های داخلی/loopback/link-local/private به‌صورت پیش‌فرض مسدود می‌شوند
+	 *   (ضد SSRF). برای اجازهٔ آگاهانهٔ مدل محلی (مثلاً Ollama روی لوکال‌هاست)،
+	 *   از فیلتر `ssc_chatbot_allow_private_endpoint` استفاده کنید.
+	 *
+	 * @param string $url            آدرس.
+	 * @param bool   $require_https  الزام HTTPS (وقتی دادهٔ حساس ارسال می‌شود).
+	 * @return bool
+	 */
+	protected function endpoint_allowed( $url, $require_https = false ) {
+		$url = trim( (string) $url );
+		if ( '' === $url ) {
+			return false;
+		}
+		$scheme = strtolower( (string) wp_parse_url( $url, PHP_URL_SCHEME ) );
+		// فقط https همیشه مجاز است؛ http تنها اگر دادهٔ حساسی ارسال نشود.
+		$scheme_ok = ( 'https' === $scheme ) || ( 'http' === $scheme && ! $require_https );
+		if ( ! $scheme_ok ) {
+			return false;
+		}
+		// wp_http_validate_url آدرس‌های نامعتبر و IPهای داخلی/رزرو‌شده را رد می‌کند.
+		if ( wp_http_validate_url( $url ) ) {
+			return true;
+		}
+		return (bool) apply_filters( 'ssc_chatbot_allow_private_endpoint', false, $url );
+	}
+
+	/**
 	 * ارسال درخواست POST JSON و دریافت پاسخ JSON.
 	 *
 	 * @param string $url     آدرس.
@@ -1271,6 +1340,20 @@ class SSC_Chatbot_Ajax {
 	 * @return array|null
 	 */
 	protected function remote_json( $url, $headers, $body ) {
+		// اگر درخواست حامل کلید API است، ارسال روی HTTPS الزامی می‌شود (جلوگیری از افشای کلید).
+		$has_secret = false;
+		foreach ( array_keys( (array) $headers ) as $hk ) {
+			$lk = strtolower( (string) $hk );
+			if ( 'authorization' === $lk || 'x-api-key' === $lk || 'x-goog-api-key' === $lk ) {
+				$has_secret = true;
+				break;
+			}
+		}
+		if ( ! $this->endpoint_allowed( $url, $has_secret ) ) {
+			$this->last_error = 'آدرس سرویس نامعتبر یا ناامن است (برای ارسال کلید، HTTPS الزامی است و آدرس‌های داخلی مسدود می‌شوند).';
+			return null;
+		}
+
 		/**
 		 * مهلت پاسخ‌گویی API (ثانیه). مدل‌های رایگان گاهی کند هستند؛ مقدار بالاتر از خطای timeout جلوگیری می‌کند.
 		 *
@@ -1346,6 +1429,12 @@ class SSC_Chatbot_Ajax {
 			$headers['X-Chatbot-Signature'] = 'sha256=' . hash_hmac( 'sha256', $payload, $secret );
 		}
 
+		// آدرس webhook نامعتبر/ناامن هرگز فراخوانی نمی‌شود (ضد SSRF).
+		if ( ! $this->endpoint_allowed( $url, (bool) $secret ) ) {
+			$this->last_error = 'آدرس Webhook نامعتبر یا ناامن است.';
+			return '';
+		}
+
 		$response = wp_remote_post(
 			$url,
 			array(
@@ -1364,15 +1453,14 @@ class SSC_Chatbot_Ajax {
 		}
 		$body = wp_remote_retrieve_body( $response );
 
-		// اعتبارسنجی امضای پاسخ (در صورت تنظیم secret و وجود هدر امضا).
+		// اعتبارسنجی امضای پاسخ: اگر secret تنظیم شده، امضا الزامی و fail-closed است
+		// (نبودِ یا نامعتبر بودن امضا هر دو رد می‌شوند تا پاسخ جعلی پذیرفته نشود).
 		if ( $secret ) {
 			$resp_sig = wp_remote_retrieve_header( $response, 'x-ssc-signature' );
-			if ( $resp_sig ) {
-				$expected = 'sha256=' . hash_hmac( 'sha256', $body, $secret );
-				if ( ! hash_equals( $expected, $resp_sig ) ) {
-					$this->last_error = 'امضای پاسخ Webhook نامعتبر است.';
-					return '';
-				}
+			$expected = 'sha256=' . hash_hmac( 'sha256', $body, $secret );
+			if ( ! $resp_sig || ! hash_equals( $expected, (string) $resp_sig ) ) {
+				$this->last_error = 'امضای پاسخ Webhook نامعتبر یا مفقود است.';
+				return '';
 			}
 		}
 
@@ -1407,6 +1495,7 @@ class SSC_Chatbot_Ajax {
 			'reporter_type',
 			'nfx_hp',
 			'extra',
+			'consent',
 		);
 		$args = array( 'nfx_elapsed' => isset( $_POST['nfx_elapsed'] ) ? (int) $_POST['nfx_elapsed'] : 99999 );
 		foreach ( $keys as $k ) {
@@ -1437,6 +1526,19 @@ class SSC_Chatbot_Ajax {
 			return array( 'message' => __( 'دریافت شد.', 'smart-support-chatbot' ) );
 		}
 
+		// الزام رضایت سمت سرور (نه فقط در مرورگر): در صورت فعال بودن، ثبت بدون موافقت رد می‌شود.
+		// کلاینت‌هایی که مستقیم به API درخواست می‌زنند نیز مشمول همین قاعده‌اند.
+		if ( 'yes' === SSC_Chatbot_Settings::get( 'consent_enabled', 'no' ) ) {
+			$consent = isset( $args['consent'] ) ? (string) $args['consent'] : '';
+			if ( ! in_array( strtolower( trim( $consent ) ), array( '1', 'yes', 'true', 'on' ), true ) ) {
+				return new WP_Error(
+					'ssc_consent_required',
+					__( 'برای ثبت درخواست، موافقت با حریم خصوصی الزامی است.', 'smart-support-chatbot' ),
+					array( 'status' => 400 )
+				);
+			}
+		}
+
 		if ( ! $this->check_rate_limit( 'submit' ) ) {
 			return new WP_Error(
 				'ssc_rate_limited',
@@ -1445,7 +1547,16 @@ class SSC_Chatbot_Ajax {
 			);
 		}
 
-		$type        = '' !== $get( 'type' ) ? $get( 'type' ) : __( 'نامشخص', 'smart-support-chatbot' );
+		// نوع درخواست: enum سروری (نه رشتهٔ آزاد). برچسب فارسی فقط برای نمایش است.
+		$type_input = strtolower( trim( $get( 'type' ) ) );
+		if ( in_array( $type_input, array( 'adr', 'عوارض' ), true ) || false !== mb_strpos( $get( 'type' ), 'عوارض' ) ) {
+			$type = 'گزارش عوارض دارویی';
+		} elseif ( in_array( $type_input, array( 'consult', 'consultation' ), true ) || false !== mb_strpos( $get( 'type' ), 'مشاوره' ) ) {
+			$type = 'درخواست مشاوره';
+		} else {
+			// هر مقدار ناشناخته به «درخواست مشاوره» نگاشت می‌شود تا دستهٔ دلخواه ساخته نشود.
+			$type = 'درخواست مشاوره';
+		}
 		$name        = $get( 'name' );
 		$phone       = $get( 'phone' );
 		$description = $get( 'description', true );
@@ -1596,14 +1707,16 @@ class SSC_Chatbot_Ajax {
 	}
 
 	/**
-	 * ساخت متن پیام اعلان.
+	 * آیا این درخواست، گزارش عارضهٔ جدی است؟ (بر اساس شدت یا پیامد)
 	 *
 	 * @param array $row داده‌ها.
-	 * @return string
+	 * @return bool
 	 */
 	protected function is_serious_adr( $row ) {
-		$serious = apply_filters( 'ssc_chatbot_serious_severities', array( 'شدید', 'تهدیدکننده حیات', 'منجر به بستری شد', 'فوت' ) );
-		return ! empty( $row['severity'] ) && in_array( $row['severity'], $serious, true );
+		return SSC_Chatbot_Settings::is_serious_adr(
+			isset( $row['severity'] ) ? $row['severity'] : '',
+			isset( $row['outcome'] ) ? $row['outcome'] : ''
+		);
 	}
 
 	/**
@@ -1683,7 +1796,7 @@ class SSC_Chatbot_Ajax {
 		$base     = 'telegram' === $platform ? 'https://api.telegram.org/bot' : 'https://tapi.bale.ai/bot';
 		$url      = $base . $token . '/sendMessage';
 
-		wp_remote_post(
+		$response = wp_remote_post(
 			$url,
 			array(
 				'timeout' => 8,
@@ -1693,6 +1806,42 @@ class SSC_Chatbot_Ajax {
 				),
 			)
 		);
+
+		// ثبت نتیجهٔ ارسال تا شکستِ خاموش نداشته باشیم (نمایش در پنل).
+		if ( is_wp_error( $response ) ) {
+			$this->record_notification_status( 'error', 'پیام‌رسان: ' . $response->get_error_message() );
+			return;
+		}
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		if ( $code < 200 || $code >= 300 ) {
+			$this->record_notification_status( 'error', 'پیام‌رسان: کد HTTP ' . $code );
+			return;
+		}
+		$this->record_notification_status( 'ok', '' );
+	}
+
+	/**
+	 * ثبت آخرین وضعیت تحویل اعلان (موفق/ناموفق) برای نمایش در پنل مدیریت.
+	 *
+	 * به‌جای شکست خاموش (fire-and-forget) نتیجه و متن آخرین خطا در یک گزینه ذخیره
+	 * می‌شود تا مدیر بتواند قطعی شبکه، توکن نادرست یا محدودیت سرویس را ببیند.
+	 *
+	 * @param string $status 'ok' یا 'error'.
+	 * @param string $detail متن خطا.
+	 */
+	protected function record_notification_status( $status, $detail ) {
+		update_option(
+			'ssc_chatbot_last_notify',
+			array(
+				'status' => $status,
+				'detail' => ( 'error' === $status ) ? mb_substr( (string) $detail, 0, 300 ) : '',
+				'time'   => current_time( 'mysql' ),
+			),
+			false
+		);
+		if ( 'error' === $status ) {
+			error_log( '[SSC Chatbot] notification failed: ' . $detail ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		}
 	}
 
 	/**
@@ -1709,6 +1858,9 @@ class SSC_Chatbot_Ajax {
 			$to = get_option( 'admin_email' );
 		}
 		$subject = 'درخواست جدید: ' . $row['type'];
-		wp_mail( $to, $subject, $this->build_notification_text( $row ) );
+		$sent    = wp_mail( $to, $subject, $this->build_notification_text( $row ) );
+		if ( ! $sent ) {
+			$this->record_notification_status( 'error', 'ایمیل: ارسال ناموفق بود (تنظیمات SMTP/میل سرور را بررسی کنید).' );
+		}
 	}
 }

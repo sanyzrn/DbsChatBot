@@ -252,17 +252,48 @@ class SSC_Chatbot_Settings {
 	}
 
 	/**
-	 * رمزنگاری یک مقدار (AES-256-CBC با کلید AUTH_KEY وردپرس).
+	 * کلید رمزنگاری مشتق‌شده از AUTH_KEY وردپرس.
+	 *
+	 * @return string
+	 */
+	protected static function crypto_key() {
+		return hash( 'sha256', (string) AUTH_KEY, true );
+	}
+
+	/**
+	 * رمزنگاری یک مقدار با AES-256-GCM (احرازهویت‌شده).
+	 *
+	 * GCM علاوه بر محرمانگی، برچسب احراز هویت (tag) تولید می‌کند؛ بنابراین دست‌کاری
+	 * ciphertext شناسایی و رد می‌شود (برخلاف CBC که هیچ احراز هویتی ندارد).
+	 * برای سازگاری با سرورهای قدیمی، در نبود پشتیبانی GCM به CBC برمی‌گردیم.
 	 *
 	 * @param string $value مقدار.
 	 * @return string
 	 */
 	public static function encrypt( $value ) {
 		$value = (string) $value;
-		if ( '' === $value || ! function_exists( 'openssl_encrypt' ) || ! defined( 'AUTH_KEY' ) ) {
+		if ( '' === $value ) {
 			return $value;
 		}
-		$key       = hash( 'sha256', AUTH_KEY, true );
+		// بدون openssl یا AUTH_KEY امکان رمزنگاری مطمئن نیست؛ مقدار خام برگردانده می‌شود
+		// تا ذخیره‌سازی اصلاً شکست نخورد (رفتار سازگار با گذشته).
+		if ( ! function_exists( 'openssl_encrypt' ) || ! defined( 'AUTH_KEY' ) ) {
+			return $value;
+		}
+		$key = self::crypto_key();
+
+		// مسیر ترجیحی: AES-256-GCM با nonce ۱۲ بایتی و tag ۱۶ بایتی.
+		if ( in_array( 'aes-256-gcm', openssl_get_cipher_methods(), true ) ) {
+			$iv  = openssl_random_pseudo_bytes( 12 );
+			$tag = '';
+			$enc = openssl_encrypt( $value, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag );
+			if ( false !== $enc && '' !== $tag ) {
+				// قالب: iv(12) || tag(16) || ciphertext.
+				return 'enc::v2::' . base64_encode( $iv . $tag . $enc ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- کدگذاری باینری رمزشده برای ذخیره در گزینه؛ نه پنهان‌سازی کد.
+			}
+		}
+
+		// بازگشت سازگار: AES-256-CBC (نسخهٔ قدیمی).
 		$iv        = openssl_random_pseudo_bytes( 16 );
 		$encrypted = openssl_encrypt( $value, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv );
 		if ( false === $encrypted ) {
@@ -272,28 +303,44 @@ class SSC_Chatbot_Settings {
 	}
 
 	/**
-	 * رمزگشایی یک مقدار (با پشتیبانی از مقادیر قدیمی plaintext).
+	 * رمزگشایی یک مقدار (با پشتیبانی از v2 (GCM)، v1 (CBC) و مقادیر قدیمی plaintext).
 	 *
 	 * @param string $value مقدار ذخیره‌شده.
 	 * @return string
 	 */
 	public static function decrypt( $value ) {
 		$value = (string) $value;
-		if ( 0 !== strpos( $value, 'enc::v1::' ) ) {
-			return $value; // مقدار قدیمی plaintext.
-		}
 		if ( ! function_exists( 'openssl_decrypt' ) || ! defined( 'AUTH_KEY' ) ) {
-			return '';
+			return ( 0 === strpos( $value, 'enc::' ) ) ? '' : $value;
 		}
-		$raw = base64_decode( substr( $value, 9 ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- رمزگشایی داده باینری رمزشده (نه اجرای کد پنهان).
-		if ( false === $raw || strlen( $raw ) < 17 ) {
-			return '';
+		$key = self::crypto_key();
+
+		// v2 — AES-256-GCM (احرازهویت‌شده).
+		if ( 0 === strpos( $value, 'enc::v2::' ) ) {
+			$raw = base64_decode( substr( $value, 9 ), true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- رمزگشایی داده باینری رمزشده.
+			if ( false === $raw || strlen( $raw ) < 28 ) {
+				return '';
+			}
+			$iv         = substr( $raw, 0, 12 );
+			$tag        = substr( $raw, 12, 16 );
+			$ciphertext = substr( $raw, 28 );
+			$dec        = openssl_decrypt( $ciphertext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag );
+			return ( false === $dec ) ? '' : $dec;
 		}
-		$key       = hash( 'sha256', AUTH_KEY, true );
-		$iv        = substr( $raw, 0, 16 );
-		$encrypted = substr( $raw, 16 );
-		$dec       = openssl_decrypt( $encrypted, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv );
-		return ( false === $dec ) ? '' : $dec;
+
+		// v1 — AES-256-CBC (قدیمی، بدون احراز هویت).
+		if ( 0 === strpos( $value, 'enc::v1::' ) ) {
+			$raw = base64_decode( substr( $value, 9 ), true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+			if ( false === $raw || strlen( $raw ) < 17 ) {
+				return '';
+			}
+			$iv        = substr( $raw, 0, 16 );
+			$encrypted = substr( $raw, 16 );
+			$dec       = openssl_decrypt( $encrypted, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv );
+			return ( false === $dec ) ? '' : $dec;
+		}
+
+		return $value; // مقدار قدیمی plaintext.
 	}
 
 	/**
@@ -377,13 +424,76 @@ class SSC_Chatbot_Settings {
 		}
 		$now   = (int) current_time( 'G' );        // ساعت ۰-۲۳.
 		$day   = (int) current_time( 'w' );        // روز هفته ۰=یکشنبه.
-		$days  = (array) self::get( 'office_days', array( 6, 0, 1, 2, 3 ) );
+		$days  = array_map( 'intval', (array) self::get( 'office_days', array( 6, 0, 1, 2, 3 ) ) );
 		$start = (int) self::get( 'office_start', 8 );
 		$end   = (int) self::get( 'office_end', 16 );
-		if ( ! in_array( $day, array_map( 'intval', $days ), true ) ) {
+
+		// بازهٔ عادی (مثلاً ۸ تا ۱۶).
+		if ( $end > $start ) {
+			if ( ! in_array( $day, $days, true ) ) {
+				return false;
+			}
+			return ( $now >= $start && $now < $end );
+		}
+
+		// بازهٔ شبانه (مثلاً ۲۲ تا ۶) که از نیمه‌شب عبور می‌کند.
+		if ( $end < $start ) {
+			// پیش از نیمه‌شب: همان روزِ کاری باید فعال باشد.
+			if ( $now >= $start ) {
+				return in_array( $day, $days, true );
+			}
+			// پس از نیمه‌شب: روزِ کاریِ مربوط، «روز قبل» است.
+			if ( $now < $end ) {
+				$prev = ( $day + 6 ) % 7;
+				return in_array( $prev, $days, true );
+			}
 			return false;
 		}
-		return ( $now >= $start && $now < $end );
+
+		// start === end: به‌عنوان «شبانه‌روزی» تفسیر نمی‌شود؛ فقط روزهای کاری.
+		return in_array( $day, $days, true );
+	}
+
+	/**
+	 * معیار «عارضهٔ جدی» — بر اساس شدت و/یا پیامد.
+	 *
+	 * گزارش‌هایی که outcome آن‌ها «منجر به بستری شد»، «فوت» یا «عارضه ماندگار/ناتوانی»
+	 * است، صرف‌نظر از شدت، جدی محسوب می‌شوند (الزام ایمنی دارویی/ADR).
+	 *
+	 * @param string $severity شدت عارضه.
+	 * @param string $outcome  پیامد عارضه.
+	 * @return bool
+	 */
+	public static function is_serious_adr( $severity, $outcome ) {
+		$serious_severity = (array) apply_filters( 'ssc_chatbot_serious_severities', array( 'شدید', 'تهدیدکننده حیات' ) );
+		$serious_outcome  = (array) apply_filters( 'ssc_chatbot_serious_outcomes', array( 'منجر به بستری شد', 'فوت', 'عارضه ماندگار/ناتوانی' ) );
+
+		$severity = trim( (string) $severity );
+		$outcome  = trim( (string) $outcome );
+
+		if ( '' !== $severity && in_array( $severity, $serious_severity, true ) ) {
+			return true;
+		}
+		if ( '' !== $outcome && in_array( $outcome, $serious_outcome, true ) ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * فهرست کامل «شدت یا پیامدِ» جدی (برای پرس‌وجوی دیتابیس).
+	 *
+	 * @return array
+	 */
+	public static function serious_adr_values() {
+		return array_values(
+			array_unique(
+				array_merge(
+					(array) apply_filters( 'ssc_chatbot_serious_severities', array( 'شدید', 'تهدیدکننده حیات' ) ),
+					(array) apply_filters( 'ssc_chatbot_serious_outcomes', array( 'منجر به بستری شد', 'فوت', 'عارضه ماندگار/ناتوانی' ) )
+				)
+			)
+		);
 	}
 
 	/**

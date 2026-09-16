@@ -948,21 +948,26 @@ class SSC_Chatbot_DB {
 	}
 
 	/**
-	 * شمارش گزارش‌های عارضهٔ جدی.
+	 * شمارش گزارش‌های عارضهٔ جدی (بر اساس شدت **یا** پیامد).
 	 *
-	 * @param array $severities فهرست شدت‌های جدی.
+	 * @param array $values فهرست مقادیر جدی (شدت و پیامد).
 	 * @return int
 	 */
-	public static function serious_adr_count( $severities ) {
-		$severities = array_filter( (array) $severities );
-		if ( empty( $severities ) ) {
+	public static function serious_adr_count( $values ) {
+		$values = array_filter( (array) $values );
+		if ( empty( $values ) ) {
 			return 0;
 		}
 		global $wpdb;
 		$table        = self::table_name();
-		$placeholders = implode( ', ', array_fill( 0, count( $severities ), '%s' ) );
-		// phpcs:ignore WordPress.DB
-		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE severity IN ( {$placeholders} )", $severities ) );
+		$placeholders = implode( ', ', array_fill( 0, count( $values ), '%s' ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQLPlaceholders -- جدول اختصاصی افزونه؛ جای‌نگهدارها با تعداد ستون‌ها هم‌خوان‌اند.
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table} WHERE severity IN ( {$placeholders} ) OR outcome IN ( {$placeholders} )",
+				array_merge( $values, $values )
+			)
+		);
 	}
 
 	/* ---------------- بانک سوال/جواب ---------------- */

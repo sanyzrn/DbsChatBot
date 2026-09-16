@@ -299,6 +299,7 @@ class SSC_Chatbot_REST {
 			'reporter_type',
 			'nfx_hp',
 			'extra',
+			'consent',
 		);
 		// نبود این مقدار نباید تلهٔ زمانیِ ضداسپم را فعال کند (مثل مسیر AJAX).
 		$elapsed = $request->get_param( 'nfx_elapsed' );

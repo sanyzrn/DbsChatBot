@@ -417,13 +417,19 @@ class SSC_Chatbot_Elementor_Widget extends Widget_Base {
 		// محصولات سفارشی.
 		if ( ! empty( $settings['override_products'] ) && ! empty( $settings['products_list'] ) ) {
 			$products = array();
+			$seen_ids = array();
 			foreach ( $settings['products_list'] as $item ) {
-				if ( empty( $item['product_id'] ) ) {
+				$name = isset( $item['product_name'] ) ? $item['product_name'] : '';
+				// از helper مشترک استفاده می‌کنیم تا شناسهٔ فارسی (مثل «کپسول») نیز پشتیبانی شود
+				// (sanitize_key حروف غیرلاتین را حذف می‌کرد و محصول بی‌صدا از دست می‌رفت).
+				$pid = SSC_Chatbot_Admin::make_product_id( isset( $item['product_id'] ) ? $item['product_id'] : '', $name, $seen_ids );
+				if ( '' === $pid ) {
 					continue;
 				}
-				$products[] = array(
-					'id'   => sanitize_key( $item['product_id'] ),
-					'name' => $item['product_name'],
+				$seen_ids[ $pid ] = true;
+				$products[]       = array(
+					'id'   => $pid,
+					'name' => '' !== trim( (string) $name ) ? $name : $pid,
 				);
 			}
 			if ( $products ) {
