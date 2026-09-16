@@ -815,13 +815,14 @@
 		render();
 
 		var payload = {
-			type: isAdr ? 'گزارش عوارض دارویی' : 'درخواست مشاوره',
+			type: isAdr ? 'adr' : 'consultation',
 			name: state.form.name,
 			phone: state.form.phone,
 			description: state.form.description,
 			nfx_hp: state.form.hp || '',
 			nfx_elapsed: Date.now() - ( state.formOpenedAt || 0 ),
-			extra: JSON.stringify( state.form.extra || {} )
+			extra: JSON.stringify( state.form.extra || {} ),
+			consent: state.form.consent ? 'yes' : ''
 		};
 		if ( isAdr ) {
 			payload.product = state.form.productName;

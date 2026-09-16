@@ -70,10 +70,13 @@ final class SSC_Chatbot {
 		// REST روی همان لایهٔ سرویسِ کلاس AJAX سوار می‌شود تا رفتار هر دو مسیر یکسان بماند.
 		$this->rest = new SSC_Chatbot_REST( $this->ajax );
 
+		// مهاجرت ساختار دیتابیس در صورت نیاز (افزودن ستون/جدول جدید + مهاجرت آمار).
+		// این کار روی `init` همه‌جا (نه فقط پیشخوان) اجرا می‌شود تا پس از به‌روزرسانی،
+		// فرانت‌اند هرگز روی ساختار قدیمی جدول اجرا نشود (idempotent + ارزان).
+		add_action( 'init', array( 'SSC_Chatbot_DB', 'maybe_upgrade' ), 5 );
+
 		if ( is_admin() ) {
 			$this->admin = new SSC_Chatbot_Admin();
-			// مهاجرت ساختار دیتابیس در صورت نیاز (افزودن ستون/جدول جدید + مهاجرت آمار).
-			add_action( 'admin_init', array( 'SSC_Chatbot_DB', 'maybe_upgrade' ) );
 			// متن پیشنهادی سیاست حریم خصوصی وردپرس.
 			add_action( 'admin_init', array( $this, 'add_privacy_policy_content' ) );
 		}

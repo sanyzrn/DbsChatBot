@@ -214,7 +214,7 @@ class SSC_Chatbot_Admin {
 		$product_subs = SSC_Chatbot_DB::product_submission_counts();
 		$recent       = SSC_Chatbot_DB::get_recent( 6 );
 		$adr_opts     = SSC_Chatbot_Settings::adr_options();
-		$serious_list = apply_filters( 'ssc_chatbot_serious_severities', array( 'شدید', 'تهدیدکننده حیات', 'منجر به بستری شد', 'فوت' ) );
+		$serious_list = SSC_Chatbot_Settings::serious_adr_values();
 		$insights     = array(
 			'unanswered' => SSC_Chatbot_DB::count_chatlog_source( 'unanswered' ),
 			'feedback'   => SSC_Chatbot_DB::feedback_counts(),
@@ -414,15 +414,21 @@ class SSC_Chatbot_Admin {
 		}
 
 		// تشخیص بریده‌شدن POST توسط max_input_vars.
-		// هر ردیف ۵ فیلد آرایه‌ای دارد؛ با عبور از سقف، PHP بی‌صدا ورودی را می‌بُرد.
-		// در این حالت ذخیره متوقف می‌شود تا ردیف‌های ارسال‌نشده آسیب نبینند.
-		$rendered = isset( $in['qa_rendered'] ) ? (int) $in['qa_rendered'] : 0;
-		$received = isset( $in['qa_id'] ) && is_array( $in['qa_id'] ) ? count( $in['qa_id'] ) : 0;
-		if ( $rendered > 0 && $received > 0 && $received < $rendered ) {
+		// هر ردیف چند فیلد آرایه‌ای دارد؛ با عبور از سقف، PHP بی‌صدا انتهای ورودی را می‌بُرد.
+		// نکته: ردیف‌هایی که کاربر عمداً حذف کرده در شمارش لحاظ می‌شوند تا حذف عادی باعث
+		// توقف اشتباه ذخیره نشود (باگ قبلی: حذف هر ردیف، ذخیره را لغو می‌کرد).
+		$deleted_ids = array();
+		if ( ! empty( $in['qa_deleted'] ) ) {
+			$deleted_ids = array_values( array_filter( array_map( 'intval', explode( ',', (string) $in['qa_deleted'] ) ) ) );
+		}
+		$rendered     = isset( $in['qa_rendered'] ) ? (int) $in['qa_rendered'] : 0;
+		$received     = isset( $in['qa_id'] ) && is_array( $in['qa_id'] ) ? count( $in['qa_id'] ) : 0;
+		$received_all = $received + count( $deleted_ids );
+		if ( $rendered > 0 && $received_all < $rendered ) {
 			return sprintf(
 				/* translators: 1: تعداد دریافت‌شده، 2: تعداد ارسالی، 3: مقدار max_input_vars */
 				__( '⚠️ ذخیره انجام نشد: فقط %1$d ردیف از %2$d ردیف به سرور رسید. مقدار max_input_vars در php.ini (فعلاً %3$s) برای این تعداد ردیف کافی نیست. آن را افزایش دهید یا بانک را در چند مرحله ذخیره کنید. هیچ داده‌ای تغییر نکرد.', 'smart-support-chatbot' ),
-				$received,
+				$received_all,
 				$rendered,
 				ini_get( 'max_input_vars' )
 			);
@@ -577,7 +583,7 @@ class SSC_Chatbot_Admin {
 	 * @param array  $taken  شناسه‌های استفاده‌شده تا این لحظه.
 	 * @return string شناسهٔ معتبر یا رشتهٔ خالی اگر هیچ منبعی موجود نباشد.
 	 */
-	protected static function make_product_id( $raw_id, $name, $taken ) {
+	public static function make_product_id( $raw_id, $name, $taken = array() ) {
 		$raw_id = trim( (string) $raw_id );
 		$name   = trim( (string) $name );
 
@@ -731,8 +737,11 @@ class SSC_Chatbot_Admin {
 		$new['button_icon_url'] = isset( $in['button_icon_url'] ) ? esc_url_raw( $in['button_icon_url'] ) : '';
 
 		// محصولات.
-		$products = array();
-		if ( isset( $in['product_id'] ) && is_array( $in['product_id'] ) ) {
+		// sentinel: فرم ویرایش محصولات همیشه ارسال می‌شود؛ با این نشانگر تشخیص می‌دهیم که
+		// کاربر عمداً همهٔ محصولات را حذف کرده است (نه اینکه فیلد ارسال نشده باشد).
+		$products_present = isset( $in['ssc_products_present'] );
+		$products         = array();
+		if ( $products_present && isset( $in['product_id'] ) && is_array( $in['product_id'] ) ) {
 			$ids           = $in['product_id'];
 			$names         = isset( $in['product_name'] ) ? $in['product_name'] : array();
 			$know          = isset( $in['product_knowledge'] ) ? $in['product_knowledge'] : array();
@@ -763,9 +772,7 @@ class SSC_Chatbot_Admin {
 				}
 			}
 			$new['product_knowledge'] = $knowledge_map;
-		}
-		if ( ! empty( $products ) ) {
-			$new['products'] = $products;
+			$new['products']          = $products; // حتی وقتی خالی است — تا حذف آخرین محصول ذخیره شود.
 		}
 
 		// فیلدهای سفارشی فرم‌ساز پویا.
@@ -826,6 +833,9 @@ class SSC_Chatbot_Admin {
 				);
 			}
 			$new['quick_replies'] = $quick;
+		} elseif ( isset( $in['ssc_quick_present'] ) ) {
+			// فرم ارسال شده اما هیچ ردیفی نمانده است → پاک‌سازی کامل.
+			$new['quick_replies'] = array();
 		}
 
 		SSC_Chatbot_Settings::update( $new );

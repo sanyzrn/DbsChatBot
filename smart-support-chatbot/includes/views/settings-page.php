@@ -180,6 +180,8 @@ $secret_ph = function ( $key ) {
 				<h3 class="ssc-section"><?php esc_html_e( 'مدیریت محصولات', 'smart-support-chatbot' ); ?></h3>
 				<p class="description"><?php esc_html_e( 'محصولاتی که در منوی چت‌بات و فرم گزارش عوارض نمایش داده می‌شوند. می‌توانید برای هر محصول یک «پایگاه دانش» وارد کنید تا هوش مصنوعی بر اساس آن پاسخ دهد.', 'smart-support-chatbot' ); ?></p>
 
+				<?php // نشانگر ارسال فرم محصولات (برای تشخیص «حذف عمدی همهٔ محصولات» از «ارسال‌نشدن فیلد»). ?>
+				<input type="hidden" name="ssc_products_present" value="1">
 				<table class="ssc-products-table widefat" id="ssc-products">
 					<thead>
 						<tr>
@@ -225,6 +227,8 @@ $secret_ph = function ( $key ) {
 					</tr>
 				</table>
 
+				<?php // نشانگر ارسال فرم پاسخ‌های پیشنهادی (برای تشخیص «حذف عمدی همه» از «ارسال‌نشدن فیلد»). ?>
+				<input type="hidden" name="ssc_quick_present" value="1">
 				<table class="ssc-products-table widefat" id="ssc-quick-replies">
 					<thead>
 						<tr>
@@ -755,6 +759,26 @@ $secret_ph = function ( $key ) {
 
 			<!-- اعلان‌ها -->
 			<div id="tab-notify" class="ssc-tab-panel">
+				<?php
+				// وضعیت آخرین تحویل اعلان (موفق/ناموفق) — تا شکستِ خاموش دیده شود.
+				$ssc_last_notify = get_option( 'ssc_chatbot_last_notify', array() );
+				if ( is_array( $ssc_last_notify ) && ! empty( $ssc_last_notify['status'] ) ) :
+					$ssc_n_ok = ( 'ok' === $ssc_last_notify['status'] );
+					?>
+					<div class="notice <?php echo $ssc_n_ok ? 'notice-success' : 'notice-error'; ?> inline">
+						<p>
+							<?php if ( $ssc_n_ok ) : ?>
+								<strong><?php esc_html_e( 'آخرین اعلان با موفقیت ارسال شد.', 'smart-support-chatbot' ); ?></strong>
+							<?php else : ?>
+								<strong><?php esc_html_e( 'آخرین اعلان ارسال نشد:', 'smart-support-chatbot' ); ?></strong>
+								<?php echo esc_html( isset( $ssc_last_notify['detail'] ) ? $ssc_last_notify['detail'] : '' ); ?>
+							<?php endif; ?>
+							<?php if ( ! empty( $ssc_last_notify['time'] ) ) : ?>
+								<span class="description">(<?php echo esc_html( $ssc_last_notify['time'] ); ?>)</span>
+							<?php endif; ?>
+						</p>
+					</div>
+				<?php endif; ?>
 				<h3 class="ssc-section"><?php esc_html_e( 'اعلان پیام‌رسان (بله / تلگرام)', 'smart-support-chatbot' ); ?></h3>
 				<table class="form-table">
 					<tr>
