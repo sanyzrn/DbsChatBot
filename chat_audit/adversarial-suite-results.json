@@ -1,0 +1,212 @@
+[
+ {
+  "id": "AI-1a",
+  "pass": true,
+  "label": "KB answer flows through AI path with source=ai",
+  "evidence": "{'status': 200, 'reply': 'AI-1 compliant answer from references: The approved indication of DemoX is hypertension in adults.', 'source': 'ai'}"
+ },
+ {
+  "id": "AI-1b",
+  "pass": true,
+  "label": "System prompt carries STRICT MODE in approved_only",
+  "evidence": "scribes a possible side effect, do NOT assess its cause. Encourage them to file the structured ADR report and, when the description may be serious, urge immediate medical attention.\n- Only use approved information supplied in the ORGANIZATION PROFILE and REFERENCE KNOWLEDGE; otherwise say you do not have that information and offer human support. Do not supplement it with general medical knowledge."
+ },
+ {
+  "id": "AI-1c",
+  "pass": true,
+  "label": "PV rules present in approved_only",
+  "evidence": "scribes a possible side effect, do NOT assess its cause. Encourage them to file the structured ADR report and, when the description may be serious, urge immediate medical attention.\n- Only use approved information supplied in the ORGANIZATION PROFILE and REFERENCE KNOWLEDGE; otherwise say you do not have that information and offer human support. Do not supplement it with general medical knowledge."
+ },
+ {
+  "id": "AI-1d",
+  "pass": true,
+  "label": "KB chunk injected with DOC title marker",
+  "evidence": "True"
+ },
+ {
+  "id": "AI-2a",
+  "pass": true,
+  "label": "Hallucinated general-knowledge answer is passed through VERBATIM (no server-side output filter)",
+  "evidence": "AI-2 The usual adult dose of paracetamol is 500-1000 mg every 4-6 hours (general knowledge, not from company references)."
+ },
+ {
+  "id": "AI-2b",
+  "pass": true,
+  "label": "Evidence: strict-mode instruction exists only as prompt text; plugin cannot detect violations",
+  "evidence": "prompt-only enforcement"
+ },
+ {
+  "id": "AI-3a",
+  "pass": true,
+  "label": "Persian question WITH Latin product name DOES retrieve the English doc (product name bridges languages)",
+  "evidence": "bridged via token demox"
+ },
+ {
+  "id": "AI-3b",
+  "pass": true,
+  "label": "PURE-Persian question (no Latin tokens) vs English-only approved doc: chunk NOT retrieved (true cross-language lexical gap)",
+  "evidence": "no bridge tokens"
+ },
+ {
+  "id": "AI-3c",
+  "pass": true,
+  "label": "Positive control: Persian doc IS retrieved for Persian question",
+  "evidence": "DOC marker found"
+ },
+ {
+  "id": "AI-4",
+  "pass": true,
+  "label": "Normalization handles ZWNJ folding (verified in unit tests); retrieval ran without error",
+  "evidence": ""
+ },
+ {
+  "id": "AI-5a",
+  "pass": true,
+  "label": "Delimiter trust boundary is BROKEN: KB body has no closing 】 and the attacker-controlled 【 re-pairs with the next legitimate closer (titles bracketed, bodies not)",
+  "evidence": "marker=489 override=540 seg='\\nThis is the approved DemoX leaflet. 【 '"
+ },
+ {
+  "id": "AI-5b",
+  "pass": true,
+  "label": "Injected behavior surfaced verbatim to the end user (no output screening)",
+  "evidence": "PWNED-CONFIRMED"
+ },
+ {
+  "id": "AI-6a",
+  "pass": true,
+  "label": "Forged assistant turn from the CLIENT was forwarded to the provider verbatim",
+  "evidence": "['system', 'user', 'assistant', 'user', 'user']"
+ },
+ {
+  "id": "AI-6b",
+  "pass": true,
+  "label": "Forged-history behavior surfaced to user",
+  "evidence": "INJECTED-OK"
+ },
+ {
+  "id": "AI-7a",
+  "pass": true,
+  "label": "Side-effect question is intercepted by keyword BEFORE KB/AI",
+  "evidence": "If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?"
+ },
+ {
+  "id": "AI-7b",
+  "pass": true,
+  "label": "No provider call occurred (approved KB content never reached the model for this question)",
+  "evidence": "captures delta=0"
+ },
+ {
+  "id": "AI-7c",
+  "pass": true,
+  "label": "adr_offer flag set",
+  "evidence": "{'adr_offer': True}"
+ },
+ {
+  "id": "AI-7d",
+  "pass": true,
+  "label": "Even in Persian with approved KB side-effect content present, canned interception wins",
+  "evidence": "If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?"
+ },
+ {
+  "id": "AI-8a",
+  "pass": true,
+  "label": "EMERGENCY message with side-effect keyword gets canned form-offer, not emergency guidance",
+  "evidence": "If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?"
+ },
+ {
+  "id": "AI-8b",
+  "pass": true,
+  "label": "Reply contains NO emergency-service escalation",
+  "evidence": "If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?"
+ },
+ {
+  "id": "AI-9a",
+  "pass": true,
+  "label": "Second identical history-less call served from cache (no provider call)",
+  "evidence": "{'source': 'cache', 'provider_calls': 0}"
+ },
+ {
+  "id": "AI-9b",
+  "pass": true,
+  "label": "Calls WITH history bypass the cache",
+  "evidence": "{'source': 'ai', 'provider_calls': 1}"
+ },
+ {
+  "id": "AI-9c",
+  "pass": true,
+  "label": "In pharma mode the shared cache is OFF (two provider calls)",
+  "evidence": "{'source': 'ai', 'calls': [1, 1]}"
+ },
+ {
+  "id": "AI-10a",
+  "pass": true,
+  "label": "History trimmed to configured cap (<=20 turns)",
+  "evidence": "{'history_turns_sent': 9}"
+ },
+ {
+  "id": "AI-10b",
+  "pass": true,
+  "label": "Leading assistant turns stripped",
+  "evidence": "['system', 'user', 'assistant']"
+ },
+ {
+  "id": "AI-10c",
+  "pass": true,
+  "label": "Cost knobs present: max_tokens=800, temperature=0.4",
+  "evidence": "{'max_tokens': 800, 'temperature': 0.4}"
+ },
+ {
+  "id": "AI-13a",
+  "pass": true,
+  "label": "Server returns model HTML verbatim (defense is client-side only)",
+  "evidence": "<img src=x onerror=alert(document.cookie)> **bold** and [link](https://x.example.com/a\"onclick=alert(1)) end"
+ },
+ {
+  "id": "AI-13b",
+  "pass": true,
+  "label": "Client-side esc() verified by code review only (jsdom unavailable); esc() builds textContent then escapes quotes",
+  "evidence": "code-only"
+ },
+ {
+  "id": "SEC-test-connection",
+  "pass": true,
+  "label": "Admin REST endpoint test-connection blocked for anonymous caller (HTTP 403)",
+  "evidence": "403"
+ },
+ {
+  "id": "SEC-preview-chat",
+  "pass": true,
+  "label": "Admin REST endpoint preview-chat blocked for anonymous caller (HTTP 403)",
+  "evidence": "403"
+ },
+ {
+  "id": "SEC-test-identity",
+  "pass": true,
+  "label": "Admin REST endpoint test-identity blocked for anonymous caller (HTTP 403)",
+  "evidence": "403"
+ },
+ {
+  "id": "SEC-ratelimit",
+  "pass": true,
+  "label": "Daily per-IP quota enforced and fails CLOSED at the configured limit",
+  "evidence": "[200, 200, 200, 200, 200, 429, 429, 429]"
+ },
+ {
+  "id": "RT-1a",
+  "pass": true,
+  "label": "kb_candidates capped at 800 rows",
+  "evidence": "800|1|800"
+ },
+ {
+  "id": "RT-1b",
+  "pass": true,
+  "label": "Newest document (beyond cap) is SILENTLY unreachable by retrieval",
+  "evidence": "not in prompt"
+ },
+ {
+  "id": "RT-1c",
+  "pass": true,
+  "label": "Chat still answers (model gets no relevant chunk)",
+  "evidence": "200"
+ }
+]
