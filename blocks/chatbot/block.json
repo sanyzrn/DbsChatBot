@@ -1,0 +1,22 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "ssc/chatbot",
+	"title": "Smart Assistant Chatbot",
+	"category": "widgets",
+	"description": "Place the AI assistant chat widget on this page.",
+	"keywords": [ "chat", "chatbot", "assistant", "ai" ],
+	"supports": {
+		"html": false,
+		"multiple": false,
+		"reusable": false
+	},
+	"attributes": {
+		"position": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"textdomain": "smart-support-chatbot",
+	"editorScript": "file:./index.js"
+}

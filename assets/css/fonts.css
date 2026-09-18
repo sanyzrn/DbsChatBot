@@ -1,0 +1,69 @@
+/**
+ * تعریف فونت‌های میزبانی‌شدهٔ محلی.
+ *
+ * این فایل فقط زمانی بارگذاری می‌شود که فایل woff2 مربوطه در assets/fonts/ موجود باشد
+ * (بررسی در SSC_Chatbot_Frontend::enqueue_font). هیچ درخواستی به CDN خارجی ارسال نمی‌شود:
+ *  - پایداری در شبکه‌های محدود/تحریم‌شده
+ *  - بدون ریسک حریم خصوصی (بارگذاری Google Fonts از سرور گوگل در اتحادیهٔ اروپا مسئله‌ساز است)
+ *
+ * برای وارد کردن فایل‌های فونت پیش از انتشار: bin/fetch-fonts.sh
+ */
+
+/* Font families are SSC-prefixed so they NEVER collide with theme/plugin
+ * @font-face rules for the same commercial names (Inter, Roboto, Vazirmatn).
+ * Only the chatbot root references these families. */
+
+/* ---------- SSC Vazirmatn (فارسی) ---------- */
+@font-face {
+	font-family: 'SSC Vazirmatn';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('../fonts/vazirmatn-400.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SSC Vazirmatn';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url('../fonts/vazirmatn-500.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SSC Vazirmatn';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('../fonts/vazirmatn-700.woff2') format('woff2');
+}
+
+/* ---------- SSC Inter (لاتین) ---------- */
+@font-face {
+	font-family: 'SSC Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('../fonts/inter-400.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SSC Inter';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('../fonts/inter-700.woff2') format('woff2');
+}
+
+/* ---------- SSC Roboto (لاتین) ---------- */
+@font-face {
+	font-family: 'SSC Roboto';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('../fonts/roboto-400.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SSC Roboto';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('../fonts/roboto-700.woff2') format('woff2');
+}

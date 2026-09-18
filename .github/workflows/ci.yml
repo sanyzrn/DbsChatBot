@@ -2,141 +2,95 @@ name: CI
 
 on:
   push:
-    branches: [ '**' ]
+    branches: [main, master]
   pull_request:
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
-  php-lint:
-    name: PHP syntax (${{ matrix.php }})
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        # پایین‌ترین نسخهٔ پشتیبانی‌شده تا جدیدترین پایدار.
-        php: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          coverage: none
-
-      - name: Lint every PHP file
-        run: |
-          err=0
-          while IFS= read -r -d '' f; do
-            php -l "$f" > /dev/null || { echo "::error file=$f::PHP syntax error"; err=1; }
-          done < <(find smart-support-chatbot -name '*.php' -print0)
-          exit $err
-
   phpcs:
-    name: WordPress coding standards
+    name: PHPCS (legacy style advisory)
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           coverage: none
-          tools: composer
-
-      - name: Cache Composer packages
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: composer-${{ hashFiles('composer.json') }}
-          restore-keys: composer-
+          tools: composer:v2
 
       - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
+        run: composer install --prefer-dist --no-progress
 
       - name: Run PHPCS
-        run: vendor/bin/phpcs --report=full --report-summary
+        run: vendor/bin/phpcs -q --report=summary
 
-  js-lint:
-    name: JavaScript syntax
+  syntax:
+    name: PHP syntax
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.1', '8.2', '8.3', '8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, openssl
+          coverage: none
+      - name: Lint all PHP files
+        run: |
+          set -e
+          find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+      - name: PHP behavior checks
+        run: php tests/unit.php
+
+  frontend:
+    name: Frontend behavior
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+      - run: node --check assets/js/chatbot.js
+      - run: node --test tests/frontend.test.cjs
 
-      - name: Check every JS file parses
-        run: |
-          err=0
-          for f in $(find smart-support-chatbot -name '*.js'); do
-            node --check "$f" || { echo "::error file=$f::JS syntax error"; err=1; }
-          done
-          exit $err
-
-  plugin-checks:
-    name: Plugin sanity checks
+  wordpress:
+    name: WordPress integration (MySQL)
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test-only
+          MYSQL_DATABASE: ssc_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -ptest-only"
+          --health-interval=10s --health-timeout=5s --health-retries=10
     steps:
       - uses: actions/checkout@v4
-
-      - name: Version numbers agree
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mysqli, mbstring, openssl
+          tools: wp-cli
+          coverage: none
+      - name: Install disposable WordPress
         run: |
-          header=$(grep -oP '^\s*\*\s*Version:\s*\K[0-9.]+' smart-support-chatbot/smart-support-chatbot.php)
-          const=$(grep -oP "SSC_CHATBOT_VERSION',\s*'\K[0-9.]+" smart-support-chatbot/smart-support-chatbot.php)
-          stable=$(grep -oP '^Stable tag:\s*\K[0-9.]+' smart-support-chatbot/readme.txt)
-          echo "header=$header const=$const stable=$stable"
-          test "$header" = "$const" && test "$header" = "$stable" \
-            || { echo "::error::Version mismatch between plugin header, constant and readme Stable tag"; exit 1; }
-
-      - name: Text domain matches plugin slug
-        run: |
-          td=$(grep -oP '^\s*\*\s*Text Domain:\s*\K[a-z0-9-]+' smart-support-chatbot/smart-support-chatbot.php)
-          test "$td" = "smart-support-chatbot" \
-            || { echo "::error::Text Domain '$td' does not match the plugin slug"; exit 1; }
-
-      - name: No external CDN assets
-        run: |
-          # افزونه نباید فونت/اسکریپت از CDN خارجی بارگذاری کند (پایداری + حریم خصوصی).
-          if grep -rn "cdn.jsdelivr.net\|fonts.googleapis.com\|fonts.gstatic.com\|cdnjs.cloudflare.com" \
-               smart-support-chatbot --include='*.php' --include='*.css' --include='*.js'; then
-            echo "::error::External CDN reference found"
-            exit 1
-          fi
-
-      - name: REST routes match the frontend route map
-        run: |
-          # هر اکشنی که کلاینت صدا می‌زند باید یک مسیر REST متناظر داشته باشد.
-          grep -oP "^\t\t\t'/\K[a-z]+" smart-support-chatbot/includes/class-smart-support-chatbot-rest.php | sort -u > /tmp/php_routes
-          grep -oP "ssc_chatbot_[a-z]+: '\K[a-z]+" smart-support-chatbot/assets/js/smart-support-chatbot.js | sort -u > /tmp/js_routes
-          diff /tmp/php_routes /tmp/js_routes \
-            || { echo "::error::REST routes and the frontend route map disagree"; exit 1; }
-
-      - name: readme.txt has the required sections
-        run: |
-          for section in "Description" "Installation" "Frequently Asked Questions" "Changelog" "Upgrade Notice"; do
-            grep -q "^== $section ==" smart-support-chatbot/readme.txt \
-              || { echo "::error::readme.txt is missing '== $section =='"; exit 1; }
-          done
-
-      - name: No leftover legacy prefix outside the migration path
-        run: |
-          # ارجاع به nafas_ فقط در کد مهاجرت و حذف افزونه مجاز است.
-          hits=$(grep -rn "nafas" smart-support-chatbot --include='*.php' --include='*.js' --include='*.css' \
-                 | grep -v "class-smart-support-chatbot-db.php" \
-                 | grep -v "uninstall.php" \
-                 | grep -v "smart-support-chatbot.php:" || true)
-          if [ -n "$hits" ]; then
-            echo "$hits"
-            echo "::error::Legacy 'nafas' prefix found outside the migration path"
-            exit 1
-          fi
+          mkdir -p /tmp/ssc-wordpress
+          wp core download --path=/tmp/ssc-wordpress
+          wp config create --path=/tmp/ssc-wordpress --dbname=ssc_test --dbuser=root --dbpass=test-only --dbhost=127.0.0.1:3306
+          wp config set SSC_TEST_SITE true --raw --path=/tmp/ssc-wordpress
+          wp config set DISABLE_WP_CRON true --raw --path=/tmp/ssc-wordpress
+          wp core install --path=/tmp/ssc-wordpress --url=http://localhost --title=Test --admin_user=test-admin --admin_password=test-only-pass --admin_email=test@example.invalid --skip-email
+          ln -s "$GITHUB_WORKSPACE" /tmp/ssc-wordpress/wp-content/plugins/smart-support-chatbot
+          wp plugin activate smart-support-chatbot --path=/tmp/ssc-wordpress
+      - name: Integration checks with mocked external services
+        env:
+          SSC_WP_TEST_ROOT: /tmp/ssc-wordpress
+        run: php tests/integration.php

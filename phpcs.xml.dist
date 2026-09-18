@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<ruleset name="Smart Support Chatbot">
+	<description>WordPress Coding Standards for Smart Support Chatbot.</description>
+
+	<file>smart-support-chatbot.php</file>
+	<file>uninstall.php</file>
+	<file>includes/</file>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*.min.*</exclude-pattern>
+
+	<arg name="basepath" value="."/>
+	<arg name="extensions" value="php"/>
+	<arg value="sp"/>
+
+	<config name="testVersion" value="7.4-"/>
+	<config name="minimum_wp_version" value="5.6"/>
+
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals"/>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array" value="ssc,SSC,ssc_chatbot"/>
+		</properties>
+	</rule>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
+	<rule ref="Generic.Files.LineEndings"/>
+</ruleset>

@@ -1,0 +1,431 @@
+msgid ""
+msgstr "Project-Id-Version: NexaChatAI\nLanguage: fa_IR\nContent-Type: text/plain; charset=UTF-8\nPlural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "%d notifications exhausted automatic retries. Check delivery settings, then retry them."
+msgstr "تلاش خودکار برای ارسال %d اعلان ناموفق بوده است. تنظیمات ارسال را بررسی و سپس دوباره تلاش کنید."
+
+msgid "ADR Cases"
+msgstr "پرونده‌های عوارض دارویی"
+
+msgid "AI Connection"
+msgstr "اتصال هوش مصنوعی"
+
+msgid "About us, services and contact info"
+msgstr "دربارهٔ ما، خدمات و راه‌های ارتباط"
+
+msgid "Adverse drug reaction report"
+msgstr "گزارش عارضهٔ دارویی"
+
+msgid "Allowed information sources"
+msgstr "منابع مجاز پاسخ‌گویی"
+
+msgid "Appearance"
+msgstr "ظاهر"
+
+msgid "Approved company sources only"
+msgstr "فقط منابع تأییدشدهٔ شرکت"
+
+msgid "Archived"
+msgstr "بایگانی‌شده"
+
+msgid "Ask us"
+msgstr "از ما بپرسید"
+
+msgid "Batch / lot number"
+msgstr "شمارهٔ سری ساخت / بچ"
+
+msgid "Both modes refer personal treatment questions to a healthcare professional. Product-specific claims require approved company sources. Test answers with your medical team before publication."
+msgstr "در هر دو حالت، پرسش‌های درمانی شخصی به متخصص ارجاع داده می‌شوند. ادعاهای مرتبط با محصولات باید مستند به منابع تأییدشدهٔ شرکت باشند. پیش از انتشار، پاسخ‌ها را با تیم پزشکی خود بررسی کنید."
+
+msgid "Business Knowledge"
+msgstr "دانش شرکت"
+
+msgid "Call us"
+msgstr "تماس با ما"
+
+msgid "Clinical severity (how it felt)"
+msgstr "شدت علائم (تجربهٔ بیمار)"
+
+msgid "Close chat"
+msgstr "بستن گفتگو"
+
+msgid "Closed"
+msgstr "بسته‌شده"
+
+msgid "Company sources and general educational information"
+msgstr "منابع شرکت همراه با اطلاعات عمومی آموزشی"
+
+msgid "Congenital anomaly or birth defect"
+msgstr "ناهنجاری مادرزادی یا نقص هنگام تولد"
+
+msgid "Connection error. Please check your internet and try again."
+msgstr "خطا در ارتباط. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید."
+
+msgid "Consultation request"
+msgstr "درخواست مشاوره"
+
+msgid "Contact phone"
+msgstr "شمارهٔ تماس"
+
+msgid "Copied ✓"
+msgstr "کپی شد ✓"
+
+msgid "Copy answer"
+msgstr "کپی پاسخ"
+
+msgid "Dashboard"
+msgstr "پیشخوان"
+
+msgid "Death"
+msgstr "مرگ"
+
+msgid "Dose and frequency used"
+msgstr "مقدار و دفعات مصرف‌شده"
+
+msgid "Female"
+msgstr "زن"
+
+msgid "Follow-up requested"
+msgstr "نیازمند پیگیری"
+
+msgid "Full name"
+msgstr "نام و نام خانوادگی"
+
+msgid "Good answer"
+msgstr "پاسخ مفید"
+
+msgid "Hello! 👋"
+msgstr "سلام! 👋"
+
+msgid "Hospitalized"
+msgstr "بستری"
+
+msgid "How can I help you today?"
+msgstr "چطور می‌توانم کمکتان کنم؟"
+
+msgid "How was this conversation?"
+msgstr "از این گفتگو چقدر رضایت داشتید؟"
+
+msgid "I consent to the processing of my contact and health information for safety review and follow-up."
+msgstr "با پردازش اطلاعات تماس و سلامت خود برای بررسی ایمنی و پیگیری این گزارش موافقم."
+
+msgid "I consent to the processing of my contact information and message for follow-up."
+msgstr "با پردازش اطلاعات تماس و پیام خود برای پیگیری درخواست موافقم."
+
+msgid "If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?"
+msgstr "اگر می‌خواهید عارضهٔ احتمالی یک دارو را گزارش کنید، می‌توانم فرم گزارش ایمنی را برای بررسی تیم مسئول در اختیارتان بگذارم. می‌خواهید گزارش را شروع کنید؟"
+
+msgid "Inhalation"
+msgstr "استنشاقی"
+
+msgid "Intramuscular"
+msgstr "داخل عضلانی"
+
+msgid "Intravenous"
+msgstr "داخل وریدی"
+
+msgid "Life-threatening"
+msgstr "تهدیدکنندهٔ حیات"
+
+msgid "Listen to this answer"
+msgstr "شنیدن پاسخ"
+
+msgid "Listening…"
+msgstr "در حال شنیدن…"
+
+msgid "Main menu"
+msgstr "منوی اصلی"
+
+msgid "Male"
+msgstr "مرد"
+
+msgid "Message text"
+msgstr "متن پیام"
+
+msgid "Mild"
+msgstr "خفیف"
+
+msgid "Moderate"
+msgstr "متوسط"
+
+msgid "Modules"
+msgstr "ماژول‌ها"
+
+msgid "New (awaiting triage)"
+msgstr "جدید (در انتظار بررسی اولیه)"
+
+msgid "New conversation"
+msgstr "گفتگوی جدید"
+
+msgid "Nexa"
+msgstr "نکسا"
+
+msgid "Not recovered"
+msgstr "بهبود نیافته"
+
+msgid "Nurse"
+msgstr "پرستار"
+
+msgid "Offline"
+msgstr "خارج از ساعات پاسخ‌گویی"
+
+msgid "Online"
+msgstr "آمادهٔ پاسخ‌گویی"
+
+msgid "Open chat"
+msgstr "باز کردن گفتگو"
+
+msgid "Ophthalmic"
+msgstr "چشمی"
+
+msgid "Oral"
+msgstr "خوراکی"
+
+msgid "Other"
+msgstr "سایر"
+
+msgid "Other health professional"
+msgstr "سایر کارکنان حوزهٔ سلامت"
+
+msgid "Other medically important event"
+msgstr "سایر رویدادهای مهم پزشکی"
+
+msgid "Other medicines taken at the same time"
+msgstr "سایر داروهای مصرف‌شده در همان زمان"
+
+msgid "Outcome so far"
+msgstr "وضعیت بیمار تا این لحظه"
+
+msgid "Patient / consumer"
+msgstr "بیمار / مصرف‌کننده"
+
+msgid "Patient age (years)"
+msgstr "سن بیمار (سال)"
+
+msgid "Patient age must be between 0 and 130 years."
+msgstr "سن بیمار باید بین صفر تا ۱۳۰ سال باشد."
+
+msgid "Patient sex"
+msgstr "جنسیت بیمار"
+
+msgid "Persistent or significant disability"
+msgstr "ناتوانی پایدار یا قابل‌توجه"
+
+msgid "Pharmaceutical answer policy"
+msgstr "سیاست پاسخ‌گویی دارویی"
+
+msgid "Pharmacist"
+msgstr "داروساز"
+
+msgid "Phone number"
+msgstr "شمارهٔ تماس"
+
+msgid "Physician"
+msgstr "پزشک"
+
+msgid "Please describe the reaction (10-10000 characters)."
+msgstr "عارضه را شرح دهید (۱۰ تا ۱۰۰۰۰ نویسه)."
+
+msgid "Please describe your request (10-1000 characters)."
+msgstr "درخواست خود را شرح دهید (۱۰ تا ۱۰۰۰ نویسه)."
+
+msgid "Please enter a valid contact phone."
+msgstr "شمارهٔ تماس معتبر وارد کنید."
+
+msgid "Please enter a valid phone number."
+msgstr "شمارهٔ تماس معتبر وارد کنید."
+
+msgid "Please enter the reporter name (2-80 characters)."
+msgstr "نام گزارش‌دهنده را وارد کنید (۲ تا ۸۰ نویسه)."
+
+msgid "Please enter your name (2-80 characters)."
+msgstr "نام خود را وارد کنید (۲ تا ۸۰ نویسه)."
+
+msgid "Poor answer"
+msgstr "پاسخ نامناسب"
+
+msgid "Press Alt+C to open chat"
+msgstr "برای باز کردن گفتگو Alt+C را بزنید"
+
+msgid "Privacy policy"
+msgstr "سیاست حفظ حریم خصوصی"
+
+msgid "Product information"
+msgstr "اطلاعات محصول"
+
+msgid "Product name"
+msgstr "نام محصول"
+
+msgid "Products & services"
+msgstr "محصولات و خدمات"
+
+msgid "Received ✓ We will contact you soon."
+msgstr "دریافت شد ✓ درخواست شما برای پیگیری ثبت شد."
+
+msgid "Recovered"
+msgstr "بهبودیافته"
+
+msgid "Recovering"
+msgstr "در حال بهبودی"
+
+msgid "Regulatory seriousness criteria (any that apply)"
+msgstr "معیارهای جدی‌بودن عارضه (موارد مرتبط را انتخاب کنید)"
+
+msgid "Related questions:"
+msgstr "پرسش‌های مرتبط:"
+
+msgid "Remove direct identifiers"
+msgstr "حذف شناسه‌های مستقیم"
+
+msgid "Report a side effect"
+msgstr "گزارش عارضهٔ دارویی"
+
+msgid "Reporter"
+msgstr "گزارش‌دهنده"
+
+msgid "Reporter name"
+msgstr "نام گزارش‌دهنده"
+
+msgid "Reporter role"
+msgstr "نقش گزارش‌دهنده"
+
+msgid "Requests"
+msgstr "درخواست‌ها"
+
+msgid "Required or prolonged hospitalization"
+msgstr "نیازمند بستری یا افزایش مدت بستری"
+
+msgid "Resulted in death"
+msgstr "منجر به مرگ شده است"
+
+msgid "Retry failed notifications"
+msgstr "تلاش مجدد برای اعلان‌های ناموفق"
+
+msgid "Route of administration"
+msgstr "روش مصرف"
+
+msgid "Send message"
+msgstr "ارسال پیام"
+
+msgid "Sequelae / permanent impairment"
+msgstr "عوارض باقی‌مانده / آسیب پایدار"
+
+msgid "Server conversation history is optional and follows the configured retention policy. Outside pharmaceutical mode, the browser may keep a short-lived conversation and the server may cache answers. In pharmaceutical mode these two caches are disabled; submitted safety reports are still stored for review. Deleting a browser conversation does not delete server records. Contact the site owner about access or deletion requests."
+msgstr "ذخیرهٔ تاریخچهٔ گفتگو روی سرور اختیاری است و از سیاست نگهداری تنظیم‌شده پیروی می‌کند. خارج از حالت دارویی، ممکن است گفتگو برای مدت کوتاهی در مرورگر و پاسخ‌ها در کش سرور نگهداری شوند. در حالت دارویی این دو نوع ذخیره‌سازی غیرفعال‌اند، اما گزارش‌های ایمنی ارسالی برای بررسی ثبت می‌شوند. حذف گفتگوی مرورگر، سوابق سرور را حذف نمی‌کند. برای درخواست دسترسی یا حذف اطلاعات با مدیر سایت تماس بگیرید."
+
+msgid "Settings"
+msgstr "تنظیمات"
+
+msgid "Settings saved."
+msgstr "تنظیمات ذخیره شد."
+
+msgid "Setup Wizard"
+msgstr "راه‌اندازی گام‌به‌گام"
+
+msgid "Severe"
+msgstr "شدید"
+
+msgid "Skip"
+msgstr "رد کردن"
+
+msgid "Speak"
+msgstr "صحبت کنید"
+
+msgid "Stop audio"
+msgstr "توقف صدا"
+
+msgid "Subcutaneous"
+msgstr "زیرجلدی"
+
+msgid "Submit"
+msgstr "ثبت و ارسال"
+
+msgid "Suspected product"
+msgstr "محصول مشکوک"
+
+msgid "Suspected reaction"
+msgstr "عارضهٔ احتمالی"
+
+msgid "Talk to a human expert"
+msgstr "ارتباط با کارشناس"
+
+msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
+msgstr "از پیام شما سپاسگزارم. برای پاسخ به این پرسش اطلاعات تأییدشدهٔ کافی ندارم. لطفاً درخواست خود را ثبت کنید یا مستقیم با کارشناسان ما تماس بگیرید."
+
+msgid "Thanks for your rating 🙏"
+msgstr "از امتیاز شما سپاسگزاریم 🙏"
+
+msgid "The assistant is not available yet."
+msgstr "دستیار هنوز در دسترس نیست."
+
+msgid "The field \"%s\" is required."
+msgstr "تکمیل فیلد «%s» الزامی است."
+
+msgid "The field \"%s\" must be a valid email."
+msgstr "فیلد «%s» باید نشانی ایمیل معتبر باشد."
+
+msgid "The form could not be submitted. Please try again."
+msgstr "فرم ثبت نشد. لطفاً دوباره تلاش کنید."
+
+msgid "The message could not be processed."
+msgstr "پردازش پیام ممکن نشد."
+
+msgid "The report could not be stored. Please try again."
+msgstr "گزارش ذخیره نشد. لطفاً دوباره تلاش کنید."
+
+msgid "The request could not be stored. Please try again."
+msgstr "درخواست ذخیره نشد. لطفاً دوباره تلاش کنید."
+
+msgid "Too many submissions today. Please try again tomorrow."
+msgstr "تعداد درخواست‌های امروز به سقف مجاز رسیده است. لطفاً فردا تلاش کنید."
+
+msgid "Topical"
+msgstr "موضعی"
+
+msgid "Typing…"
+msgstr "در حال نوشتن…"
+
+msgid "Under assessment"
+msgstr "در حال ارزیابی"
+
+msgid "Unknown"
+msgstr "نامشخص"
+
+msgid "Unknown product. Please choose from the list."
+msgstr "لطفاً محصول را از فهرست انتخاب کنید."
+
+msgid "View brochure"
+msgstr "مشاهدهٔ بروشور"
+
+msgid "We are currently away. Leave a message and we will get back to you during business hours."
+msgstr "اکنون خارج از ساعات پاسخ‌گویی هستیم. پیام بگذارید تا در ساعات کاری پیگیری کنیم."
+
+msgid "What happened? Describe the reaction and dates."
+msgstr "چه اتفاقی افتاد؟ عارضه و تاریخ‌ها را شرح دهید."
+
+msgid "Which one?"
+msgstr "کدام محصول را انتخاب می‌کنید؟"
+
+msgid "Write your message…"
+msgstr "پیام خود را بنویسید…"
+
+msgid "You have reached the daily usage limit. Please try again tomorrow."
+msgstr "به سقف استفادهٔ روزانه رسیده‌اید. لطفاً فردا دوباره تلاش کنید."
+
+msgid "Your consent is required to continue."
+msgstr "برای ادامه، رضایت شما لازم است."
+
+msgid "Your consent is required to submit a safety report."
+msgstr "برای ثبت گزارش ایمنی، رضایت شما لازم است."
+
+msgid "Your consent is required to submit this form."
+msgstr "برای ارسال این فرم، رضایت شما لازم است."
+
+msgid "Your message"
+msgstr "پیام شما"
+
+msgid "Your session expired. Please refresh the page and try again."
+msgstr "نشست شما منقضی شده است. صفحه را تازه کنید و دوباره تلاش کنید."
+
+msgid "Your session has expired. Please refresh the page."
+msgstr "نشست شما منقضی شده است. صفحه را تازه کنید."
