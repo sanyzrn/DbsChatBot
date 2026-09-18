@@ -56,13 +56,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Most-discussed products', 'smart-support-chatbot' ); ?></h2>
 			<?php if ( $data['top_products'] ) : ?>
-				<table class="ssc-table">
+				<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table">
 					<tbody>
 						<?php foreach ( $data['top_products'] as $row ) : ?>
 							<tr><td><?php echo esc_html( $row['name'] ); ?></td><td><?php echo esc_html( number_format_i18n( $row['count'] ) ); ?></td></tr>
 						<?php endforeach; ?>
 					</tbody>
-				</table>
+				</table></div>
 			<?php else : ?>
 				<p class="ssc-card__sub"><?php esc_html_e( 'No product conversations recorded yet.', 'smart-support-chatbot' ); ?></p>
 			<?php endif; ?>
@@ -72,13 +72,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<h2><?php esc_html_e( 'Unanswered questions', 'smart-support-chatbot' ); ?></h2>
 			<p class="ssc-card__sub"><?php esc_html_e( 'Knowledge gaps — answer these in the FAQ bank or knowledge page.', 'smart-support-chatbot' ); ?></p>
 			<?php if ( $data['unanswered'] ) : ?>
-				<table class="ssc-table">
+				<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table">
 					<tbody>
 						<?php foreach ( $data['unanswered'] as $row ) : ?>
 							<tr><td class="ssc-td-truncate"><?php echo esc_html( mb_substr( (string) $row['question'], 0, 100 ) ); ?></td><td>×<?php echo esc_html( number_format_i18n( (int) $row['n'] ) ); ?></td></tr>
 						<?php endforeach; ?>
 					</tbody>
-				</table>
+				</table></div>
 			<?php else : ?>
 				<p class="ssc-card__sub"><?php esc_html_e( 'Every question got an answer. 👏', 'smart-support-chatbot' ); ?></p>
 			<?php endif; ?>

@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php if ( empty( $result['items'] ) ) : ?>
 		<div class="ssc-empty"><p><?php esc_html_e( 'No conversations stored yet.', 'smart-support-chatbot' ); ?></p></div>
 	<?php else : ?>
-		<table class="ssc-table ssc-table--wide">
+		<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table ssc-table--wide">
 			<thead>
 				<tr><th><?php esc_html_e( 'Time', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'Question', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'Answer', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'Source', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'Rating', 'smart-support-chatbot' ); ?></th><th></th></tr>
 			</thead>
@@ -62,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
-		</table>
+		</table></div>
 		<?php if ( $result['total_pages'] > 1 ) : ?>
 			<nav class="ssc-pagination">
 				<?php for ( $p = 1; $p <= $result['total_pages']; ++$p ) : ?>

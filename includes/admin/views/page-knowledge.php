@@ -155,7 +155,7 @@ $kb_state = isset( $_GET['kb'] ) ? sanitize_key( wp_unslash( $_GET['kb'] ) ) : '
 		<p class="ssc-card__sub"><?php echo esc_html( sprintf( __( '%d chunks from %d documents. Relevant pieces are retrieved automatically per question.', 'smart-support-chatbot' ), $kb_count, count( $kb_docs ) ) ); ?></p>
 
 		<?php if ( $kb_docs ) : ?>
-			<table class="ssc-table">
+			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table">
 				<thead>
 					<tr><th><?php esc_html_e( 'Document', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'Chunks', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'Added', 'smart-support-chatbot' ); ?></th><th></th></tr>
 				</thead>
@@ -169,7 +169,7 @@ $kb_state = isset( $_GET['kb'] ) ? sanitize_key( wp_unslash( $_GET['kb'] ) ) : '
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
-			</table>
+			</table></div>
 		<?php endif; ?>
 
 		<div class="ssc-kb-import">

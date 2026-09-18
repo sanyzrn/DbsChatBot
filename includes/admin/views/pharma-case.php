@@ -33,7 +33,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 	<div class="ssc-grid ssc-grid--2">
 		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Reporter', 'smart-support-chatbot' ); ?></h2>
-			<table class="ssc-table ssc-table--kv">
+			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table ssc-table--kv">
 				<tbody>
 					<tr><th><?php esc_html_e( 'Name', 'smart-support-chatbot' ); ?></th><td><?php echo esc_html( $case['name'] ); ?></td></tr>
 					<tr><th><?php esc_html_e( 'Phone', 'smart-support-chatbot' ); ?></th><td dir="ltr"><?php echo esc_html( $case['phone'] ); ?></td></tr>
@@ -45,12 +45,12 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 						<tr><th><?php esc_html_e( 'Patient sex', 'smart-support-chatbot' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'patient_sex', (string) $extra['patient_sex'] ) ); ?></td></tr>
 					<?php endif; ?>
 				</tbody>
-			</table>
+			</table></div>
 		</section>
 
 		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Suspected product', 'smart-support-chatbot' ); ?></h2>
-			<table class="ssc-table ssc-table--kv">
+			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table ssc-table--kv">
 				<tbody>
 					<tr><th><?php esc_html_e( 'Product', 'smart-support-chatbot' ); ?></th><td><?php echo esc_html( $case['product'] ); ?></td></tr>
 					<tr><th><?php esc_html_e( 'Batch / lot', 'smart-support-chatbot' ); ?></th><td><?php echo esc_html( $case['batch_number'] ); ?></td></tr>
@@ -61,13 +61,13 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 						<tr><th><?php esc_html_e( 'Route', 'smart-support-chatbot' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'route', (string) $extra['route'] ) ); ?></td></tr>
 					<?php endif; ?>
 				</tbody>
-			</table>
+			</table></div>
 		</section>
 
 		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Reaction', 'smart-support-chatbot' ); ?></h2>
 			<blockquote class="ssc-quote"><?php echo esc_html( (string) $case['description'] ); ?></blockquote>
-			<table class="ssc-table ssc-table--kv">
+			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table ssc-table--kv">
 				<tbody>
 					<tr><th><?php esc_html_e( 'Clinical severity', 'smart-support-chatbot' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'severity', (string) $case['severity'] ) ); ?></td></tr>
 					<tr><th><?php esc_html_e( 'Seriousness criteria', 'smart-support-chatbot' ); ?></th><td><?php echo $criteria ? esc_html( implode( ', ', $criteria ) ) : '—'; ?></td></tr>
@@ -76,7 +76,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 						<tr><th><?php esc_html_e( 'Concomitant drugs', 'smart-support-chatbot' ); ?></th><td><?php echo esc_html( (string) $case['concomitant_drugs'] ); ?></td></tr>
 					<?php endif; ?>
 				</tbody>
-			</table>
+			</table></div>
 		</section>
 
 		<section class="ssc-card">
@@ -120,7 +120,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 	<section class="ssc-card ssc-mt">
 		<h2><?php esc_html_e( 'Audit trail', 'smart-support-chatbot' ); ?></h2>
 		<?php if ( $audit ) : ?>
-			<table class="ssc-table">
+			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table">
 				<thead><tr><th><?php esc_html_e( 'Time', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'Action', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'From → To', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'By', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'Note', 'smart-support-chatbot' ); ?></th></tr></thead>
 				<tbody>
 					<?php foreach ( $audit as $entry ) : ?>
@@ -133,7 +133,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
-			</table>
+			</table></div>
 		<?php else : ?>
 			<p class="ssc-card__sub"><?php esc_html_e( 'No audit entries yet.', 'smart-support-chatbot' ); ?></p>
 		<?php endif; ?>

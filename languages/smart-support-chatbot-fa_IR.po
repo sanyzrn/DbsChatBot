@@ -304,6 +304,9 @@ msgstr "تلاش مجدد برای اعلان‌های ناموفق"
 msgid "Route of administration"
 msgstr "روش مصرف"
 
+msgid "Scrollable table"
+msgstr "جدول قابل پیمایش"
+
 msgid "Send message"
 msgstr "ارسال پیام"
 

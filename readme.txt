@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.6.0-beta
+Stable tag: 0.6.1-beta
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,12 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 0.6.1-beta =
+
+* Make every admin page and setup wizard use the available WordPress content width.
+* Adapt form grids, repeaters, cards and dashboard readiness to narrow screens.
+* Keep wide tables readable with keyboard-accessible scrolling inside their own regions.
 
 = 0.6.0-beta =
 

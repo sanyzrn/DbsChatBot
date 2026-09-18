@@ -51,7 +51,7 @@ if ( isset( $counts['pharma_adr'] ) ) {
         <?php if ( empty( $result['items'] ) ) : ?>
                 <div class="ssc-empty"><p><?php esc_html_e( 'No ADR cases yet. When someone files a report through the chat, it appears here for triage.', 'smart-support-chatbot' ); ?></p></div>
         <?php else : ?>
-                <table class="ssc-table">
+                <div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table">
                         <thead>
                                 <tr>
                                         <th><?php esc_html_e( 'Received', 'smart-support-chatbot' ); ?></th>
@@ -75,7 +75,7 @@ if ( isset( $counts['pharma_adr'] ) ) {
                                         </tr>
                                 <?php endforeach; ?>
                         </tbody>
-                </table>
+                </table></div>
                 <?php if ( $result['total_pages'] > 1 ) : ?>
                         <nav class="ssc-pagination">
                                 <?php for ( $p = 1; $p <= $result['total_pages']; ++$p ) : ?>

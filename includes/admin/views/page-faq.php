@@ -69,7 +69,7 @@ $err      = isset( $_GET['error'] ) ? sanitize_key( wp_unslash( $_GET['error'] )
 	</section>
 
 	<?php if ( $rows ) : ?>
-		<table class="ssc-table ssc-table--wide">
+		<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table ssc-table--wide">
 			<thead><tr><th><?php esc_html_e( 'Question', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'Answer', 'smart-support-chatbot' ); ?></th><th><?php esc_html_e( 'Keywords', 'smart-support-chatbot' ); ?></th><th></th></tr></thead>
 			<tbody>
 				<?php foreach ( $rows as $row ) : ?>
@@ -81,7 +81,7 @@ $err      = isset( $_GET['error'] ) ? sanitize_key( wp_unslash( $_GET['error'] )
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
-		</table>
+		</table></div>
 		<?php if ( $pages > 1 ) : ?>
 			<nav class="ssc-pagination">
 				<?php for ( $p = 1; $p <= $pages; ++$p ) : ?>

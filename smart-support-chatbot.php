@@ -3,7 +3,7 @@
  * Plugin Name:       NexaChatAI
  * Plugin URI:        https://saeedzarrini.ir/en/projects/nexachat
  * Description:       Professional AI assistant for WordPress. Setup wizard, multi-provider AI engines, business knowledge base, modular architecture. Optional voice, analytics, lead collection and pharmaceutical (pharmacovigilance) extension. Persian/RTL-first with LTR support.
- * Version:           0.6.0-beta
+ * Version:           0.6.1-beta
  * Author:            DbsStudio
  * Author URI:        https://saeedzarrini.ir/en/projects/nexachat
  * Text Domain:       smart-support-chatbot
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Direct access blocked.
 }
 
-define( 'SSC_CHATBOT_VERSION', '0.6.0-beta' );
+define( 'SSC_CHATBOT_VERSION', '0.6.1-beta' );
 define( 'SSC_CHATBOT_FILE', __FILE__ );
 define( 'SSC_CHATBOT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SSC_CHATBOT_URL', plugin_dir_url( __FILE__ ) );

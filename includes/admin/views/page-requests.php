@@ -49,7 +49,7 @@ $base    = admin_url( 'admin.php' );
 	<?php if ( empty( $result['items'] ) ) : ?>
 		<div class="ssc-empty"><p><?php esc_html_e( 'No requests yet. When visitors submit the consultation form, they appear here.', 'smart-support-chatbot' ); ?></p></div>
 	<?php else : ?>
-		<table class="ssc-table">
+		<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Received', 'smart-support-chatbot' ); ?></th>
@@ -104,7 +104,7 @@ $base    = admin_url( 'admin.php' );
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
-		</table>
+		</table></div>
 
 		<?php if ( $result['total_pages'] > 1 ) : ?>
 			<nav class="ssc-pagination" aria-label="<?php esc_attr_e( 'Pagination', 'smart-support-chatbot' ); ?>">
