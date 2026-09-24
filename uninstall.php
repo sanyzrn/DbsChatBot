@@ -96,7 +96,12 @@ if ( is_multisite() ) {
 	// Clean every site, not just the current one. The loop variable is named
 	// away from $id: WordPress uses that global and overwriting it here would
 	// corrupt anything reading it later in the uninstall request.
-	$ssc_site_ids = get_sites( array( 'fields' => 'ids', 'number' => 0 ) );
+	$ssc_site_ids = get_sites(
+		array(
+			'fields' => 'ids',
+			'number' => 0,
+		)
+	);
 	foreach ( $ssc_site_ids as $ssc_site_id ) {
 		ssc_chatbot_run_uninstall( (int) $ssc_site_id );
 	}

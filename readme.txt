@@ -2,9 +2,9 @@
 Contributors: DbsStudio
 Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 0.6.1-beta
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ NexaChatAI — Professional AI assistant for WordPress. Setup wizard, multi-prov
 
 == Description ==
 
-NexaChatAI (beta) is a professional AI assistant for WordPress: install it, run the setup wizard, and publish an assistant that actually knows your business.
+NexaChatAI is a professional AI assistant for WordPress: install it, run the setup wizard, and publish an assistant that actually knows your business.
 
 = Product philosophy =
 
@@ -67,6 +67,35 @@ PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifi
 
 == Changelog ==
 
+= 1.0.0 =
+
+First stable release. Everything from the 0.6.x beta line, plus:
+
+* Fix the Add button on knowledge items, products and form fields — the row
+  builder used a relative CSS selector that browsers reject, so nothing happened
+  on click.
+* Fix repeating a row after deleting one in the middle, which reused an index
+  that was still in use and silently overwrote the surviving entry on save.
+* Fix manual model IDs saving as empty. The typed value is now materialized as a
+  real option before submit and resolved server-side, so it also survives with
+  JavaScript disabled.
+* Fix the manual model field binding to the first provider block instead of its
+  own, so a model typed for one provider could be read for another.
+* Fix legacy notification migration aborting on the first malformed entry and
+  stranding every job queued behind it.
+* Stop re-billing the AI provider for a completed stream that hit a late
+  transport error while closing the connection.
+* Fix automatic text direction, which chose between two identical branches; it
+  now follows WordPress's own RTL flag and a wider RTL locale list.
+* Validate FAQ imports by extension and report unsupported types instead of
+  failing during parsing.
+* Harden custom font names, SSE event names, request paths and the multisite
+  uninstall loop; guard the block asset file against direct access.
+* Full WordPress Coding Standards compliance across every shipped PHP file, with
+  each deliberate deviation documented in the ruleset.
+* Reproducible release packaging with an independent verifier that refuses to
+  ship tests, tooling, internal notes or stray credentials.
+
 = 0.6.1-beta =
 
 * Make every admin page and setup wizard use the available WordPress content width.
@@ -103,6 +132,14 @@ PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifi
 * composer / PHPCS / CI scaffolding
 
 == Upgrade Notice ==
+
+= 1.0.0 =
+
+First stable release; the data format is unchanged from 0.6.x, so settings,
+knowledge, requests and ADR cases are preserved. Back up your database first and
+clear page/CDN caches after upgrading. If you had entered a model ID manually, it
+was not being saved — re-enter it once after upgrading and confirm the connection
+test passes.
 
 = 0.6.0-beta =
 

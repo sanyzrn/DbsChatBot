@@ -5,13 +5,19 @@ on:
     branches: [main, master]
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   phpcs:
-    name: PHPCS (legacy style advisory)
-    continue-on-error: true
+    name: WordPress Coding Standards
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -20,20 +26,28 @@ jobs:
           coverage: none
           tools: composer:v2
 
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
       - name: Run PHPCS
-        run: vendor/bin/phpcs -q --report=summary
+        run: vendor/bin/phpcs
 
   syntax:
     name: PHP syntax
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         php: ['7.4', '8.1', '8.2', '8.3', '8.4', '8.5']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -51,12 +65,14 @@ jobs:
     name: Frontend behavior
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
       - run: node --check assets/js/chatbot.js
-      - run: node --test tests/frontend.test.cjs
+      - run: node --check assets/js/admin.js
+      - run: node --check blocks/chatbot/index.js
+      - run: node --test tests/frontend.test.cjs tests/admin.test.cjs
 
   wordpress:
     name: WordPress integration (MySQL)
@@ -73,7 +89,7 @@ jobs:
           --health-cmd="mysqladmin ping -h localhost -ptest-only"
           --health-interval=10s --health-timeout=5s --health-retries=10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
@@ -94,3 +110,21 @@ jobs:
         env:
           SSC_WP_TEST_ROOT: /tmp/ssc-wordpress
         run: php tests/integration.php
+
+  package:
+    name: Release package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Build the distributable ZIP
+        run: python tools/build-release.py
+      - name: Verify no development files were shipped
+        run: python tools/verify-release.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nexachat-ai-plugin
+          path: dist/*.zip
+          if-no-files-found: error

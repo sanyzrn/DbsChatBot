@@ -15,8 +15,15 @@
   "scripts": {
     "phpcs": "phpcs",
     "phpcbf": "phpcbf",
-    "test": ["php tests/unit.php", "node --test tests/frontend.test.cjs"],
-    "test:integration": "php tests/integration.php"
+    "test": [
+      "php tests/unit.php",
+      "node --test tests/frontend.test.cjs tests/admin.test.cjs"
+    ],
+    "test:integration": "php tests/integration.php",
+    "build": [
+      "python tools/build-release.py",
+      "python tools/verify-release.py"
+    ]
   },
   "config": {
     "allow-plugins": {

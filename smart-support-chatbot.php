@@ -3,7 +3,7 @@
  * Plugin Name:       NexaChatAI
  * Plugin URI:        https://saeedzarrini.ir/en/projects/nexachat
  * Description:       Professional AI assistant for WordPress. Setup wizard, multi-provider AI engines, business knowledge base, modular architecture. Optional voice, analytics, lead collection and pharmaceutical (pharmacovigilance) extension. Persian/RTL-first with LTR support.
- * Version:           0.6.1-beta
+ * Version:           1.0.0
  * Author:            DbsStudio
  * Author URI:        https://saeedzarrini.ir/en/projects/nexachat
  * Text Domain:       smart-support-chatbot
@@ -13,7 +13,7 @@
  * Requires at least: 5.6
  * Requires PHP:      7.4
  *
- * NexaChatAI (beta) — three layers in one plugin.
+ * NexaChatAI — three layers in one plugin.
  *   Layer A - Core Engine   : chat, identity, knowledge, providers, appearance, security.
  *   Layer B - Optional      : modular capabilities, disabled by default (voice, analytics, ...).
  *   Layer C - Industry      : independent extensions (pharmaceutical ADR reporting).
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Direct access blocked.
 }
 
-define( 'SSC_CHATBOT_VERSION', '0.6.1-beta' );
+define( 'SSC_CHATBOT_VERSION', '1.0.0' );
 define( 'SSC_CHATBOT_FILE', __FILE__ );
 define( 'SSC_CHATBOT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SSC_CHATBOT_URL', plugin_dir_url( __FILE__ ) );
@@ -90,4 +90,3 @@ add_action( 'init', 'ssc_chatbot_load_textdomain' );
 function SSC_Chatbot() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals, WordPress.NamingConventions.ValidFunctionName
 	return SSC_Plugin::instance();
 }
-
