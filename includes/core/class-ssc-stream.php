@@ -52,25 +52,52 @@ class SSC_Stream {
 		self::send_headers();
 		self::flush_all();
 		$result = $engine->chat( $message, $product, $history, array( __CLASS__, 'emit_delta' ) );
-		if ( empty( $result['ok'] ) ) { self::emit_error( 'ssc_chat_failed' ); }
+		if ( empty( $result['ok'] ) ) {
+			self::emit_error( 'ssc_chat_failed' );
+		}
 		self::emit_done( $result );
 	}
 
-	/** Generate through the common engine; null requests a normal HTTP fallback. */
+	/**
+	 * Stream one generation, invoking $on_delta for each chunk as it arrives.
+	 *
+	 * @param SSC_Provider $provider Streaming-capable provider adapter.
+	 * @param string       $system   System prompt.
+	 * @param array        $messages Conversation messages.
+	 * @param array        $opts     Generation options.
+	 * @param callable     $on_delta Receives each text chunk.
+	 * @return array|null Result envelope, or null to request a plain HTTP retry.
+	 */
 	public static function generate( $provider, $system, $messages, $opts, $on_delta ) {
-		$creds = $provider->saved_credentials();
-		$opts = wp_parse_args( $opts, array(
-			'temperature' => (float) SSC_Settings::get( 'ai_temperature', 0.4 ),
-			'max_tokens' => (int) SSC_Settings::get( 'ai_max_tokens', 800 ),
-		) );
-		$parts = $provider->request_parts( $creds['api_key'], $creds['model'] ?: $provider->default_model(), $system, $messages, $opts );
-		$full = '';
-		$status = self::curl_stream( $parts['url'], $parts['headers'], $parts['body'], function ( $delta ) use ( &$full, $on_delta ) {
-			$full .= $delta;
-			call_user_func( $on_delta, $delta );
-		} );
+		$creds  = $provider->saved_credentials();
+		$opts   = wp_parse_args(
+			$opts,
+			array(
+				'temperature' => (float) SSC_Settings::get( 'ai_temperature', 0.4 ),
+				'max_tokens'  => (int) SSC_Settings::get( 'ai_max_tokens', 800 ),
+			)
+		);
+		$model  = '' !== (string) $creds['model'] ? $creds['model'] : $provider->default_model();
+		$parts  = $provider->request_parts( $creds['api_key'], $model, $system, $messages, $opts );
+		$full   = '';
+		$status = self::curl_stream(
+			$parts['url'],
+			$parts['headers'],
+			$parts['body'],
+			function ( $delta ) use ( &$full, $on_delta ) {
+				$full .= $delta;
+				call_user_func( $on_delta, $delta );
+			}
+		);
 		if ( connection_aborted() ) {
-			return array( 'ok' => false, 'text' => '', 'error' => array( 'code' => 'network', 'message' => 'Client disconnected.' ) );
+			return array(
+				'ok'    => false,
+				'text'  => '',
+				'error' => array(
+					'code'    => 'network',
+					'message' => 'Client disconnected.',
+				),
+			);
 		}
 
 		/*
@@ -81,7 +108,11 @@ class SSC_Stream {
 		 */
 		$complete = $status['got'] && $status['finished'] && ! $status['failed'] && '' !== trim( $full );
 		if ( $complete ) {
-			return array( 'ok' => true, 'text' => $full, 'error' => null );
+			return array(
+				'ok'    => true,
+				'text'  => $full,
+				'error' => null,
+			);
 		}
 
 		// Nothing usable arrived: let the caller retry over plain HTTP.
@@ -116,11 +147,13 @@ class SSC_Stream {
 	 */
 	protected static function flush_all() {
 		while ( ob_get_level() > 0 ) {
-			if ( ! @ob_end_flush() ) { break; } // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- a buffer owned elsewhere must not raise here.
+			if ( ! @ob_end_flush() ) {
+				break;
+			}
 		}
-		if ( function_exists( 'fastcgi_finish_request' ) ) {
-			// Not used: we need the connection open. Just flush.
-		}
+		// fastcgi_finish_request() is deliberately NOT called: it closes the
+		// connection, and this response must stay open for the whole stream.
 		self::flush();
 	}
 
@@ -163,14 +196,17 @@ class SSC_Stream {
 	 * @param array $result Chat envelope.
 	 */
 	protected static function emit_done( $result ) {
-		self::emit( 'done', array(
-			'reply'     => isset( $result['reply'] ) ? $result['reply'] : '',
-			'source'    => isset( $result['source'] ) ? $result['source'] : 'ai',
-			'handoff'   => ! empty( $result['handoff'] ),
-			'log_id'    => isset( $result['log_id'] ) ? (int) $result['log_id'] : 0,
-			'log_token' => isset( $result['log_token'] ) ? (string) $result['log_token'] : '',
-			'flags'     => isset( $result['flags'] ) ? $result['flags'] : (object) array(),
-		) );
+		self::emit(
+			'done',
+			array(
+				'reply'     => isset( $result['reply'] ) ? $result['reply'] : '',
+				'source'    => isset( $result['source'] ) ? $result['source'] : 'ai',
+				'handoff'   => ! empty( $result['handoff'] ),
+				'log_id'    => isset( $result['log_id'] ) ? (int) $result['log_id'] : 0,
+				'log_token' => isset( $result['log_token'] ) ? (string) $result['log_token'] : '',
+				'flags'     => isset( $result['flags'] ) ? $result['flags'] : (object) array(),
+			)
+		);
 		exit;
 	}
 
@@ -196,7 +232,12 @@ class SSC_Stream {
 	 * @return array{got:bool,finished:bool,failed:bool,errno:int} Stream outcome.
 	 */
 	protected static function curl_stream( $url, $headers, $body, $on_delta ) {
-		$aborted = array( 'got' => false, 'finished' => false, 'failed' => true, 'errno' => 0 );
+		$aborted = array(
+			'got'      => false,
+			'finished' => false,
+			'failed'   => true,
+			'errno'    => 0,
+		);
 
 		if ( defined( 'WP_PROXY_HOST' ) || ! function_exists( 'curl_init' ) || ! SSC_HTTP::is_safe_url( $url, true ) ) {
 			return $aborted;
@@ -204,11 +245,14 @@ class SSC_Stream {
 
 		// Pin the validated address: cURL must not perform a second DNS lookup.
 		$host = wp_parse_url( $url, PHP_URL_HOST );
-		$ip = gethostbyname( $host );
-		if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) { return $aborted; }
-		$port = wp_parse_url( $url, PHP_URL_PORT ) ?: 443;
+		$ip   = gethostbyname( $host );
+		if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+			return $aborted;
+		}
+		$parsed_port    = wp_parse_url( $url, PHP_URL_PORT );
+		$port           = $parsed_port ? (int) $parsed_port : 443;
 		$body['stream'] = true;
-		$json = wp_json_encode( $body );
+		$json           = wp_json_encode( $body );
 		if ( false === $json ) {
 			return $aborted;
 		}
@@ -218,12 +262,12 @@ class SSC_Stream {
 			$header_lines[] = $k . ': ' . $v;
 		}
 
-		$got = false;
+		$got      = false;
 		$finished = false;
-		$failed = false;
-		$bytes = 0;
-		$buf = '';
-		$ch  = curl_init( $url );
+		$failed   = false;
+		$bytes    = 0;
+		$buf      = '';
+		$ch       = curl_init( $url );
 		curl_setopt_array(
 			$ch,
 			array(
@@ -238,7 +282,9 @@ class SSC_Stream {
 				CURLOPT_RETURNTRANSFER => false,
 				CURLOPT_WRITEFUNCTION  => function ( $ch, $chunk ) use ( &$buf, &$got, &$finished, &$failed, &$bytes, $on_delta ) {
 					$bytes += strlen( $chunk );
-					if ( $bytes > 2097152 || connection_aborted() || 200 !== (int) curl_getinfo( $ch, CURLINFO_HTTP_CODE ) ) { return 0; }
+					if ( $bytes > 2097152 || connection_aborted() || 200 !== (int) curl_getinfo( $ch, CURLINFO_HTTP_CODE ) ) {
+						return 0;
+					}
 					$buf .= $chunk;
 					while ( false !== ( $pos = strpos( $buf, "\n" ) ) ) {
 						$line = substr( $buf, 0, $pos );
@@ -256,8 +302,12 @@ class SSC_Stream {
 						if ( ! is_array( $decoded ) ) {
 							continue;
 						}
-						if ( isset( $decoded['error'] ) ) { $failed = true; }
-						if ( ! empty( $decoded['choices'][0]['finish_reason'] ) ) { $finished = true; }
+						if ( isset( $decoded['error'] ) ) {
+							$failed = true;
+						}
+						if ( ! empty( $decoded['choices'][0]['finish_reason'] ) ) {
+							$finished = true;
+						}
 						$delta = isset( $decoded['choices'][0]['delta']['content'] ) ? $decoded['choices'][0]['delta']['content'] : '';
 						if ( is_string( $delta ) && '' !== $delta ) {
 							$got = true;
@@ -272,7 +322,9 @@ class SSC_Stream {
 		);
 		curl_exec( $ch );
 		$errno = curl_errno( $ch );
-		curl_close( $ch );
+		// curl_close() became a deprecated no-op in PHP 8.0; the handle is
+		// released when $ch goes out of scope.
+		unset( $ch );
 		return array(
 			'got'      => $got,
 			'finished' => $finished,

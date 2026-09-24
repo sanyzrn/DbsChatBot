@@ -135,8 +135,10 @@ class SSC_Module_Notifications extends SSC_Module {
 		}
 		foreach ( $jobs as $channel ) {
 			$id = SSC_Notification_Queue::enqueue( $channel, (int) $submission_id );
-			if ( $id ) { $this->deliver_job( $id ); }
-			else { do_action( 'ssc_notification_failed', $channel, $submission_id, 'queue-write-failed' ); }
+			if ( $id ) {
+				$this->deliver_job( $id ); } else {
+				do_action( 'ssc_notification_failed', $channel, $submission_id, 'queue-write-failed' );
+				}
 		}
 	}
 
@@ -153,7 +155,10 @@ class SSC_Module_Notifications extends SSC_Module {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- single row read.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $submission_id ), ARRAY_A );
 		if ( ! $row ) {
-			return array( 'ok' => false, 'error' => 'missing-row' );
+			return array(
+				'ok'    => false,
+				'error' => 'missing-row',
+			);
 		}
 		$text = $this->build_text( $row );
 
@@ -172,22 +177,36 @@ class SSC_Module_Notifications extends SSC_Module {
 				array( 'timeout' => 8 )
 			);
 			if ( ! $response['ok'] || empty( $response['data']['ok'] ) ) {
-				return array( 'ok' => false, 'error' => isset( $response['error']['code'] ) ? $response['error']['code'] : 'messenger-rejected' );
+				return array(
+					'ok'    => false,
+					'error' => isset( $response['error']['code'] ) ? $response['error']['code'] : 'messenger-rejected',
+				);
 			}
-			return array( 'ok' => true, 'error' => '' );
+			return array(
+				'ok'    => true,
+				'error' => '',
+			);
 		}
 
 		// Email channel.
 		$to = (string) SSC_Settings::get( 'notify_email_to', '' );
 		$pv = get_option( 'ssc_pharma_setup', array() );
-		if ( 'pharma_adr' === $row['type'] && ! empty( $pv['pv_contact'] ) && is_email( $pv['pv_contact'] ) ) { $to = $pv['pv_contact']; }
+		if ( 'pharma_adr' === $row['type'] && ! empty( $pv['pv_contact'] ) && is_email( $pv['pv_contact'] ) ) {
+			$to = $pv['pv_contact'];
+		}
 		if ( '' === $to || ! is_email( $to ) ) {
 			$to = get_option( 'admin_email' );
 		}
 		/* translators: %s: submission type label. */
 		$subject = sprintf( __( 'New request: %s', 'smart-support-chatbot' ), SSC_Schema::type_label( $row['type'] ) );
 		$sent    = wp_mail( $to, $subject, $text, array( 'Content-Type: text/plain; charset=UTF-8' ) );
-		return $sent ? array( 'ok' => true, 'error' => '' ) : array( 'ok' => false, 'error' => 'mail-rejected' );
+		return $sent ? array(
+			'ok'    => true,
+			'error' => '',
+		) : array(
+			'ok'    => false,
+			'error' => 'mail-rejected',
+		);
 	}
 
 	/**
@@ -209,7 +228,11 @@ class SSC_Module_Notifications extends SSC_Module {
 		$lines[] = sprintf( __( 'New request (%s)', 'smart-support-chatbot' ), $type );
 		// Medical narratives and direct identifiers stay in the access-controlled inbox.
 		if ( $is_adr ) {
-			$lines[] = sprintf( __( 'Case #%d — sign in to review the report.', 'smart-support-chatbot' ), (int) $row['id'] );
+			$lines[] = sprintf(
+				/* translators: %d: internal case number. */
+				__( 'Case #%d — sign in to review the report.', 'smart-support-chatbot' ),
+				(int) $row['id']
+			);
 			$lines[] = admin_url( 'admin.php?page=ssc-pharma&view=' . (int) $row['id'] );
 			return implode( "\n", $lines );
 		}
@@ -240,14 +263,24 @@ class SSC_Module_Notifications extends SSC_Module {
 		return implode( "\n", $lines );
 	}
 
-	/** Delivery occurs only after the job is durably stored and claimed. */
+	/**
+	 * Delivery occurs only after the job is durably stored and claimed.
+	 *
+	 * @param int $id Queue job id.
+	 * @return bool Whether the delivery attempt succeeded.
+	 */
 	protected function deliver_job( $id ) {
 		$job = SSC_Notification_Queue::claim( $id );
-		if ( ! $job ) { return false; }
+		if ( ! $job ) {
+			return false;
+		}
 		try {
 			$result = $this->attempt( $job['channel'], (int) $job['submission_id'] );
 		} catch ( Throwable $error ) {
-			$result = array( 'ok' => false, 'error' => 'delivery-exception' );
+			$result = array(
+				'ok'    => false,
+				'error' => 'delivery-exception',
+			);
 		}
 		SSC_Notification_Queue::finish( $job, $result['ok'], $result['error'] );
 		if ( ! $result['ok'] ) {
@@ -258,21 +291,37 @@ class SSC_Module_Notifications extends SSC_Module {
 
 	/** Bounded worker; failed jobs remain visible after five attempts. */
 	public static function retry_failed() {
-		if ( ! SSC_Modules::is_active( 'notifications' ) ) { return 0; }
+		if ( ! SSC_Modules::is_active( 'notifications' ) ) {
+			return 0;
+		}
 		SSC_Notification_Queue::migrate_legacy();
 		$module = SSC_Modules::get( 'notifications' );
-		if ( ! $module ) { return 0; }
+		if ( ! $module ) {
+			return 0;
+		}
 		$healed = 0;
 		foreach ( SSC_Notification_Queue::due_ids() as $id ) {
-			if ( $module->deliver_job( $id ) ) { ++$healed; }
+			if ( $module->deliver_job( $id ) ) {
+				++$healed;
+			}
 		}
 		return $healed;
 	}
 
+	/**
+	 * Notifications still waiting or in flight (dashboard widget).
+	 *
+	 * @return int
+	 */
 	public static function pending_count() {
 		return SSC_Notification_Queue::pending_count();
 	}
 
+	/**
+	 * Most recent delivery failure (admin notice).
+	 *
+	 * @return array|null channel, error, attempts.
+	 */
 	public static function last_failure() {
 		return SSC_Notification_Queue::last_failure();
 	}

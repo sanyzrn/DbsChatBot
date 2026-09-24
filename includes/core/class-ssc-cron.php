@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class SSC_Cron {
 
-	const HOOK = 'ssc_daily_cleanup';
+	const HOOK       = 'ssc_daily_cleanup';
 	const RETRY_HOOK = 'ssc_notification_retry';
 
 	/**
@@ -46,8 +46,22 @@ class SSC_Cron {
 		add_filter( 'cron_schedules', array( __CLASS__, 'schedules' ) );
 	}
 
+	/**
+	 * Register the notification retry interval.
+	 *
+	 * Five minutes is deliberately shorter than the 15-minute floor WPCS
+	 * suggests: the hook only drains a small, already-persisted queue with
+	 * exponential backoff, and a slower cadence would leave safety-report
+	 * notifications sitting undelivered.
+	 *
+	 * @param array $schedules Registered cron schedules.
+	 * @return array
+	 */
 	public static function schedules( $schedules ) {
-		$schedules['ssc_five_minutes'] = array( 'interval' => 300, 'display' => 'NexaChat: every five minutes' );
+		$schedules['ssc_five_minutes'] = array(
+			'interval' => 300,
+			'display'  => __( 'NexaChatAI: every five minutes', 'smart-support-chatbot' ),
+		);
 		return $schedules;
 	}
 

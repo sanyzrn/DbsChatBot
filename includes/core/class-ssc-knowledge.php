@@ -27,13 +27,37 @@ class SSC_Knowledge {
 	public static function normalize( $text ) {
 		$text = (string) $text;
 		// Arabic -> Persian letter folding.
-		$map = array(
-			'ي' => 'ی', 'ك' => 'ک', 'ة' => 'ه', 'ۀ' => 'ه', 'أ' => 'ا', 'إ' => 'ا', 'آ' => 'ا',
-			'ؤ' => 'و', 'ئ' => 'ی', 'ٱ' => 'ا',
-			'٠' => '0', '١' => '1', '٢' => '2', '٣' => '3', '٤' => '4',
-			'٥' => '5', '٦' => '6', '٧' => '7', '٨' => '8', '٩' => '9',
-			'۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4',
-			'۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9',
+		$map  = array(
+			'ي' => 'ی',
+			'ك' => 'ک',
+			'ة' => 'ه',
+			'ۀ' => 'ه',
+			'أ' => 'ا',
+			'إ' => 'ا',
+			'آ' => 'ا',
+			'ؤ' => 'و',
+			'ئ' => 'ی',
+			'ٱ' => 'ا',
+			'٠' => '0',
+			'١' => '1',
+			'٢' => '2',
+			'٣' => '3',
+			'٤' => '4',
+			'٥' => '5',
+			'٦' => '6',
+			'٧' => '7',
+			'٨' => '8',
+			'٩' => '9',
+			'۰' => '0',
+			'۱' => '1',
+			'۲' => '2',
+			'۳' => '3',
+			'۴' => '4',
+			'۵' => '5',
+			'۶' => '6',
+			'۷' => '7',
+			'۸' => '8',
+			'۹' => '9',
 		);
 		$text = strtr( $text, $map );
 		// Diacritics + kashida removal.
@@ -53,10 +77,46 @@ class SSC_Knowledge {
 	 * @return string[] Unique tokens.
 	 */
 	public static function tokenize( $text ) {
-		$stop = array(
-			'از', 'به', 'با', 'در', 'که', 'را', 'و', 'این', 'آن', 'برای', 'است', 'هست', 'بود',
-			'می', 'های', 'ها', 'یا', 'هم', 'چه', 'چطور', 'کدام', 'شما', 'من', 'ما', 'اون', 'بر',
-			'the', 'a', 'an', 'of', 'to', 'in', 'is', 'are', 'and', 'or', 'for', 'on', 'it',
+		$stop  = array(
+			'از',
+			'به',
+			'با',
+			'در',
+			'که',
+			'را',
+			'و',
+			'این',
+			'آن',
+			'برای',
+			'است',
+			'هست',
+			'بود',
+			'می',
+			'های',
+			'ها',
+			'یا',
+			'هم',
+			'چه',
+			'چطور',
+			'کدام',
+			'شما',
+			'من',
+			'ما',
+			'اون',
+			'بر',
+			'the',
+			'a',
+			'an',
+			'of',
+			'to',
+			'in',
+			'is',
+			'are',
+			'and',
+			'or',
+			'for',
+			'on',
+			'it',
 		);
 		$parts = preg_split( '/\s+/u', trim( (string) $text ) );
 		$out   = array();
@@ -120,7 +180,7 @@ class SSC_Knowledge {
 	/**
 	 * Overlap score between user tokens and a reference text.
 	 *
-	 * score = 0.7 * coverage(user) + 0.3 * density(reference)
+	 * Score = 0.7 * coverage(user) + 0.3 * density(reference).
 	 *
 	 * @param string[] $user_tokens   Tokenized user question.
 	 * @param string   $reference_text Normalized reference text.
@@ -197,9 +257,11 @@ class SSC_Knowledge {
 		return array_slice( $chunks, 0, $max_chunks );
 	}
 
-	/* ------------------------------------------------------------------ *
+	/*
+	 * --------------------------------------------------------------
 	 * Retrieval (DB-backed).
-	 * ------------------------------------------------------------------ */
+	 * --------------------------------------------------------------
+	 */
 
 	/**
 	 * Best KB chunks for a question (RAG-lite injection).
@@ -319,9 +381,11 @@ class SSC_Knowledge {
 		return array_slice( $scored, 0, max( 1, (int) $limit ) );
 	}
 
-	/* ------------------------------------------------------------------ *
+	/*
+	 * --------------------------------------------------------------
 	 * Business knowledge compilation (for the prompt builder).
-	 * ------------------------------------------------------------------ */
+	 * --------------------------------------------------------------
+	 */
 
 	/**
 	 * Compact "always included" business context (identity + curated items).
@@ -352,7 +416,7 @@ class SSC_Knowledge {
 		}
 
 		// Curated knowledge items (wizard step 2) - compact, token-budgeted.
-		$items = (array) SSC_Settings::get( 'knowledge_items', array() );
+		$items  = (array) SSC_Settings::get( 'knowledge_items', array() );
 		$budget = 4000; // chars of curated knowledge max.
 		$used   = 0;
 		foreach ( $items as $item ) {
@@ -363,8 +427,8 @@ class SSC_Knowledge {
 			if ( $used + mb_strlen( $body ) > $budget ) {
 				$body = mb_substr( $body, 0, max( 0, $budget - $used ) ) . '…';
 			}
-			$used  += mb_strlen( $body );
-			$title = ! empty( $item['title'] ) ? $item['title'] : __( 'Reference', 'smart-support-chatbot' );
+			$used   += mb_strlen( $body );
+			$title   = ! empty( $item['title'] ) ? $item['title'] : __( 'Reference', 'smart-support-chatbot' );
 			$parts[] = '【KNOWLEDGE:' . $title . "】\n" . $body;
 			if ( $used >= $budget ) {
 				break;

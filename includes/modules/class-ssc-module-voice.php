@@ -78,8 +78,8 @@ class SSC_Module_Voice extends SSC_Module {
 	 */
 	public function settings_schema() {
 		return array(
-			'voice_input'  => 'yes',
-			'voice_output' => 'yes',
+			'voice_input'    => 'yes',
+			'voice_output'   => 'yes',
 			'voice_language' => 'auto',
 		);
 	}

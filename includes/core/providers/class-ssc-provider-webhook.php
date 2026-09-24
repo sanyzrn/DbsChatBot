@@ -88,7 +88,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 			'product'      => isset( $opts['product'] ) ? $opts['product'] : '',
 			'product_name' => isset( $opts['product_name'] ) ? $opts['product_name'] : '',
 		);
-		$body = wp_json_encode( $payload );
+		$body    = wp_json_encode( $payload );
 
 		$headers = array();
 		if ( '' !== (string) $secret ) {
@@ -161,9 +161,9 @@ class SSC_Provider_Webhook extends SSC_Provider {
 		}
 
 		// Manual post (response signature validation needs the raw body).
-		$headers                   = $parts['headers'];
-		$headers['Content-Type']   = 'application/json';
-		$response = wp_safe_remote_post(
+		$headers                 = $parts['headers'];
+		$headers['Content-Type'] = 'application/json';
+		$response                = wp_safe_remote_post(
 			$parts['url'],
 			array(
 				'timeout' => (int) apply_filters( 'ssc_http_timeout', 60 ),
@@ -173,9 +173,16 @@ class SSC_Provider_Webhook extends SSC_Provider {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			$msg = $response->get_error_message();
+			$msg  = $response->get_error_message();
 			$code = ( false !== stripos( $msg, 'timed out' ) ) ? 'timeout' : 'network';
-			return array( 'ok' => false, 'text' => '', 'error' => array( 'code' => $code, 'message' => $msg ) );
+			return array(
+				'ok'    => false,
+				'text'  => '',
+				'error' => array(
+					'code'    => $code,
+					'message' => $msg,
+				),
+			);
 		}
 
 		$status = (int) wp_remote_retrieve_response_code( $response );
@@ -230,7 +237,11 @@ class SSC_Provider_Webhook extends SSC_Provider {
 				),
 			);
 		}
-		return array( 'ok' => true, 'text' => $text, 'error' => null );
+		return array(
+			'ok'    => true,
+			'text'  => $text,
+			'error' => null,
+		);
 	}
 
 	/**
@@ -259,8 +270,16 @@ class SSC_Provider_Webhook extends SSC_Provider {
 			'',
 			'',
 			'You are a connection test. Reply with exactly: OK',
-			array( array( 'role' => 'user', 'content' => 'Reply with exactly: OK' ) ),
-			array( 'endpoint' => $endpoint, 'max_tokens' => 32 )
+			array(
+				array(
+					'role'    => 'user',
+					'content' => 'Reply with exactly: OK',
+				),
+			),
+			array(
+				'endpoint'   => $endpoint,
+				'max_tokens' => 32,
+			)
 		);
 		if ( ! $result['ok'] ) {
 			$result['error']['friendly'] = SSC_HTTP::friendly_error( $result['error']['code'] );

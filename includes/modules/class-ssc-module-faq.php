@@ -133,7 +133,13 @@ class SSC_Module_Faq extends SSC_Module {
 		// CSV import.
 		if ( isset( $_POST['ssc_faq_import'] ) && check_admin_referer( 'ssc_faq' ) ) {
 			$result = $this->import_file();
-			self::redirect( array( 'imported' => $result['inserted'], 'skipped' => $result['skipped'], 'error' => $result['error'] ) );
+			self::redirect(
+				array(
+					'imported' => $result['inserted'],
+					'skipped'  => $result['skipped'],
+					'error'    => $result['error'],
+				)
+			);
 		}
 
 		// Export.
@@ -159,17 +165,36 @@ class SSC_Module_Faq extends SSC_Module {
 	 * @return array inserted/skipped/error.
 	 */
 	protected function import_file() {
-		$out = array( 'inserted' => 0, 'skipped' => 0, 'error' => '' );
-		if ( empty( $_FILES['faq_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['faq_file']['tmp_name'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- is_uploaded_file check; content parsed below.
+		$out = array(
+			'inserted' => 0,
+			'skipped'  => 0,
+			'error'    => '',
+		);
+
+		/*
+		 * Upload boundary. The file is parsed in memory and never written to
+		 * disk, but the extension is still whitelisted so an unexpected type
+		 * fails with a clear message instead of a parse error. Every index is
+		 * read defensively: a truncated upload leaves $_FILES incomplete.
+		 * phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing -- nonce verified by the caller; paths are validated with is_uploaded_file() rather than sanitized.
+		 */
+		$tmp_name = isset( $_FILES['faq_file']['tmp_name'] ) ? $_FILES['faq_file']['tmp_name'] : '';
+		if ( '' === $tmp_name || ! is_uploaded_file( $tmp_name ) ) {
 			$out['error'] = 'nofile';
 			return $out;
 		}
-		$size = (int) $_FILES['faq_file']['size'];
+		$size = isset( $_FILES['faq_file']['size'] ) ? (int) $_FILES['faq_file']['size'] : 0;
 		if ( $size > 2 * MB_IN_BYTES ) {
 			$out['error'] = 'toobig';
 			return $out;
 		}
-		$content = (string) file_get_contents( $_FILES['faq_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- validated upload.
+		$name = isset( $_FILES['faq_file']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['faq_file']['name'] ) ) : '';
+		if ( ! in_array( strtolower( pathinfo( $name, PATHINFO_EXTENSION ) ), array( 'csv', 'json', 'txt' ), true ) ) {
+			$out['error'] = 'badtype';
+			return $out;
+		}
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
+		$content = (string) file_get_contents( $tmp_name ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- upload validated with is_uploaded_file().
 		$rows    = array();
 		if ( false !== strpos( $content, '{"' ) && null !== json_decode( $content, true ) ) {
 			$decoded = json_decode( $content, true );
@@ -198,14 +223,18 @@ class SSC_Module_Faq extends SSC_Module {
 					$a     = isset( $map['answer'] ) && isset( $cells[ $map['answer'] ] ) ? $cells[ $map['answer'] ] : ( isset( $cells[1] ) ? $cells[1] : '' );
 					$k     = isset( $map['keywords'] ) && isset( $cells[ $map['keywords'] ] ) ? $cells[ $map['keywords'] ] : '';
 					if ( '' !== trim( $q ) && '' !== trim( $a ) ) {
-						$rows[] = array( 'question' => $q, 'answer' => $a, 'keywords' => $k );
+						$rows[] = array(
+							'question' => $q,
+							'answer'   => $a,
+							'keywords' => $k,
+						);
 					} else {
 						++$out['skipped'];
 					}
 				}
 			}
 		}
-		$replace = isset( $_POST['import_mode'] ) && 'replace' === sanitize_key( wp_unslash( $_POST['import_mode'] ) );
+		$replace         = isset( $_POST['import_mode'] ) && 'replace' === sanitize_key( wp_unslash( $_POST['import_mode'] ) );
 		$out['inserted'] = SSC_Schema::qa_import( $rows, $replace );
 		return $out;
 	}
@@ -236,12 +265,12 @@ class SSC_Module_Faq extends SSC_Module {
 			wp_die( esc_html__( 'Insufficient permissions.', 'smart-support-chatbot' ) );
 		}
 		// Batched listing (no giant single form - 4.x fragility removed).
-		$page   = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
-		$per    = 30;
-		$all    = SSC_Schema::qa_candidates( 'general' );
-		$total  = count( $all );
-		$rows   = array_slice( array_reverse( $all ), ( $page - 1 ) * $per, $per );
-		$pages  = (int) ceil( $total / $per );
+		$page  = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
+		$per   = 30;
+		$all   = SSC_Schema::qa_candidates( 'general' );
+		$total = count( $all );
+		$rows  = array_slice( array_reverse( $all ), ( $page - 1 ) * $per, $per );
+		$pages = (int) ceil( $total / $per );
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-faq.php';
 	}
 }

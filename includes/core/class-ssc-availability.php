@@ -35,11 +35,17 @@ class SSC_Availability {
 			$tz = new DateTimeZone( 'UTC' );
 		}
 
-		$now    = new DateTime( 'now', $tz );
+		$now = new DateTime( 'now', $tz );
 		return self::is_online_at( $now );
 	}
 
-	/** Evaluate a local time; after-midnight hours belong to the previous opening day. */
+	/**
+	 * Evaluate a local time; after-midnight hours belong to the previous
+	 * opening day, so a 22:00-06:00 shift stays open past midnight.
+	 *
+	 * @param DateTimeInterface $now Local time to evaluate.
+	 * @return bool
+	 */
 	public static function is_online_at( $now ) {
 		$hour   = (int) $now->format( 'G' );
 		$minute = (int) $now->format( 'i' );
@@ -97,9 +103,9 @@ class SSC_Availability {
 			return false;
 		}
 
-		// Device targeting is refined client-side (server cannot know viewport
-		// reliably); the config carries the rule so JS can hide the launcher.
-		// Page rules are the server's job:
+		// Device targeting is refined client-side (the server cannot know the
+		// viewport reliably); the config carries the rule so JS can hide the
+		// launcher. Page rules are the server's job.
 		$mode  = (string) SSC_Settings::get( 'display_mode', 'all' );
 		$paths = self::display_paths();
 		if ( 'all' === $mode || empty( $paths ) ) {
@@ -126,11 +132,11 @@ class SSC_Availability {
 	public static function public_status() {
 		$online = self::is_online();
 		return array(
-			'online'          => $online,
-			'offlineMessage'  => $online ? '' : self::offline_message(),
-			'device'          => (string) SSC_Settings::get( 'display_devices', 'all' ),
-			'sound'           => 'yes' === SSC_Settings::get( 'sound_enabled', 'no' ),
-			'streaming'       => 'yes' === SSC_Settings::get( 'streaming_enabled', 'yes' ),
+			'online'         => $online,
+			'offlineMessage' => $online ? '' : self::offline_message(),
+			'device'         => (string) SSC_Settings::get( 'display_devices', 'all' ),
+			'sound'          => 'yes' === SSC_Settings::get( 'sound_enabled', 'no' ),
+			'streaming'      => 'yes' === SSC_Settings::get( 'streaming_enabled', 'yes' ),
 		);
 	}
 
@@ -162,7 +168,9 @@ class SSC_Availability {
 		if ( ! preg_match( '/^(\d{1,2}):(\d{2})$/', trim( $hhmm ), $m ) ) {
 			return $fallback;
 		}
-		if ( (int) $m[1] > 23 || (int) $m[2] > 59 ) { return $fallback; }
+		if ( (int) $m[1] > 23 || (int) $m[2] > 59 ) {
+			return $fallback;
+		}
 		return ( (int) $m[1] ) * 60 + ( (int) $m[2] );
 	}
 

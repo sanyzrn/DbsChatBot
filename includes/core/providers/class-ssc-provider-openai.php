@@ -57,11 +57,11 @@ class SSC_Provider_Openai extends SSC_Provider_OpenAI_Compat {
 	 */
 	public function models() {
 		$models = array(
-			'gpt-4o-mini' => 'GPT-4o mini (fast, cheap)',
-			'gpt-4o'      => 'GPT-4o',
+			'gpt-4o-mini'  => 'GPT-4o mini (fast, cheap)',
+			'gpt-4o'       => 'GPT-4o',
 			'gpt-4.1-mini' => 'GPT-4.1 mini',
-			'gpt-4.1'     => 'GPT-4.1',
-			'o4-mini'     => 'o4-mini (reasoning)',
+			'gpt-4.1'      => 'GPT-4.1',
+			'o4-mini'      => 'o4-mini (reasoning)',
 		);
 		/**
 		 * Maintain the OpenAI model list without waiting for plugin releases.

@@ -68,9 +68,9 @@ class SSC_Frontend {
 		}
 		$this->assets_done = true;
 
-		$s           = SSC_Settings::all();
-		$business    = SSC_Settings::business();
-		$font_stack  = $this->enqueue_font( $s );
+		$s          = SSC_Settings::all();
+		$business   = SSC_Settings::business();
+		$font_stack = $this->enqueue_font( $s );
 
 		// Products payload (public-safe fields only).
 		$products = array();
@@ -78,7 +78,7 @@ class SSC_Frontend {
 			if ( empty( $p['id'] ) ) {
 				continue;
 			}
-			$summary = ! empty( $p['summary'] ) ? $p['summary'] : '';
+			$summary    = ! empty( $p['summary'] ) ? $p['summary'] : '';
 			$products[] = array(
 				'id'       => $p['id'],
 				'name'     => isset( $p['name'] ) ? $p['name'] : $p['id'],
@@ -93,72 +93,72 @@ class SSC_Frontend {
 
 		$config = array(
 			// Transports (REST first, admin-ajax fallback for cached pages).
-			'restUrl'   => esc_url_raw( rest_url( SSC_REST::NS . '/' ) ),
-			'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
+			'restUrl'         => esc_url_raw( rest_url( SSC_REST::NS . '/' ) ),
+			'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
 			// Public traffic is cache-safe; strict mode uses WordPress's REST action.
-			'nonce'     => apply_filters( 'ssc_enforce_rest_nonce', false ) ? wp_create_nonce( 'wp_rest' ) : '',
+			'nonce'           => apply_filters( 'ssc_enforce_rest_nonce', false ) ? wp_create_nonce( 'wp_rest' ) : '',
 
 			// Identity & texts.
-			'assistantName' => $display_name,
-			'orgName'   => '' !== trim( (string) $business['org_name'] ) ? $business['org_name'] : get_bloginfo( 'name' ),
-			'welcomeTitle' => '' !== trim( (string) $s['welcome_title'] ) ? $s['welcome_title'] : __( 'Hello! 👋', 'smart-support-chatbot' ),
-			'welcomeText'  => '' !== trim( (string) $s['welcome_text'] ) ? $s['welcome_text'] : __( 'How can I help you today?', 'smart-support-chatbot' ),
-			'disclaimer'   => (string) $s['disclaimer'],
-			'direction' => $direction,
+			'assistantName'   => $display_name,
+			'orgName'         => '' !== trim( (string) $business['org_name'] ) ? $business['org_name'] : get_bloginfo( 'name' ),
+			'welcomeTitle'    => '' !== trim( (string) $s['welcome_title'] ) ? $s['welcome_title'] : __( 'Hello! 👋', 'smart-support-chatbot' ),
+			'welcomeText'     => '' !== trim( (string) $s['welcome_text'] ) ? $s['welcome_text'] : __( 'How can I help you today?', 'smart-support-chatbot' ),
+			'disclaimer'      => (string) $s['disclaimer'],
+			'direction'       => $direction,
 
 			// Appearance.
-			'themeMode' => $s['theme_mode'],
-			'position'  => $s['position'],
-			'primaryColor'  => $s['primary_color'],
-			'fontSize'     => (int) $s['font_size'],
-			'windowWidth'  => (int) $s['window_width'],
-			'windowRadius' => (int) $s['window_radius'],
-			'bubbleRadius' => (int) $s['bubble_radius'],
-			'userBubble'   => $s['user_bubble_color'],
-			'botBubble'    => $s['bot_bubble_color'],
-			'fontStack'    => $font_stack,
-			'avatarUrl'    => $s['avatar_url'],
-			'launcherSize' => (int) $s['launcher_size'],
+			'themeMode'       => $s['theme_mode'],
+			'position'        => $s['position'],
+			'primaryColor'    => $s['primary_color'],
+			'fontSize'        => (int) $s['font_size'],
+			'windowWidth'     => (int) $s['window_width'],
+			'windowRadius'    => (int) $s['window_radius'],
+			'bubbleRadius'    => (int) $s['bubble_radius'],
+			'userBubble'      => $s['user_bubble_color'],
+			'botBubble'       => $s['bot_bubble_color'],
+			'fontStack'       => $font_stack,
+			'avatarUrl'       => $s['avatar_url'],
+			'launcherSize'    => (int) $s['launcher_size'],
 			'launcherIconUrl' => $s['launcher_icon_url'],
-			'supportPhone' => $business['support_phone'] ? $business['support_phone'] : $business['phone'],
+			'supportPhone'    => $business['support_phone'] ? $business['support_phone'] : $business['phone'],
 
 			// Catalog.
-			'products'  => array_values( $products ),
+			'products'        => array_values( $products ),
 
 			// Module-gated capabilities (server-enforced mirror).
-			'features'  => array(
-				'leads'        => SSC_Modules::is_active( 'leads' ),
-				'faq'          => SSC_Modules::is_active( 'faq' ),
-				'voice'        => SSC_Modules::is_active( 'voice' ),
-				'voiceInput'   => SSC_Modules::is_active( 'voice' ) && 'yes' === $s['voice_input'],
-				'voiceOutput'  => SSC_Modules::is_active( 'voice' ) && 'yes' === $s['voice_output'],
-				'csat'         => SSC_Modules::is_active( 'csat' ),
-				'handoff'      => SSC_Modules::is_active( 'handoff' ),
-				'proactive'    => SSC_Modules::is_active( 'proactive' ),
-				'pharma'       => SSC_Modules::is_active( 'pharma' ),
-				'feedback'     => SSC_Modules::is_active( 'history' ),
+			'features'        => array(
+				'leads'       => SSC_Modules::is_active( 'leads' ),
+				'faq'         => SSC_Modules::is_active( 'faq' ),
+				'voice'       => SSC_Modules::is_active( 'voice' ),
+				'voiceInput'  => SSC_Modules::is_active( 'voice' ) && 'yes' === $s['voice_input'],
+				'voiceOutput' => SSC_Modules::is_active( 'voice' ) && 'yes' === $s['voice_output'],
+				'csat'        => SSC_Modules::is_active( 'csat' ),
+				'handoff'     => SSC_Modules::is_active( 'handoff' ),
+				'proactive'   => SSC_Modules::is_active( 'proactive' ),
+				'pharma'      => SSC_Modules::is_active( 'pharma' ),
+				'feedback'    => SSC_Modules::is_active( 'history' ),
 			),
 
 			// Availability + behaviour (server-computed).
-			'availability' => SSC_Availability::public_status(),
-			'handoffText'   => (string) $s['handoff_text'],
-			'proactiveDelay' => (int) $s['proactive_delay'],
-			'proactiveText'  => (string) $s['proactive_text'],
-			'voiceLanguage'  => $this->voice_language(),
+			'availability'    => SSC_Availability::public_status(),
+			'handoffText'     => (string) $s['handoff_text'],
+			'proactiveDelay'  => (int) $s['proactive_delay'],
+			'proactiveText'   => (string) $s['proactive_text'],
+			'voiceLanguage'   => $this->voice_language(),
 
 			// Leads form (module-gated).
-			'formFields' => ( SSC_Modules::is_active( 'leads' ) ) ? SSC_Settings::form_fields() : array(),
-			'consent'    => array(
+			'formFields'      => ( SSC_Modules::is_active( 'leads' ) ) ? SSC_Settings::form_fields() : array(),
+			'consent'         => array(
 				'enabled' => 'yes' === $s['consent_enabled'],
 				'text'    => SSC_Input::consent_text( SSC_Modules::is_active( 'pharma' ) ),
 				'link'    => (string) $s['consent_link'],
 			),
 
 			// Pharma ADR options (module-gated).
-			'adrOptions' => SSC_Modules::is_active( 'pharma' ) ? SSC_Module_Pharma::adr_options_public() : null,
+			'adrOptions'      => SSC_Modules::is_active( 'pharma' ) ? SSC_Module_Pharma::adr_options_public() : null,
 
 			// i18n strings for the widget.
-			'i18n'      => $this->strings(),
+			'i18n'            => $this->strings(),
 		);
 
 		$config = apply_filters( 'ssc_frontend_config', $this->apply_overrides( $config, $overrides ) );
@@ -205,50 +205,50 @@ class SSC_Frontend {
 	 */
 	protected function strings() {
 		return array(
-			'open'          => __( 'Open chat', 'smart-support-chatbot' ),
+			'open'            => __( 'Open chat', 'smart-support-chatbot' ),
 			'newConversation' => __( 'New conversation', 'smart-support-chatbot' ),
-			'close'         => __( 'Close chat', 'smart-support-chatbot' ),
-			'send'          => __( 'Send message', 'smart-support-chatbot' ),
-			'inputLabel'    => __( 'Message text', 'smart-support-chatbot' ),
-			'placeholder'   => __( 'Write your message…', 'smart-support-chatbot' ),
-			'sessionExpired' => __( 'Your session expired. Please refresh the page and try again.', 'smart-support-chatbot' ),
+			'close'           => __( 'Close chat', 'smart-support-chatbot' ),
+			'send'            => __( 'Send message', 'smart-support-chatbot' ),
+			'inputLabel'      => __( 'Message text', 'smart-support-chatbot' ),
+			'placeholder'     => __( 'Write your message…', 'smart-support-chatbot' ),
+			'sessionExpired'  => __( 'Your session expired. Please refresh the page and try again.', 'smart-support-chatbot' ),
 			'connectionError' => __( 'Connection error. Please check your internet and try again.', 'smart-support-chatbot' ),
-			'rateLimited'   => __( 'You have reached the daily usage limit. Please try again tomorrow.', 'smart-support-chatbot' ),
-			'mainMenu'      => __( 'Main menu', 'smart-support-chatbot' ),
-			'askUs'         => __( 'Ask us', 'smart-support-chatbot' ),
-			'askUsDesc'     => __( 'About us, services and contact info', 'smart-support-chatbot' ),
-			'products'      => __( 'Products & services', 'smart-support-chatbot' ),
-			'productsDesc'  => __( 'Product information', 'smart-support-chatbot' ),
-			'chooseProduct' => __( 'Which one?', 'smart-support-chatbot' ),
-			'requestForm'   => __( 'Consultation request', 'smart-support-chatbot' ),
-			'reportAdr'     => __( 'Report a side effect', 'smart-support-chatbot' ),
-			'brochure'      => __( 'View brochure', 'smart-support-chatbot' ),
-			'callUs'        => __( 'Call us', 'smart-support-chatbot' ),
-			'speak'         => __( 'Listen to this answer', 'smart-support-chatbot' ),
-			'speakStop'     => __( 'Stop audio', 'smart-support-chatbot' ),
-			'mic'           => __( 'Speak', 'smart-support-chatbot' ),
-			'micListening'  => __( 'Listening…', 'smart-support-chatbot' ),
-			'handoffBtn'    => __( 'Talk to a human expert', 'smart-support-chatbot' ),
-			'csatTitle'     => __( 'How was this conversation?', 'smart-support-chatbot' ),
-			'csatThanks'    => __( 'Thanks for your rating 🙏', 'smart-support-chatbot' ),
-			'csatSkip'      => __( 'Skip', 'smart-support-chatbot' ),
-			'copy'          => __( 'Copy answer', 'smart-support-chatbot' ),
-			'copied'        => __( 'Copied ✓', 'smart-support-chatbot' ),
+			'rateLimited'     => __( 'You have reached the daily usage limit. Please try again tomorrow.', 'smart-support-chatbot' ),
+			'mainMenu'        => __( 'Main menu', 'smart-support-chatbot' ),
+			'askUs'           => __( 'Ask us', 'smart-support-chatbot' ),
+			'askUsDesc'       => __( 'About us, services and contact info', 'smart-support-chatbot' ),
+			'products'        => __( 'Products & services', 'smart-support-chatbot' ),
+			'productsDesc'    => __( 'Product information', 'smart-support-chatbot' ),
+			'chooseProduct'   => __( 'Which one?', 'smart-support-chatbot' ),
+			'requestForm'     => __( 'Consultation request', 'smart-support-chatbot' ),
+			'reportAdr'       => __( 'Report a side effect', 'smart-support-chatbot' ),
+			'brochure'        => __( 'View brochure', 'smart-support-chatbot' ),
+			'callUs'          => __( 'Call us', 'smart-support-chatbot' ),
+			'speak'           => __( 'Listen to this answer', 'smart-support-chatbot' ),
+			'speakStop'       => __( 'Stop audio', 'smart-support-chatbot' ),
+			'mic'             => __( 'Speak', 'smart-support-chatbot' ),
+			'micListening'    => __( 'Listening…', 'smart-support-chatbot' ),
+			'handoffBtn'      => __( 'Talk to a human expert', 'smart-support-chatbot' ),
+			'csatTitle'       => __( 'How was this conversation?', 'smart-support-chatbot' ),
+			'csatThanks'      => __( 'Thanks for your rating 🙏', 'smart-support-chatbot' ),
+			'csatSkip'        => __( 'Skip', 'smart-support-chatbot' ),
+			'copy'            => __( 'Copy answer', 'smart-support-chatbot' ),
+			'copied'          => __( 'Copied ✓', 'smart-support-chatbot' ),
 			'consentRequired' => __( 'Your consent is required to continue.', 'smart-support-chatbot' ),
-			'privacy'       => __( 'Privacy policy', 'smart-support-chatbot' ),
-			'formName'      => __( 'Full name', 'smart-support-chatbot' ),
-			'formPhone'     => __( 'Phone number', 'smart-support-chatbot' ),
-			'goodAnswer'    => __( 'Good answer', 'smart-support-chatbot' ),
-			'poorAnswer'    => __( 'Poor answer', 'smart-support-chatbot' ),
-			'formMessage'   => __( 'Your message', 'smart-support-chatbot' ),
-			'formSubmit'    => __( 'Submit', 'smart-support-chatbot' ),
-			'formSent'      => __( 'Received ✓ We will contact you soon.', 'smart-support-chatbot' ),
-			'formError'     => __( 'The form could not be submitted. Please try again.', 'smart-support-chatbot' ),
-			'suggestions'   => __( 'Related questions:', 'smart-support-chatbot' ),
-			'typing'        => __( 'Typing…', 'smart-support-chatbot' ),
-			'offline'       => __( 'Offline', 'smart-support-chatbot' ),
-			'online'        => __( 'Online', 'smart-support-chatbot' ),
-			'shortcutHint'  => __( 'Press Alt+C to open chat', 'smart-support-chatbot' ),
+			'privacy'         => __( 'Privacy policy', 'smart-support-chatbot' ),
+			'formName'        => __( 'Full name', 'smart-support-chatbot' ),
+			'formPhone'       => __( 'Phone number', 'smart-support-chatbot' ),
+			'goodAnswer'      => __( 'Good answer', 'smart-support-chatbot' ),
+			'poorAnswer'      => __( 'Poor answer', 'smart-support-chatbot' ),
+			'formMessage'     => __( 'Your message', 'smart-support-chatbot' ),
+			'formSubmit'      => __( 'Submit', 'smart-support-chatbot' ),
+			'formSent'        => __( 'Received ✓ We will contact you soon.', 'smart-support-chatbot' ),
+			'formError'       => __( 'The form could not be submitted. Please try again.', 'smart-support-chatbot' ),
+			'suggestions'     => __( 'Related questions:', 'smart-support-chatbot' ),
+			'typing'          => __( 'Typing…', 'smart-support-chatbot' ),
+			'offline'         => __( 'Offline', 'smart-support-chatbot' ),
+			'online'          => __( 'Online', 'smart-support-chatbot' ),
+			'shortcutHint'    => __( 'Press Alt+C to open chat', 'smart-support-chatbot' ),
 		);
 	}
 
@@ -259,7 +259,7 @@ class SSC_Frontend {
 	 * @return string font-family stack.
 	 */
 	protected function enqueue_font( $s ) {
-		$family = isset( $s['font_family'] ) ? $s['font_family'] : 'vazirmatn';
+		$family       = isset( $s['font_family'] ) ? $s['font_family'] : 'vazirmatn';
 		$system_stack = "system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif";
 
 		if ( 'custom' === $family ) {
@@ -314,19 +314,19 @@ class SSC_Frontend {
 			return $config;
 		}
 		$map = array(
-			'position'      => 'position',
-			'primary_color' => 'primaryColor',
-			'theme_mode'    => 'themeMode',
+			'position'               => 'position',
+			'primary_color'          => 'primaryColor',
+			'theme_mode'             => 'themeMode',
 			'assistant_display_name' => 'assistantName',
-			'welcome_title' => 'welcomeTitle',
-			'welcome_text'  => 'welcomeText',
-			'disclaimer'    => 'disclaimer',
-			'font_size'     => 'fontSize',
-			'window_width'  => 'windowWidth',
-			'window_radius' => 'windowRadius',
-			'bubble_radius' => 'bubbleRadius',
-			'user_bubble_color' => 'userBubble',
-			'bot_bubble_color'  => 'botBubble',
+			'welcome_title'          => 'welcomeTitle',
+			'welcome_text'           => 'welcomeText',
+			'disclaimer'             => 'disclaimer',
+			'font_size'              => 'fontSize',
+			'window_width'           => 'windowWidth',
+			'window_radius'          => 'windowRadius',
+			'bubble_radius'          => 'bubbleRadius',
+			'user_bubble_color'      => 'userBubble',
+			'bot_bubble_color'       => 'botBubble',
 		);
 		foreach ( $map as $from => $to ) {
 			if ( isset( $overrides[ $from ] ) && '' !== $overrides[ $from ] ) {

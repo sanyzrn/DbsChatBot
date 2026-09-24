@@ -61,10 +61,10 @@ abstract class SSC_Provider_OpenAI_Compat extends SSC_Provider {
 		);
 
 		return array(
-			'url'           => $endpoint,
-			'headers'       => $headers,
-			'body'          => $body,
-			'needs_https'   => true,
+			'url'         => $endpoint,
+			'headers'     => $headers,
+			'body'        => $body,
+			'needs_https' => true,
 		);
 	}
 

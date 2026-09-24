@@ -58,9 +58,9 @@ class SSC_Provider_Openrouter extends SSC_Provider_OpenAI_Compat {
 	 */
 	public function models() {
 		$models = array(
-			'openai/gpt-4o-mini'      => 'OpenAI GPT-4o mini',
+			'openai/gpt-4o-mini'                => 'OpenAI GPT-4o mini',
 			'meta-llama/llama-3.3-70b-instruct' => 'Llama 3.3 70B',
-			'deepseek/deepseek-chat'  => 'DeepSeek Chat',
+			'deepseek/deepseek-chat'            => 'DeepSeek Chat',
 		);
 		/** This filter is documented in class-ssc-provider-openai.php. */
 		return apply_filters( 'ssc_models_openrouter', $models );
@@ -77,7 +77,7 @@ class SSC_Provider_Openrouter extends SSC_Provider_OpenAI_Compat {
 	 * @return array
 	 */
 	public function request_parts( $api_key, $model, $system, $messages, $opts = array() ) {
-		$parts = parent::request_parts( $api_key, $model, $system, $messages, $opts );
+		$parts                            = parent::request_parts( $api_key, $model, $system, $messages, $opts );
 		$parts['headers']['HTTP-Referer'] = home_url( '/' );
 		$parts['headers']['X-Title']      = get_bloginfo( 'name' );
 		return $parts;

@@ -34,14 +34,23 @@ $err      = isset( $_GET['error'] ) ? sanitize_key( wp_unslash( $_GET['error'] )
 		<div class="ssc-notice ssc-notice--info" role="status"><?php esc_html_e( 'Answer deleted.', 'smart-support-chatbot' ); ?></div>
 	<?php endif; ?>
 	<?php if ( $imported >= 0 ) : ?>
-		<div class="ssc-notice <?php echo 'toobig' === $err || 'nofile' === $err ? 'ssc-notice--error' : 'ssc-notice--success'; ?>" role="status">
+		<div class="ssc-notice <?php echo '' !== $err ? 'ssc-notice--error' : 'ssc-notice--success'; ?>" role="status">
 			<?php
 			if ( 'toobig' === $err ) {
 				esc_html_e( 'The file is larger than 2 MB and was NOT imported.', 'smart-support-chatbot' );
 			} elseif ( 'nofile' === $err ) {
 				esc_html_e( 'No file was uploaded.', 'smart-support-chatbot' );
+			} elseif ( 'badtype' === $err ) {
+				esc_html_e( 'Only .csv, .json and .txt files can be imported.', 'smart-support-chatbot' );
 			} else {
-				echo esc_html( sprintf( __( 'Imported %d answers (%d skipped).', 'smart-support-chatbot' ), $imported, $skipped ) );
+				echo esc_html(
+					sprintf(
+						/* translators: 1: number of imported answers, 2: number of skipped rows. */
+						__( 'Imported %1$d answers (%2$d skipped).', 'smart-support-chatbot' ),
+						$imported,
+						$skipped
+					)
+				);
 			}
 			?>
 		</div>

@@ -114,7 +114,14 @@ abstract class SSC_Provider {
 	 */
 	public function generate_with( $api_key, $model, $system, $messages, $opts = array() ) {
 		if ( '' === trim( (string) $model ) ) {
-			return array( 'ok' => false, 'text' => '', 'error' => array( 'code' => 'model', 'message' => __( 'No model selected.', 'smart-support-chatbot' ) ) );
+			return array(
+				'ok'    => false,
+				'text'  => '',
+				'error' => array(
+					'code'    => 'model',
+					'message' => __( 'No model selected.', 'smart-support-chatbot' ),
+				),
+			);
 		}
 		$opts = wp_parse_args(
 			$opts,
@@ -138,7 +145,11 @@ abstract class SSC_Provider {
 		);
 
 		if ( ! $response['ok'] ) {
-			return array( 'ok' => false, 'text' => '', 'error' => $response['error'] );
+			return array(
+				'ok'    => false,
+				'text'  => '',
+				'error' => $response['error'],
+			);
 		}
 
 		// Extra guard: some gateways return 200 with an embedded error object.
@@ -165,7 +176,11 @@ abstract class SSC_Provider {
 				),
 			);
 		}
-		return array( 'ok' => true, 'text' => $text, 'error' => null );
+		return array(
+			'ok'    => true,
+			'text'  => $text,
+			'error' => null,
+		);
 	}
 
 	/**
@@ -193,16 +208,16 @@ abstract class SSC_Provider {
 	 * @return array ok, text, error{code,message,friendly}.
 	 */
 	public function test_connection( $overrides = array() ) {
-		$saved  = $this->saved_credentials();
-		$key    = isset( $overrides['api_key'] ) ? (string) $overrides['api_key'] : $saved['api_key'];
-		$model  = isset( $overrides['model'] ) && '' !== trim( (string) $overrides['model'] ) ? (string) $overrides['model'] : $saved['model'];
+		$saved    = $this->saved_credentials();
+		$key      = isset( $overrides['api_key'] ) ? (string) $overrides['api_key'] : $saved['api_key'];
+		$model    = isset( $overrides['model'] ) && '' !== trim( (string) $overrides['model'] ) ? (string) $overrides['model'] : $saved['model'];
 		$endpoint = isset( $overrides['endpoint'] ) ? (string) $overrides['endpoint'] : $saved['endpoint'];
 
 		if ( '' === trim( $key ) && $this->needs_key() ) {
 			return array(
-				'ok'     => false,
-				'text'   => '',
-				'error'  => array(
+				'ok'    => false,
+				'text'  => '',
+				'error' => array(
 					'code'     => 'auth',
 					'message'  => __( 'No API key provided.', 'smart-support-chatbot' ),
 					'friendly' => SSC_HTTP::friendly_error( 'auth' ),
@@ -214,7 +229,12 @@ abstract class SSC_Provider {
 			$key,
 			'' !== $model ? $model : $this->default_model(),
 			'You are a connection test. Reply with exactly: OK',
-			array( array( 'role' => 'user', 'content' => 'Reply with exactly: OK' ) ),
+			array(
+				array(
+					'role'    => 'user',
+					'content' => 'Reply with exactly: OK',
+				),
+			),
 			array(
 				'endpoint'    => $endpoint,
 				'max_tokens'  => 32,

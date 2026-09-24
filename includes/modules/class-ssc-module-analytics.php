@@ -76,10 +76,10 @@ class SSC_Module_Analytics extends SSC_Module {
 	 * @return array
 	 */
 	public function insights() {
-		$chats = SSC_Schema::stats_series( 14, 'chat' );
+		$chats  = SSC_Schema::stats_series( 14, 'chat' );
 		$series = array();
 		for ( $i = 13; $i >= 0; --$i ) {
-			$day         = gmdate( 'Y-m-d', time() - DAY_IN_SECONDS * $i );
+			$day            = gmdate( 'Y-m-d', time() - DAY_IN_SECONDS * $i );
 			$series[ $day ] = 0;
 		}
 		foreach ( $chats as $row ) {

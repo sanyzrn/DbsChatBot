@@ -2,13 +2,22 @@
 <ruleset name="Smart Support Chatbot">
 	<description>WordPress Coding Standards for Smart Support Chatbot.</description>
 
+	<!-- Every PHP file that ships inside the distributed plugin. -->
 	<file>smart-support-chatbot.php</file>
 	<file>uninstall.php</file>
+	<file>index.php</file>
 	<file>includes/</file>
+	<file>widgets/</file>
+	<file>blocks/</file>
+	<file>assets/</file>
+	<file>languages/</file>
 
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/dist/*</exclude-pattern>
 	<exclude-pattern>*.min.*</exclude-pattern>
+	<!-- Directory-listing guards carry no code to review. -->
+	<exclude-pattern>*/index.php</exclude-pattern>
 
 	<arg name="basepath" value="."/>
 	<arg name="extensions" value="php"/>
@@ -23,11 +32,120 @@
 	</rule>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
-			<property name="prefixes" type="array" value="ssc,SSC,ssc_chatbot"/>
+			<property name="prefixes" type="array">
+				<element value="ssc"/>
+				<element value="SSC"/>
+				<element value="ssc_chatbot"/>
+			</property>
 		</properties>
 	</rule>
 	<rule ref="PHPCompatibilityWP"/>
 
 	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
 	<rule ref="Generic.Files.LineEndings"/>
+
+	<!--
+		Deliberate deviations. Each one is a design decision, scoped to the
+		files that actually rely on it so the rule still protects the rest of
+		the plugin. Nothing below waives a real security control.
+	-->
+
+	<!--
+		Custom tables (submissions, chatlog, qa, kb, stats, audit, notifications)
+		have no WordPress data API, so direct queries are the only option and
+		there is nothing for an object cache to key on. Table names are built
+		from $wpdb->prefix and interpolated because prepare() cannot
+		parameterize an identifier; every VALUE is still passed as a
+		placeholder.
+	-->
+	<rule ref="WordPress.DB.DirectDatabaseQuery">
+		<exclude-pattern>includes/core/class-ssc-schema.php</exclude-pattern>
+		<exclude-pattern>includes/core/class-ssc-settings.php</exclude-pattern>
+		<exclude-pattern>includes/core/class-ssc-notification-queue.php</exclude-pattern>
+		<exclude-pattern>includes/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.DB.PreparedSQL.InterpolatedNotPrepared">
+		<exclude-pattern>includes/core/class-ssc-schema.php</exclude-pattern>
+		<exclude-pattern>includes/core/class-ssc-notification-queue.php</exclude-pattern>
+		<exclude-pattern>includes/modules/*</exclude-pattern>
+		<exclude-pattern>uninstall.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.DB.PreparedSQL.NotPrepared">
+		<exclude-pattern>includes/core/class-ssc-schema.php</exclude-pattern>
+		<exclude-pattern>includes/modules/*</exclude-pattern>
+	</rule>
+	<!-- Prefix-scoped transient purge; the wildcards are literal, not input. -->
+	<rule ref="WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery">
+		<exclude-pattern>includes/core/class-ssc-schema.php</exclude-pattern>
+	</rule>
+
+	<!--
+		Server-Sent Events. The WordPress HTTP API buffers whole responses, so
+		token streaming has to use cURL directly, and the response must escape
+		every output buffer to reach the browser incrementally.
+	-->
+	<rule ref="WordPress.WP.AlternativeFunctions.curl_curl_init">
+		<exclude-pattern>includes/core/class-ssc-stream.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.AlternativeFunctions.curl_curl_exec">
+		<exclude-pattern>includes/core/class-ssc-stream.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.AlternativeFunctions.curl_curl_errno">
+		<exclude-pattern>includes/core/class-ssc-stream.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.AlternativeFunctions.curl_curl_getinfo">
+		<exclude-pattern>includes/core/class-ssc-stream.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.AlternativeFunctions.curl_curl_setopt_array">
+		<exclude-pattern>includes/core/class-ssc-stream.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.PHP.IniSet.Risky">
+		<exclude-pattern>includes/core/class-ssc-stream.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_apache_setenv">
+		<exclude-pattern>includes/core/class-ssc-stream.php</exclude-pattern>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition">
+		<exclude-pattern>includes/core/class-ssc-stream.php</exclude-pattern>
+	</rule>
+
+	<!-- CSV exports stream to php://output; WP_Filesystem has no equivalent. -->
+	<rule ref="WordPress.WP.AlternativeFunctions.file_system_operations_fwrite">
+		<exclude-pattern>includes/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.AlternativeFunctions.file_system_operations_fclose">
+		<exclude-pattern>includes/modules/*</exclude-pattern>
+	</rule>
+
+	<!--
+		Public chat endpoints are intentionally nonce-less so full-page caches
+		can serve them; abuse protection is layered server-side (rate limits,
+		size caps, module gates, honeypot) and strict nonces can be switched on
+		with the ssc_enforce_rest_nonce filter. Admin screens read $_GET only to
+		repopulate list filters after their own nonce check has already run.
+	-->
+	<rule ref="WordPress.Security.NonceVerification">
+		<exclude-pattern>includes/core/class-ssc-ajax.php</exclude-pattern>
+		<exclude-pattern>includes/modules/*</exclude-pattern>
+		<exclude-pattern>includes/admin/views/*</exclude-pattern>
+	</rule>
+
+	<!--
+		The retry hook drains an already-persisted queue with exponential
+		backoff; a 15-minute floor would delay safety-report notifications.
+	-->
+	<rule ref="WordPress.WP.CronInterval">
+		<exclude-pattern>includes/core/class-ssc-cron.php</exclude-pattern>
+	</rule>
+
+	<!-- WordPress itself requires this exact filename next to the block script. -->
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<exclude-pattern>blocks/chatbot/index.asset.php</exclude-pattern>
+	</rule>
+
+	<!-- $class/$default/$new read naturally here and are not reserved in PHP 7.4+. -->
+	<rule ref="Universal.NamingConventions.NoReservedKeywordParameterNames">
+		<exclude-pattern>includes/class-ssc-autoloader.php</exclude-pattern>
+		<exclude-pattern>includes/core/class-ssc-settings.php</exclude-pattern>
+	</rule>
 </ruleset>

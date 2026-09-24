@@ -128,7 +128,7 @@ class SSC_Module_History extends SSC_Module {
 			'rating' => isset( $_GET['rating'] ) ? sanitize_key( wp_unslash( $_GET['rating'] ) ) : '',
 			'page'   => isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1,
 		);
-		$result = SSC_Schema::get_chatlog( $filters );
+		$result  = SSC_Schema::get_chatlog( $filters );
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-conversations.php';
 	}
 
@@ -153,13 +153,21 @@ class SSC_Module_History extends SSC_Module {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- single-row read.
 			$row = $wpdb->get_row( $wpdb->prepare( "SELECT question, answer FROM {$table} WHERE id = %d", $id ), ARRAY_A );
 			if ( $row ) {
-				SSC_Schema::qa_insert( array( 'question' => $row['question'], 'answer' => $row['answer'], 'product_id' => 'general' ) );
+				SSC_Schema::qa_insert(
+					array(
+						'question'   => $row['question'],
+						'answer'     => $row['answer'],
+						'product_id' => 'general',
+					)
+				);
 			}
 		}
 		$args = array( 'page' => 'ssc-conversations' );
 		foreach ( array( 'source', 'rating', 'paged' ) as $keep ) {
-			if ( isset( $_GET[ $keep ] ) && '' !== (string) $_GET[ $keep ] ) {
-				$args[ $keep ] = rawurlencode( sanitize_text_field( wp_unslash( $_GET[ $keep ] ) ) );
+			// Nonce already verified above; sanitize before the value is read.
+			$value = isset( $_GET[ $keep ] ) ? sanitize_text_field( wp_unslash( $_GET[ $keep ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( '' !== $value ) {
+				$args[ $keep ] = rawurlencode( $value );
 			}
 		}
 		wp_safe_redirect( add_query_arg( $args, admin_url( 'admin.php' ) ) );

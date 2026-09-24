@@ -102,14 +102,14 @@ class SSC_HTTP {
 		}
 
 		$headers['Content-Type'] = 'application/json';
-		$response = wp_safe_remote_post(
+		$response                = wp_safe_remote_post(
 			$url,
 			array(
-				'redirection' => 0, // Never forward keys or signed payloads to a redirect target.
+				'redirection'         => 0, // Never forward keys or signed payloads to a redirect target.
 				'limit_response_size' => 2097152,
-				'timeout' => (int) $opts['timeout'],
-				'headers' => $headers,
-				'body'    => $payload,
+				'timeout'             => (int) $opts['timeout'],
+				'headers'             => $headers,
+				'body'                => $payload,
 			)
 		);
 
@@ -187,7 +187,9 @@ class SSC_HTTP {
 			return 'auth';
 		}
 		if ( 429 === $status ) {
-			if ( false !== strpos( $d, 'insufficient_quota' ) || false !== strpos( $d, 'billing' ) || false !== strpos( $d, 'credit' ) ) { return 'credits'; }
+			if ( false !== strpos( $d, 'insufficient_quota' ) || false !== strpos( $d, 'billing' ) || false !== strpos( $d, 'credit' ) ) {
+				return 'credits';
+			}
 			return 'rate_limit';
 		}
 		if ( 404 === $status || 400 === $status ) {
