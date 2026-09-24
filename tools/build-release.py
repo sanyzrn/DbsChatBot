@@ -35,6 +35,11 @@ EXCLUDED_PREFIXES = ('docs/internal/',)
 EXCLUDED_SUFFIXES = ('.map', '.log', '.orig', '.rej', '.bak')
 EXCLUDED_NAMES = ('.DS_Store', 'Thumbs.db', 'desktop.ini')
 
+# Every entry is stamped with this instead of its mtime, so the archive is
+# byte-identical across machines and checkouts. The value is arbitrary; it only
+# has to be constant and valid for the ZIP format (which cannot store < 1980).
+FIXED_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
+
 
 def plugin_version() -> str:
     """Read the single source of truth for the version."""
@@ -93,9 +98,17 @@ def main() -> None:
     archive = output / f'nexachat-ai-{version}.zip'
     files = collect()
 
+    # Reproducible: the archive must depend only on file names and contents, so
+    # that anyone can rebuild a tag and confirm the published checksum. A ZIP
+    # normally embeds each file's mtime, which differs between a working copy
+    # and a fresh checkout and would make every build produce different bytes.
     with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
         for path in files:
-            bundle.write(path, f'{SLUG}/' + path.relative_to(ROOT).as_posix())
+            name = f'{SLUG}/' + path.relative_to(ROOT).as_posix()
+            info = zipfile.ZipInfo(name, date_time=FIXED_TIMESTAMP)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16  # Regular file, consistent mode.
+            bundle.writestr(info, path.read_bytes())
 
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     archive.with_suffix('.zip.sha256').write_text(
