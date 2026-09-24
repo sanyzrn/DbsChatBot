@@ -123,7 +123,7 @@ jobs:
         run: python tools/build-release.py
       - name: Verify no development files were shipped
         run: python tools/verify-release.py
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: nexachat-ai-plugin
           path: dist/*.zip
