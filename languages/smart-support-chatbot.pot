@@ -1,2691 +1,3079 @@
-# Smart Support Chatbot translation template.
-# Copyright (C) 2026 DBS
+# NexaChatAI translation template.
+# Copyright (C) 2026 DbsStudio
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Smart Support Chatbot 5.0.0\n"
+"Project-Id-Version: NexaChatAI 1.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/sanyzrn/DbsChatBot/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-16 21:40:16\n"
-"X-Generator: ssc-make-pot\n"
-"Language: fa\n"
+"POT-Creation-Date: 2026-09-24 14:30:16+00:00\n"
+"X-Generator: tools/make-pot.py\n"
+"X-Domain: smart-support-chatbot\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: includes/admin/views/page-faq.php
-msgid "%d answer"
-msgid_plural "%d answers"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/admin/views/page-pharma.php
-msgid "%d case"
-msgid_plural "%d cases"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "%d chunks from %d documents. Relevant pieces are retrieved automatically per question."
+#: includes/admin/class-ssc-admin-appearance.php:23
+#: includes/admin/class-ssc-admin-connection.php:25
+#: includes/admin/class-ssc-admin-dashboard.php:23
+#: includes/admin/class-ssc-admin-knowledge.php:23
+#: includes/admin/class-ssc-admin-modules.php:25
+#: includes/admin/class-ssc-admin-settings.php:23
+#: includes/admin/class-ssc-admin.php:311
+#: includes/admin/class-ssc-admin.php:38
+#: includes/admin/class-ssc-wizard.php:38
+#: includes/core/class-ssc-ajax.php:219
+#: includes/core/class-ssc-rest.php:71
+#: includes/modules/class-ssc-module-analytics.php:155
+#: includes/modules/class-ssc-module-faq.php:265
+#: includes/modules/class-ssc-module-history.php:122
+#: includes/modules/class-ssc-module-leads.php:116
+#: includes/modules/class-ssc-module-leads.php:376
+msgid "Insufficient permissions."
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php
-msgid "%d entries · %d documents"
+#: includes/admin/class-ssc-admin.php:79
+msgid "Dashboard"
 msgstr ""
 
-#: includes/admin/views/page-conversations.php
-msgid "%d exchange"
-msgid_plural "%d exchanges"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "%d notification deliveries are pending retry (last error: %s)."
+#: includes/admin/class-ssc-admin.php:80
+#: includes/admin/class-ssc-wizard.php:341
+#: includes/admin/views/page-knowledge.php:23
+msgid "Business Knowledge"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php
-msgid "%d question went unanswered in the last 14 days — consider adding it to your FAQ bank."
-msgid_plural "%d questions went unanswered in the last 14 days — consider adding them to your FAQ bank."
-msgstr[0] ""
-msgstr[1] ""
+#: includes/admin/class-ssc-admin.php:81
+#: includes/admin/class-ssc-wizard.php:342
+#: includes/admin/views/page-connection.php:24
+msgid "AI Connection"
+msgstr ""
 
-#: includes/admin/views/page-analytics.php
+#: includes/admin/class-ssc-admin.php:82
+#: includes/admin/class-ssc-wizard.php:343
+#: includes/admin/views/page-appearance.php:29
+msgid "Appearance"
+msgstr ""
+
+#: includes/admin/class-ssc-admin.php:83
+#: includes/admin/views/page-modules.php:23
+msgid "Modules"
+msgstr ""
+
+#: includes/admin/class-ssc-admin.php:84
+#: includes/admin/views/page-settings.php:21
+#: includes/core/class-ssc-plugin.php:113
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-ssc-admin.php:91
+#: includes/admin/class-ssc-admin.php:92
+msgid "Setup Wizard"
+msgstr ""
+
+#: includes/admin/class-ssc-admin.php:126
+#: includes/core/class-ssc-plugin.php:157
+#: widgets/class-ssc-elementor-widget.php:32
+msgid "NexaChatAI"
+msgstr ""
+
+#: includes/admin/class-ssc-admin.php:127
+msgid "Also permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?"
+msgstr ""
+
+#: includes/admin/class-ssc-admin.php:128
+msgid "OK = delete plugin + data"
+msgstr ""
+
+#: includes/admin/class-ssc-admin.php:129
+msgid "Cancel = delete plugin, KEEP data"
+msgstr ""
+
+#: includes/admin/class-ssc-admin.php:158
+msgid "The data deletion preference could not be saved. Deletion was stopped. Please check Settings before trying again."
+msgstr ""
+
+#: includes/admin/class-ssc-admin.php:222
+#: includes/admin/views/wizard.php:407
+#: includes/core/class-ssc-frontend.php:250
+msgid "Online"
+msgstr ""
+
+#: includes/admin/class-ssc-admin.php:223
+#: includes/core/class-ssc-frontend.php:249
+msgid "Offline"
+msgstr ""
+
+#: includes/admin/class-ssc-wizard.php:340
+msgid "Business Identity"
+msgstr ""
+
+#: includes/admin/class-ssc-wizard.php:344
+msgid "Verify & Launch"
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:16
+#: includes/core/class-ssc-modules.php:236
+#: includes/modules/class-ssc-module-analytics.php:142
+#: includes/modules/class-ssc-module-analytics.php:143
+msgid "Analytics"
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:17
+msgid "Last 14 days. Only what helps you improve the assistant."
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:24
+msgid "Conversations (14 days)"
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:29
 msgid "%d rating"
 msgid_plural "%d ratings"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin/views/page-requests.php
+#: includes/admin/views/page-analytics.php:34
+msgid "Unanswered questions (14 days)"
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:39
+msgid "Conversation volume"
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:40
+msgid "Daily conversations over the last 14 days"
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:57
+msgid "Most-discussed products"
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:59
+#: includes/admin/views/page-analytics.php:75
+#: includes/admin/views/page-conversations.php:41
+#: includes/admin/views/page-faq.php:81
+#: includes/admin/views/page-knowledge.php:158
+#: includes/admin/views/page-pharma.php:54
+#: includes/admin/views/page-requests.php:52
+#: includes/admin/views/pharma-case.php:123
+#: includes/admin/views/pharma-case.php:36
+#: includes/admin/views/pharma-case.php:53
+#: includes/admin/views/pharma-case.php:70
+msgid "Scrollable table"
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:67
+msgid "No product conversations recorded yet."
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:72
+msgid "Unanswered questions"
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:73
+msgid "Knowledge gaps — answer these in the FAQ bank or knowledge page."
+msgstr ""
+
+#: includes/admin/views/page-analytics.php:83
+msgid "Every question got an answer. 👏"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:18
+#: includes/admin/views/wizard.php:389
+#: includes/admin/views/wizard.php:406
+#: includes/admin/views/wizard.php:503
+#: includes/core/class-ssc-frontend.php:91
+msgid "Nexa"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:19
+#: includes/admin/views/wizard.php:393
+#: includes/admin/views/wizard.php:411
+#: includes/admin/views/wizard.php:505
+#: includes/core/class-ssc-frontend.php:104
+msgid "Hello! 👋"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:20
+#: includes/admin/views/wizard.php:411
+#: includes/admin/views/wizard.php:506
+#: includes/core/class-ssc-frontend.php:105
+msgid "How can I help you today?"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:21
+msgid "AI can make mistakes."
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:30
+msgid "Brand the assistant and watch the preview update live. Dark and light themes are fully supported."
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:35
+msgid "Appearance saved."
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:45
+msgid "Essentials"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:48
+#: includes/admin/views/wizard.php:360
+msgid "Primary brand color"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:52
+#: includes/admin/views/wizard.php:364
+msgid "Theme"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:175
+#: includes/admin/views/page-appearance.php:54
+#: includes/admin/views/wizard.php:366
+#: widgets/class-ssc-elementor-widget.php:160
+msgid "Light"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:176
+#: includes/admin/views/page-appearance.php:55
+#: includes/admin/views/wizard.php:367
+#: widgets/class-ssc-elementor-widget.php:161
+msgid "Dark"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:56
+#: includes/admin/views/wizard.php:368
+msgid "Match visitor device"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:60
+#: includes/admin/views/wizard.php:372
+#: widgets/class-ssc-elementor-widget.php:132
+msgid "Floating button position"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:62
+#: includes/admin/views/wizard.php:374
+#: widgets/class-ssc-elementor-widget.php:137
+msgid "Bottom right"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:63
+#: includes/admin/views/wizard.php:375
+#: widgets/class-ssc-elementor-widget.php:138
+msgid "Bottom left"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:67
+msgid "Chat text direction"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:69
+#: includes/admin/views/wizard.php:381
+msgid "RTL (Persian/Arabic)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:70
+#: includes/admin/views/wizard.php:382
+msgid "LTR (Latin)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:71
+#: includes/admin/views/wizard.php:383
+msgid "Auto (follow site language)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:76
+#: includes/admin/views/wizard.php:388
+msgid "Assistant display name"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:80
+msgid "Avatar / custom icon URL"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:84
+#: includes/admin/views/wizard.php:392
+msgid "Welcome title"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:88
+#: includes/admin/views/wizard.php:396
+msgid "Welcome message"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:92
+msgid "Disclaimer (shown under the chat)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:98
+msgid "Advanced styling"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:101
+msgid "Font"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:103
+msgid "Vazirmatn (Persian)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:106
+msgid "System default"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:107
+msgid "Custom…"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:111
+msgid "Base font size (px)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:115
+msgid "Custom font name"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:119
+msgid "Custom font stylesheet URL"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:123
+msgid "Chat window width (px)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:127
+msgid "Window corner radius (px)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:131
+msgid "Message bubble radius (px)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:135
+msgid "Visitor bubble color"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:139
+msgid "Assistant bubble color"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:143
+msgid "Floating button size (px)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:147
+msgid "Floating button custom image (optional)"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:173
+msgid "Live preview"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:174
+msgid "Preview theme"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:194
+#: includes/admin/views/wizard.php:412
+msgid "Hi! Do you ship internationally?"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:196
+#: includes/core/class-ssc-frontend.php:218
+msgid "Ask us"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:197
+#: includes/admin/views/page-knowledge.php:103
+#: includes/admin/views/wizard.php:217
+msgid "Products"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:201
+msgid "Write a message…"
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:214
+msgid "Toggle Dark to preview night mode. Changes apply instantly — save when you are happy."
+msgstr ""
+
+#: includes/admin/views/page-appearance.php:219
+msgid "Save appearance"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:25
+msgid "Keys are encrypted at rest and never leave the server. Connection tests perform a real generation, not just a ping."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:30
+msgid "Connection settings saved."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:33
+msgid "The API key could not be encrypted (OpenSSL unavailable or AUTH_KEY missing). It was NOT saved in plaintext. Fix the server crypto setup and try again."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:39
+#: includes/admin/views/page-dashboard.php:62
+msgid "Connection verified"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:39
+msgid "Connection not verified"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:43
+msgid "Verified %s ago for the current provider, key, model and endpoint."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:45
+msgid "Changing the provider, key, model or endpoint invalidates previous verification. Run a test after every change."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:57
+#: includes/admin/views/wizard.php:274
+msgid "Provider"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:59
+msgid "AI engine"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:65
+msgid "“No AI engine” answers from your FAQ bank and knowledge only — nothing leaves your server."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:74
+#: includes/admin/views/wizard.php:288
+msgid "API key"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:75
+#: includes/admin/views/wizard.php:289
+msgid "A key is stored — type to replace"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:75
+#: includes/admin/views/wizard.php:289
+msgid "Paste your API key"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:77
+msgid "Remove the stored key"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:82
+#: includes/admin/views/wizard.php:293
+msgid "Model"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:93
+#: includes/admin/views/wizard.php:307
+msgid "Enter model ID manually…"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:96
+#: includes/admin/views/page-connection.php:98
+#: includes/admin/views/wizard.php:312
+msgid "Model ID"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:100
+msgid "Model IDs evolve — manual entry is always available and lists stay current via your own updates."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:105
+#: includes/admin/views/wizard.php:318
+msgid "Endpoint URL (OpenAI-compatible)"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:112
+#: includes/admin/views/wizard.php:325
+msgid "Webhook URL"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:116
+msgid "Shared secret (HMAC)"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:117
+#: includes/admin/views/wizard.php:330
+msgid "A secret is stored — type to replace"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:125
+#: includes/admin/views/wizard.php:337
+msgid "Test connection"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:131
+msgid "Advanced engine options"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:134
+msgid "Answer priority"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:136
+msgid "AI first, FAQ bank as fallback"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:137
+msgid "FAQ bank first, AI as fallback"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:138
+msgid "FAQ bank only"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:142
+msgid "Creativity (temperature)"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:144
+msgid "0.1 — very precise"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:144
+msgid "0.4 — balanced"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:144
+msgid "0.7 — creative"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:144
+msgid "1 — maximum creativity"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:150
+msgid "Max answer length"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:154
+msgid "Conversation memory (messages)"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:158
+msgid "Retrieved knowledge chunks per answer"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:162
+msgid "Strict mode — answer only from your knowledge"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:163
+msgid "Cache identical questions (6 hours, faster + cheaper)"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:165
+msgid "Extra instructions for the assistant"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:166
+msgid "Optional business-specific rules…"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:169
+msgid "Offline message (when nothing can answer)"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:175
+msgid "Save connection"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:17
+#: includes/modules/class-ssc-module-history.php:109
+#: includes/modules/class-ssc-module-history.php:110
+msgid "Conversations"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:18
+msgid "%d exchange"
+msgid_plural "%d exchanges"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/views/page-conversations.php:18
+msgid "retention is configured in Settings"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:24
+msgid "Answer source"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:25
+msgid "All sources"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:26
+msgid "AI"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:26
+msgid "FAQ bank"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:26
+msgid "Cache"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:26
+msgid "Unanswered"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:30
+#: includes/admin/views/page-conversations.php:43
+msgid "Rating"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:31
+msgid "Any rating"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:35
+#: includes/admin/views/page-pharma.php:48
+#: includes/admin/views/page-requests.php:46
+msgid "Filter"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:39
+msgid "No conversations stored yet."
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:43
+#: includes/admin/views/pharma-case.php:124
+msgid "Time"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:43
+#: includes/admin/views/page-faq.php:65
+#: includes/admin/views/page-faq.php:82
+msgid "Question"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:43
+#: includes/admin/views/page-faq.php:73
+#: includes/admin/views/page-faq.php:82
+msgid "Answer"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:43
+msgid "Source"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:58
+msgid "Add to FAQ"
+msgstr ""
+
+#: includes/admin/views/page-conversations.php:60
+#: includes/admin/views/page-faq.php:89
+#: includes/admin/views/page-requests.php:102
+msgid "Delete"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:31
+msgid "Setup wizard"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:33
+msgid "Take offline"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:35
+#: includes/admin/views/wizard.php:488
+msgid "Publish chatbot"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:43
+msgid "Setup is not finished"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:44
+msgid "The assistant is invisible to visitors until the wizard is complete and you publish it. Pick up where you left off:"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:46
+msgid "Resume setup"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:54
+msgid "Live on your site"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:54
+msgid "Not published"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:55
+msgid "Visitors can chat with the assistant."
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:55
+msgid "Invisible to visitors."
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:61
+msgid "No AI engine"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:62
+msgid "Not verified"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:64
+#: includes/admin/views/page-dashboard.php:72
+msgid "Manage"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:69
+msgid "Business knowledge"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:70
+msgid "%d entries · %d documents"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:80
+msgid "%d notifications exhausted automatic retries. Check delivery settings, then retry them."
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:83
+msgid "The assistant is published without an AI engine — it can only answer from your FAQ bank."
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:86
+msgid "External data transfer disclosures have not been acknowledged."
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:90
+msgid "%d notification deliveries are pending retry (last error: %s)."
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:93
+msgid "%d question went unanswered in the last 14 days — consider adding it to your FAQ bank."
+msgid_plural "%d questions went unanswered in the last 14 days — consider adding them to your FAQ bank."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/views/page-dashboard.php:97
+msgid "Important notices"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:109
+msgid "Retry failed notifications"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:114
+#: includes/admin/views/page-knowledge.php:118
+#: includes/core/class-ssc-frontend.php:220
+msgid "Products & services"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:119
+#: includes/admin/views/page-requests.php:20
+#: includes/modules/class-ssc-module-leads.php:103
+#: includes/modules/class-ssc-module-leads.php:104
+msgid "Requests"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:125
+msgid "Conversations (all time)"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:130
+msgid "Active modules"
+msgstr ""
+
+#: includes/admin/views/page-dashboard.php:135
+msgid "Readiness"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:25
+#: includes/modules/class-ssc-module-faq.php:89
+#: includes/modules/class-ssc-module-faq.php:90
+msgid "FAQ Bank"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:26
+msgid "%d answer"
+msgid_plural "%d answers"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/views/page-faq.php:31
+msgid "Answer added."
+msgstr ""
+
+#: includes/admin/views/page-faq.php:34
+msgid "Answer deleted."
+msgstr ""
+
+#: includes/admin/views/page-faq.php:40
+#: includes/admin/views/page-knowledge.php:34
+msgid "The file is larger than 2 MB and was NOT imported."
+msgstr ""
+
+#: includes/admin/views/page-faq.php:42
+msgid "No file was uploaded."
+msgstr ""
+
+#: includes/admin/views/page-faq.php:44
+msgid "Only .csv, .json and .txt files can be imported."
+msgstr ""
+
+#. translators: 1: number of imported answers, 2: number of skipped rows.
+#: includes/admin/views/page-faq.php:49
+msgid "Imported %1$d answers (%2$d skipped)."
+msgstr ""
+
+#: includes/admin/views/page-faq.php:60
+msgid "Add an answer"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:69
+msgid "Keywords (comma separated, optional)"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:70
+msgid "price, cost, shipping"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:76
+msgid "Add answer"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:82
+msgid "Keywords"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:108
+msgid "Bulk import / export"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:111
+msgid "FAQ file"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:112
+msgid "Import mode"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:113
+msgid "Add to existing answers"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:114
+msgid "Replace all answers"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:116
+msgid "Import"
+msgstr ""
+
+#: includes/admin/views/page-faq.php:117
+#: includes/admin/views/page-pharma.php:31
+#: includes/admin/views/page-requests.php:23
+msgid "Export CSV"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:24
+msgid "The facts your assistant relies on. Everything you write here reaches the AI on every answer."
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:29
+msgid "Knowledge saved."
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:32
+msgid "Document imported (%d chunks)."
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:36
+msgid "Only .txt, .md, .csv and .json files can be imported."
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:38
+msgid "The page could not be imported (check the URL or try later)."
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:40
+msgid "Document removed."
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:48
+msgid "Business profile"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:49
+msgid "Always included in the assistant's instructions."
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:53
+#: includes/admin/views/wizard.php:93
+msgid "Official organization name"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:54
+#: includes/admin/views/wizard.php:98
+msgid "Brand / trading name"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:55
+#: includes/admin/views/wizard.php:102
+msgid "Business category"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:56
+#: includes/admin/views/wizard.php:106
+msgid "Industry"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:57
+#: includes/admin/views/wizard.php:120
+msgid "Website"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:58
+#: includes/admin/views/wizard.php:124
+msgid "Location"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:59
+#: includes/admin/views/wizard.php:128
+#: includes/modules/class-ssc-module-pharma.php:230
+msgid "Contact phone"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:60
+#: includes/admin/views/wizard.php:132
+msgid "Contact email"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:61
+#: includes/admin/views/wizard.php:136
+msgid "Support phone"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:62
+msgid "Support email"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:63
+#: includes/admin/views/wizard.php:140
+msgid "Working hours"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:64
+#: includes/admin/views/wizard.php:158
+msgid "Assistant name"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:65
+#: includes/admin/views/wizard.php:162
+msgid "Assistant role"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:66
+#: includes/admin/views/wizard.php:182
+msgid "Primary answer language"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:78
+#: includes/admin/views/wizard.php:166
+msgid "Communication tone"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:80
+#: includes/admin/views/wizard.php:170
+msgid "Professional"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:80
+#: includes/admin/views/wizard.php:171
+msgid "Friendly"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:80
+#: includes/admin/views/wizard.php:172
+msgid "Formal"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:80
+#: includes/admin/views/wizard.php:173
+msgid "Casual"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:85
+#: includes/admin/views/wizard.php:112
+msgid "What does your organization do?"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:85
+#: includes/admin/views/wizard.php:145
+msgid "Products & services overview"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:85
+msgid "Differentiators"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:94
+msgid "Knowledge entries"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:95
+msgid "Short, factual reference blocks the assistant quotes verbatim. (Policies, prices, hours, FAQs…)"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:102
+#: includes/admin/views/page-requests.php:32
+msgid "Type"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:103
+#: includes/admin/views/wizard.php:216
+#: includes/core/class-ssc-schema.php:435
+msgid "General"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:103
+#: includes/admin/views/wizard.php:218
+msgid "Services"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:103
+#: includes/admin/views/wizard.php:219
+msgid "FAQ"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:103
+#: includes/admin/views/wizard.php:220
+msgid "Policies"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:103
+#: includes/admin/views/wizard.php:221
+msgid "Support"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:103
+#: includes/admin/views/wizard.php:222
+msgid "Custom"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:107
+msgid "Title"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:108
+#: includes/admin/views/page-knowledge.php:168
+msgid "Remove"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:110
+msgid "Facts…"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:114
+msgid "+ Add entry"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:119
+msgid "When a visitor asks about a product, its summary and attributes are injected into the answer context."
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:126
+msgid "Product / service name"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:127
+msgid "Brochure link (optional)"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:128
+msgid "Image URL (optional)"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:129
+msgid "Remove product"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:131
+msgid "What is it, key facts, terms…"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:136
+msgid "Attribute (e.g. warranty)"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:137
+msgid "Value"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:145
+msgid "+ Add product"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:149
+msgid "Save knowledge"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:154
+msgid "Long documents (knowledge base)"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:155
+msgid "%d chunks from %d documents. Relevant pieces are retrieved automatically per question."
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:160
+msgid "Document"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:160
+msgid "Chunks"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:160
+msgid "Added"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:179
+msgid "Page URL to import"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:180
+msgid "Import page"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:185
+msgid "Document file to import"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:186
+msgid "Upload file"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:24
+msgid "Enable exactly what your business needs. Everything is free, included, and safely reversible — data is preserved when you switch a module off."
+msgstr ""
+
+#: includes/admin/views/page-modules.php:28
+msgid "Search modules…"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:28
+msgid "Search modules"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:33
+msgid "Module activated."
+msgstr ""
+
+#: includes/admin/views/page-modules.php:36
+msgid "Module deactivated. Its data is kept and will be there when you re-enable it."
+msgstr ""
+
+#: includes/admin/views/page-modules.php:92
+msgid "Requires: %s"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:99
+msgid "Active"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:101
+msgid "Setup Required"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:103
+msgid "Inactive"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:108
+msgid "Configure"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:112
+msgid "Activate"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:114
+msgid "Deactivate"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:126
+msgid "No modules match your search."
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:26
+#: includes/modules/class-ssc-module-pharma.php:625
+#: includes/modules/class-ssc-module-pharma.php:626
+msgid "ADR Cases"
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:27
+msgid "%d case"
+msgid_plural "%d cases"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/views/page-pharma.php:36
+msgid "Case updated."
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:41
+#: includes/admin/views/page-pharma.php:62
+#: includes/admin/views/page-requests.php:39
+#: includes/admin/views/page-requests.php:59
+#: includes/admin/views/pharma-case.php:88
+msgid "Status"
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:42
+#: includes/admin/views/page-requests.php:40
+msgid "All statuses"
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:47
+msgid "Search…"
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:52
+msgid "No ADR cases yet. When someone files a report through the chat, it appears here for triage."
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:57
+#: includes/admin/views/page-requests.php:55
+msgid "Received"
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:58
+msgid "Product / batch"
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:59
+#: includes/admin/views/pharma-case.php:35
+#: includes/modules/class-ssc-module-pharma.php:217
+msgid "Reporter"
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:60
+msgid "Severity"
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:61
+msgid "Seriousness"
+msgstr ""
+
+#: includes/admin/views/page-pharma.php:73
+msgid "SERIOUS"
+msgstr ""
+
+#: includes/admin/views/page-requests.php:21
 msgid "%d request"
 msgid_plural "%d requests"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin/views/wizard.php
-msgid "+ Add another entry"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "+ Add entry"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "+ Add field"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "+ Add product"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "0.1 — very precise"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "0.4 — balanced"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "0.7 — creative"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "1 — maximum creativity"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "A key is stored — type to replace"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "A private preview — visitors cannot see it. Ask anything your customers would ask."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "A secret is stored — type to replace"
-msgstr ""
-
-#: includes/modules/class-ssc-module-csat.php
-msgid "A short 1-5 star survey at the end of a real conversation, with a skip option."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "A short, factual description the assistant can rely on…"
-msgstr ""
-
-#: includes/modules/class-ssc-module-proactive.php
-msgid "A single, dismissible invitation bubble after a delay - shown at most once per browser session."
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "A token is stored — type to replace"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-#: includes/admin/views/page-pharma.php
-msgid "ADR Cases"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "ADR case #%d"
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "ADR cases are never auto-deleted by retention rules; deletion is a manual, audited action."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "ADR report received"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "ADR reporting is disabled on this site."
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "ADR reports"
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "AI"
-msgstr ""
-
-#: includes/admin/class-ssc-admin.php
-#: includes/admin/class-ssc-wizard.php
-#: includes/admin/views/page-connection.php
-msgid "AI Connection"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "AI engine"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "AI first, FAQ bank as fallback"
-msgstr ""
-
-#: includes/core/class-ssc-setup.php
-msgid "AI provider connection verified"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "API key"
-msgstr ""
-
-#: includes/core/class-ssc-settings.php
-msgid "About the organization"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "About us, services and contact info"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Action"
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Activate"
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Active"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Active modules"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Add an answer"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Add answer"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Add the facts visitors usually ask about. No AI jargon needed — just type what you would tell a new employee."
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "Add to FAQ"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Add to existing answers"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Added"
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-rest.php
-msgid "Admin-only notice — AI engine error:"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Advanced engine options"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Advanced styling"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-#: includes/core/class-ssc-schema.php
-msgid "Adverse drug reaction report"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "All cases"
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "All sources"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-#: includes/admin/views/page-pharma.php
-msgid "All statuses"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "All types"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Also send email notifications"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Always included in the assistant's instructions."
-msgstr ""
-
-#: includes/modules/class-ssc-module-analytics.php
-#: includes/core/class-ssc-modules.php
-#: includes/admin/views/page-analytics.php
-msgid "Analytics"
-msgstr ""
-
-#: includes/modules/class-ssc-module-analytics.php
-msgid "Analytics & Insights"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-#: includes/admin/views/page-conversations.php
-msgid "Answer"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Answer added."
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Answer deleted."
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Answer priority"
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "Answer source"
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "Any rating"
-msgstr ""
-
-#: includes/admin/class-ssc-admin.php
-#: includes/admin/class-ssc-wizard.php
-#: includes/admin/views/page-appearance.php
-msgid "Appearance"
-msgstr ""
-
-#: includes/core/class-ssc-setup.php
-msgid "Appearance configured"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Appearance saved."
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Applies to every form the assistant shows. Chat messages are only persisted when the Conversation History module is active."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-#: includes/admin/views/page-requests.php
-msgid "Archived"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Ask us"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Asks the assistant which organization it represents. It must answer correctly before publishing."
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Assistant bubble color (optional)"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Assistant display name"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Assistant name"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-msgid "Assistant name (empty = global)"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Assistant personality"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Assistant role"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Attribute (e.g. warranty)"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Audit trail"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Auto (follow site language)"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Avatar / custom icon URL"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Back"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Bale"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Base font size (px)"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Batch / lot"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Batch / lot number"
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "Before you go live"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Bot token"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Both"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Bottom left"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Bottom right"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Brand / trading name"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Brand color, texts and placement — with a live preview. Everything can be fine-tuned later."
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Brochure link (optional)"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Browser session"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Bulk import / export"
-msgstr ""
-
-#: includes/admin/class-ssc-wizard.php
-msgid "Business Identity"
-msgstr ""
-
-#: includes/admin/class-ssc-admin.php
-#: includes/admin/class-ssc-wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Business Knowledge"
-msgstr ""
-
-#: includes/core/class-ssc-modules.php
-msgid "Business Tools"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Business category"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Business identity test"
-msgstr ""
-
-#: includes/core/class-ssc-setup.php
-msgid "Business identity test passed"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Business knowledge"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Business profile"
-msgstr ""
-
-#: includes/core/class-ssc-setup.php
-msgid "Business profile completed"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "By"
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "Cache"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Cache identical questions (6 hours, faster + cheaper)"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Cached AI answers cleared."
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Call us"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Capture complete, reviewable safety reports instead of loose chat messages."
-msgstr ""
-
-#: includes/admin/views/page-pharma.php
-msgid "Case updated."
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Case workflow"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Casual"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "Change status"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Changing the provider, key, model or endpoint invalidates previous verification. Run a test after every change."
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Chat / channel ID"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Chat messages / day / session"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Chat messages / day / visitor"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Chat window width (px)"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Chunks"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Clear cached AI answers"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Clinical severity"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Clinical severity (how it felt)"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/wizard.php
-msgid "Close chat"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Closed"
-msgstr ""
-
-#: includes/core/class-ssc-modules.php
-msgid "Communication"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Communication tone"
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "Complete setup"
-msgstr ""
-
-#: includes/core/class-ssc-rest.php
-msgid "Complete the business profile (step 1) first."
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "Compliance disclaimer:"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Concomitant drugs"
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Configure"
-msgstr ""
-
-#: includes/core/class-ssc-rest.php
-msgid "Configure and verify an AI provider first."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Congenital anomaly or birth defect"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Connect an AI provider"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/wizard.php
-msgid "Connection error. Please check your internet and try again."
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Connection not verified"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Connection settings saved."
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-#: includes/admin/views/page-connection.php
-msgid "Connection verified"
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-rest.php
-msgid "Connection verified — the model replied successfully."
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Consent text"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "Consultation"
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-msgid "Consultation & Lead Collection"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/core/class-ssc-schema.php
-msgid "Consultation request"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Contact email"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Contact phone"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-msgid "Content"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Continue"
-msgstr ""
-
-#: includes/modules/class-ssc-module-history.php
-msgid "Conversation History"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Conversation history module"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Conversation memory (messages)"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Conversation retention (days, 0 = keep forever)"
-msgstr ""
-
-#: includes/core/class-ssc-plugin.php
-msgid "Conversation text may be stored temporarily when the site owner enables conversation logging, and is removed automatically after the configured retention period. You can request deletion of your data at any time."
-msgstr ""
-
-#: includes/admin/views/page-analytics.php
-msgid "Conversation volume"
-msgstr ""
-
-#: includes/modules/class-ssc-module-analytics.php
-msgid "Conversation volume trends, most-discussed products, the unanswered-questions radar and satisfaction summary."
-msgstr ""
-
-#: includes/modules/class-ssc-module-history.php
-#: includes/admin/views/page-conversations.php
-msgid "Conversations"
-msgstr ""
-
-#: includes/admin/views/page-analytics.php
-msgid "Conversations (14 days)"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Conversations (all time)"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Copied ✓"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Copy answer"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Creativity (temperature)"
-msgstr ""
-
-#: includes/modules/class-ssc-module-faq.php
-msgid "Curated question/answer pairs with smart Persian/English matching. Works even when the AI engine is unavailable or set to bank-only mode."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Custom"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Custom fields for the consultation form. Server-side validation is generated from this definition."
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Custom font name"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Custom font stylesheet URL"
-msgstr ""
-
-#: includes/core/providers/class-ssc-provider-webhook.php
-msgid "Custom webhook"
-msgstr ""
-
-#: includes/core/class-ssc-modules.php
-msgid "Customer Engagement"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Custom…"
-msgstr ""
-
-#: includes/admin/views/page-analytics.php
-msgid "Daily conversations over the last 14 days"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Dark"
-msgstr ""
-
-#: includes/admin/class-ssc-admin.php
-msgid "Dashboard"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Data tools"
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Deactivate"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Death"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Delay before showing (seconds)"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-#: includes/admin/views/page-faq.php
-#: includes/admin/views/page-conversations.php
-msgid "Delete"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Differentiators"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Disclaimer (shown under the chat)"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Do this later"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Document"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Document file to import"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Document imported (%d chunks)."
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Document removed."
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "Done"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Dose & frequency"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Dose and frequency used"
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "Each report becomes a case with a review workflow (triage → assessment → follow-up → closed) and a permanent audit trail of every change."
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Email recipient (empty = site admin)"
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Enable exactly what your business needs. Everything is free, included, and safely reversible — data is preserved when you switch a module off."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "Endpoint URL (OpenAI-compatible)"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "Enter model ID manually…"
-msgstr ""
-
-#: includes/core/class-ssc-setup.php
-msgid "Essential business knowledge added"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Essential controls with a live preview. Granular styling lives in the advanced section."
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Essentials"
-msgstr ""
-
-#: includes/admin/views/page-analytics.php
-msgid "Every question got an answer. 👏"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-#: includes/admin/views/page-faq.php
-#: includes/admin/views/page-pharma.php
-msgid "Export CSV"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "External data transfer disclosures have not been acknowledged."
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Extra instructions for the assistant"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "FAQ"
-msgstr ""
-
-#: includes/modules/class-ssc-module-faq.php
-msgid "FAQ Answer Bank"
-msgstr ""
-
-#: includes/modules/class-ssc-module-faq.php
-#: includes/admin/views/page-faq.php
-msgid "FAQ Bank"
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "FAQ bank"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "FAQ bank first, AI as fallback"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "FAQ bank only"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "FAQ file"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Facts…"
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-rest.php
-msgid "Feedback is disabled on this site."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Female"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Field label"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Field type"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-#: includes/admin/views/page-conversations.php
-#: includes/admin/views/page-pharma.php
-msgid "Filter"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Final check & launch"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Five short steps. Your progress is saved automatically — you can leave and come back anytime."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Fix"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Floating button custom image (optional)"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Floating button position"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Floating button size (px)"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Follow-up note (recorded in the audit trail)"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Follow-up requested"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Font"
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-rest.php
-msgid "Form submission is disabled on this site."
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Form submissions / day / visitor"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Formal"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Friendly"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "From → To"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Full name"
-msgstr ""
-
-#: includes/core/class-ssc-schema.php
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "General"
-msgstr ""
-
-#: includes/modules/class-ssc-module-proactive.php
-msgid "Gently start conversations with hesitant visitors without being intrusive."
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-msgid "Global setting"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Go to dashboard"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Handoff message"
-msgstr ""
-
-#: includes/modules/class-ssc-module-voice.php
-msgid "Hands-free conversations and accessible answers for visitors on the go."
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Hello! 👋"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Hi! Do you ship internationally?"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Hospitalized"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "How can I help you today?"
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "How this extension works:"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "How was this conversation?"
-msgstr ""
-
-#: includes/modules/class-ssc-module-handoff.php
-msgid "Human Handoff"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Human handoff module"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "I understand chat messages are sent to the AI provider I configured (an external service) and form data is stored on my site. I will inform my visitors."
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "IP address"
-msgstr ""
-
-#: includes/core/class-ssc-rest.php
-msgid "Identity verified — the assistant correctly identified your organization."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Image URL (optional)"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Import"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Import from a website page (optional)"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Import mode"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Import page"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Important notices"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Imported %d answers (%d skipped)."
-msgstr ""
-
-#: includes/modules/class-ssc-module-history.php
-msgid "Improve answer quality with real conversation evidence, with configurable retention."
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "In progress"
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Inactive"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Industry"
-msgstr ""
-
-#: includes/core/class-ssc-modules.php
-msgid "Industry Extensions"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Inhalation"
-msgstr ""
-
-#: includes/modules/class-ssc-module-notifications.php
-msgid "Instant alerts for new requests via Bale/Telegram and/or email, with delivery tracking and automatic retries for failed deliveries."
-msgstr ""
-
-#: includes/modules/class-ssc-module-faq.php
-msgid "Instant, zero-cost, perfectly controlled answers for your most common questions."
-msgstr ""
-
-#: includes/modules/class-ssc-module-analytics.php
-#: includes/modules/class-ssc-module-history.php
-#: includes/modules/class-ssc-module-leads.php
-#: includes/modules/class-ssc-module-faq.php
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-rest.php
-#: includes/admin/class-ssc-admin-dashboard.php
-#: includes/admin/class-ssc-admin-appearance.php
-msgid "Insufficient permissions."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Intramuscular"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Intravenous"
-msgstr ""
-
-#: includes/core/class-ssc-rest.php
-msgid "Invalid feedback token."
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-msgid "Invalid feedback."
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-msgid "Invalid nonce."
-msgstr ""
-
-#: includes/core/class-ssc-rest.php
-msgid "Invalid rating."
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-rest.php
-msgid "Invalid score."
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-msgid "Invalid submission type."
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Invisible to visitors."
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Invitation text"
-msgstr ""
-
-#: includes/modules/class-ssc-module-handoff.php
-msgid "It looks like this question is better handled by a human expert. Would you like to leave a consultation request?"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Keys are encrypted at rest and never leave the server. Connection tests perform a real generation, not just a ping."
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Keywords"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Keywords (comma separated, optional)"
-msgstr ""
-
-#: includes/core/class-ssc-modules.php
-msgid "Knowledge & Intelligence"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Knowledge entries"
-msgstr ""
-
-#: includes/admin/views/page-analytics.php
-msgid "Knowledge gaps — answer these in the FAQ bank or knowledge page."
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Knowledge saved."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Knowledge type"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "LTR (Latin)"
-msgstr ""
-
-#: includes/admin/views/page-analytics.php
-msgid "Last 14 days. Only what helps you improve the assistant."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Life-threatening"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Light"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Limit by"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Listen to this answer"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Listening…"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Live on your site"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Location"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Long documents (knowledge base)"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/wizard.php
-msgid "Main menu"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Make it yours"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Male"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Manage"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-msgid "Match device"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Match visitor device"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Max answer length"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Message bubble radius (px)"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/wizard.php
-msgid "Message text"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Messenger platform"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Microphone input"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Mild"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "Model"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "Model ID"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Model ID (e.g. my-model-v2)"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Model IDs evolve — manual entry is always available and lists stay current via your own updates."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Moderate"
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Module activated."
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Module deactivated. Its data is kept and will be there when you re-enable it."
-msgstr ""
-
-#: includes/admin/class-ssc-admin.php
-#: includes/admin/views/page-modules.php
-msgid "Modules"
-msgstr ""
-
-#: includes/admin/views/page-analytics.php
-msgid "Most-discussed products"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-#: includes/admin/views/page-requests.php
-msgid "Name"
-msgstr ""
-
-#: includes/modules/class-ssc-module-notifications.php
-msgid "Name: %s"
-msgstr ""
-
-#: includes/modules/class-ssc-module-notifications.php
-msgid "Never miss a request - failed deliveries are retried and surfaced instead of vanishing."
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "New"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "New (awaiting triage)"
-msgstr ""
-
-#: includes/modules/class-ssc-module-notifications.php
-msgid "New request (%s)"
-msgstr ""
-
-#: includes/modules/class-ssc-module-notifications.php
-msgid "New request: %s"
-msgstr ""
-
-#: includes/admin/views/page-pharma.php
-msgid "No ADR cases yet. When someone files a report through the chat, it appears here for triage."
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "No AI engine"
-msgstr ""
-
-#: includes/core/class-ssc-providers.php
-msgid "No AI engine (offline answers only)"
-msgstr ""
-
-#: includes/core/class-ssc-provider.php
-msgid "No API key provided."
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "No audit entries yet."
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "No conversations stored yet."
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "No file was uploaded."
-msgstr ""
-
-#: includes/core/class-ssc-provider.php
-msgid "No model selected."
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "No modules match your search."
-msgstr ""
-
-#: includes/admin/views/page-analytics.php
-msgid "No product conversations recorded yet."
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "No requests yet. When visitors submit the consultation form, they appear here."
-msgstr ""
-
-#: includes/modules/class-ssc-module-handoff.php
-msgid "No visitor is ever left stuck without a path to a real person."
-msgstr ""
-
-#: includes/core/providers/class-ssc-provider-webhook.php
-msgid "No webhook URL configured."
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Not published"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Not recovered"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Not verified"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Note"
-msgstr ""
-
-#: includes/modules/class-ssc-module-notifications.php
-msgid "Notifications"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Notifications module"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Nurse"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Off (not recommended)"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Official organization name"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Offline message (when nothing can answer)"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Online"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Only .txt, .md, .csv and .json files can be imported."
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/wizard.php
-msgid "Open chat"
-msgstr ""
-
-#: includes/core/providers/class-ssc-provider-custom.php
-msgid "OpenAI-compatible endpoint"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Ophthalmic"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Optional business-specific rules…"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Optional details (contacts, hours, differentiators)"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Oral"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Other"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Other health professional"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Other medically important event"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Other medicines taken at the same time"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Outcome"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Outcome so far"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Page URL"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Page URL to import"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "Pagination"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "Paste your API key"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Patient / consumer"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Patient age"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Patient age (years)"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-#: includes/admin/views/pharma-case.php
-msgid "Patient sex"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Persistent or significant disability"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-#: includes/admin/views/pharma-setup.php
-msgid "Pharmaceutical Extension"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Pharmacist"
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "Pharmacovigilance contact email (for internal alerts and case routing)"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-#: includes/admin/views/page-requests.php
-msgid "Phone"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Phone number"
-msgstr ""
-
-#: includes/modules/class-ssc-module-notifications.php
-msgid "Phone: %s"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Physician"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Placeholder"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Please describe the reaction (at least 10 characters)."
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-msgid "Please describe your request (10-1000 characters)."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Please enter a valid contact phone."
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-msgid "Please enter a valid phone number."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Please enter the official organization name."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Please enter the reporter name (2-80 characters)."
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-msgid "Please enter your name (2-80 characters)."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Policies"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Primary answer language"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Primary brand color"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-msgid "Primary color (empty = global)"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Privacy & consent"
-msgstr ""
-
-#: includes/core/class-ssc-setup.php
-msgid "Privacy disclosures acknowledged"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Privacy policy"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Privacy policy link"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Privacy, protection and module options. Security and privacy controls are always active — they are not modules."
-msgstr ""
-
-#: includes/modules/class-ssc-module-proactive.php
-msgid "Proactive Invitation"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Proactive invitation module"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Product"
-msgstr ""
-
-#: includes/admin/views/page-pharma.php
-msgid "Product / batch"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Product / service name"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Product information"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Product name"
-msgstr ""
-
-#: includes/modules/class-ssc-module-notifications.php
-msgid "Product: %s"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Products"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/page-dashboard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Products & services"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Products & services overview"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Professional"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Protection & limits"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "Provider"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-#: includes/admin/views/wizard.php
-msgid "Publish chatbot"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Published! Your assistant is now live on your site."
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-#: includes/admin/views/page-conversations.php
-msgid "Question"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "RTL (Persian/Arabic)"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Rate limit reached."
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "Rating"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Reaction"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Read answers aloud"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Readiness"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-#: includes/admin/views/page-pharma.php
-msgid "Received"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Received ✓ We will contact you soon."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Recovered"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Recovering"
-msgstr ""
-
-#: includes/core/class-ssc-knowledge.php
-msgid "Reference"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Regulatory seriousness criteria (any that apply)"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Related questions:"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Remove"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Remove ALL plugin data (settings, knowledge, requests, ADR cases, logs) when the plugin is deleted. Keep this off to preserve your data."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Remove entry"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Remove field"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Remove product"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Remove the stored key"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Remove the stored token"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-msgid "Replace all answers"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Report a side effect"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-#: includes/admin/views/pharma-case.php
-#: includes/admin/views/page-pharma.php
-msgid "Reporter"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Reporter name"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-#: includes/admin/views/pharma-case.php
-msgid "Reporter role"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "Request"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Request form module"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Request retention (days, 0 = keep forever; ADR cases are never auto-deleted)"
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-#: includes/admin/views/page-dashboard.php
-#: includes/admin/views/page-requests.php
-msgid "Requests"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Require explicit consent before storing contact data"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Required"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Required or prolonged hospitalization"
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Requires: %s"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Resulted in death"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Resume setup"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Retrieved knowledge chunks per answer"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Review the checklist, try the assistant yourself, then publish it when you are satisfied."
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Route"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Route of administration"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Run identity test"
-msgstr ""
-
-#: includes/admin/views/page-pharma.php
-msgid "SERIOUS"
-msgstr ""
-
-#: includes/modules/class-ssc-module-notifications.php
-msgid "SERIOUS adverse reaction report - review immediately"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "SERIOUS case"
-msgstr ""
-
-#: includes/modules/class-ssc-module-csat.php
-msgid "Satisfaction Survey (CSAT)"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Satisfaction survey module"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "Save appearance"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Save connection"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Save data policy"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Save knowledge"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Save settings"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Saved"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Saved in offline mode: the assistant will answer from your FAQ bank only. You can connect an AI provider anytime later."
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Search modules"
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Search modules…"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-msgid "Search name or text…"
-msgstr ""
-
-#: includes/admin/views/page-pharma.php
-msgid "Search…"
-msgstr ""
-
-#: includes/modules/class-ssc-module-analytics.php
-msgid "See exactly what visitors ask and where your knowledge has gaps - not decorative charts."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Select a provider, paste your API key, choose a model — then run the test. You cannot continue until the connection actually works."
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-msgid "Select and save an AI provider first."
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/wizard.php
-msgid "Send message"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Sequelae / permanent impairment"
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "Serious cases (any seriousness criterion, or serious outcome) are flagged and notified immediately — independent of the reported clinical severity."
-msgstr ""
-
-#: includes/admin/views/page-pharma.php
-msgid "Seriousness"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Seriousness criteria"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Services"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Set up your AI assistant"
-msgstr ""
-
-#: includes/core/class-ssc-plugin.php
-#: includes/admin/class-ssc-admin.php
-#: includes/admin/views/page-settings.php
-msgid "Settings"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Settings saved."
-msgstr ""
-
-#: includes/core/class-ssc-plugin.php
-msgid "Setup"
-msgstr ""
-
-#: includes/admin/views/page-modules.php
-msgid "Setup Required"
-msgstr ""
-
-#: includes/admin/class-ssc-admin.php
-msgid "Setup Wizard"
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "Setup complete. You can now receive and manage ADR reports."
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Setup is not finished"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Setup progress"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Setup wizard"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Severe"
-msgstr ""
-
-#: includes/admin/views/page-pharma.php
-msgid "Severity"
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Shared secret (HMAC)"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Shared secret (HMAC, recommended)"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Short, factual reference blocks the assistant quotes verbatim. (Policies, prices, hours, FAQs…)"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Show the end-of-conversation survey"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Skip"
-msgstr ""
-
-#: includes/core/class-ssc-plugin.php
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/class-ssc-admin.php
-#: includes/admin/views/page-dashboard.php
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Smart Assistant"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-msgid "Smart Assistant Chatbot"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Some readiness items are incomplete — finish them first (each links to its settings)."
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "Source"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Speak"
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-#: includes/admin/views/page-requests.php
-#: includes/admin/views/page-pharma.php
-msgid "Status"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Stop audio"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Store conversations (needed for feedback, unanswered radar and quality review)"
-msgstr ""
-
-#: includes/modules/class-ssc-module-history.php
-msgid "Stores conversations so you can review quality, capture answers into the FAQ bank and spot unanswered questions."
-msgstr ""
-
-#: includes/admin/views/page-connection.php
-msgid "Strict mode — answer only from your knowledge"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Structured adverse drug reaction (ADR) intake with ICH E2A-style seriousness criteria, case management, audit trail and follow-up workflow for pharmacovigilance teams."
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "Structured adverse drug reaction reporting for your pharmacovigilance workflow."
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-msgid "Structured request forms inside the chat with custom fields, consent capture and a request inbox."
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-msgid "Style"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Subcutaneous"
-msgstr ""
-
-#: includes/core/class-ssc-schema.php
-msgid "Submission deleted"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Submit"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Suggested from your site title — edit if needed."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Support"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Support email"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Support phone"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-#: includes/admin/views/pharma-case.php
-msgid "Suspected product"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Suspected reaction"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "System default"
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "Take offline"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Talk to a human expert"
-msgstr ""
-
-#: includes/admin/views/page-settings.php
-msgid "Telegram"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "Test connection"
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Text direction"
-msgstr ""
-
-#: includes/core/class-ssc-chat-engine.php
-msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Thanks for your rating 🙏"
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "The AI assistant is locked to strict pharmacovigilance answer rules: no invented medical claims, no personalized treatment advice."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The API key was rejected. Double-check the key and that it belongs to the selected provider."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The account has insufficient credits or billing is not active. Check your provider account balance."
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "The assistant is invisible to visitors until the wizard is complete and you publish it. Pick up where you left off:"
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-rest.php
-msgid "The assistant is not available yet."
-msgstr ""
-
-#: includes/admin/views/page-dashboard.php
-msgid "The assistant is published without an AI engine — it can only answer from your FAQ bank."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "The chatbot stays invisible to visitors until you publish it in the last step."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The endpoint address is invalid or not allowed."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The endpoint address is not allowed (it must be a valid public address; HTTPS is required when credentials are sent)."
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "The facts your assistant relies on. Everything you write here reaches the AI on every answer."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "The facts… (prices, policies, answers, anything)"
-msgstr ""
-
-#: includes/admin/views/page-faq.php
-#: includes/admin/views/page-knowledge.php
-msgid "The file is larger than 2 MB and was NOT imported."
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "The form could not be submitted. Please try again."
-msgstr ""
-
-#: includes/core/class-ssc-rest.php
-msgid "The identity test could not run."
-msgstr ""
-
-#: includes/core/class-ssc-rest.php
-msgid "The message could not be processed."
-msgstr ""
-
-#: includes/core/providers/class-ssc-provider-gemini.php
-msgid "The model blocked the test prompt for safety reasons."
-msgstr ""
-
-#: includes/core/class-ssc-rest.php
-msgid "The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again."
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "The page could not be imported (check the URL or try later)."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "The page is fetched once, now, because you asked for it — its readable text becomes reference knowledge."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The provider is not available from your server region or the account is region-restricted."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The provider is rate-limiting requests right now. Wait a moment and test again."
-msgstr ""
-
-#: includes/core/class-ssc-provider.php
-msgid "The provider replied 200 but no generated text was found in the response."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The provider response was not valid JSON."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The provider returned an unexpected response format."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The provider took too long to respond. Try a faster model or test again."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "The report could not be stored. Please try again."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The request body could not be encoded."
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-msgid "The request could not be stored. Please try again."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The selected model is not available for this account or does not exist. Pick another model or enter the model ID manually."
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "The server could not reach the provider (network or provider outage). Try again later."
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-rest.php
-msgid "The survey is disabled on this site."
-msgstr ""
-
-#: includes/core/providers/class-ssc-provider-webhook.php
-msgid "The webhook URL is not allowed (public address; HTTPS required when a secret is configured)."
-msgstr ""
-
-#: includes/core/providers/class-ssc-provider-webhook.php
-msgid "The webhook did not return JSON."
-msgstr ""
-
-#: includes/core/providers/class-ssc-provider-webhook.php
-msgid "The webhook response signature is missing or invalid."
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Theme"
-msgstr ""
-
-#: widgets/class-ssc-elementor-widget.php
-msgid "Theme (empty = global)"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "This is what the AI reads to understand your organization. Only the official name is required."
-msgstr ""
-
-#: includes/core/class-ssc-modules.php
-msgid "This module needs: %s"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "This provider is not verified yet. Run the connection test below and wait for the green result before continuing."
-msgstr ""
-
-#: includes/core/class-ssc-plugin.php
-msgid "This site uses an AI chat assistant. Messages you type are processed by this website and sent to the AI provider selected by the site owner (an external service) to generate replies. If you submit a contact form, your name, phone number and message are stored so we can follow up."
-msgstr ""
-
-#: includes/admin/views/pharma-setup.php
-msgid "This tool supports your workflow but does not certify regulatory compliance. Verify your national reporting obligations (e.g., your pharmacovigilance center's timelines and formats) before relying on it for submissions."
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-#: includes/admin/views/page-conversations.php
-msgid "Time"
-msgstr ""
-
-#: includes/admin/views/page-knowledge.php
-msgid "Title"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Title (e.g. Return policy)"
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-rest.php
-msgid "Too many submissions today. Please try again tomorrow."
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-rest.php
-msgid "Too many votes today."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Topical"
-msgstr ""
-
-#: includes/modules/class-ssc-module-csat.php
-msgid "Track assistant quality over time with one simple number."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "Try the assistant (preview)"
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-msgid "Turn conversations into actionable requests with clean, validated contact data."
-msgstr ""
-
-#: includes/admin/views/page-requests.php
-#: includes/admin/views/page-knowledge.php
-msgid "Type"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/wizard.php
-msgid "Typing…"
-msgstr ""
-
-#: includes/admin/views/page-conversations.php
-msgid "Unanswered"
-msgstr ""
-
-#: includes/admin/views/page-analytics.php
-msgid "Unanswered questions"
-msgstr ""
-
-#: includes/admin/views/page-analytics.php
-msgid "Unanswered questions (14 days)"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Under assessment"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Unknown"
-msgstr ""
-
-#: includes/core/class-ssc-http.php
-msgid "Unknown connection error."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "Unknown product. Please choose from the list."
-msgstr ""
-
-#: includes/core/class-ssc-rest.php
-msgid "Unknown provider."
-msgstr ""
-
-#: includes/admin/views/pharma-case.php
-msgid "Update case"
-msgstr ""
-
-#: includes/admin/views/page-requests.php
+#: includes/admin/views/page-requests.php:27
 msgid "Updated."
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php
-msgid "Upload file"
+#: includes/admin/views/page-requests.php:33
+msgid "All types"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php
-msgid "Value"
+#: includes/admin/views/page-requests.php:34
+msgid "Consultation"
 msgstr ""
 
-#: includes/admin/views/page-appearance.php
-msgid "Vazirmatn (Persian)"
+#: includes/admin/views/page-requests.php:36
+msgid "ADR reports"
 msgstr ""
 
-#: includes/admin/views/page-connection.php
-msgid "Verified %s ago for the current provider, key, model and endpoint."
+#: includes/admin/views/page-requests.php:41
+#: includes/admin/views/page-requests.php:66
+msgid "New"
 msgstr ""
 
-#: includes/admin/class-ssc-wizard.php
-msgid "Verify & Launch"
+#: includes/admin/views/page-requests.php:41
+#: includes/admin/views/page-requests.php:66
+msgid "In progress"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php
-msgid "View brochure"
+#: includes/admin/views/page-requests.php:41
+#: includes/admin/views/page-requests.php:66
+msgid "Done"
 msgstr ""
 
-#: includes/admin/views/page-appearance.php
-msgid "Visitor bubble color (optional)"
+#: includes/admin/views/page-requests.php:41
+#: includes/admin/views/page-requests.php:66
+#: includes/modules/class-ssc-module-pharma.php:845
+msgid "Archived"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php
-msgid "Visitors can chat with the assistant."
+#: includes/admin/views/page-requests.php:45
+msgid "Search name or text…"
 msgstr ""
 
-#: includes/admin/views/pharma-setup.php
-msgid "Visitors can file a structured ADR report: suspected product, batch/lot, reporter details, reaction description, clinical severity, ICH E2A-style seriousness criteria and outcome."
+#: includes/admin/views/page-requests.php:50
+msgid "No requests yet. When visitors submit the consultation form, they appear here."
 msgstr ""
 
-#: includes/modules/class-ssc-module-voice.php
-msgid "Visitors speak to the assistant and listen to answers (microphone input and text-to-speech playback)."
+#: includes/admin/views/page-requests.php:56
+#: includes/admin/views/pharma-case.php:38
+msgid "Name"
 msgstr ""
 
-#: includes/modules/class-ssc-module-voice.php
-msgid "Voice Interaction"
+#: includes/admin/views/page-requests.php:57
+#: includes/admin/views/pharma-case.php:39
+msgid "Phone"
 msgstr ""
 
-#: includes/admin/views/page-settings.php
+#: includes/admin/views/page-requests.php:58
+msgid "Request"
+msgstr ""
+
+#: includes/admin/views/page-requests.php:94
+msgid "Change status"
+msgstr ""
+
+#: includes/admin/views/page-requests.php:110
+msgid "Pagination"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:22
+msgid "Privacy, protection and module options. Security and privacy controls are always active — they are not modules."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:27
+msgid "Settings saved."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:30
+msgid "The secret could not be encrypted (OpenSSL unavailable or AUTH_KEY missing). It was NOT saved in plaintext. Fix the server crypto setup and try again."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:33
+msgid "Cached AI answers cleared."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:42
+msgid "Pharmaceutical answer policy"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:44
+msgid "Allowed information sources"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:46
+msgid "Approved company sources only"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:47
+msgid "Company sources and general educational information"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:49
+msgid "Both modes refer personal treatment questions to a healthcare professional. Product-specific claims require approved company sources. Test answers with your medical team before publication."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:55
+msgid "Privacy & consent"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:56
+msgid "Applies to every form. Server transcript logging is opt-in; browser transcripts and shared answer caching are disabled in pharmaceutical mode. Submitted forms are stored independently of chat history."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:57
+msgid "Require explicit consent before storing contact data"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:59
+msgid "Consent text"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:63
+msgid "Privacy policy link"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:68
+msgid "Conversation retention (days, 0 = keep forever)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:72
+msgid "Request retention (days, 0 = keep forever; ADR cases are never auto-deleted)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:79
+msgid "Where the widget appears"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:80
+msgid "Pages that fail these rules never load the chatbot CSS or JS — better performance and cleaner analytics."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:83
+msgid "Page targeting"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:85
+msgid "All pages"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:86
+msgid "Only these paths"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:87
+msgid "Everywhere except these paths"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:91
+msgid "Devices"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:93
+msgid "All devices"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:94
+msgid "Desktop only"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:95
+msgid "Mobile only"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:99
+msgid "Visitors"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:101
+msgid "Everyone"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:102
+msgid "Logged-out visitors only"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:103
+msgid "Logged-in users only"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:108
+msgid "Path patterns (one per line; * = wildcard)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:114
+msgid "Business hours"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:115
+msgid "Outside these hours the widget shows an offline notice. Forms still work so visitors can leave a message."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:116
+msgid "Limit availability to business hours"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:119
+msgid "Opens at"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:123
+msgid "Closes at"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:127
+msgid "Days (Mon=1 … Sun=7)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:131
+msgid "Timezone (empty = site timezone)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:136
+msgid "Offline message"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:142
+msgid "Widget behaviour"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:143
+msgid "Stream AI answers as they are generated (faster first word; OpenAI-compatible providers)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:144
+msgid "Play a soft ping when a reply arrives while the chat is closed"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:148
+msgid "Protection & limits"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:151
+msgid "Limit by"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:153
+msgid "IP address"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:154
+msgid "Browser session"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:155
+msgid "Both"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:156
+msgid "Off (not recommended)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:160
+msgid "Chat messages / day / visitor"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:164
+msgid "Form submissions / day / visitor"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:168
+msgid "Chat messages / day / session"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:172
+msgid "Trusted proxy header (behind CDN / reverse proxy)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:174
+msgid "None — use REMOTE_ADDR (direct connection)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:182
+msgid "Required when the site sits behind Cloudflare or any reverse proxy — otherwise every visitor shares one IP and one rate-limit quota. Only enable the header your proxy actually sets and strips from client requests."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:189
 msgid "Voice module"
 msgstr ""
 
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-connection.php
-msgid "Webhook URL"
+#: includes/admin/views/page-settings.php:190
+msgid "Microphone input"
 msgstr ""
 
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Website"
+#: includes/admin/views/page-settings.php:191
+msgid "Read answers aloud"
 msgstr ""
 
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Welcome message"
+#: includes/admin/views/page-settings.php:193
+msgid "Recognition language (or \"auto\")"
 msgstr ""
 
-#: widgets/class-ssc-elementor-widget.php
-msgid "Welcome message (empty = global)"
+#: includes/admin/views/page-settings.php:201
+msgid "Conversation history module"
 msgstr ""
 
-#: includes/admin/views/page-appearance.php
-#: includes/admin/views/wizard.php
-msgid "Welcome title"
+#: includes/admin/views/page-settings.php:202
+msgid "Store conversations (needed for feedback, unanswered radar and quality review)"
 msgstr ""
 
-#: widgets/class-ssc-elementor-widget.php
-msgid "Welcome title (empty = global)"
+#: includes/admin/views/page-settings.php:208
+msgid "Satisfaction survey module"
 msgstr ""
 
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "What does your organization do?"
+#: includes/admin/views/page-settings.php:209
+msgid "Show the end-of-conversation survey"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php
-msgid "What happened? Describe the reaction and dates."
+#: includes/admin/views/page-settings.php:215
+msgid "Human handoff module"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php
-msgid "What is it, key facts, terms…"
+#: includes/admin/views/page-settings.php:217
+msgid "Handoff message"
 msgstr ""
 
-#: includes/admin/views/wizard.php
-msgid "What makes you different?"
+#: includes/admin/views/page-settings.php:225
+msgid "Proactive invitation module"
 msgstr ""
 
-#: includes/admin/views/wizard.php
-msgid "What should the assistant know?"
+#: includes/admin/views/page-settings.php:228
+msgid "Delay before showing (seconds)"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php
-msgid "When a visitor asks about a product, its summary and attributes are injected into the answer context."
+#: includes/admin/views/page-settings.php:232
+msgid "Invitation text"
 msgstr ""
 
-#: includes/modules/class-ssc-module-handoff.php
-msgid "When the assistant cannot answer, it transparently offers an escalation to a human expert via a consultation request."
+#: includes/admin/views/page-settings.php:241
+msgid "Request form module"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php
-msgid "Which one?"
+#: includes/admin/views/page-settings.php:242
+msgid "Custom fields for the consultation form. Server-side validation is generated from this definition."
 msgstr ""
 
-#: includes/admin/views/wizard.php
+#: includes/admin/views/page-settings.php:249
+msgid "Field label"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:250
+msgid "Field type"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:255
+msgid "Required"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:256
+msgid "Placeholder"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:257
+msgid "Remove field"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:261
+msgid "+ Add field"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:267
+msgid "Notifications module"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:270
+msgid "Messenger platform"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:272
+msgid "Bale"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:273
+msgid "Telegram"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:277
+msgid "Chat / channel ID"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:282
+msgid "Bot token"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:283
+msgid "A token is stored — type to replace"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:285
+msgid "Remove the stored token"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:288
+msgid "Also send email notifications"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:290
+msgid "Email recipient (empty = site admin)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:297
+msgid "Save settings"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:302
+msgid "Data tools"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:305
+msgid "Clear cached AI answers"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:312
+msgid "Remove ALL plugin data (settings, knowledge, requests, ADR cases, logs) when the plugin is deleted. Set this policy before deactivation; an inactive plugin cannot display a deletion prompt. Keep this off to preserve your data."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:314
+msgid "Save data policy"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:23
+msgid "ADR case #%d"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:26
+msgid "All cases"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:30
+msgid "SERIOUS case"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:40
+#: includes/modules/class-ssc-module-pharma.php:220
+msgid "Reporter role"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:42
+msgid "Patient age"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:45
+#: includes/modules/class-ssc-module-pharma.php:239
+msgid "Patient sex"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:52
+#: includes/modules/class-ssc-module-pharma.php:246
+msgid "Suspected product"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:55
+msgid "Product"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:56
+msgid "Batch / lot"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:58
+msgid "Dose & frequency"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:61
+msgid "Route"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:68
+msgid "Reaction"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:72
+msgid "Clinical severity"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:73
+msgid "Seriousness criteria"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:74
+msgid "Outcome"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:76
+msgid "Concomitant drugs"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:83
+msgid "Case workflow"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:96
+msgid "Follow-up note (recorded in the audit trail)"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:99
+msgid "Update case"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:104
+msgid "Privacy actions (per record)"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:105
+msgid "Export this case, remove direct identifiers, or permanently delete the record. Removing identifiers does not anonymize free-text narratives or audit notes; review those separately under your retention policy."
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:109
+msgid "Export JSON"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:111
+msgid "Remove reporter name, phone, IP and demographics? Clinical fields stay for PV review."
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:111
+msgid "Remove direct identifiers"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:113
+msgid "Direct identifiers removed"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:115
+msgid "Permanently delete this case? Clinical data is removed; a purge entry stays in the audit trail."
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:115
+msgid "Delete case"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:121
+msgid "Audit trail"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:124
+msgid "Action"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:124
+msgid "From → To"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:124
+msgid "By"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:124
+msgid "Note"
+msgstr ""
+
+#: includes/admin/views/pharma-case.php:138
+msgid "No audit entries yet."
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:16
+#: includes/modules/class-ssc-module-pharma.php:48
+msgid "Pharmaceutical Extension"
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:17
+msgid "Structured adverse drug reaction reporting for your pharmacovigilance workflow."
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:22
+msgid "Setup complete. You can now receive and manage ADR reports."
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:30
+msgid "Before you go live"
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:32
+msgid "Pharmacovigilance contact email (for internal alerts and case routing)"
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:37
+msgid "How this extension works:"
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:39
+msgid "Visitors can file a structured ADR report: suspected product, batch/lot, reporter details, reaction description, clinical severity, ICH E2A-style seriousness criteria and outcome."
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:40
+msgid "Each report becomes a case with a review workflow (triage → assessment → follow-up → closed) and a permanent audit trail of every change."
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:41
+msgid "Serious cases (any seriousness criterion, or serious outcome) are flagged and notified immediately — independent of the reported clinical severity."
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:42
+msgid "The AI assistant is locked to strict pharmacovigilance answer rules: no invented medical claims, no personalized treatment advice."
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:43
+msgid "ADR cases are never auto-deleted by retention rules; deletion is a manual, audited action."
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:48
+msgid "Compliance disclaimer:"
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:48
+msgid "This tool supports your workflow but does not certify regulatory compliance. Verify your national reporting obligations (e.g., your pharmacovigilance center's timelines and formats) before relying on it for submissions."
+msgstr ""
+
+#: includes/admin/views/pharma-setup.php:53
+msgid "Complete setup"
+msgstr ""
+
+#: includes/admin/views/wizard.php:37
+msgid "Set up your AI assistant"
+msgstr ""
+
+#: includes/admin/views/wizard.php:38
+msgid "Five short steps. Your progress is saved automatically — you can leave and come back anytime."
+msgstr ""
+
+#: includes/admin/views/wizard.php:42
+msgid "Saved"
+msgstr ""
+
+#: includes/admin/views/wizard.php:47
+msgid "Setup progress"
+msgstr ""
+
+#: includes/admin/views/wizard.php:73
+msgid "The chatbot stays invisible to visitors until you publish it in the last step."
+msgstr ""
+
+#: includes/admin/views/wizard.php:84
 msgid "Who does the assistant represent?"
 msgstr ""
 
-#: includes/admin/views/page-appearance.php
-msgid "Window corner radius (px)"
+#: includes/admin/views/wizard.php:85
+msgid "This is what the AI reads to understand your organization. Only the official name is required."
 msgstr ""
 
-#: includes/admin/views/wizard.php
-#: includes/admin/views/page-knowledge.php
-msgid "Working hours"
+#: includes/admin/views/wizard.php:88
+msgid "Please enter the official organization name."
 msgstr ""
 
-#: includes/admin/views/wizard.php
-msgid "Works with OpenRouter, Groq, DeepSeek, Ollama relays, Azure-style proxies and more."
+#: includes/admin/views/wizard.php:95
+msgid "Suggested from your site title — edit if needed."
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/wizard.php
-msgid "Write your message…"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php
-msgid "You do not have permission to access case records."
-msgstr ""
-
-#: includes/core/class-ssc-ajax.php
-#: includes/core/class-ssc-frontend.php
-#: includes/core/class-ssc-rest.php
-msgid "You have reached the daily usage limit. Please try again tomorrow."
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Your consent is required to continue."
-msgstr ""
-
-#: includes/modules/class-ssc-module-leads.php
-msgid "Your consent is required to submit this form."
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-msgid "Your message"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php
-#: includes/admin/views/wizard.php
-msgid "Your session expired. Please refresh the page and try again."
-msgstr ""
-
-#: includes/core/class-ssc-rest.php
-msgid "Your session has expired. Please refresh the page."
-msgstr ""
-
-#: includes/admin/views/page-appearance.php
-msgid "e.g. AI can make mistakes."
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "e.g. Customer support specialist"
-msgstr ""
-
-#: includes/admin/views/wizard.php
-msgid "e.g. Pharmaceutical, E-commerce"
-msgstr ""
-
-#: includes/admin/views/wizard.php
+#: includes/admin/views/wizard.php:103
 msgid "e.g. Retail, Clinic, Manufacturer"
 msgstr ""
 
-#: includes/admin/views/wizard.php
-msgid "e.g. Sara"
+#: includes/admin/views/wizard.php:107
+msgid "e.g. Pharmaceutical, E-commerce"
 msgstr ""
 
-#: includes/admin/views/wizard.php
+#: includes/admin/views/wizard.php:113
+msgid "A short, factual description the assistant can rely on…"
+msgstr ""
+
+#: includes/admin/views/wizard.php:117
+msgid "Optional details (contacts, hours, differentiators)"
+msgstr ""
+
+#: includes/admin/views/wizard.php:141
 msgid "e.g. Sat–Wed, 9:00–17:00"
 msgstr ""
 
-#: includes/admin/views/page-faq.php
-msgid "price, cost, shipping"
+#: includes/admin/views/wizard.php:149
+msgid "What makes you different?"
 msgstr ""
 
-#: includes/admin/views/page-conversations.php
-msgid "retention is configured in Settings"
+#: includes/admin/views/wizard.php:155
+msgid "Assistant personality"
 msgstr ""
 
-#: includes/admin/views/page-connection.php
-msgid "“No AI engine” answers from your FAQ bank and knowledge only — nothing leaves your server."
+#: includes/admin/views/wizard.php:159
+msgid "e.g. Sara"
 msgstr ""
 
+#: includes/admin/views/wizard.php:163
+msgid "e.g. Customer support specialist"
+msgstr ""
+
+#: includes/admin/views/wizard.php:189
+msgid "Do this later"
+msgstr ""
+
+#: includes/admin/views/wizard.php:190
+#: includes/admin/views/wizard.php:249
+#: includes/admin/views/wizard.php:343
+#: includes/admin/views/wizard.php:421
+msgid "Continue"
+msgstr ""
+
+#: includes/admin/views/wizard.php:200
+msgid "What should the assistant know?"
+msgstr ""
+
+#: includes/admin/views/wizard.php:201
+msgid "Add the facts visitors usually ask about. No AI jargon needed — just type what you would tell a new employee."
+msgstr ""
+
+#: includes/admin/views/wizard.php:213
+msgid "Knowledge type"
+msgstr ""
+
+#: includes/admin/views/wizard.php:229
+msgid "Title (e.g. Return policy)"
+msgstr ""
+
+#: includes/admin/views/wizard.php:230
+msgid "Remove entry"
+msgstr ""
+
+#: includes/admin/views/wizard.php:232
+msgid "The facts… (prices, policies, answers, anything)"
+msgstr ""
+
+#: includes/admin/views/wizard.php:236
+msgid "+ Add another entry"
+msgstr ""
+
+#: includes/admin/views/wizard.php:239
+msgid "Import from a website page (optional)"
+msgstr ""
+
+#: includes/admin/views/wizard.php:241
+msgid "Page URL"
+msgstr ""
+
+#: includes/admin/views/wizard.php:243
+msgid "The page is fetched once, now, because you asked for it — its readable text becomes reference knowledge."
+msgstr ""
+
+#: includes/admin/views/wizard.php:248
+#: includes/admin/views/wizard.php:342
+#: includes/admin/views/wizard.php:420
+#: includes/admin/views/wizard.php:486
+msgid "Back"
+msgstr ""
+
+#: includes/admin/views/wizard.php:264
+msgid "Connect an AI provider"
+msgstr ""
+
+#: includes/admin/views/wizard.php:265
+msgid "Select a provider, paste your API key, choose a model — then run the test. You cannot continue until the connection actually works."
+msgstr ""
+
+#: includes/admin/views/wizard.php:268
+msgid "This provider is not verified yet. Run the connection test below and wait for the green result before continuing."
+msgstr ""
+
+#: includes/admin/views/wizard.php:270
+msgid "Saved in offline mode: the assistant will answer from your FAQ bank only. You can connect an AI provider anytime later."
+msgstr ""
+
+#: includes/admin/views/wizard.php:310
+msgid "Model ID (e.g. my-model-v2)"
+msgstr ""
+
+#: includes/admin/views/wizard.php:320
+msgid "Works with OpenRouter, Groq, DeepSeek, Ollama relays, Azure-style proxies and more."
+msgstr ""
+
+#: includes/admin/views/wizard.php:329
+msgid "Shared secret (HMAC, recommended)"
+msgstr ""
+
+#: includes/admin/views/wizard.php:353
+msgid "Make it yours"
+msgstr ""
+
+#: includes/admin/views/wizard.php:354
+msgid "Brand color, texts and placement — with a live preview. Everything can be fine-tuned later."
+msgstr ""
+
+#: includes/admin/views/wizard.php:379
+msgid "Text direction"
+msgstr ""
+
+#: includes/admin/views/wizard.php:428
+msgid "Final check & launch"
+msgstr ""
+
+#: includes/admin/views/wizard.php:429
+msgid "Review the checklist, try the assistant yourself, then publish it when you are satisfied."
+msgstr ""
+
+#: includes/admin/views/wizard.php:432
+msgid "Some readiness items are incomplete — finish them first (each links to its settings)."
+msgstr ""
+
+#: includes/admin/views/wizard.php:435
+msgid "Published! Your assistant is now live on your site."
+msgstr ""
+
+#: includes/admin/views/wizard.php:435
+msgid "Go to dashboard"
+msgstr ""
+
+#: includes/admin/views/wizard.php:457
+msgid "Fix"
+msgstr ""
+
+#: includes/admin/views/wizard.php:464
+msgid "Business identity test"
+msgstr ""
+
+#: includes/admin/views/wizard.php:465
+msgid "Asks the assistant which organization it represents. It must answer correctly before publishing."
+msgstr ""
+
+#: includes/admin/views/wizard.php:466
+msgid "Run identity test"
+msgstr ""
+
+#: includes/admin/views/wizard.php:471
+msgid "Try the assistant (preview)"
+msgstr ""
+
+#: includes/admin/views/wizard.php:472
+msgid "A private preview — visitors cannot see it. Ask anything your customers would ask."
+msgstr ""
+
+#: includes/admin/views/wizard.php:482
+msgid "I understand chat messages are sent to the AI provider I configured (an external service) and form data is stored on my site. I will inform my visitors."
+msgstr ""
+
+#: includes/admin/views/wizard.php:544
+#: includes/core/class-ssc-frontend.php:208
+msgid "Open chat"
+msgstr ""
+
+#: includes/admin/views/wizard.php:545
+#: includes/core/class-ssc-frontend.php:210
+msgid "Close chat"
+msgstr ""
+
+#: includes/admin/views/wizard.php:546
+#: includes/core/class-ssc-frontend.php:211
+msgid "Send message"
+msgstr ""
+
+#: includes/admin/views/wizard.php:547
+#: includes/core/class-ssc-frontend.php:212
+msgid "Message text"
+msgstr ""
+
+#: includes/admin/views/wizard.php:548
+#: includes/core/class-ssc-frontend.php:213
+msgid "Write your message…"
+msgstr ""
+
+#: includes/admin/views/wizard.php:549
+#: includes/core/class-ssc-frontend.php:214
+msgid "Your session expired. Please refresh the page and try again."
+msgstr ""
+
+#: includes/admin/views/wizard.php:550
+#: includes/core/class-ssc-frontend.php:215
+msgid "Connection error. Please check your internet and try again."
+msgstr ""
+
+#: includes/admin/views/wizard.php:551
+msgid "Rate limit reached."
+msgstr ""
+
+#: includes/admin/views/wizard.php:552
+#: includes/core/class-ssc-frontend.php:217
+msgid "Main menu"
+msgstr ""
+
+#: includes/admin/views/wizard.php:553
+#: includes/core/class-ssc-frontend.php:248
+msgid "Typing…"
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:72
+#: includes/core/class-ssc-rest.php:53
+msgid "The request is too large."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:128
+#: includes/core/class-ssc-ajax.php:93
+#: includes/core/class-ssc-rest.php:315
+#: includes/core/class-ssc-rest.php:341
+#: includes/core/class-ssc-rest.php:386
+msgid "The assistant is not available yet."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:97
+#: includes/core/class-ssc-frontend.php:216
+#: includes/core/class-ssc-rest.php:319
+#: includes/core/class-ssc-rest.php:345
+msgid "You have reached the daily usage limit. Please try again tomorrow."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:104
+#: includes/core/class-ssc-rest.php:357
+#: includes/core/class-ssc-rest.php:559
+msgid "The message could not be processed."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:108
+#: includes/core/class-ssc-rest.php:363
+msgid "Admin-only notice — AI engine error:"
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:135
+#: includes/core/class-ssc-rest.php:397
+#: includes/modules/class-ssc-module-leads.php:216
+#: includes/modules/class-ssc-module-pharma.php:454
+msgid "ADR reporting is disabled on this site."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:140
+#: includes/core/class-ssc-rest.php:402
+#: includes/modules/class-ssc-module-leads.php:223
+msgid "Form submission is disabled on this site."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:146
+#: includes/core/class-ssc-rest.php:409
+msgid "Too many submissions today. Please try again tomorrow."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:161
+#: includes/core/class-ssc-rest.php:448
+msgid "Feedback is disabled on this site."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:167
+#: includes/core/class-ssc-ajax.php:208
+#: includes/core/class-ssc-rest.php:455
+#: includes/core/class-ssc-rest.php:482
+msgid "Too many votes today."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:170
+msgid "Invalid feedback."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:201
+#: includes/core/class-ssc-rest.php:475
+msgid "The survey is disabled on this site."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:205
+#: includes/core/class-ssc-rest.php:479
+msgid "Invalid score."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:225
+msgid "Select and save an AI provider first."
+msgstr ""
+
+#: includes/core/class-ssc-ajax.php:231
+#: includes/core/class-ssc-rest.php:537
+msgid "Connection verified — the model replied successfully."
+msgstr ""
+
+#: includes/core/class-ssc-availability.php:81
+msgid "We are currently away. Leave a message and we will get back to you during business hours."
+msgstr ""
+
+#: includes/core/class-ssc-chat-engine.php:213
+msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
+msgstr ""
+
+#: includes/core/class-ssc-cron.php:63
+msgid "NexaChatAI: every five minutes"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:209
+msgid "New conversation"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:219
+msgid "About us, services and contact info"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:221
+msgid "Product information"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:222
+msgid "Which one?"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:223
+#: includes/core/class-ssc-schema.php:406
+#: includes/core/class-ssc-schema.php:430
+msgid "Consultation request"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:224
+msgid "Report a side effect"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:225
+msgid "View brochure"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:226
+msgid "Call us"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:227
+msgid "Listen to this answer"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:228
+msgid "Stop audio"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:229
+msgid "Speak"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:230
+msgid "Listening…"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:231
+msgid "Talk to a human expert"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:232
+msgid "How was this conversation?"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:233
+msgid "Thanks for your rating 🙏"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:234
+msgid "Skip"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:235
+msgid "Copy answer"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:236
+msgid "Copied ✓"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:237
+msgid "Your consent is required to continue."
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:238
+msgid "Privacy policy"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:239
+msgid "Full name"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:240
+msgid "Phone number"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:241
+msgid "Good answer"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:242
+msgid "Poor answer"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:243
+msgid "Your message"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:244
+msgid "Submit"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:245
+msgid "Received ✓ We will contact you soon."
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:246
+msgid "The form could not be submitted. Please try again."
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:247
+msgid "Related questions:"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:251
+msgid "Press Alt+C to open chat"
+msgstr ""
+
+#: includes/core/class-ssc-http.php:96
+msgid "The endpoint address is not allowed (it must be a valid public address; HTTPS is required when credentials are sent)."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:101
+msgid "The request body could not be encoded."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:159
+msgid "The provider response was not valid JSON."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:221
+msgid "The API key was rejected. Double-check the key and that it belongs to the selected provider."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:222
+msgid "The selected model is not available for this account or does not exist. Pick another model or enter the model ID manually."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:223
+msgid "The account has insufficient credits or billing is not active. Check your provider account balance."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:224
+msgid "The provider is rate-limiting requests right now. Wait a moment and test again."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:225
+msgid "The provider is not available from your server region or the account is region-restricted."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:226
+msgid "The server could not reach the provider (network or provider outage). Try again later."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:227
+msgid "The provider took too long to respond. Try a faster model or test again."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:228
+msgid "The endpoint address is invalid or not allowed."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:229
+msgid "The provider returned an unexpected response format."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:231
+msgid "Unknown connection error."
+msgstr ""
+
+#: includes/core/class-ssc-input.php:58
+msgid "I consent to the processing of my contact and health information for safety review and follow-up."
+msgstr ""
+
+#: includes/core/class-ssc-input.php:59
+msgid "I consent to the processing of my contact information and message for follow-up."
+msgstr ""
+
+#: includes/core/class-ssc-knowledge.php:431
+msgid "Reference"
+msgstr ""
+
+#. translators: %s: comma-separated list of required module names.
+#: includes/core/class-ssc-modules.php:131
+msgid "This module needs: %s"
+msgstr ""
+
+#: includes/core/class-ssc-modules.php:234
+msgid "Customer Engagement"
+msgstr ""
+
+#: includes/core/class-ssc-modules.php:235
+msgid "Communication"
+msgstr ""
+
+#: includes/core/class-ssc-modules.php:237
+msgid "Knowledge & Intelligence"
+msgstr ""
+
+#: includes/core/class-ssc-modules.php:238
+msgid "Business Tools"
+msgstr ""
+
+#: includes/core/class-ssc-modules.php:239
+msgid "Industry Extensions"
+msgstr ""
+
+#: includes/core/class-ssc-plugin.php:112
+msgid "Setup"
+msgstr ""
+
+#: includes/core/class-ssc-plugin.php:143
+msgid "This site uses an AI chat assistant. Messages you type are processed by this website and sent to the AI provider selected by the site owner (an external service) to generate replies. If you submit a contact form, your name, phone number and message are stored so we can follow up."
+msgstr ""
+
+#: includes/core/class-ssc-plugin.php:144
+msgid "Server conversation history is optional and follows the configured retention policy. Outside pharmaceutical mode, the browser may keep a short-lived conversation and the server may cache answers. In pharmaceutical mode these two caches are disabled; submitted safety reports are still stored for review. Deleting a browser conversation does not delete server records. Contact the site owner about access or deletion requests."
+msgstr ""
+
+#: includes/core/class-ssc-provider.php:122
+msgid "No model selected."
+msgstr ""
+
+#: includes/core/class-ssc-provider.php:175
+msgid "The provider replied 200 but no generated text was found in the response."
+msgstr ""
+
+#: includes/core/class-ssc-provider.php:222
+msgid "No API key provided."
+msgstr ""
+
+#: includes/core/class-ssc-providers.php:62
+msgid "No AI engine (offline answers only)"
+msgstr ""
+
+#: includes/core/class-ssc-rest.php:58
+msgid "Your session has expired. Please refresh the page."
+msgstr ""
+
+#: includes/core/class-ssc-rest.php:458
+msgid "Invalid rating."
+msgstr ""
+
+#: includes/core/class-ssc-rest.php:461
+msgid "Invalid feedback token."
+msgstr ""
+
+#: includes/core/class-ssc-rest.php:505
+msgid "Unknown provider."
+msgstr ""
+
+#: includes/core/class-ssc-rest.php:583
+msgid "Configure and verify an AI provider first."
+msgstr ""
+
+#: includes/core/class-ssc-rest.php:592
+msgid "Complete the business profile (step 1) first."
+msgstr ""
+
+#: includes/core/class-ssc-rest.php:620
+msgid "The identity test could not run."
+msgstr ""
+
+#: includes/core/class-ssc-rest.php:637
+msgid "Identity verified — the assistant correctly identified your organization."
+msgstr ""
+
+#: includes/core/class-ssc-rest.php:637
+msgid "The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again."
+msgstr ""
+
+#: includes/core/class-ssc-schema.php:429
+#: includes/modules/class-ssc-module-pharma.php:152
+msgid "Adverse drug reaction report"
+msgstr ""
+
+#: includes/core/class-ssc-schema.php:614
+msgid "Submission deleted"
+msgstr ""
+
+#: includes/core/class-ssc-settings.php:845
+msgid "About the organization"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:312
+msgid "Business profile completed"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:317
+msgid "Essential business knowledge added"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:322
+msgid "AI provider connection verified"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:327
+msgid "Business identity test passed"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:332
+msgid "Appearance configured"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:337
+msgid "Privacy disclosures acknowledged"
+msgstr ""
+
+#: includes/core/providers/class-ssc-provider-custom.php:33
+msgid "OpenAI-compatible endpoint"
+msgstr ""
+
+#: includes/core/providers/class-ssc-provider-gemini.php:124
+msgid "The model blocked the test prompt for safety reasons."
+msgstr ""
+
+#: includes/core/providers/class-ssc-provider-webhook.php:33
+msgid "Custom webhook"
+msgstr ""
+
+#: includes/core/providers/class-ssc-provider-webhook.php:145
+msgid "No webhook URL configured."
+msgstr ""
+
+#: includes/core/providers/class-ssc-provider-webhook.php:158
+msgid "The webhook URL is not allowed (public address; HTTPS required when a secret is configured)."
+msgstr ""
+
+#: includes/core/providers/class-ssc-provider-webhook.php:211
+msgid "The webhook response signature is missing or invalid."
+msgstr ""
+
+#: includes/core/providers/class-ssc-provider-webhook.php:224
+msgid "The webhook did not return JSON."
+msgstr ""
+
+#: includes/core/providers/class-ssc-provider-webhook.php:236
+msgid "The webhook JSON has no \"reply\", \"message\" or \"text\" field."
+msgstr ""
+
+#: includes/modules/class-ssc-module-analytics.php:33
+msgid "Analytics & Insights"
+msgstr ""
+
+#: includes/modules/class-ssc-module-analytics.php:42
+msgid "Conversation volume trends, most-discussed products, the unanswered-questions radar and satisfaction summary."
+msgstr ""
+
+#: includes/modules/class-ssc-module-analytics.php:51
+msgid "See exactly what visitors ask and where your knowledge has gaps - not decorative charts."
+msgstr ""
+
+#: includes/modules/class-ssc-module-csat.php:32
+msgid "Satisfaction Survey (CSAT)"
+msgstr ""
+
+#: includes/modules/class-ssc-module-csat.php:41
+msgid "A short 1-5 star survey at the end of a real conversation, with a skip option."
+msgstr ""
+
+#: includes/modules/class-ssc-module-csat.php:50
+msgid "Track assistant quality over time with one simple number."
+msgstr ""
+
+#: includes/modules/class-ssc-module-faq.php:33
+msgid "FAQ Answer Bank"
+msgstr ""
+
+#: includes/modules/class-ssc-module-faq.php:42
+msgid "Curated question/answer pairs with smart Persian/English matching. Works even when the AI engine is unavailable or set to bank-only mode."
+msgstr ""
+
+#: includes/modules/class-ssc-module-faq.php:51
+msgid "Instant, zero-cost, perfectly controlled answers for your most common questions."
+msgstr ""
+
+#: includes/modules/class-ssc-module-handoff.php:32
+msgid "Human Handoff"
+msgstr ""
+
+#: includes/modules/class-ssc-module-handoff.php:41
+msgid "When the assistant cannot answer, it transparently offers an escalation to a human expert via a consultation request."
+msgstr ""
+
+#: includes/modules/class-ssc-module-handoff.php:50
+msgid "No visitor is ever left stuck without a path to a real person."
+msgstr ""
+
+#: includes/modules/class-ssc-module-handoff.php:88
+msgid "It looks like this question is better handled by a human expert. Would you like to leave a consultation request?"
+msgstr ""
+
+#: includes/modules/class-ssc-module-history.php:36
+msgid "Conversation History"
+msgstr ""
+
+#: includes/modules/class-ssc-module-history.php:45
+msgid "Stores conversations so you can review quality, capture answers into the FAQ bank and spot unanswered questions."
+msgstr ""
+
+#: includes/modules/class-ssc-module-history.php:54
+msgid "Improve answer quality with real conversation evidence, with configurable retention."
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:37
+msgid "Consultation & Lead Collection"
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:46
+msgid "Structured request forms inside the chat with custom fields, consent capture and a request inbox."
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:55
+msgid "Turn conversations into actionable requests with clean, validated contact data."
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:219
+msgid "Invalid submission type."
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:233
+msgid "Please enter your name (2-80 characters)."
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:242
+msgid "Please enter a valid phone number."
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:245
+msgid "Please describe your request (10-1000 characters)."
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:259
+msgid "Your consent is required to submit this form."
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:295
+msgid "The request could not be stored. Please try again."
+msgstr ""
+
+#. translators: %s: field label.
+#: includes/modules/class-ssc-module-leads.php:352
+#: includes/modules/class-ssc-module-pharma.php:509
+#: includes/modules/class-ssc-module-pharma.php:520
+msgid "The field \"%s\" is required."
+msgstr ""
+
+#. translators: %s: field label.
+#: includes/modules/class-ssc-module-leads.php:356
+msgid "The field \"%s\" must be a valid email."
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:379
+msgid "Invalid nonce."
+msgstr ""
+
+#: includes/modules/class-ssc-module-notifications.php:36
+msgid "Notifications"
+msgstr ""
+
+#: includes/modules/class-ssc-module-notifications.php:45
+msgid "Instant alerts for new requests via Bale/Telegram and/or email, with delivery tracking and automatic retries for failed deliveries."
+msgstr ""
+
+#: includes/modules/class-ssc-module-notifications.php:54
+msgid "Never miss a request - failed deliveries are retried and surfaced instead of vanishing."
+msgstr ""
+
+#. translators: %s: submission type label.
+#: includes/modules/class-ssc-module-notifications.php:201
+msgid "New request: %s"
+msgstr ""
+
+#: includes/modules/class-ssc-module-notifications.php:225
+msgid "SERIOUS adverse reaction report - review immediately"
+msgstr ""
+
+#. translators: %s: type label.
+#: includes/modules/class-ssc-module-notifications.php:228
+msgid "New request (%s)"
+msgstr ""
+
+#. translators: %d: internal case number.
+#: includes/modules/class-ssc-module-notifications.php:233
+msgid "Case #%d — sign in to review the report."
+msgstr ""
+
+#. translators: %s: name.
+#: includes/modules/class-ssc-module-notifications.php:241
+msgid "Name: %s"
+msgstr ""
+
+#. translators: %s: phone.
+#: includes/modules/class-ssc-module-notifications.php:245
+msgid "Phone: %s"
+msgstr ""
+
+#. translators: %s: product.
+#: includes/modules/class-ssc-module-notifications.php:249
+msgid "Product: %s"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:57
+msgid "Structured adverse drug reaction (ADR) intake with ICH E2A-style seriousness criteria, case management, audit trail and follow-up workflow for pharmacovigilance teams."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:66
+msgid "Capture complete, reviewable safety reports instead of loose chat messages."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:177
+msgid "If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:225
+msgid "Reporter name"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:235
+msgid "Patient age (years)"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:249
+msgid "Product name"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:254
+msgid "Batch / lot number"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:258
+msgid "Dose and frequency used"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:262
+msgid "Route of administration"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:269
+msgid "Suspected reaction"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:272
+msgid "What happened? Describe the reaction and dates."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:277
+msgid "Clinical severity (how it felt)"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:282
+msgid "Regulatory seriousness criteria (any that apply)"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:285
+msgid "Resulted in death"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:286
+msgid "Life-threatening"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:287
+msgid "Required or prolonged hospitalization"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:288
+msgid "Persistent or significant disability"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:289
+msgid "Congenital anomaly or birth defect"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:290
+msgid "Other medically important event"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:294
+msgid "Outcome so far"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:299
+msgid "Other medicines taken at the same time"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:358
+msgid "Patient / consumer"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:359
+msgid "Physician"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:360
+msgid "Pharmacist"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:361
+msgid "Nurse"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:362
+msgid "Other health professional"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:365
+msgid "Female"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:366
+msgid "Male"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:367
+#: includes/modules/class-ssc-module-pharma.php:378
+msgid "Other"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:368
+#: includes/modules/class-ssc-module-pharma.php:379
+#: includes/modules/class-ssc-module-pharma.php:393
+msgid "Unknown"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:371
+msgid "Oral"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:372
+msgid "Topical"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:373
+msgid "Intravenous"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:374
+msgid "Intramuscular"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:375
+msgid "Subcutaneous"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:376
+msgid "Inhalation"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:377
+msgid "Ophthalmic"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:382
+msgid "Mild"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:383
+msgid "Moderate"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:384
+msgid "Severe"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:387
+msgid "Recovered"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:388
+msgid "Recovering"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:389
+msgid "Not recovered"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:390
+msgid "Sequelae / permanent impairment"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:391
+msgid "Hospitalized"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:392
+msgid "Death"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:470
+msgid "Please enter the reporter name (2-80 characters)."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:474
+msgid "Please enter a valid contact phone."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:477
+msgid "Please describe the reaction (10-10000 characters)."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:485
+msgid "Your consent is required to submit a safety report."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:537
+msgid "Unknown product. Please choose from the list."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:543
+msgid "Patient age must be between 0 and 130 years."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:582
+msgid "The report could not be stored. Please try again."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:586
+msgid "ADR report received"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:657
+msgid "Enter a valid pharmacovigilance contact email."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:765
+msgid "Case not found."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:813
+msgid "Reporter PII removed (privacy request)"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:841
+msgid "New (awaiting triage)"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:842
+msgid "Under assessment"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:843
+msgid "Follow-up requested"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:844
+msgid "Closed"
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:854
+msgid "You do not have permission to access case records."
+msgstr ""
+
+#: includes/modules/class-ssc-module-proactive.php:35
+msgid "Proactive Invitation"
+msgstr ""
+
+#: includes/modules/class-ssc-module-proactive.php:44
+msgid "A single, dismissible invitation bubble after a delay - shown at most once per browser session."
+msgstr ""
+
+#: includes/modules/class-ssc-module-proactive.php:53
+msgid "Gently start conversations with hesitant visitors without being intrusive."
+msgstr ""
+
+#: includes/modules/class-ssc-module-voice.php:35
+msgid "Voice Interaction"
+msgstr ""
+
+#: includes/modules/class-ssc-module-voice.php:44
+msgid "Visitors speak to the assistant and listen to answers (microphone input and text-to-speech playback)."
+msgstr ""
+
+#: includes/modules/class-ssc-module-voice.php:53
+msgid "Hands-free conversations and accessible answers for visitors on the go."
+msgstr ""
+
+#: widgets/class-ssc-elementor-widget.php:88
+msgid "Content"
+msgstr ""
+
+#: widgets/class-ssc-elementor-widget.php:94
+msgid "Assistant name (empty = global)"
+msgstr ""
+
+#: widgets/class-ssc-elementor-widget.php:104
+msgid "Welcome title (empty = global)"
+msgstr ""
+
+#: widgets/class-ssc-elementor-widget.php:113
+msgid "Welcome message (empty = global)"
+msgstr ""
+
+#: widgets/class-ssc-elementor-widget.php:124
+msgid "Style"
+msgstr ""
+
+#: widgets/class-ssc-elementor-widget.php:136
+#: widgets/class-ssc-elementor-widget.php:159
+msgid "Global setting"
+msgstr ""
+
+#: widgets/class-ssc-elementor-widget.php:146
+msgid "Primary color (empty = global)"
+msgstr ""
+
+#: widgets/class-ssc-elementor-widget.php:155
+msgid "Theme (empty = global)"
+msgstr ""
+
+#: widgets/class-ssc-elementor-widget.php:162
+msgid "Match device"
+msgstr ""

@@ -9,8 +9,7 @@
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
     "phpcompatibility/phpcompatibility-wp": "^2.1",
-    "wp-coding-standards/wpcs": "^3.0",
-    "phpunit/phpunit": "^9.6"
+    "wp-coding-standards/wpcs": "^3.0"
   },
   "scripts": {
     "phpcs": "phpcs",
@@ -20,6 +19,7 @@
       "node --test tests/frontend.test.cjs tests/admin.test.cjs"
     ],
     "test:integration": "php tests/integration.php",
+    "pot": "python tools/make-pot.py",
     "build": [
       "python tools/build-release.py",
       "python tools/verify-release.py"
@@ -28,6 +28,9 @@
   "config": {
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "platform": {
+      "php": "7.4.0"
     }
   }
 }
