@@ -1,0 +1,77 @@
+name: Release
+
+# Pushing a v* tag publishes the release. The ZIP is built and verified here
+# rather than uploaded by hand, so what customers download is always exactly
+# what the tagged commit produces.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Build, verify and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Check the tag matches the plugin version
+        run: |
+          set -e
+          tag="${GITHUB_REF_NAME#v}"
+          version=$(grep -oP "define\( 'SSC_CHATBOT_VERSION', '\K[^']+" smart-support-chatbot.php)
+          echo "tag=$tag plugin=$version"
+          if [ "$tag" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match SSC_CHATBOT_VERSION $version"
+            exit 1
+          fi
+
+      - name: Build the distributable ZIP
+        run: python tools/build-release.py
+
+      - name: Verify no development files were shipped
+        run: python tools/verify-release.py
+
+      - name: Extract the changelog section for this version
+        run: |
+          set -e
+          version="${GITHUB_REF_NAME#v}"
+          # Written from Python directly rather than via stdout redirection so
+          # the notes keep their UTF-8 (em dashes, Persian) whatever the
+          # runner's stdout encoding happens to be.
+          python - "$version" <<'PY'
+          import io, re, sys
+          version = sys.argv[1]
+          readme = io.open('readme.txt', encoding='utf-8').read()
+          match = re.search(
+              r'^= ' + re.escape(version) + r' =\s*\n(.*?)(?=^= |\Z)',
+              readme.split('== Changelog ==', 1)[-1],
+              re.S | re.M,
+          )
+          if not match:
+              sys.exit('No changelog section found for ' + version + ' in readme.txt.')
+          notes = (
+              match.group(1).strip()
+              + '\n\n---\n\n'
+              + '**Install:** upload the ZIP below via Plugins → Add New → Upload Plugin.\n'
+              + 'Verify the download against the published `.sha256` file.\n'
+          )
+          io.open('RELEASE_NOTES.md', 'w', encoding='utf-8', newline='\n').write(notes)
+          PY
+          cat RELEASE_NOTES.md
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "NexaChatAI ${GITHUB_REF_NAME#v}" \
+            --notes-file RELEASE_NOTES.md \
+            dist/*.zip dist/*.zip.sha256
