@@ -400,16 +400,17 @@ class SSC_Knowledge {
 		if ( '' !== $product_id ) {
 			foreach ( (array) SSC_Settings::get( 'products', array() ) as $p ) {
 				if ( isset( $p['id'] ) && $p['id'] === $product_id ) {
-					$entry = '【PRODUCT:' . $p['name'] . '】';
-					if ( ! empty( $p['summary'] ) ) {
-						$entry .= "\n" . wp_strip_all_tags( (string) $p['summary'] );
-					}
+					$body = ! empty( $p['summary'] ) ? (string) $p['summary'] : '';
 					if ( ! empty( $p['attributes'] ) && is_array( $p['attributes'] ) ) {
 						foreach ( $p['attributes'] as $k => $v ) {
-							$entry .= "\n- " . $k . ': ' . $v;
+							$body .= "\n- " . $k . ': ' . $v;
 						}
 					}
-					$parts[] = $entry;
+					// Title AND body go inside the fence; see SSC_Prompt_Builder::fence().
+					$entry = SSC_Prompt_Builder::fence( 'PRODUCT', isset( $p['name'] ) ? $p['name'] : '', $body );
+					if ( '' !== $entry ) {
+						$parts[] = $entry;
+					}
 					break;
 				}
 			}
@@ -420,7 +421,7 @@ class SSC_Knowledge {
 		$budget = 4000; // chars of curated knowledge max.
 		$used   = 0;
 		foreach ( $items as $item ) {
-			$body = isset( $item['content'] ) ? trim( wp_strip_all_tags( (string) $item['content'] ) ) : '';
+			$body = isset( $item['content'] ) ? trim( (string) $item['content'] ) : '';
 			if ( '' === $body ) {
 				continue;
 			}
@@ -429,7 +430,7 @@ class SSC_Knowledge {
 			}
 			$used   += mb_strlen( $body );
 			$title   = ! empty( $item['title'] ) ? $item['title'] : __( 'Reference', 'smart-support-chatbot' );
-			$parts[] = '【KNOWLEDGE:' . $title . "】\n" . $body;
+			$parts[] = SSC_Prompt_Builder::fence( 'KNOWLEDGE', $title, $body );
 			if ( $used >= $budget ) {
 				break;
 			}

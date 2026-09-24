@@ -83,6 +83,20 @@ First stable release. Everything from the 0.6.x beta line, plus:
   own, so a model typed for one provider could be read for another.
 * Fix legacy notification migration aborting on the first malformed entry and
   stranding every job queued behind it.
+* **Security — prompt injection through knowledge content.** The delimiters that
+  mark reference data closed immediately after a document TITLE, leaving every
+  document body outside the fence the system prompt declares to be data-only, and
+  a delimiter typed into a knowledge entry, product name or imported page could
+  re-pair the fence. Instructions planted in a knowledge document could therefore
+  reach the model as trusted text. Titles and bodies are now enclosed together and
+  delimiters in untrusted content are neutralized.
+* **Safety — emergency escalation.** A message describing a life-threatening
+  reaction that also mentioned a side effect was intercepted before the model ran
+  and received only the report offer, with no guidance to seek urgent care. Such
+  messages now lead with a bilingual emergency notice before the report offer.
+  This is a broad keyword screen for harm reduction, not clinical triage; sites
+  outside Iran should adjust it with the ssc_emergency_notice and
+  ssc_emergency_terms filters.
 * Stop re-billing the AI provider for a completed stream that hit a late
   transport error while closing the connection.
 * Fix automatic text direction, which chose between two identical branches; it

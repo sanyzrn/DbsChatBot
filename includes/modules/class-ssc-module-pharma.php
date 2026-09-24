@@ -174,10 +174,134 @@ class SSC_Module_Pharma extends SSC_Module {
 				if ( $engine ) {
 					$engine->flags['adr_offer'] = true;
 				}
-				return __( 'If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?', 'smart-support-chatbot' );
+				$offer = __( 'If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?', 'smart-support-chatbot' );
+
+				/*
+				 * This interception runs BEFORE the model and the knowledge
+				 * base, so the pharmacovigilance prompt rule that tells the
+				 * model to urge immediate medical attention never applies
+				 * here. Without this branch, a message describing a
+				 * life-threatening reaction received only the form offer.
+				 * The notice is emitted in both languages because the reply
+				 * otherwise follows the SITE locale, which may not be the
+				 * language the visitor just wrote in.
+				 */
+				if ( self::looks_like_emergency( $normalized ) ) {
+					if ( $engine ) {
+						$engine->flags['emergency'] = true;
+					}
+					return self::emergency_notice() . "\n\n" . $offer;
+				}
+				return $offer;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Emergency-first notice, shown in both supported languages.
+	 *
+	 * @return string
+	 */
+	protected static function emergency_notice() {
+		$english = __( 'This may be a medical emergency. Stop and seek immediate medical help now — call your local emergency number or go to the nearest emergency department. Do not wait for a reply here.', 'smart-support-chatbot' );
+		$persian = 'این وضعیت می‌تواند اورژانس پزشکی باشد. همین حالا کمک پزشکی فوری بگیرید — با اورژانس تماس بگیرید یا به نزدیک‌ترین بخش اورژانس بروید. منتظر پاسخ در این گفتگو نمانید.';
+
+		/**
+		 * Emergency guidance shown before any side-effect form offer.
+		 *
+		 * Sites outside Iran should filter this to their own emergency number
+		 * and languages.
+		 *
+		 * @param string $notice Default bilingual notice.
+		 */
+		return (string) apply_filters( 'ssc_emergency_notice', '⚠️ ' . $english . "\n\n⚠️ " . $persian );
+	}
+
+	/**
+	 * Heuristic screen for descriptions that may be life-threatening.
+	 *
+	 * Deliberately broad: a false positive costs one extra safety sentence,
+	 * a false negative costs a visitor their emergency guidance. This is
+	 * harm reduction, NOT clinical triage, and it does not replace the
+	 * medical judgement of the pharmacovigilance team.
+	 *
+	 * @param string $normalized Normalized, space-padded message.
+	 * @return bool
+	 */
+	public static function looks_like_emergency( $normalized ) {
+		$terms = array(
+			// English.
+			'unconscious',
+			'not breathing',
+			'cant breathe',
+			'can not breathe',
+			'cannot breathe',
+			'difficulty breathing',
+			'trouble breathing',
+			'stopped breathing',
+			'choking',
+			'anaphyla',
+			'seizure',
+			'convulsion',
+			'collapsed',
+			'chest pain',
+			'heart attack',
+			'stroke',
+			'severe bleeding',
+			'bleeding heavily',
+			'coma',
+			'overdose',
+			'poisoning',
+			'suicide',
+			'swelling of the throat',
+			'throat swelling',
+			'blue lips',
+			'no pulse',
+			'life threatening',
+			'emergency',
+			'dying',
+			'died',
+			'death',
+			// Persian.
+			'بیهوش',
+			'نفس نمی',
+			'نفس نمیکشد',
+			'تنفس ندارد',
+			'قطع تنفس',
+			'خفگی',
+			'تشنج',
+			'حمله قلبی',
+			'درد قفسه سینه',
+			'سکته',
+			'خونریزی شدید',
+			'کما',
+			'مسمومیت',
+			'اوردوز',
+			'خودکشی',
+			'تورم گلو',
+			'ورم گلو',
+			'نبض ندارد',
+			'حساسیت شدید',
+			'انافیلاکسی',
+			'اورژانس',
+			'در حال مرگ',
+			'فوت کرد',
+			'مرگ',
+		);
+		/**
+		 * Terms that mark a message as a possible emergency.
+		 *
+		 * @param string[] $terms      Default term list.
+		 * @param string   $normalized Normalized message.
+		 */
+		$terms = (array) apply_filters( 'ssc_emergency_terms', $terms, $normalized );
+		foreach ( $terms as $term ) {
+			if ( '' !== $term && false !== mb_stripos( $normalized, $term ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

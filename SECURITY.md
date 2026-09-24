@@ -61,10 +61,30 @@ prefixes.
 **Data at rest.** Deleting the plugin preserves business data by default;
 destructive removal happens only if an administrator opted in beforehand.
 
+**Knowledge trust boundary.** Untrusted content — knowledge entries, product
+data, imported documents — is enclosed in `【…】` delimiters that the system
+prompt declares to be reference data only, and the delimiters are stripped from
+that content so it cannot forge its own fence. This is defence in depth around
+the model, not a guarantee about it; see the limitation below.
+
 ## Known limitations
 
 These are documented deliberately rather than presented as fixed.
 
+- **Answering mode is prompt-only.** In the pharmaceutical module's
+  `approved_only` mode, the restriction is enforced by instructing the model.
+  There is no server-side screening of model output, no citation requirement,
+  and no policy-violation detection. A model that hallucinates, or that complies
+  with an injection despite the trust boundary, has its answer forwarded to the
+  visitor verbatim. Treat the mode as a strong instruction, not a control, and
+  review real answers with your medical team before production use.
+- **Conversation history is client-supplied.** The browser sends prior turns
+  back with each message. They are sanitized, role-restricted and length-capped,
+  but a crafted client can present assistant turns that never happened. History
+  therefore influences the model and must not be treated as an audit record.
+- **Emergency screening is a keyword heuristic.** It is deliberately broad and
+  intended to reduce harm, not to perform clinical triage. It will produce false
+  positives, and it can miss a description that uses none of its terms.
 - **DNS rebinding (TOCTOU).** The SSRF guard resolves DNS once; WordPress resolves
   again when the request is issued. A hostname could in principle rebind between
   the two. WordPress core applies a second layer of protection, so practical risk

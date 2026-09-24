@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-24 14:30:16+00:00\n"
+"POT-Creation-Date: 2026-09-24 14:41:55+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: smart-support-chatbot\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -942,7 +942,7 @@ msgstr ""
 
 #: includes/admin/views/page-knowledge.php:59
 #: includes/admin/views/wizard.php:128
-#: includes/modules/class-ssc-module-pharma.php:230
+#: includes/modules/class-ssc-module-pharma.php:354
 msgid "Contact phone"
 msgstr ""
 
@@ -1209,8 +1209,8 @@ msgid "No modules match your search."
 msgstr ""
 
 #: includes/admin/views/page-pharma.php:26
-#: includes/modules/class-ssc-module-pharma.php:625
-#: includes/modules/class-ssc-module-pharma.php:626
+#: includes/modules/class-ssc-module-pharma.php:749
+#: includes/modules/class-ssc-module-pharma.php:750
 msgid "ADR Cases"
 msgstr ""
 
@@ -1256,7 +1256,7 @@ msgstr ""
 
 #: includes/admin/views/page-pharma.php:59
 #: includes/admin/views/pharma-case.php:35
-#: includes/modules/class-ssc-module-pharma.php:217
+#: includes/modules/class-ssc-module-pharma.php:341
 msgid "Reporter"
 msgstr ""
 
@@ -1311,7 +1311,7 @@ msgstr ""
 
 #: includes/admin/views/page-requests.php:41
 #: includes/admin/views/page-requests.php:66
-#: includes/modules/class-ssc-module-pharma.php:845
+#: includes/modules/class-ssc-module-pharma.php:969
 msgid "Archived"
 msgstr ""
 
@@ -1718,7 +1718,7 @@ msgid "SERIOUS case"
 msgstr ""
 
 #: includes/admin/views/pharma-case.php:40
-#: includes/modules/class-ssc-module-pharma.php:220
+#: includes/modules/class-ssc-module-pharma.php:344
 msgid "Reporter role"
 msgstr ""
 
@@ -1727,12 +1727,12 @@ msgid "Patient age"
 msgstr ""
 
 #: includes/admin/views/pharma-case.php:45
-#: includes/modules/class-ssc-module-pharma.php:239
+#: includes/modules/class-ssc-module-pharma.php:363
 msgid "Patient sex"
 msgstr ""
 
 #: includes/admin/views/pharma-case.php:52
-#: includes/modules/class-ssc-module-pharma.php:246
+#: includes/modules/class-ssc-module-pharma.php:370
 msgid "Suspected product"
 msgstr ""
 
@@ -2198,7 +2198,7 @@ msgstr ""
 #: includes/core/class-ssc-ajax.php:135
 #: includes/core/class-ssc-rest.php:397
 #: includes/modules/class-ssc-module-leads.php:216
-#: includes/modules/class-ssc-module-pharma.php:454
+#: includes/modules/class-ssc-module-pharma.php:578
 msgid "ADR reporting is disabled on this site."
 msgstr ""
 
@@ -2442,7 +2442,7 @@ msgstr ""
 msgid "I consent to the processing of my contact information and message for follow-up."
 msgstr ""
 
-#: includes/core/class-ssc-knowledge.php:431
+#: includes/core/class-ssc-knowledge.php:432
 msgid "Reference"
 msgstr ""
 
@@ -2706,8 +2706,8 @@ msgstr ""
 
 #. translators: %s: field label.
 #: includes/modules/class-ssc-module-leads.php:352
-#: includes/modules/class-ssc-module-pharma.php:509
-#: includes/modules/class-ssc-module-pharma.php:520
+#: includes/modules/class-ssc-module-pharma.php:633
+#: includes/modules/class-ssc-module-pharma.php:644
 msgid "The field \"%s\" is required."
 msgstr ""
 
@@ -2778,242 +2778,246 @@ msgstr ""
 msgid "If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:225
+#: includes/modules/class-ssc-module-pharma.php:207
+msgid "This may be a medical emergency. Stop and seek immediate medical help now — call your local emergency number or go to the nearest emergency department. Do not wait for a reply here."
+msgstr ""
+
+#: includes/modules/class-ssc-module-pharma.php:349
 msgid "Reporter name"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:235
+#: includes/modules/class-ssc-module-pharma.php:359
 msgid "Patient age (years)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:249
+#: includes/modules/class-ssc-module-pharma.php:373
 msgid "Product name"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:254
+#: includes/modules/class-ssc-module-pharma.php:378
 msgid "Batch / lot number"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:258
+#: includes/modules/class-ssc-module-pharma.php:382
 msgid "Dose and frequency used"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:262
+#: includes/modules/class-ssc-module-pharma.php:386
 msgid "Route of administration"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:269
+#: includes/modules/class-ssc-module-pharma.php:393
 msgid "Suspected reaction"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:272
+#: includes/modules/class-ssc-module-pharma.php:396
 msgid "What happened? Describe the reaction and dates."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:277
+#: includes/modules/class-ssc-module-pharma.php:401
 msgid "Clinical severity (how it felt)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:282
+#: includes/modules/class-ssc-module-pharma.php:406
 msgid "Regulatory seriousness criteria (any that apply)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:285
+#: includes/modules/class-ssc-module-pharma.php:409
 msgid "Resulted in death"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:286
+#: includes/modules/class-ssc-module-pharma.php:410
 msgid "Life-threatening"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:287
+#: includes/modules/class-ssc-module-pharma.php:411
 msgid "Required or prolonged hospitalization"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:288
+#: includes/modules/class-ssc-module-pharma.php:412
 msgid "Persistent or significant disability"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:289
+#: includes/modules/class-ssc-module-pharma.php:413
 msgid "Congenital anomaly or birth defect"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:290
+#: includes/modules/class-ssc-module-pharma.php:414
 msgid "Other medically important event"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:294
+#: includes/modules/class-ssc-module-pharma.php:418
 msgid "Outcome so far"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:299
+#: includes/modules/class-ssc-module-pharma.php:423
 msgid "Other medicines taken at the same time"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:358
+#: includes/modules/class-ssc-module-pharma.php:482
 msgid "Patient / consumer"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:359
+#: includes/modules/class-ssc-module-pharma.php:483
 msgid "Physician"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:360
+#: includes/modules/class-ssc-module-pharma.php:484
 msgid "Pharmacist"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:361
+#: includes/modules/class-ssc-module-pharma.php:485
 msgid "Nurse"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:362
+#: includes/modules/class-ssc-module-pharma.php:486
 msgid "Other health professional"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:365
+#: includes/modules/class-ssc-module-pharma.php:489
 msgid "Female"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:366
+#: includes/modules/class-ssc-module-pharma.php:490
 msgid "Male"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:367
-#: includes/modules/class-ssc-module-pharma.php:378
+#: includes/modules/class-ssc-module-pharma.php:491
+#: includes/modules/class-ssc-module-pharma.php:502
 msgid "Other"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:368
-#: includes/modules/class-ssc-module-pharma.php:379
-#: includes/modules/class-ssc-module-pharma.php:393
+#: includes/modules/class-ssc-module-pharma.php:492
+#: includes/modules/class-ssc-module-pharma.php:503
+#: includes/modules/class-ssc-module-pharma.php:517
 msgid "Unknown"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:371
+#: includes/modules/class-ssc-module-pharma.php:495
 msgid "Oral"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:372
+#: includes/modules/class-ssc-module-pharma.php:496
 msgid "Topical"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:373
+#: includes/modules/class-ssc-module-pharma.php:497
 msgid "Intravenous"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:374
+#: includes/modules/class-ssc-module-pharma.php:498
 msgid "Intramuscular"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:375
+#: includes/modules/class-ssc-module-pharma.php:499
 msgid "Subcutaneous"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:376
+#: includes/modules/class-ssc-module-pharma.php:500
 msgid "Inhalation"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:377
+#: includes/modules/class-ssc-module-pharma.php:501
 msgid "Ophthalmic"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:382
+#: includes/modules/class-ssc-module-pharma.php:506
 msgid "Mild"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:383
+#: includes/modules/class-ssc-module-pharma.php:507
 msgid "Moderate"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:384
+#: includes/modules/class-ssc-module-pharma.php:508
 msgid "Severe"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:387
+#: includes/modules/class-ssc-module-pharma.php:511
 msgid "Recovered"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:388
+#: includes/modules/class-ssc-module-pharma.php:512
 msgid "Recovering"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:389
+#: includes/modules/class-ssc-module-pharma.php:513
 msgid "Not recovered"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:390
+#: includes/modules/class-ssc-module-pharma.php:514
 msgid "Sequelae / permanent impairment"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:391
+#: includes/modules/class-ssc-module-pharma.php:515
 msgid "Hospitalized"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:392
+#: includes/modules/class-ssc-module-pharma.php:516
 msgid "Death"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:470
+#: includes/modules/class-ssc-module-pharma.php:594
 msgid "Please enter the reporter name (2-80 characters)."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:474
+#: includes/modules/class-ssc-module-pharma.php:598
 msgid "Please enter a valid contact phone."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:477
+#: includes/modules/class-ssc-module-pharma.php:601
 msgid "Please describe the reaction (10-10000 characters)."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:485
+#: includes/modules/class-ssc-module-pharma.php:609
 msgid "Your consent is required to submit a safety report."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:537
+#: includes/modules/class-ssc-module-pharma.php:661
 msgid "Unknown product. Please choose from the list."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:543
+#: includes/modules/class-ssc-module-pharma.php:667
 msgid "Patient age must be between 0 and 130 years."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:582
+#: includes/modules/class-ssc-module-pharma.php:706
 msgid "The report could not be stored. Please try again."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:586
+#: includes/modules/class-ssc-module-pharma.php:710
 msgid "ADR report received"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:657
+#: includes/modules/class-ssc-module-pharma.php:781
 msgid "Enter a valid pharmacovigilance contact email."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:765
+#: includes/modules/class-ssc-module-pharma.php:889
 msgid "Case not found."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:813
+#: includes/modules/class-ssc-module-pharma.php:937
 msgid "Reporter PII removed (privacy request)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:841
+#: includes/modules/class-ssc-module-pharma.php:965
 msgid "New (awaiting triage)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:842
+#: includes/modules/class-ssc-module-pharma.php:966
 msgid "Under assessment"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:843
+#: includes/modules/class-ssc-module-pharma.php:967
 msgid "Follow-up requested"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:844
+#: includes/modules/class-ssc-module-pharma.php:968
 msgid "Closed"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:854
+#: includes/modules/class-ssc-module-pharma.php:978
 msgid "You do not have permission to access case records."
 msgstr ""
 
