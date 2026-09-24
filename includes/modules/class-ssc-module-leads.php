@@ -390,12 +390,10 @@ class SSC_Module_Leads extends SSC_Module {
                                 )
                         );
                         foreach ( $result['items'] as $row ) {
+                                // write_csv() already runs every cell through csv_cell().
                                 SSC_Input::write_csv(
                                         $out,
-                                        array_map(
-                                                array( 'SSC_Input', 'csv_cell' ),
-                                                array( $row['id'], $row['type'], $row['name'], $row['phone'], $row['product'], $row['description'], $row['status'], $row['created_at'] )
-                                        )
+                                        array( $row['id'], $row['type'], $row['name'], $row['phone'], $row['product'], $row['description'], $row['status'], $row['created_at'] )
                                 );
                         }
                         ++$page;

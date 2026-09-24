@@ -306,7 +306,8 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
                                                                                                 <?php endforeach; ?>
                                                                                                 <option value="__manual__"><?php esc_html_e( 'Enter model ID manually…', 'smart-support-chatbot' ); ?></option>
                                                                                         </select>
-                                                                                        <input class="ssc-model-manual" type="text" name="<?php echo esc_attr( $pid ); ?>_model_manual" dir="ltr" placeholder="<?php esc_attr_e( 'Model ID (e.g. my-model-v2)', 'smart-support-chatbot' ); ?>" <?php echo $has_saved && ! isset( $models[ $saved_model ] ) ? '' : 'hidden'; ?> />
+                                                                                        <?php // Hidden and disabled until "Enter model ID manually…" is picked, so it never posts a stray empty model. ?>
+                                                                                        <input class="ssc-model-manual" type="text" name="<?php echo esc_attr( $pid ); ?>_model_manual" dir="ltr" placeholder="<?php esc_attr_e( 'Model ID (e.g. my-model-v2)', 'smart-support-chatbot' ); ?>" hidden disabled />
                                                                                 <?php else : ?>
                                                                                         <input id="<?php echo esc_attr( $pid ); ?>_model" name="<?php echo esc_attr( $pid ); ?>_model" type="text" dir="ltr" value="<?php echo esc_attr( (string) SSC_Settings::get( $pid . '_model', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Model ID', 'smart-support-chatbot' ); ?>" />
                                                                                 <?php endif; ?>

@@ -65,15 +65,27 @@ class SSC_Stream {
 		) );
 		$parts = $provider->request_parts( $creds['api_key'], $creds['model'] ?: $provider->default_model(), $system, $messages, $opts );
 		$full = '';
-		$ok = self::curl_stream( $parts['url'], $parts['headers'], $parts['body'], function ( $delta ) use ( &$full, $on_delta ) {
+		$status = self::curl_stream( $parts['url'], $parts['headers'], $parts['body'], function ( $delta ) use ( &$full, $on_delta ) {
 			$full .= $delta;
 			call_user_func( $on_delta, $delta );
 		} );
 		if ( connection_aborted() ) {
 			return array( 'ok' => false, 'text' => '', 'error' => array( 'code' => 'network', 'message' => 'Client disconnected.' ) );
 		}
-		if ( ! $ok || '' === trim( $full ) ) { return null; }
-		return array( 'ok' => true, 'text' => $full, 'error' => null );
+
+		/*
+		 * A stream that reached its terminal marker carries a COMPLETE answer.
+		 * Accept it even when cURL reports a late transport error while closing
+		 * the connection: falling back there would bill the provider a second
+		 * time for a reply the visitor has already read.
+		 */
+		$complete = $status['got'] && $status['finished'] && ! $status['failed'] && '' !== trim( $full );
+		if ( $complete ) {
+			return array( 'ok' => true, 'text' => $full, 'error' => null );
+		}
+
+		// Nothing usable arrived: let the caller retry over plain HTTP.
+		return null;
 	}
 
 	/**
@@ -128,7 +140,10 @@ class SSC_Stream {
 	 * @param array  $data  Payload.
 	 */
 	protected static function emit( $event, $data ) {
-		echo 'event: ' . $event . "\n";
+		// SSE field names are a fixed vocabulary; anything else could inject
+		// extra frames into the event stream.
+		$event = preg_replace( '/[^a-z_]/', '', (string) $event );
+		echo 'event: ' . esc_html( $event ) . "\n";
 		echo 'data: ' . wp_json_encode( $data ) . "\n\n";
 		self::flush();
 	}
@@ -178,22 +193,24 @@ class SSC_Stream {
 	 * @param array    $headers  Headers.
 	 * @param array    $body     JSON body (stream forced true).
 	 * @param callable $on_delta function(string $text).
-	 * @return bool True when at least one delta arrived.
+	 * @return array{got:bool,finished:bool,failed:bool,errno:int} Stream outcome.
 	 */
 	protected static function curl_stream( $url, $headers, $body, $on_delta ) {
+		$aborted = array( 'got' => false, 'finished' => false, 'failed' => true, 'errno' => 0 );
+
 		if ( defined( 'WP_PROXY_HOST' ) || ! function_exists( 'curl_init' ) || ! SSC_HTTP::is_safe_url( $url, true ) ) {
-			return false;
+			return $aborted;
 		}
 
 		// Pin the validated address: cURL must not perform a second DNS lookup.
 		$host = wp_parse_url( $url, PHP_URL_HOST );
 		$ip = gethostbyname( $host );
-		if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) { return false; }
+		if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) { return $aborted; }
 		$port = wp_parse_url( $url, PHP_URL_PORT ) ?: 443;
 		$body['stream'] = true;
 		$json = wp_json_encode( $body );
 		if ( false === $json ) {
-			return false;
+			return $aborted;
 		}
 
 		$header_lines = array( 'Content-Type: application/json' );
@@ -256,6 +273,11 @@ class SSC_Stream {
 		curl_exec( $ch );
 		$errno = curl_errno( $ch );
 		curl_close( $ch );
-		return $got && $finished && ! $failed && 0 === $errno;
+		return array(
+			'got'      => $got,
+			'finished' => $finished,
+			'failed'   => $failed,
+			'errno'    => $errno,
+		);
 	}
 }

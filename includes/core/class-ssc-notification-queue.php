@@ -91,13 +91,37 @@ class SSC_Notification_Queue {
 		return $wpdb->query( "UPDATE {$table} SET status = 'pending', attempts = 0, next_at = 0 WHERE status = 'failed'" );
 	}
 
-	/** Preserve old pending jobs before deleting the legacy shared option. */
+	/**
+	 * Preserve old pending jobs before deleting the legacy shared option.
+	 *
+	 * Unreadable entries are skipped, never fatal: one malformed row used to
+	 * abort the whole migration, stranding every job queued after it. The
+	 * option is dropped only once no job is left behind, so a genuine write
+	 * failure retries on the next boot instead of losing deliveries.
+	 */
 	public static function migrate_legacy() {
 		$legacy = get_option( 'ssc_notify_queue', array() );
-		if ( ! is_array( $legacy ) || ! $legacy ) { return; }
+		if ( ! is_array( $legacy ) || ! $legacy ) {
+			return;
+		}
+		$unmigrated = array();
 		foreach ( $legacy as $job ) {
-			if ( ! is_array( $job ) || empty( $job['channel'] ) || empty( $job['submission_id'] ) ) { return; }
-			if ( ! self::enqueue( $job['channel'], (int) $job['submission_id'], isset( $job['attempts'] ) ? $job['attempts'] : 1, isset( $job['next_at'] ) ? $job['next_at'] : 0 ) ) { return; }
+			if ( ! is_array( $job ) || empty( $job['channel'] ) || empty( $job['submission_id'] ) ) {
+				continue; // Not a job we can replay; dropping it loses nothing.
+			}
+			$stored = self::enqueue(
+				$job['channel'],
+				(int) $job['submission_id'],
+				isset( $job['attempts'] ) ? $job['attempts'] : 1,
+				isset( $job['next_at'] ) ? $job['next_at'] : 0
+			);
+			if ( ! $stored ) {
+				$unmigrated[] = $job; // Database refused it — keep it for the next run.
+			}
+		}
+		if ( $unmigrated ) {
+			update_option( 'ssc_notify_queue', $unmigrated, false );
+			return;
 		}
 		delete_option( 'ssc_notify_queue' );
 	}

@@ -175,11 +175,13 @@ class SSC_Frontend {
 		if ( 'rtl' === $setting || 'ltr' === $setting ) {
 			return $setting;
 		}
-		// auto: follow the site locale.
-		$rtl_locales = array( 'fa', 'fa_IR', 'ar', 'he', 'ur', 'ckb', 'fa-ir' );
-		$locale      = get_locale();
-		$prefix      = function_exists( 'get_user_locale' ) ? substr( $locale, 0, 2 ) : substr( $locale, 0, 2 );
-		return in_array( $locale, $rtl_locales, true ) || in_array( $prefix, array( 'fa', 'ar', 'he', 'ur' ), true ) ? 'rtl' : 'ltr';
+		// auto: follow the site locale, preferring WordPress's own RTL flag.
+		if ( function_exists( 'is_rtl' ) && is_rtl() ) {
+			return 'rtl';
+		}
+		$locale = strtolower( (string) get_locale() );
+		$prefix = substr( $locale, 0, 2 );
+		return in_array( $prefix, array( 'fa', 'ar', 'he', 'ur', 'ps', 'ug', 'yi', 'ku', 'sd', 'dv' ), true ) ? 'rtl' : 'ltr';
 	}
 
 	/**
@@ -266,7 +268,10 @@ class SSC_Frontend {
 			if ( $url ) {
 				wp_enqueue_style( 'smart-support-chatbot-font-custom', $url, array(), SSC_CHATBOT_VERSION );
 			}
-			return $name ? "'" . $name . "', sans-serif" : $system_stack;
+			// The stack lands in a CSS custom property: strip anything that
+			// could terminate the declaration or open a new rule.
+			$name = trim( preg_replace( '/[^\p{L}\p{N} _-]+/u', '', $name ) );
+			return '' !== $name ? "'" . $name . "', sans-serif" : $system_stack;
 		}
 		if ( 'system' === $family ) {
 			return $system_stack;

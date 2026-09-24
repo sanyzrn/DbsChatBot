@@ -32,10 +32,16 @@
 
 	/* ---------- Manual model entry ---------- */
 
+	/** The manual input that belongs to ONE select (every provider block has its own). */
+	function manualInputFor(select) {
+		var scope = select.closest('.ssc-field') || select.parentElement;
+		return scope ? scope.querySelector('.ssc-model-manual') : null;
+	}
+
 	function bindManualModel(select) {
 		if (!select || select.getAttribute('data-manual') !== '1') { return; }
-		var form = select.closest('form') || document;
-		var input = form.querySelector('.ssc-model-manual');
+		// Scoped to this select's own field: a form holds one block per provider.
+		var input = manualInputFor(select);
 		if (!input) { return; }
 
 		function sync() {
@@ -49,13 +55,27 @@
 			}
 		}
 
-		// Manual value must win on submit.
+		/*
+		 * Manual value must win on submit. Assigning an unlisted value to a
+		 * <select> silently yields '' (selectedIndex -1), so the typed model
+		 * has to be materialized as a real <option> first. The manual input
+		 * also POSTs under its own name as a no-JS/server-side fallback.
+		 */
 		var formEl = select.closest('form');
 		if (formEl) {
 			formEl.addEventListener('submit', function () {
-				if (select.value === '__manual__') {
-					select.value = input.value.trim();
+				if (select.value !== '__manual__') { return; }
+				var typed = input.value.trim();
+				if ('' === typed) { return; }
+				var option = select.querySelector('option[data-manual-value="1"]');
+				if (!option) {
+					option = document.createElement('option');
+					option.setAttribute('data-manual-value', '1');
+					select.appendChild(option);
 				}
+				option.value = typed;
+				option.textContent = typed;
+				select.value = typed;
 			});
 		}
 		select.addEventListener('change', sync);
@@ -66,9 +86,33 @@
 
 	/* ---------- Repeatable rows (knowledge, products, form fields) ---------- */
 
-	function nextIndex(list, name) {
-		var rows = $$(' > *', list).filter(function (el) { return el.classList.contains('ssc-ki') || el.classList.contains('ssc-product') || el.classList.contains('ssc-fieldrow'); });
-		return rows.length;
+	var ROW_SELECTOR = ':scope > .ssc-ki, :scope > .ssc-product, :scope > .ssc-fieldrow';
+
+	function directRows(list) {
+		return $$(ROW_SELECTOR, list);
+	}
+
+	/**
+	 * Next free index for a set of field names: one past the HIGHEST index in
+	 * use, never the row count. After a middle row is removed the remaining
+	 * names are sparse (e.g. [0], [2]) and a count-based index would collide,
+	 * silently overwriting an existing entry when PHP rebuilds the array.
+	 */
+	function nextIndexFor(names) {
+		var max = -1;
+		names.forEach(function (name) {
+			var found = /\[(\d+)\]/.exec(name || '');
+			if (found) { max = Math.max(max, parseInt(found[1], 10)); }
+		});
+		return max + 1;
+	}
+
+	function nextIndex(list) {
+		var names = [];
+		directRows(list).forEach(function (row) {
+			$$('[name]', row).forEach(function (input) { names.push(input.getAttribute('name')); });
+		});
+		return nextIndexFor(names);
 	}
 
 	function rewriteNames(row, idx) {
@@ -83,7 +127,7 @@
 			btn.addEventListener('click', function () {
 				var list = $(btn.getAttribute('data-target'));
 				if (!list) { return; }
-				var first = $('> .ssc-ki, > .ssc-product, > .ssc-fieldrow', list) || list.firstElementChild;
+				var first = directRows(list)[0] || list.firstElementChild;
 				if (!first) { return; }
 				var clone = first.cloneNode(true);
 				$$('input[type="text"], input[type="url"], input[type="email"], textarea', clone).forEach(function (i) { i.value = ''; });
@@ -266,11 +310,12 @@
 			el.addEventListener('change', update);
 		});
 
-		// Init toggle state from saved theme.
+		// Init toggle state from the saved theme. 'auto' keeps following the OS
+		// preference (overrideTheme stays null) so the preview matches reality.
 		(function initToggle() {
 			var mode = panel.getAttribute('data-theme-mode') || 'light';
-			var want = ('dark' === mode) ? 'dark' : 'light';
-			overrideTheme = want;
+			overrideTheme = ('auto' === mode) ? null : (('dark' === mode) ? 'dark' : 'light');
+			var want = resolvedTheme();
 			$$('.ssc-preview-toggle [data-pv-theme]').forEach(function (b) {
 				b.classList.toggle('is-on', b.getAttribute('data-pv-theme') === want);
 			});
@@ -302,13 +347,15 @@
 		var keyInput = $('#' + provider + '_api_key');
 		if (keyInput && keyInput.value.trim()) { fields.api_key = keyInput.value.trim(); }
 
-		var modelSel = $('#' + provider + '_model');
-		if (modelSel) {
-			var manual = document.querySelector('.ssc-model-manual:not([hidden])');
-			fields.model = (modelSel.value === '__manual__' && manual) ? manual.value.trim() : modelSel.value;
-		} else {
-			var modelInput = $('#' + provider + '_model');
-			if (modelInput && modelInput.value.trim()) { fields.model = modelInput.value.trim(); }
+		// One element serves both shapes: a <select> for known models, a text
+		// <input> for providers that ship no list. Read the manual field from
+		// THIS provider's block, never the first one on the page.
+		var modelEl = $('#' + provider + '_model');
+		if (modelEl && 'SELECT' === modelEl.tagName) {
+			var manual = manualInputFor(modelEl);
+			fields.model = (modelEl.value === '__manual__' && manual) ? manual.value.trim() : modelEl.value;
+		} else if (modelEl && modelEl.value.trim()) {
+			fields.model = modelEl.value.trim();
 		}
 
 		var endpointInput = $('#custom_endpoint');
@@ -409,7 +456,6 @@
 	var fontSelect = $('#font_family');
 	if (fontSelect) {
 		var syncFont = function () {
-			var isCustom = 'custom' === fontSelect.value;
 			$$('[data-show-when]').forEach(function (row) {
 				var cond = row.getAttribute('data-show-when') || '';
 				var parts = cond.split('=');

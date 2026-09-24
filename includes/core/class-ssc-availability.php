@@ -207,7 +207,7 @@ class SSC_Availability {
 	 * @return string
 	 */
 	protected static function current_request_path() {
-		$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/';
+		$uri  = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
 		$path = (string) wp_parse_url( $uri, PHP_URL_PATH );
 		return '/' . ltrim( $path, '/' );
 	}

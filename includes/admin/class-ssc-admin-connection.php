@@ -53,9 +53,11 @@ class SSC_Admin_Connection {
 			'ai_fallback_msg' => isset( $_POST['ai_fallback_msg'] ) ? wp_kses_post( wp_unslash( $_POST['ai_fallback_msg'] ) ) : '',
 			'kb_max_chunks' => isset( $_POST['kb_max_chunks'] ) ? max( 1, min( 8, (int) $_POST['kb_max_chunks'] ) ) : 3,
 		);
+		$posted = wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each model id sanitized in model_from_request().
 		foreach ( array( 'openai', 'gemini', 'claude', 'openrouter', 'custom' ) as $pid ) {
-			if ( isset( $_POST[ $pid . '_model' ] ) ) {
-				$patch[ $pid . '_model' ] = sanitize_text_field( wp_unslash( $_POST[ $pid . '_model' ] ) );
+			$model = SSC_Providers::model_from_request( $posted, $pid );
+			if ( null !== $model ) {
+				$patch[ $pid . '_model' ] = $model;
 			}
 		}
 		if ( isset( $_POST['custom_endpoint'] ) ) {

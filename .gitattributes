@@ -1,0 +1,24 @@
+# Normalize line endings: the repo stores LF, checkouts get the platform default.
+* text=auto eol=lf
+
+# Binary assets must never be touched.
+*.woff2  binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.zip    binary
+*.mo     binary
+
+# Development-only paths are excluded from `git archive` exports so a source
+# tarball matches the distributed plugin.
+/.github/        export-ignore
+/.gitattributes  export-ignore
+/.gitignore      export-ignore
+/chat_audit/     export-ignore
+/dist/           export-ignore
+/tests/          export-ignore
+/tools/          export-ignore
+/composer.json   export-ignore
+/composer.lock   export-ignore
+/phpcs.xml.dist  export-ignore

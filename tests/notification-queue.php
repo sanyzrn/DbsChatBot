@@ -32,6 +32,22 @@ SSC_Notification_Queue::migrate_legacy();
 check( get_option( 'ssc_notify_queue', null ) === null && SSC_Notification_Queue::last_failure()['attempts'] == 5, 'Legacy jobs migrate without losing exhausted failures' );
 $wpdb->delete( $queue_table, array( 'submission_id' => $case_id ) );
 
+// A malformed legacy entry used to abort the loop, stranding every job behind it.
+update_option(
+    'ssc_notify_queue',
+    array(
+        'not-an-array',
+        array( 'channel' => 'email' ),
+        array( 'submission_id' => $case_id, 'channel' => 'messenger', 'attempts' => 1, 'next_at' => 0 ),
+    ),
+    false
+);
+SSC_Notification_Queue::migrate_legacy();
+$migrated = $wpdb->get_col( $wpdb->prepare( "SELECT channel FROM {$queue_table} WHERE submission_id = %d", $case_id ) );
+check( in_array( 'messenger', $migrated, true ), 'A malformed legacy entry does not strand the jobs queued after it' );
+check( get_option( 'ssc_notify_queue', null ) === null, 'Skipped legacy entries still clear the migrated option' );
+$wpdb->delete( $queue_table, array( 'submission_id' => $case_id ) );
+
 $saved_modules = SSC_Modules::active_ids();
 update_option( SSC_Modules::OPTION, array( 'notifications', 'pharma' ) );
 update_option( 'ssc_pharma_setup', array( 'done' => 1, 'pv_contact' => 'pv@example.invalid' ) );

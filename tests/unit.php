@@ -55,4 +55,17 @@ rewind( $csv );
 check( fgetcsv( $csv, 0, ',', '"', '' ) === array( "'=1+1", 'a,"b"', 'back\\slash', '' ), 'CSV exports prevent formulas and preserve literal values' );
 fclose( $csv );
 check( $gemini->extract_text( array( 'candidates' => array( array( 'content' => array( 'parts' => array( array( 'text' => 'internal', 'thought' => true ), array( 'text' => 'answer' ) ) ) ) ) ) ) === 'answer', 'Gemini thought parts are not exposed as the answer' );
+/*
+ * Manual model entry. The dropdown posts a `__manual__` sentinel alongside a
+ * free-text field; reading only the dropdown saved that sentinel (or an empty
+ * string) as the model id and silently broke generation.
+ */
+require __DIR__ . '/../includes/core/class-ssc-providers.php';
+check( SSC_Providers::model_from_request( array( 'openai_model' => 'gpt-4o' ), 'openai' ) === 'gpt-4o', 'a listed model is taken as-is' );
+check( SSC_Providers::model_from_request( array( 'openai_model' => '__manual__', 'openai_model_manual' => ' my-model-v2 ' ), 'openai' ) === 'my-model-v2', 'the manual sentinel resolves to the typed model' );
+check( SSC_Providers::model_from_request( array( 'openai_model' => '', 'openai_model_manual' => 'fallback-model' ), 'openai' ) === 'fallback-model', 'an empty select falls back to the manual field' );
+check( SSC_Providers::model_from_request( array( 'openai_model' => '__manual__', 'openai_model_manual' => '  ' ), 'openai' ) === '', 'a blank manual entry clears the model instead of storing the sentinel' );
+check( null === SSC_Providers::model_from_request( array( 'gemini_model' => 'gemini-pro' ), 'openai' ), 'another provider\'s fields never leak across' );
+check( SSC_Providers::model_from_request( array( 'custom_model_manual' => 'only-manual' ), 'custom' ) === 'only-manual', 'a manual-only form still yields the model' );
+
 echo "$count unit checks passed.\n";

@@ -822,7 +822,8 @@ class SSC_Module_Pharma extends SSC_Module {
                                 $extra = is_array( $extra ) ? $extra : array();
                                 SSC_Input::write_csv(
                                         $out,
-                                        array_map( array( 'SSC_Input', 'csv_cell' ), array(
+                                        // write_csv() already runs every cell through csv_cell().
+                                        array(
                                                 $row['id'],
                                                 $row['created_at'],
                                                 isset( $extra['reporter_type'] ) ? $extra['reporter_type'] : $row['reporter_type'],
@@ -841,7 +842,7 @@ class SSC_Module_Pharma extends SSC_Module {
                                                 $row['concomitant_drugs'],
                                                 $row['status'],
                                                 self::is_serious_row( $row ) ? 'yes' : 'no',
-                                        ) )
+                                        )
                                 );
                         }
                         ++$page;

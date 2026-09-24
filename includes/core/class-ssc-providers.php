@@ -86,4 +86,31 @@ class SSC_Providers {
 		$id = (string) SSC_Settings::get( 'ai_provider', 'none' );
 		return ( 'none' === $id ) ? null : self::get( $id );
 	}
+
+	/**
+	 * Resolve the model a submitted form means for one provider.
+	 *
+	 * The model dropdown carries a `__manual__` sentinel that reveals a free-text
+	 * field named `{provider}_model_manual`. This reads the pair server-side so the
+	 * typed model is honoured even when the browser never rewrote the select
+	 * (no JavaScript, a blocked script, or a failed option injection).
+	 *
+	 * @param array  $source      Raw request data (already unslashed).
+	 * @param string $provider_id Provider id, e.g. 'openai'.
+	 * @return string|null Sanitized model id, or null when the form carried none.
+	 */
+	public static function model_from_request( $source, $provider_id ) {
+		$select = isset( $source[ $provider_id . '_model' ] ) ? sanitize_text_field( (string) $source[ $provider_id . '_model' ] ) : null;
+		$manual = isset( $source[ $provider_id . '_model_manual' ] ) ? sanitize_text_field( (string) $source[ $provider_id . '_model_manual' ] ) : '';
+		$manual = trim( $manual );
+
+		// The sentinel is a UI token, never a model id: the typed value replaces it.
+		if ( '__manual__' === $select || ( null !== $select && '' === trim( $select ) ) ) {
+			return $manual;
+		}
+		if ( null === $select ) {
+			return '' !== $manual ? $manual : null;
+		}
+		return $select;
+	}
 }

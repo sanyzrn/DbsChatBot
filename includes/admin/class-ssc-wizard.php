@@ -203,9 +203,11 @@ class SSC_Wizard {
                 $patch = array( 'ai_provider' => $provider );
 
                 // Per-provider fields.
+                $posted = wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each model id sanitized in model_from_request().
                 foreach ( array( 'openai', 'gemini', 'claude', 'openrouter', 'custom' ) as $pid ) {
-                        if ( isset( $_POST[ $pid . '_model' ] ) ) {
-                                $patch[ $pid . '_model' ] = sanitize_text_field( wp_unslash( $_POST[ $pid . '_model' ] ) );
+                        $model = SSC_Providers::model_from_request( $posted, $pid );
+                        if ( null !== $model ) {
+                                $patch[ $pid . '_model' ] = $model;
                         }
                 }
                 if ( isset( $_POST['custom_endpoint'] ) ) {

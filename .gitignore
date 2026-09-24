@@ -1,0 +1,21 @@
+# Composer (dev tooling only — the plugin itself has no runtime dependencies)
+/vendor/
+
+# Node (used only by the test runner; there is no build step)
+/node_modules/
+
+# Build output
+/dist/
+
+# Editors & OS
+.idea/
+.vscode/
+*.sublime-*
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local overrides & logs
+*.log
+.phpunit.result.cache
+.phpcs-cache
