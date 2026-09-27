@@ -428,45 +428,292 @@ class SSC_Module_Pharma extends SSC_Module {
 		);
 	}
 
+	/*
+	 * --------------------------------------------------------------
+	 * Form configuration (presets, per-field switches, custom questions).
+	 * --------------------------------------------------------------
+	 */
+
+	/**
+	 * Fields that can never be switched off: without an identifiable
+	 * reporter, a way to contact them, a suspect product and a described
+	 * reaction the report is not a valid safety case.
+	 */
+	const LOCKED_FIELDS = array( 'name', 'phone', 'product', 'description' );
+
+	/** Types allowed for admin-defined questions. */
+	const CUSTOM_TYPES = array( 'text', 'textarea', 'number', 'select', 'checkboxes' );
+
+	/** Most admin-defined questions a form may carry. */
+	const MAX_CUSTOM = 15;
+
+	/**
+	 * Built-in fields per preset ('full' = every field, 'custom' = per-field switches).
+	 *
+	 * @return array
+	 */
+	public static function presets() {
+		return array(
+			'short'    => array( 'name', 'phone', 'product', 'description', 'seriousness' ),
+			'standard' => array( 'reporter_type', 'name', 'phone', 'patient_age', 'patient_sex', 'product', 'description', 'severity', 'seriousness', 'outcome' ),
+		);
+	}
+
+	/**
+	 * Preset names for the admin screen.
+	 *
+	 * @return array
+	 */
+	public static function preset_labels() {
+		return array(
+			'short'    => __( 'Short — essentials only (5 questions)', 'nexachat-ai' ),
+			'standard' => __( 'Standard — essentials plus patient and outcome', 'nexachat-ai' ),
+			'full'     => __( 'Full — every question (most complete reports)', 'nexachat-ai' ),
+			'custom'   => __( 'Custom — choose each question', 'nexachat-ai' ),
+		);
+	}
+
+	/**
+	 * Type names for admin-defined questions.
+	 *
+	 * @return array
+	 */
+	public static function custom_type_labels() {
+		return array(
+			'text'       => __( 'Short text', 'nexachat-ai' ),
+			'textarea'   => __( 'Long text', 'nexachat-ai' ),
+			'number'     => __( 'Number', 'nexachat-ai' ),
+			'select'     => __( 'Dropdown (one choice)', 'nexachat-ai' ),
+			'checkboxes' => __( 'Checkboxes (several choices)', 'nexachat-ai' ),
+		);
+	}
+
+	/**
+	 * Saved form configuration, normalized.
+	 *
+	 * @return array
+	 */
+	public static function form_config() {
+		$raw = SSC_Settings::get( 'adr_form', array() );
+		return self::sanitize_form_config( is_array( $raw ) ? $raw : array() );
+	}
+
+	/**
+	 * Normalize a form configuration (admin POST or stored value).
+	 *
+	 * Defaults keep the historical behaviour: the full form.
+	 *
+	 * @param array $raw Raw configuration.
+	 * @return array
+	 */
+	public static function sanitize_form_config( $raw ) {
+		$raw    = is_array( $raw ) ? $raw : array();
+		$preset = isset( $raw['preset'] ) ? sanitize_key( $raw['preset'] ) : 'full';
+		$config = array(
+			'preset'            => in_array( $preset, array( 'short', 'standard', 'full', 'custom' ), true ) ? $preset : 'full',
+			'collapse_optional' => ( isset( $raw['collapse_optional'] ) && in_array( $raw['collapse_optional'], array( 'no', '0', 0, false ), true ) ) ? 'no' : 'yes',
+			'intro'             => isset( $raw['intro'] ) ? mb_substr( sanitize_textarea_field( (string) $raw['intro'] ), 0, 400 ) : '',
+			'fields'            => array(),
+			'custom'            => array(),
+		);
+
+		$known = array();
+		foreach ( self::form_schema() as $section ) {
+			foreach ( $section['fields'] as $key => $field ) {
+				$known[ $key ] = $field;
+			}
+		}
+		$fields = isset( $raw['fields'] ) && is_array( $raw['fields'] ) ? $raw['fields'] : array();
+		foreach ( $fields as $key => $f ) {
+			if ( ! isset( $known[ $key ] ) || ! is_array( $f ) ) {
+				continue;
+			}
+			$locked                   = in_array( $key, self::LOCKED_FIELDS, true );
+			$config['fields'][ $key ] = array(
+				'on'    => $locked || ! empty( $f['on'] ),
+				'req'   => $locked || ! empty( $f['req'] ),
+				'label' => isset( $f['label'] ) ? mb_substr( sanitize_text_field( (string) $f['label'] ), 0, 160 ) : '',
+			);
+		}
+
+		$custom = isset( $raw['custom'] ) && is_array( $raw['custom'] ) ? array_values( $raw['custom'] ) : array();
+		$taken  = array_fill_keys( array_merge( array_keys( $known ), array( 'consent', 'type', 'ssc_hp', 'extra' ) ), true );
+		foreach ( $custom as $q ) {
+			if ( count( $config['custom'] ) >= self::MAX_CUSTOM ) {
+				break;
+			}
+			if ( ! is_array( $q ) ) {
+				continue;
+			}
+			$label = isset( $q['label'] ) ? mb_substr( sanitize_text_field( (string) $q['label'] ), 0, 160 ) : '';
+			if ( '' === $label ) {
+				continue;
+			}
+			$type    = isset( $q['type'] ) && in_array( $q['type'], self::CUSTOM_TYPES, true ) ? $q['type'] : 'text';
+			$options = array();
+			if ( in_array( $type, array( 'select', 'checkboxes' ), true ) ) {
+				$list    = isset( $q['options'] ) ? ( is_array( $q['options'] ) ? $q['options'] : preg_split( '/[\r\n,،]+/u', (string) $q['options'] ) ) : array();
+				$options = array_slice( array_values( array_unique( array_filter( array_map( 'sanitize_text_field', (array) $list ), 'strlen' ) ) ), 0, 30 );
+				if ( ! $options ) {
+					$type = 'text'; // A choice question without choices degrades to text.
+				}
+			}
+			// Stable key: the posted one (hidden input), else derived from the label.
+			$key = isset( $q['key'] ) ? sanitize_key( (string) $q['key'] ) : '';
+			if ( 0 !== strpos( $key, 'q_' ) ) {
+				$key = 'q_' . substr( md5( $label ), 0, 8 );
+			}
+			$base = $key;
+			for ( $n = 2; isset( $taken[ $key ] ); ++$n ) {
+				$key = $base . '_' . $n;
+			}
+			$taken[ $key ]      = true;
+			$config['custom'][] = array(
+				'key'      => $key,
+				'label'    => $label,
+				'type'     => $type,
+				'options'  => $options,
+				'required' => ! empty( $q['required'] ),
+			);
+		}
+		return $config;
+	}
+
+	/**
+	 * The fields the form actually shows, in order, after presets, switches,
+	 * label overrides and admin-defined questions are applied.
+	 *
+	 * Each entry: key, label, type, required, options (as in the schema),
+	 * custom (bool).
+	 *
+	 * @return array
+	 */
+	public static function effective_fields() {
+		$config  = self::form_config();
+		$presets = self::presets();
+		$out     = array();
+		foreach ( self::form_schema() as $section ) {
+			foreach ( $section['fields'] as $key => $field ) {
+				$locked   = in_array( $key, self::LOCKED_FIELDS, true );
+				$override = isset( $config['fields'][ $key ] ) ? $config['fields'][ $key ] : null;
+				if ( 'custom' === $config['preset'] ) {
+					// Never-configured fields start switched on (the full form).
+					$on       = $locked || null === $override || ! empty( $override['on'] );
+					$required = $locked || ( null === $override ? ! empty( $field['required'] ) : ! empty( $override['req'] ) );
+				} else {
+					$on       = $locked || 'full' === $config['preset'] || in_array( $key, $presets[ $config['preset'] ], true );
+					$required = $locked || ! empty( $field['required'] );
+				}
+				if ( ! $on ) {
+					continue;
+				}
+				$field['key']      = $key;
+				$field['required'] = $required;
+				$field['custom']   = false;
+				if ( $override && '' !== $override['label'] ) {
+					$field['label'] = $override['label'];
+				}
+				$out[] = $field;
+			}
+		}
+		foreach ( $config['custom'] as $q ) {
+			$q['custom'] = true;
+			$out[]       = $q;
+		}
+		return $out;
+	}
+
 	/**
 	 * Public (widget-facing) ADR form: labels translated, values validated.
 	 *
 	 * @return array
 	 */
 	public static function adr_options_public() {
-		$schema = self::form_schema();
-		$out    = array();
-		foreach ( $schema as $section ) {
-			foreach ( $section['fields'] as $key => $field ) {
-				$entry = array(
-					'key'      => $key,
-					'label'    => $field['label'],
-					'type'     => $field['type'],
-					'required' => ! empty( $field['required'] ),
-				);
-				if ( isset( $field['options'] ) ) {
-					if ( 'checkboxes' === $field['type'] ) {
-						$entry['options'] = array();
-						foreach ( $field['options'] as $value => $label ) {
-							$entry['options'][] = array(
-								'value' => $value,
-								'label' => $label,
-							);
-						}
+		$out = array();
+		foreach ( self::effective_fields() as $field ) {
+			$key   = $field['key'];
+			$entry = array(
+				'key'      => $key,
+				'label'    => $field['label'],
+				'type'     => $field['type'],
+				'required' => ! empty( $field['required'] ),
+			);
+			if ( ! empty( $field['options'] ) ) {
+				$entry['options'] = array();
+				foreach ( $field['options'] as $value => $label ) {
+					if ( $field['custom'] ) {
+						// Admin-defined choices: the text is both value and label.
+						$entry['options'][] = array(
+							'value' => $label,
+							'label' => $label,
+						);
+					} elseif ( 'checkboxes' === $field['type'] ) {
+						$entry['options'][] = array(
+							'value' => $value,
+							'label' => $label,
+						);
 					} else {
-						$entry['options'] = array();
-						foreach ( $field['options'] as $value ) {
-							$entry['options'][] = array(
-								'value' => $value,
-								'label' => self::option_label( $key, $value ),
-							);
-						}
+						$entry['options'][] = array(
+							'value' => $label,
+							'label' => self::option_label( $key, $label ),
+						);
 					}
 				}
-				$out[] = $entry;
 			}
+			$out[] = $entry;
 		}
 		return $out;
+	}
+
+	/**
+	 * Answers to admin-defined questions stored on a case, as
+	 * array( array( question text => answer ) ), using the question text saved
+	 * with the report. Wrapped in one group so views can skip it when empty.
+	 *
+	 * @param array $extra Decoded extra_fields.
+	 * @return array
+	 */
+	public static function custom_answers( $extra ) {
+		$out       = array();
+		$questions = isset( $extra['_questions'] ) && is_array( $extra['_questions'] ) ? $extra['_questions'] : array();
+		foreach ( $questions as $key => $label ) {
+			if ( ! isset( $extra[ $key ] ) ) {
+				continue;
+			}
+			$value = is_array( $extra[ $key ] ) ? implode( '، ', array_map( 'strval', $extra[ $key ] ) ) : (string) $extra[ $key ];
+			if ( '' !== trim( $value ) ) {
+				$out[ (string) $label ] = $value;
+			}
+		}
+		return array( $out );
+	}
+
+	/**
+	 * Admin-defined answers as one CSV-friendly cell ("question: answer | …").
+	 *
+	 * @param array $extra Decoded extra_fields.
+	 * @return string
+	 */
+	public static function custom_answers_text( $extra ) {
+		$parts   = array();
+		$answers = self::custom_answers( $extra );
+		foreach ( $answers[0] as $question => $answer ) {
+			$parts[] = $question . ': ' . $answer;
+		}
+		return implode( ' | ', $parts );
+	}
+
+	/**
+	 * Form presentation options for the widget.
+	 *
+	 * @return array
+	 */
+	public static function adr_form_public() {
+		$config = self::form_config();
+		return array(
+			'collapse' => 'yes' === $config['collapse_optional'],
+			'intro'    => $config['intro'],
+		);
 	}
 
 	/**
@@ -617,64 +864,92 @@ class SSC_Module_Pharma extends SSC_Module {
 			);
 		}
 
-		// Structured fields validated against the schema whitelist.
-		$extra = array();
-		foreach ( self::form_schema() as $section ) {
-			foreach ( $section['fields'] as $key => $field ) {
-				if ( 'name' === $key || 'phone' === $key || 'description' === $key ) {
-					continue; // Top-level columns.
-				}
-				$raw = isset( $params[ $key ] ) ? $params[ $key ] : ( isset( $params['extra'][ $key ] ) ? $params['extra'][ $key ] : '' );
-				switch ( $field['type'] ) {
-					case 'checkboxes':
-						$raw = array_intersect( SSC_Input::list_value( $raw ), array_keys( $field['options'] ) );
-						if ( ! empty( $field['required'] ) && empty( $raw ) ) {
-							/* translators: %s: field label. */
-							$errors[] = sprintf( __( 'The field "%s" is required.', 'nexachat-ai' ), $field['label'] );
-						}
-						$extra[ $key ] = array_values( array_map( 'sanitize_key', $raw ) );
-						break;
-					case 'select':
+		// Structured fields validated against the CONFIGURED form (whitelist):
+		// switched-off questions are ignored even when posted.
+		$extra     = array();
+		$questions = array();
+		foreach ( self::effective_fields() as $field ) {
+			$key = $field['key'];
+			if ( 'name' === $key || 'phone' === $key || 'description' === $key ) {
+				continue; // Top-level columns.
+			}
+			$raw = isset( $params[ $key ] ) ? $params[ $key ] : ( isset( $params['extra'][ $key ] ) ? $params['extra'][ $key ] : '' );
+			if ( $field['custom'] ) {
+				// Keep the question text with the answer: later edits of the
+				// question must not change what an old report means.
+				$questions[ $key ] = $field['label'];
+			}
+			/* translators: %s: field label. */
+			$required_message = sprintf( __( 'The field "%s" is required.', 'nexachat-ai' ), $field['label'] );
+			switch ( $field['type'] ) {
+				case 'checkboxes':
+					$allowed = $field['custom'] ? $field['options'] : array_keys( $field['options'] );
+					$raw     = array_values( array_intersect( SSC_Input::list_value( $raw ), $allowed ) );
+					if ( ! empty( $field['required'] ) && empty( $raw ) ) {
+						$errors[] = $required_message;
+					}
+					$extra[ $key ] = $field['custom'] ? array_map( 'sanitize_text_field', $raw ) : array_map( 'sanitize_key', $raw );
+					break;
+				case 'select':
+					if ( $field['custom'] ) {
+						$raw = SSC_Input::text( $raw, 200 );
+						$raw = in_array( $raw, $field['options'], true ) ? $raw : '';
+					} else {
 						$raw = sanitize_key( SSC_Input::text( $raw, 100 ) );
 						if ( ! in_array( $raw, array_map( 'sanitize_key', $field['options'] ), true ) ) {
 							$raw = '';
 						}
-						if ( ! empty( $field['required'] ) && '' === $raw ) {
-							/* translators: %s: field label. */
-							$errors[] = sprintf( __( 'The field "%s" is required.', 'nexachat-ai' ), $field['label'] );
-						}
-						if ( '' !== $raw ) {
-							$extra[ $key ] = $raw;
-						}
-						break;
-					case 'product':
+					}
+					if ( ! empty( $field['required'] ) && '' === $raw ) {
+						$errors[] = $required_message;
+					}
+					if ( '' !== $raw ) {
+						$extra[ $key ] = $raw;
+					}
+					break;
+				case 'product':
 						// Product must exist in the catalog (product identification).
 						$raw   = SSC_Input::text( $raw, 100 );
 						$valid = 'general';
-						foreach ( (array) SSC_Settings::get( 'products', array() ) as $p ) {
-							if ( isset( $p['id'] ) && $p['id'] === $raw ) {
-								$valid = $raw;
-								break;
-							}
+					foreach ( (array) SSC_Settings::get( 'products', array() ) as $p ) {
+						if ( isset( $p['id'] ) && $p['id'] === $raw ) {
+							$valid = $raw;
+							break;
 						}
-						if ( 'general' === $valid ) {
-							$errors[] = __( 'Unknown product. Please choose from the list.', 'nexachat-ai' );
-						}
+					}
+					if ( 'general' === $valid ) {
+						$errors[] = __( 'Unknown product. Please choose from the list.', 'nexachat-ai' );
+					}
 						$extra['product_id'] = $valid;
-						break;
-					case 'number':
-						if ( '' !== $raw && ( ! is_numeric( $raw ) || (float) $raw < 0 || (float) $raw > 130 ) ) {
-							$errors[] = __( 'Patient age must be between 0 and 130 years.', 'nexachat-ai' );
-						}
-						$extra[ $key ] = is_numeric( $raw ) ? (float) $raw : '';
-						break;
-					case 'textarea':
-						$extra[ $key ] = SSC_Input::text( $raw, 4000, true );
-						break;
-					default:
-						$extra[ $key ] = SSC_Input::text( $raw, 100 );
-				}
+					break;
+				case 'number':
+					$raw = is_scalar( $raw ) ? trim( (string) $raw ) : '';
+					if ( 'patient_age' === $key && '' !== $raw && ( ! is_numeric( $raw ) || (float) $raw < 0 || (float) $raw > 130 ) ) {
+						$errors[] = __( 'Patient age must be between 0 and 130 years.', 'nexachat-ai' );
+					} elseif ( '' !== $raw && ! is_numeric( $raw ) ) {
+						/* translators: %s: field label. */
+						$errors[] = sprintf( __( 'The field "%s" must be a number.', 'nexachat-ai' ), $field['label'] );
+					}
+					if ( ! empty( $field['required'] ) && '' === $raw ) {
+						$errors[] = $required_message;
+					}
+					$extra[ $key ] = is_numeric( $raw ) ? (float) $raw : '';
+					break;
+				case 'textarea':
+					$extra[ $key ] = SSC_Input::text( $raw, 4000, true );
+					if ( ! empty( $field['required'] ) && '' === trim( $extra[ $key ] ) ) {
+						$errors[] = $required_message;
+					}
+					break;
+				default:
+					$extra[ $key ] = SSC_Input::text( $raw, $field['custom'] ? 300 : 100 );
+					if ( ! empty( $field['required'] ) && '' === trim( $extra[ $key ] ) ) {
+						$errors[] = $required_message;
+					}
 			}
+		}
+		if ( $questions ) {
+			$extra['_questions'] = $questions;
 		}
 
 		if ( ! empty( $errors ) ) {
@@ -1016,7 +1291,7 @@ class SSC_Module_Pharma extends SSC_Module {
 		header( 'Content-Disposition: attachment; filename=ssc-adr-cases-' . gmdate( 'Ymd-Hi' ) . '.csv' );
 		$out = fopen( 'php://output', 'w' );
 		fwrite( $out, "\xEF\xBB\xBF" );
-		SSC_Input::write_csv( $out, array( 'case_id', 'created_at', 'reporter_type', 'reporter_name', 'reporter_phone', 'patient_age', 'patient_sex', 'product', 'batch_number', 'dose', 'route', 'reaction', 'severity', 'seriousness_criteria', 'outcome', 'concomitant_drugs', 'status', 'serious' ) );
+		SSC_Input::write_csv( $out, array( 'case_id', 'created_at', 'reporter_type', 'reporter_name', 'reporter_phone', 'patient_age', 'patient_sex', 'product', 'batch_number', 'dose', 'route', 'reaction', 'severity', 'seriousness_criteria', 'outcome', 'concomitant_drugs', 'status', 'serious', 'additional_answers' ) );
 
 		$page = 1;
 		do {
@@ -1052,6 +1327,7 @@ class SSC_Module_Pharma extends SSC_Module {
 						$row['concomitant_drugs'],
 						$row['status'],
 						self::is_serious_row( $row ) ? 'yes' : 'no',
+						self::custom_answers_text( $extra ),
 					)
 				);
 			}

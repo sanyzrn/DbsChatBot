@@ -1,6 +1,9 @@
 msgid ""
 msgstr "Project-Id-Version: NexaChatAI\nLanguage: fa_IR\nContent-Type: text/plain; charset=UTF-8\nPlural-Forms: nplurals=2; plural=(n > 1);\n"
 
+msgid "\"Ask\" and \"Required\" are editable in Custom mode; the other lengths use a fixed set. If the seriousness question is off, serious cases cannot be flagged for immediate notification."
+msgstr "«پرسیده شود» و «الزامی» فقط در حالت دلخواه قابل تغییرند؛ بقیهٔ حالت‌ها مجموعهٔ ثابتی دارند. اگر سؤال معیارهای جدی‌بودن خاموش باشد، موارد جدی برای اطلاع‌رسانی فوری مشخص نمی‌شوند."
+
 msgid "%d answer"
 msgid_plural "%d answers"
 msgstr[0] "%d پاسخ"
@@ -63,6 +66,9 @@ msgstr "+ افزودن فیلد"
 
 msgid "+ Add product"
 msgstr "+ افزودن محصول"
+
+msgid "+ Add question"
+msgstr "+ افزودن سؤال"
 
 msgid "0.1 — very precise"
 msgstr "0.1 — بسیار دقیق"
@@ -172,6 +178,12 @@ msgstr "افزودن به پاسخ‌های موجود"
 msgid "Added"
 msgstr "افزوده‌شده"
 
+msgid "Added at the end of the form, whatever the length. Answers are saved with the question text, so editing a question later never changes old reports."
+msgstr "در هر طولی به انتهای فرم اضافه می‌شوند. پاسخ‌ها همراه متن سؤال ذخیره می‌شوند، پس ویرایش بعدی سؤال، گزارش‌های قبلی را تغییر نمی‌دهد."
+
+msgid "Additional questions"
+msgstr "سؤال‌های تکمیلی"
+
 msgid "Admin-only notice — AI engine error:"
 msgstr "اعلان فقط برای مدیر — خطای موتور هوش مصنوعی:"
 
@@ -250,6 +262,9 @@ msgstr "دامنهٔ پاسخ"
 msgid "Answer source"
 msgstr "منبع پاسخ"
 
+msgid "Answer type"
+msgstr "نوع پاسخ"
+
 msgid "Answers strictly from the business profile, knowledge entries and documents. Anything else gets \"I don't have that information\" and your contact details. Safest; best for regulated content."
 msgstr "فقط از مشخصات کسب‌وکار، موارد دانش و اسناد پاسخ می‌دهد. برای هر چیز دیگر می‌گوید «این اطلاعات را ندارم» و راه‌های تماس شما را معرفی می‌کند. امن‌ترین حالت؛ مناسب محتوای حساس و قانون‌مند."
 
@@ -277,8 +292,14 @@ msgstr "فقط منابع تأییدشدهٔ شرکت"
 msgid "Archived"
 msgstr "بایگانی‌شده"
 
+msgid "Ask"
+msgstr "پرسیده شود"
+
 msgid "Ask us"
 msgstr "از ما بپرسید"
+
+msgid "Ask: %s"
+msgstr "پرسیده شود: %s"
 
 msgid "Asks the assistant which organization it represents. It must answer correctly before publishing."
 msgstr "از دستیار می‌پرسد نمایندهٔ کدام سازمان است. پیش از انتشار باید پاسخ درست بدهد."
@@ -466,11 +487,20 @@ msgstr "عرض پنجرهٔ گفتگو (پیکسل)"
 msgid "Checkbox"
 msgstr "چک‌باکس"
 
+msgid "Checkboxes (several choices)"
+msgstr "چندگزینه‌ای (چند انتخاب)"
+
 msgid "Choices"
 msgstr "گزینه‌ها"
 
+msgid "Choices, comma separated"
+msgstr "گزینه‌ها، جدا شده با ویرگول"
+
 msgid "Choices, comma separated (dropdown / radio only)"
 msgstr "گزینه‌ها، جدا شده با ویرگول (فقط برای فهرست کشویی و تک‌گزینه‌ای)"
+
+msgid "Choose how long the form visitors fill in is. Reporter name, contact phone, product and the reaction description are always asked: without them a report is not a valid safety case."
+msgstr "طول فرمی را که بازدیدکننده پر می‌کند انتخاب کنید. نام گزارش‌دهنده، شمارهٔ تماس، محصول و شرح عارضه همیشه پرسیده می‌شوند؛ بدون آن‌ها گزارش، یک گزارش ایمنی معتبر نیست."
 
 msgid "Chunks"
 msgstr "تکه‌ها"
@@ -625,6 +655,12 @@ msgstr "نشانی شیوه‌نامهٔ قلم سفارشی"
 msgid "Custom webhook"
 msgstr "وب‌هوک سفارشی"
 
+msgid "Custom wording (optional)"
+msgstr "متن دلخواه سؤال (اختیاری)"
+
+msgid "Custom — choose each question"
+msgstr "دلخواه — انتخاب تک‌تک سؤال‌ها"
+
 msgid "Customer Engagement"
 msgstr "تعامل با مشتری"
 
@@ -708,6 +744,9 @@ msgstr "مقدار و دفعات مصرف‌شده"
 
 msgid "Dropdown"
 msgstr "فهرست کشویی"
+
+msgid "Dropdown (one choice)"
+msgstr "فهرست کشویی (یک گزینه)"
 
 msgid "Each report becomes a case with a review workflow (triage → assessment → follow-up → closed) and a permanent audit trail of every change."
 msgstr "هر گزارش به پرونده‌ای با گردش کار بررسی (غربالگری ← ارزیابی ← پیگیری ← بسته‌شده) و سابقهٔ ممیزی دائمی از همهٔ تغییرات تبدیل می‌شود."
@@ -820,6 +859,9 @@ msgstr "محل دکمهٔ شناور"
 msgid "Floating button size (px)"
 msgstr "اندازهٔ دکمهٔ شناور (پیکسل)"
 
+msgid "Fold them under \"More details (optional)\" so the form looks short"
+msgstr "زیر «جزئیات بیشتر (اختیاری)» جمع شوند تا فرم کوتاه به نظر برسد"
+
 msgid "Follow-up note (recorded in the audit trail)"
 msgstr "یادداشت پیگیری (در سابقهٔ ممیزی ثبت می‌شود)"
 
@@ -831,6 +873,9 @@ msgstr "قلم"
 
 msgid "For example your own website, to answer from pages you have not imported. Honoured by OpenAI and Claude; Gemini and OpenRouter search the whole web."
 msgstr "مثلاً وب‌سایت خودتان، تا از صفحه‌هایی که وارد نکرده‌اید هم پاسخ دهد. OpenAI و Claude این محدودیت را رعایت می‌کنند؛ Gemini و OpenRouter در کل وب جست‌وجو می‌کنند."
+
+msgid "Form length"
+msgstr "طول فرم"
 
 msgid "Form submission is disabled on this site."
 msgstr "ارسال فرم در این سایت غیرفعال است."
@@ -852,6 +897,9 @@ msgstr "نشانی کامل"
 
 msgid "Full name"
 msgstr "نام و نام خانوادگی"
+
+msgid "Full — every question (most complete reports)"
+msgstr "کامل — همهٔ سؤال‌ها (کامل‌ترین گزارش)"
 
 msgid "General"
 msgstr "عمومی"
@@ -1147,6 +1195,9 @@ msgstr "ماژول غیرفعال شد. داده‌هایش حفظ شده و ب�
 msgid "Modules"
 msgstr "ماژول‌ها"
 
+msgid "More details (optional)"
+msgstr "جزئیات بیشتر (اختیاری)"
+
 msgid "Most-discussed products"
 msgstr "پرتکرارترین محصولات در گفتگو"
 
@@ -1305,6 +1356,9 @@ msgstr "قواعد اختیاری مخصوص کسب‌وکار شما…"
 
 msgid "Optional details (contacts, hours, differentiators)"
 msgstr "جزئیات اختیاری (راه‌های تماس، ساعات کاری، وجه تمایز)"
+
+msgid "Optional questions"
+msgstr "سؤال‌های اختیاری"
 
 msgid "Oral"
 msgstr "خوراکی"
@@ -1522,6 +1576,9 @@ msgstr "منتشر شد! دستیار شما اکنون روی سایت فعال
 msgid "Question"
 msgstr "پرسش"
 
+msgid "Question text"
+msgstr "متن سؤال"
+
 msgid "RTL (Persian/Arabic)"
 msgstr "راست‌به‌چپ (فارسی/عربی)"
 
@@ -1582,6 +1639,9 @@ msgstr "حذف فیلد"
 msgid "Remove product"
 msgstr "حذف محصول"
 
+msgid "Remove question"
+msgstr "حذف سؤال"
+
 msgid "Remove reporter name, phone, IP and demographics? Clinical fields stay for PV review."
 msgstr "نام، تلفن، IP و اطلاعات جمعیتی گزارش‌دهنده حذف شود؟ فیلدهای بالینی برای بررسی ایمنی دارو باقی می‌مانند."
 
@@ -1635,6 +1695,9 @@ msgstr "نیازمند بستری یا افزایش مدت بستری"
 
 msgid "Required when the site sits behind Cloudflare or any reverse proxy — otherwise every visitor shares one IP and one rate-limit quota. Only enable the header your proxy actually sets and strips from client requests."
 msgstr "وقتی سایت پشت Cloudflare یا هر پراکسی معکوس است لازم است — وگرنه همهٔ بازدیدکنندگان یک IP و یک سهمیه خواهند داشت. فقط سرآیندی را فعال کنید که پراکسی شما واقعاً تنظیم می‌کند و از درخواست کاربر حذف می‌کند."
+
+msgid "Required: %s"
+msgstr "الزامی: %s"
 
 msgid "Requires: %s"
 msgstr "نیازمند: %s"
@@ -1807,8 +1870,14 @@ msgstr "رمز مشترک (HMAC)"
 msgid "Shared secret (HMAC, recommended)"
 msgstr "رمز مشترک (HMAC، توصیه‌شده)"
 
+msgid "Short introduction above the form (optional)"
+msgstr "توضیح کوتاه بالای فرم (اختیاری)"
+
 msgid "Short text"
 msgstr "متن کوتاه"
+
+msgid "Short — essentials only (5 questions)"
+msgstr "کوتاه — فقط موارد ضروری (۵ سؤال)"
 
 msgid "Short, factual reference blocks the assistant quotes verbatim. (Policies, prices, hours, FAQs…)"
 msgstr "بلوک‌های کوتاه و دقیقی که دستیار عیناً نقل می‌کند (سیاست‌ها، قیمت‌ها، ساعات، پرسش‌های متداول…)."
@@ -1821,6 +1890,9 @@ msgstr "زمان نمایش دعوت"
 
 msgid "Show the source documents under AI answers"
 msgstr "نمایش اسناد منبع زیر پاسخ‌های هوش مصنوعی"
+
+msgid "Side-effect report form"
+msgstr "فرم گزارش عارضهٔ دارویی"
 
 msgid "Single choice"
 msgstr "تک‌گزینه‌ای"
@@ -1839,6 +1911,9 @@ msgstr "منابع:"
 
 msgid "Speak"
 msgstr "صحبت کنید"
+
+msgid "Standard — essentials plus patient and outcome"
+msgstr "استاندارد — موارد ضروری به‌همراه اطلاعات بیمار و پیامد"
 
 msgid "Status"
 msgstr "وضعیت"
@@ -1968,6 +2043,9 @@ msgstr "اطلاعات… (قیمت‌ها، سیاست‌ها، پاسخ‌ها
 
 msgid "The field \"%s\" is required."
 msgstr "تکمیل فیلد «%s» الزامی است."
+
+msgid "The field \"%s\" must be a number."
+msgstr "فیلد «%s» باید عدد باشد."
 
 msgid "The field \"%s\" must be a valid email."
 msgstr "فیلد «%s» باید نشانی ایمیل معتبر باشد."
@@ -2299,11 +2377,17 @@ msgstr "برای ارسال این فرم، رضایت شما لازم است."
 msgid "Your message"
 msgstr "پیام شما"
 
+msgid "Your own questions"
+msgstr "سؤال‌های اختصاصی شما"
+
 msgid "Your session expired. Please refresh the page and try again."
 msgstr "نشست شما منقضی شده است. صفحه را تازه کنید و دوباره تلاش کنید."
 
 msgid "Your session has expired. Please refresh the page."
 msgstr "نشست شما منقضی شده است. صفحه را تازه کنید."
+
+msgid "always"
+msgstr "همیشه"
 
 msgid "e.g. Customer support specialist"
 msgstr "مثلاً کارشناس پشتیبانی مشتریان"

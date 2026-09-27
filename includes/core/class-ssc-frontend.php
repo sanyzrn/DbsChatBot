@@ -205,6 +205,7 @@ class SSC_Frontend {
 
 			// Pharma ADR options (module-gated).
 			'adrOptions'       => SSC_Modules::is_active( 'pharma' ) ? SSC_Module_Pharma::adr_options_public() : null,
+			'adrForm'          => SSC_Modules::is_active( 'pharma' ) ? SSC_Module_Pharma::adr_form_public() : null,
 
 			// i18n strings for the widget.
 			'i18n'             => $this->strings(),
@@ -266,6 +267,7 @@ class SSC_Frontend {
 			'chooseProduct'   => __( 'Which one?', 'nexachat-ai' ),
 			'requestForm'     => __( 'Consultation request', 'nexachat-ai' ),
 			'reportAdr'       => __( 'Report a side effect', 'nexachat-ai' ),
+			'moreDetails'     => __( 'More details (optional)', 'nexachat-ai' ),
 			'brochure'        => __( 'View brochure', 'nexachat-ai' ),
 			'callUs'          => __( 'Call us', 'nexachat-ai' ),
 			'speak'           => __( 'Listen to this answer', 'nexachat-ai' ),

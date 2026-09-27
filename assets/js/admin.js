@@ -191,7 +191,7 @@
 		var type = $('select', row);
 		var options = $('.ssc-fieldrow__options', row);
 		if (!type || !options) { return; }
-		options.hidden = !(type.value === 'select' || type.value === 'radio');
+		options.hidden = !(type.value === 'select' || type.value === 'radio' || type.value === 'checkboxes');
 	}
 
 	$$('.ssc-fieldrow').forEach(syncFieldRow);
@@ -204,6 +204,57 @@
 			window.setTimeout(function () { $$('.ssc-fieldrow').forEach(syncFieldRow); }, 0);
 		}
 	});
+
+	/* ---------- Side-effect report form: preset vs. per-question switches ---------- */
+
+	(function () {
+		var preset = $('#adr_preset');
+		var table = $('.ssc-adr-fields');
+		if (!preset || !table) { return; }
+		var presets = {};
+		try { presets = JSON.parse(table.getAttribute('data-presets') || '{}'); } catch (e) { presets = {}; }
+		// Saved per-question choices, restored when the admin returns to Custom.
+		var saved = {};
+		$$('tbody tr', table).forEach(function (row) {
+			saved[row.getAttribute('data-key')] = { on: $('.ssc-adr-on', row).checked, req: $('.ssc-adr-req', row).checked };
+		});
+
+		function apply() {
+			var mode = preset.value;
+			var custom = 'custom' === mode;
+			table.classList.toggle('is-preset', !custom);
+			$$('tbody tr', table).forEach(function (row) {
+				if (row.hasAttribute('data-locked')) { return; }
+				var key = row.getAttribute('data-key');
+				var on = $('.ssc-adr-on', row);
+				var req = $('.ssc-adr-req', row);
+				if (custom) {
+					on.checked = saved[key].on;
+					req.checked = saved[key].req;
+				} else {
+					// Shown for information; still posted, so Custom starts from here.
+					on.checked = 'full' === mode || (presets[mode] || []).indexOf(key) !== -1;
+				}
+				[on, req].forEach(function (box) {
+					box.setAttribute('aria-readonly', custom ? 'false' : 'true');
+					box.tabIndex = custom ? 0 : -1;
+				});
+			});
+		}
+
+		table.addEventListener('click', function (e) {
+			// Outside Custom mode the switches are read-only (not disabled: disabled boxes are not submitted).
+			if (e.target.matches && e.target.matches('input[type="checkbox"]') && 'custom' !== preset.value) { e.preventDefault(); }
+		});
+		table.addEventListener('change', function (e) {
+			var row = e.target.closest && e.target.closest('tr');
+			if (!row || 'custom' !== preset.value) { return; }
+			var key = row.getAttribute('data-key');
+			saved[key] = { on: $('.ssc-adr-on', row).checked, req: $('.ssc-adr-req', row).checked };
+		});
+		preset.addEventListener('change', apply);
+		apply();
+	})();
 
 	/* ---------- Appearance live preview (light + dark) ---------- */
 

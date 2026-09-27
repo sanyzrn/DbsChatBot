@@ -1268,6 +1268,13 @@
                 var card = el('div', 'ssc-cardform ssc-cardform--adr');
                 card.appendChild(el('h3', 'ssc-cardform__title', esc((cfg.i18n && cfg.i18n.reportAdr) || 'Report side effect')));
 
+                var adrForm = cfg.adrForm || {};
+                if (adrForm.intro) {
+                        var intro = el('p', 'ssc-cardform__intro', esc(adrForm.intro));
+                        intro.setAttribute('dir', 'auto');
+                        card.appendChild(intro);
+                }
+
                 var form = el('form', 'ssc-cardform__form');
                 form.setAttribute('novalidate', 'novalidate');
 
@@ -1278,7 +1285,21 @@
                 hp.setAttribute('aria-hidden', 'true');
                 form.appendChild(hp);
 
-                (cfg.adrOptions || []).forEach(function (f) {
+                // Optional questions can fold under "More details" so the form looks short.
+                var more = null;
+                var hasOptional = (cfg.adrOptions || []).some(function (f) { return !f.required; });
+                if (adrForm.collapse && hasOptional) {
+                        more = el('details', 'ssc-cardform__more');
+                        more.appendChild(el('summary', 'ssc-cardform__more-toggle', esc((cfg.i18n && cfg.i18n.moreDetails) || 'More details (optional)')));
+                }
+                var ordered = (cfg.adrOptions || []).slice();
+                if (more) {
+                        ordered = ordered.filter(function (f) { return f.required; }).concat(ordered.filter(function (f) { return !f.required; }));
+                }
+
+                ordered.forEach(function (f) {
+                        var host = (more && !f.required) ? more : form;
+                        if (more && !f.required && !more.parentNode) { form.appendChild(more); }
                         if ('checkboxes' === f.type) {
                                 var fs = el('fieldset', 'ssc-f ssc-f--group');
                                 fs.appendChild(el('legend', 'ssc-f__label', esc(f.label)));
@@ -1292,7 +1313,7 @@
                                         lab.appendChild(el('span', 'ssc-f__label', esc(opt.label)));
                                         fs.appendChild(lab);
                                 });
-                                form.appendChild(fs);
+                                host.appendChild(fs);
                                 return;
                         }
                         if (f.type === 'product') {
@@ -1309,7 +1330,7 @@
                                 });
                                 if (state.product) { sel.value = state.product; }
                                 wrap.appendChild(sel);
-                                form.appendChild(wrap);
+                                host.appendChild(wrap);
                                 return;
                         }
                         if (f.type === 'textarea') {
@@ -1320,7 +1341,7 @@
                                 ta.rows = 3;
                                 if (f.required) { ta.required = true; }
                                 wrap2.appendChild(ta);
-                                form.appendChild(wrap2);
+                                host.appendChild(wrap2);
                                 return;
                         }
                         var wrap3 = el('label', 'ssc-f');
@@ -1338,15 +1359,16 @@
                                 });
                                 wrap3.appendChild(sel2);
                                 sel2.required = !!f.required;
-                                form.appendChild(wrap3);
+                                host.appendChild(wrap3);
                                 return;
                         }
                         input.name = f.key;
                         if (f.type === 'tel' || f.type === 'number') { input.dir = 'ltr'; }
-                        if (f.type === 'number') { input.min = '0'; input.max = '130'; input.step = 'any'; }
+                        if (f.type === 'number') { input.step = 'any'; }
+                        if (f.key === 'patient_age') { input.min = '0'; input.max = '130'; }
                         if (f.required) { input.required = true; }
                         wrap3.appendChild(input);
-                        form.appendChild(wrap3);
+                        host.appendChild(wrap3);
                 });
 
                 // Consent is ALWAYS required for ADR (sensitive health data), even

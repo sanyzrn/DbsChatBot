@@ -208,6 +208,102 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			</div>
 		</section>
 
+		<?php if ( SSC_Modules::is_active( 'pharma' ) ) : ?>
+			<?php
+			$adr_config  = SSC_Module_Pharma::form_config();
+			$adr_presets = SSC_Module_Pharma::presets();
+			?>
+			<section data-ssc-tab="modules" class="ssc-card" id="ssc-adr-form">
+				<h2><?php esc_html_e( 'Side-effect report form', 'nexachat-ai' ); ?></h2>
+				<p class="ssc-card__sub"><?php esc_html_e( 'Choose how long the form visitors fill in is. Reporter name, contact phone, product and the reaction description are always asked: without them a report is not a valid safety case.', 'nexachat-ai' ); ?></p>
+				<div class="ssc-grid ssc-grid--2">
+					<div class="ssc-field">
+						<label for="adr_preset"><?php esc_html_e( 'Form length', 'nexachat-ai' ); ?></label>
+						<select id="adr_preset" name="adr_form[preset]">
+							<?php foreach ( SSC_Module_Pharma::preset_labels() as $adr_pid => $adr_plabel ) : ?>
+								<option value="<?php echo esc_attr( $adr_pid ); ?>" <?php selected( $adr_config['preset'], $adr_pid ); ?>><?php echo esc_html( $adr_plabel ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					<div class="ssc-field">
+						<span class="ssc-field__label"><?php esc_html_e( 'Optional questions', 'nexachat-ai' ); ?></span>
+						<input type="hidden" name="adr_form[collapse_optional]" value="no" />
+						<label class="ssc-check"><input type="checkbox" name="adr_form[collapse_optional]" value="yes" <?php checked( 'yes', $adr_config['collapse_optional'] ); ?> /> <span><?php esc_html_e( 'Fold them under "More details (optional)" so the form looks short', 'nexachat-ai' ); ?></span></label>
+					</div>
+				</div>
+				<div class="ssc-field">
+					<label for="adr_intro"><?php esc_html_e( 'Short introduction above the form (optional)', 'nexachat-ai' ); ?></label>
+					<textarea id="adr_intro" name="adr_form[intro]" rows="2" dir="auto" maxlength="400"><?php echo esc_textarea( $adr_config['intro'] ); ?></textarea>
+				</div>
+
+				<div class="ssc-table-scroll">
+				<table class="widefat striped ssc-table ssc-adr-fields" data-presets="<?php echo esc_attr( wp_json_encode( $adr_presets ) ); ?>">
+					<thead>
+						<tr>
+							<th scope="col"><?php esc_html_e( 'Question', 'nexachat-ai' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Ask', 'nexachat-ai' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Required', 'nexachat-ai' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Custom wording (optional)', 'nexachat-ai' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						foreach ( SSC_Module_Pharma::form_schema() as $adr_section ) :
+							foreach ( $adr_section['fields'] as $adr_key => $adr_field ) :
+								$adr_locked = in_array( $adr_key, SSC_Module_Pharma::LOCKED_FIELDS, true );
+								$adr_saved  = isset( $adr_config['fields'][ $adr_key ] ) ? $adr_config['fields'][ $adr_key ] : null;
+								$adr_on     = $adr_locked || null === $adr_saved || ! empty( $adr_saved['on'] );
+								$adr_req    = $adr_locked || ( null === $adr_saved ? ! empty( $adr_field['required'] ) : ! empty( $adr_saved['req'] ) );
+								?>
+								<tr data-key="<?php echo esc_attr( $adr_key ); ?>" <?php echo $adr_locked ? 'data-locked="1"' : ''; ?>>
+									<th scope="row"><?php echo esc_html( $adr_field['label'] ); ?><?php echo $adr_locked ? ' <span class="ssc-badge">' . esc_html__( 'always', 'nexachat-ai' ) . '</span>' : ''; ?></th>
+									<td><input type="checkbox" class="ssc-adr-on" name="adr_form[fields][<?php echo esc_attr( $adr_key ); ?>][on]" value="1" <?php checked( $adr_on ); ?> <?php disabled( $adr_locked ); ?> aria-label="<?php echo esc_attr( sprintf( /* translators: %s: question */ __( 'Ask: %s', 'nexachat-ai' ), $adr_field['label'] ) ); ?>" /></td>
+									<td><input type="checkbox" class="ssc-adr-req" name="adr_form[fields][<?php echo esc_attr( $adr_key ); ?>][req]" value="1" <?php checked( $adr_req ); ?> <?php disabled( $adr_locked ); ?> aria-label="<?php echo esc_attr( sprintf( /* translators: %s: question */ __( 'Required: %s', 'nexachat-ai' ), $adr_field['label'] ) ); ?>" /></td>
+									<td><input type="text" name="adr_form[fields][<?php echo esc_attr( $adr_key ); ?>][label]" value="<?php echo esc_attr( $adr_saved ? $adr_saved['label'] : '' ); ?>" dir="auto" placeholder="<?php echo esc_attr( $adr_field['label'] ); ?>" /></td>
+								</tr>
+								<?php
+							endforeach;
+						endforeach;
+						?>
+					</tbody>
+				</table>
+				</div>
+				<p class="ssc-field__hint" id="ssc-adr-hint"><?php esc_html_e( '"Ask" and "Required" are editable in Custom mode; the other lengths use a fixed set. If the seriousness question is off, serious cases cannot be flagged for immediate notification.', 'nexachat-ai' ); ?></p>
+
+				<h3><?php esc_html_e( 'Your own questions', 'nexachat-ai' ); ?></h3>
+				<p class="ssc-card__sub"><?php esc_html_e( 'Added at the end of the form, whatever the length. Answers are saved with the question text, so editing a question later never changes old reports.', 'nexachat-ai' ); ?></p>
+				<div id="ssc-adr-custom" class="ssc-fields">
+					<?php
+					$adr_custom = $adr_config['custom'] ? $adr_config['custom'] : array(
+						array(
+							'key'      => '',
+							'label'    => '',
+							'type'     => 'text',
+							'options'  => array(),
+							'required' => false,
+						),
+					);
+					foreach ( $adr_custom as $adr_i => $adr_q ) :
+						?>
+						<div class="ssc-fieldrow">
+							<input type="hidden" name="adr_form[custom][<?php echo esc_attr( (string) $adr_i ); ?>][key]" value="<?php echo esc_attr( $adr_q['key'] ); ?>" />
+							<input type="text" name="adr_form[custom][<?php echo esc_attr( (string) $adr_i ); ?>][label]" value="<?php echo esc_attr( $adr_q['label'] ); ?>" dir="auto" placeholder="<?php esc_attr_e( 'Question text', 'nexachat-ai' ); ?>" />
+							<select name="adr_form[custom][<?php echo esc_attr( (string) $adr_i ); ?>][type]" aria-label="<?php esc_attr_e( 'Answer type', 'nexachat-ai' ); ?>">
+								<?php foreach ( SSC_Module_Pharma::custom_type_labels() as $adr_t => $adr_tl ) : ?>
+									<option value="<?php echo esc_attr( $adr_t ); ?>" <?php selected( $adr_q['type'], $adr_t ); ?>><?php echo esc_html( $adr_tl ); ?></option>
+								<?php endforeach; ?>
+							</select>
+							<input type="text" class="ssc-fieldrow__options" name="adr_form[custom][<?php echo esc_attr( (string) $adr_i ); ?>][options]" value="<?php echo esc_attr( implode( ', ', $adr_q['options'] ) ); ?>" dir="auto" placeholder="<?php esc_attr_e( 'Choices, comma separated', 'nexachat-ai' ); ?>" aria-label="<?php esc_attr_e( 'Choices', 'nexachat-ai' ); ?>" />
+							<label class="ssc-check ssc-check--tight"><input type="checkbox" name="adr_form[custom][<?php echo esc_attr( (string) $adr_i ); ?>][required]" value="1" <?php checked( ! empty( $adr_q['required'] ) ); ?> /> <?php esc_html_e( 'Required', 'nexachat-ai' ); ?></label>
+							<span></span>
+							<button type="button" class="ssc-ki__remove" aria-label="<?php esc_attr_e( 'Remove question', 'nexachat-ai' ); ?>">×</button>
+						</div>
+					<?php endforeach; ?>
+				</div>
+				<button type="button" class="ssc-btn ssc-btn--ghost ssc-field__add" data-target="#ssc-adr-custom"><?php esc_html_e( '+ Add question', 'nexachat-ai' ); ?></button>
+			</section>
+		<?php endif; ?>
+
 		<?php if ( SSC_Modules::is_active( 'voice' ) ) : ?>
 			<section data-ssc-tab="modules" class="ssc-card">
 				<h2><?php esc_html_e( 'Voice module', 'nexachat-ai' ); ?></h2>

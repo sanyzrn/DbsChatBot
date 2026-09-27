@@ -112,6 +112,8 @@ class SSC_Settings {
 			'ai_fallback_msg'            => '',
 			'ai_cache_enabled'           => 'yes',
 			'pharma_answer_mode'         => 'approved_only',
+			// Pharma ADR form layout (preset, per-question switches, custom questions).
+			'adr_form'                   => array(),
 
 			// Response engine priority: ai_first | bank_first | bank_only.
 			'qa_mode'                    => 'ai_first',
@@ -888,6 +890,10 @@ class SSC_Settings {
 				}
 				break;
 
+			case 'adr_form':
+				$out = SSC_Module_Pharma::sanitize_form_config( $value );
+				break;
+
 			case 'form_fields':
 				$types = self::form_field_types();
 				$taken = array(
@@ -1027,6 +1033,7 @@ class SSC_Settings {
 		if ( '' === $id ) {
 			return '';
 		}
+		$id   = self::ascii_id( $id );
 		$base = $id;
 		$n    = 2;
 		while ( isset( $taken[ $id ] ) ) {
@@ -1035,6 +1042,25 @@ class SSC_Settings {
 		}
 		$taken[ $id ] = true;
 		return $id;
+	}
+
+	/**
+	 * A product/entry id that survives every sanitizer.
+	 * WordPress's sanitize_title() turns non-Latin names (e.g. Persian) into percent-encoded
+	 * sanitize_title() turns non-Latin names (e.g. Persian) into percent-encoded
+	 * slugs ("%d9%82…"); sanitize_text_field() later strips those sequences from
+	 * requests, so the id could never be matched again. Such slugs become a
+	 * short, stable hash of the decoded text instead.
+	 *
+	 * @param string $id Slug.
+	 * @return string
+	 */
+	public static function ascii_id( $id ) {
+		$id = (string) $id;
+		if ( false === strpos( $id, '%' ) ) {
+			return $id;
+		}
+		return 'p-' . substr( md5( rawurldecode( $id ) ), 0, 10 );
 	}
 
 	/*

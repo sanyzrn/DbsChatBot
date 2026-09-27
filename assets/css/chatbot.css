@@ -567,6 +567,13 @@
  * Forms inside the chat
  * ------------------------------------------------------------------ */
 
+.ssc-root .ssc-cardform__intro { margin: 0 0 10px; font-size: 12.5px; color: var(--ssc-muted); line-height: 1.6; }
+.ssc-root .ssc-cardform__more { border: 1px dashed var(--ssc-line); border-radius: 12px; padding: 4px 10px; margin-block: 4px 10px; }
+.ssc-root .ssc-cardform__more[open] { padding-block-end: 10px; }
+.ssc-root .ssc-cardform__more-toggle { cursor: pointer; padding: 6px 0; font-size: 12.5px; font-weight: 600; color: var(--ssc-primary); list-style-position: inside; }
+.ssc-root[data-theme="dark"] .ssc-cardform__more-toggle { color: var(--ssc-ink); }
+.ssc-root .ssc-cardform__more > .ssc-f:first-of-type { margin-block-start: 6px; }
+
 .ssc-root .ssc-cardform {
 	align-self: stretch;
 	background: var(--ssc-card);

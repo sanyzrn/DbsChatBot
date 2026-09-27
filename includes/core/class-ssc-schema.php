@@ -27,7 +27,7 @@ class SSC_Schema {
 	const KB_TABLE          = 'ssc_chatbot_kb';
 	const STATS_TABLE       = 'ssc_chatbot_stats';
 	const AUDIT_TABLE       = 'ssc_chatbot_audit';
-	const DB_VERSION        = '13';
+	const DB_VERSION        = '14';
 	const DB_VERSION_OPTION = 'ssc_chatbot_db_version';
 
 	/*
@@ -283,12 +283,55 @@ class SSC_Schema {
 			self::migrate_stats_from_options();
 			SSC_Settings::split_storage();
 			SSC_Settings::migrate_answer_scope();
+			self::migrate_product_ids();
 			// Setup state safety net for IN-PLACE updates (activation hooks do
 			// not re-run): a legacy live chatbot must stay live.
 			SSC_Setup::initialize_state();
 			update_option( self::DB_VERSION_OPTION, self::DB_VERSION, false );
 		} finally {
 			delete_transient( 'ssc_chatbot_upgrade_lock' );
+		}
+	}
+
+	/**
+	 * Percent-encoded product ids (products with non-Latin names) could never
+	 * be matched after request sanitizing: side-effect reports failed with
+	 * "unknown product" and product-scoped chat fell back to general. Give them
+	 * clean ids and move every stored reference along. Idempotent.
+	 */
+	public static function migrate_product_ids() {
+		global $wpdb;
+		$products = (array) SSC_Settings::get( 'products', array() );
+		$map      = array();
+		foreach ( $products as $i => $p ) {
+			if ( ! is_array( $p ) || empty( $p['id'] ) ) {
+				continue;
+			}
+			$new = SSC_Settings::ascii_id( $p['id'] );
+			if ( $new !== $p['id'] ) {
+				$map[ $p['id'] ]      = $new;
+				$products[ $i ]['id'] = $new;
+			}
+		}
+		if ( ! $map ) {
+			return;
+		}
+		SSC_Settings::update( array( 'products' => $products ) );
+		$columns = array(
+			self::table_name()         => 'product',
+			self::chatlog_table_name() => 'product',
+			self::qa_table_name()      => 'product_id',
+			self::kb_table_name()      => 'product_id',
+		);
+		foreach ( $columns as $table => $column ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- migration probe.
+			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+				continue;
+			}
+			foreach ( $map as $old => $new ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- identifiers are internal constants.
+				$wpdb->query( $wpdb->prepare( "UPDATE {$table} SET {$column} = %s WHERE {$column} = %s", $new, $old ) );
+			}
 		}
 	}
 

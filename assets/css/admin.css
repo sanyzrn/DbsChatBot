@@ -888,6 +888,15 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 .ssc-btn.ssc-btn--sm { padding: 4px 10px; font-size: 12px; min-height: 0; }
 
 .ssc-product__attrs { display: flex; flex-direction: column; gap: 6px; }
+
+/* Side-effect report form builder. */
+.ssc-adr-fields td, .ssc-adr-fields th { vertical-align: middle; }
+.ssc-adr-fields td:nth-child(2), .ssc-adr-fields td:nth-child(3) { width: 84px; text-align: center; }
+.ssc-adr-fields thead th:nth-child(2), .ssc-adr-fields thead th:nth-child(3) { text-align: center; white-space: nowrap; }
+.ssc-adr-fields tbody th { text-transform: none; letter-spacing: normal; font-size: 13px; font-weight: 600; color: var(--ssc-ink, #1d2327); }
+.ssc-adr-fields td:last-child input { width: 100%; }
+.ssc-adr-fields.is-preset td:nth-child(2) input, .ssc-adr-fields.is-preset td:nth-child(3) input { opacity: 0.55; cursor: not-allowed; }
+.ssc-adr-fields .ssc-badge { margin-inline-start: 6px; font-weight: 500; }
 .ssc-product__attrrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
 .ssc-kb-import { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }

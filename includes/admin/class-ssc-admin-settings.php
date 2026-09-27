@@ -31,6 +31,9 @@ class SSC_Admin_Settings {
 	public function handle_actions() {
 		if ( isset( $_POST['ssc_settings_save'] ) && check_admin_referer( 'ssc_settings' ) ) {
 			$patch = array();
+			if ( isset( $_POST['adr_form'] ) && is_array( $_POST['adr_form'] ) ) {
+				$patch['adr_form'] = SSC_Settings::sanitize_value( 'adr_form', wp_unslash( $_POST['adr_form'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by sanitize_value().
+			}
 			if ( isset( $_POST['pharma_answer_mode'] ) ) {
 				$patch['pharma_answer_mode'] = SSC_Settings::sanitize_value( 'pharma_answer_mode', wp_unslash( $_POST['pharma_answer_mode'] ) );
 			}
@@ -123,7 +126,7 @@ class SSC_Admin_Settings {
 	/** Hidden module controls must not erase their saved configuration. */
 	public static function active_module_patch( $patch ) {
 		$groups = array(
-			'pharma' => array( 'pharma_answer_mode' ),
+			'pharma' => array( 'pharma_answer_mode', 'adr_form' ),
 			'voice' => array( 'voice_input', 'voice_output', 'voice_language' ),
 			'history' => array( 'chatlog_enabled' ),
 			'csat' => array( 'csat_enabled' ),
