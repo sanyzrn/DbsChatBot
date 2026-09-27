@@ -922,6 +922,7 @@
                                 feedbackControls(tools, data.log_id, data.log_token);
                         }
                         scheduleCsat();
+                        scrollDown(); // Sources and tools were added below the answer.
                         if (!state.open) { bumpUnread(); maybeBeep(); }
                 }).catch(function () {
                         if (typing && typing.parentElement) { typing.parentElement.removeChild(typing); }

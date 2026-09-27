@@ -449,6 +449,7 @@
 .ssc-root .ssc-sources { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-block-start: 8px; padding-block-start: 7px; border-block-start: 1px dashed var(--ssc-line); font-size: 11.5px; color: var(--ssc-muted); }
 .ssc-root .ssc-sources__label { font-weight: 600; }
 .ssc-root .ssc-sources__item { background: var(--ssc-bg); border: 1px solid var(--ssc-line); border-radius: 999px; padding: 1px 8px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit; text-decoration: none; }
+.ssc-root .ssc-msg a.ssc-sources__item { text-decoration: none; }
 .ssc-root a.ssc-sources__item:hover { color: var(--ssc-ink); border-color: var(--ssc-primary); }
 
 /* Answer tools (copy + feedback). */

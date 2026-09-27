@@ -45,18 +45,24 @@ if ( ! function_exists( 'nexachatai_legacy_basename' ) ) {
 		return 'smart-support-chatbot/smart-support-chatbot.php';
 	}
 }
-if ( defined( 'SSC_CHATBOT_FILE' ) || in_array( nexachatai_legacy_basename(), (array) get_option( 'active_plugins', array() ), true ) ) {
+$nexachatai_network = is_multisite() ? (array) get_site_option( 'active_sitewide_plugins', array() ) : array();
+if ( defined( 'SSC_CHATBOT_FILE' ) || in_array( nexachatai_legacy_basename(), (array) get_option( 'active_plugins', array() ), true ) || isset( $nexachatai_network[ nexachatai_legacy_basename() ] ) ) {
 	$nexachatai_active = (array) get_option( 'active_plugins', array() );
 	if ( in_array( nexachatai_legacy_basename(), $nexachatai_active, true ) ) {
 		update_option( 'active_plugins', array_values( array_diff( $nexachatai_active, array( nexachatai_legacy_basename() ) ) ) );
-		update_option( 'nexachatai_replaced_legacy', 1, false );
-		// Deleting the old copy runs ITS uninstall.php against the shared data:
-		// never let that wipe what this copy now uses.
-		update_option( 'ssc_chatbot_delete_on_uninstall', 'no', false );
 	}
-	unset( $nexachatai_active );
+	if ( isset( $nexachatai_network[ nexachatai_legacy_basename() ] ) ) {
+		unset( $nexachatai_network[ nexachatai_legacy_basename() ] );
+		update_site_option( 'active_sitewide_plugins', $nexachatai_network );
+	}
+	update_option( 'nexachatai_replaced_legacy', 1, false );
+	// Deleting the old copy runs ITS uninstall.php against the shared data:
+	// never let that wipe what this copy now uses.
+	update_option( 'ssc_chatbot_delete_on_uninstall', 'no', false );
+	unset( $nexachatai_active, $nexachatai_network );
 	return;
 }
+unset( $nexachatai_network );
 
 // Functions are declared in a separate file: PHP binds top-level functions
 // at compile time, so declaring them here would collide with the old copy
