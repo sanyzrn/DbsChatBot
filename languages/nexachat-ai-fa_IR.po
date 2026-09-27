@@ -496,6 +496,9 @@ msgstr "تکمیل راه‌اندازی"
 msgid "Complete the business profile (step 1) first."
 msgstr "ابتدا مشخصات کسب‌وکار (گام ۱) را کامل کنید."
 
+msgid "Complete this step"
+msgstr "تکمیل این مرحله"
+
 msgid "Compliance disclaimer:"
 msgstr "سلب مسئولیت انطباق:"
 
@@ -507,6 +510,9 @@ msgstr "پیکربندی"
 
 msgid "Configure and verify an AI provider first."
 msgstr "ابتدا یک ارائه‌دهندهٔ هوش مصنوعی را تنظیم و تأیید کنید."
+
+msgid "Confirm below"
+msgstr "تأیید در پایین صفحه"
 
 msgid "Congenital anomaly or birth defect"
 msgstr "ناهنجاری مادرزادی یا نقص هنگام تولد"
@@ -1642,6 +1648,9 @@ msgstr "روش مصرف"
 msgid "Run identity test"
 msgstr "اجرای آزمون هویت"
 
+msgid "Run the test"
+msgstr "اجرای آزمون"
+
 msgid "SERIOUS"
 msgstr "جدی"
 
@@ -2073,6 +2082,9 @@ msgstr "عنوان"
 
 msgid "Title (e.g. Return policy)"
 msgstr "عنوان (مثلاً سیاست بازگشت کالا)"
+
+msgid "To publish, complete:"
+msgstr "برای انتشار، این موارد را کامل کنید:"
 
 msgid "Too many submissions today. Please try again tomorrow."
 msgstr "تعداد درخواست‌های امروز به سقف مجاز رسیده است. لطفاً فردا تلاش کنید."

@@ -780,5 +780,9 @@
   "Uses your provider's built-in search (OpenAI, Claude, Gemini, OpenRouter; not available for custom endpoints or webhooks). The provider bills searches separately. Searched answers are not streamed or cached, and the pages used are listed under the answer. Your own knowledge always wins over web results. Not used in \"Only from my knowledge\" mode.": "از جست‌وجوی داخلی ارائه‌دهنده استفاده می‌کند (OpenAI، Claude، Gemini، OpenRouter؛ برای endpoint سفارشی و وب‌هوک در دسترس نیست). ارائه‌دهنده هزینهٔ جست‌وجو را جداگانه حساب می‌کند. پاسخ‌هایی که با جست‌وجو تولید می‌شوند استریم و کش نمی‌شوند و صفحه‌های استفاده‌شده زیر پاسخ فهرست می‌شوند. دانش خود شما همیشه بر نتایج وب مقدم است. در حالت «فقط از دانش من» استفاده نمی‌شود.",
   "The selected provider has no web search tool, so this option has no effect.": "ارائه‌دهندهٔ انتخاب‌شده ابزار جست‌وجوی اینترنتی ندارد، بنابراین این گزینه اثری ندارد.",
   "Search only these sites (optional, one domain per line)": "جست‌وجو فقط در این سایت‌ها (اختیاری، هر دامنه در یک خط)",
-  "For example your own website, to answer from pages you have not imported. Honoured by OpenAI and Claude; Gemini and OpenRouter search the whole web.": "مثلاً وب‌سایت خودتان، تا از صفحه‌هایی که وارد نکرده‌اید هم پاسخ دهد. OpenAI و Claude این محدودیت را رعایت می‌کنند؛ Gemini و OpenRouter در کل وب جست‌وجو می‌کنند."
+  "For example your own website, to answer from pages you have not imported. Honoured by OpenAI and Claude; Gemini and OpenRouter search the whole web.": "مثلاً وب‌سایت خودتان، تا از صفحه‌هایی که وارد نکرده‌اید هم پاسخ دهد. OpenAI و Claude این محدودیت را رعایت می‌کنند؛ Gemini و OpenRouter در کل وب جست‌وجو می‌کنند.",
+  "Run the test": "اجرای آزمون",
+  "Confirm below": "تأیید در پایین صفحه",
+  "Complete this step": "تکمیل این مرحله",
+  "To publish, complete:": "برای انتشار، این موارد را کامل کنید:"
 }

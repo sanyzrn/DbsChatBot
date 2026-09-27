@@ -435,26 +435,31 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 					<div class="ssc-notice ssc-notice--success" role="status"><span class="dashicons dashicons-yes-alt"></span> <?php esc_html_e( 'Published! Your assistant is now live on your site.', 'nexachat-ai' ); ?> <a href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-dashboard' ) ); ?>"><?php esc_html_e( 'Go to dashboard', 'nexachat-ai' ); ?></a></div>
 				<?php endif; ?>
 
-				<ul class="ssc-checklist">
+				<ul class="ssc-checklist ssc-checklist--launch" id="ssc-launch-checklist">
 					<?php
+					// Items fixed on another screen link there; the two items completed
+					// on THIS screen get in-page actions (they used to be anchor links
+					// to sections already in view, so clicking them seemed to do nothing).
 					$links = array(
-						'identity'       => admin_url( 'admin.php?page=ssc-wizard&step=identity' ),
-						'knowledge'      => admin_url( 'admin.php?page=ssc-knowledge' ),
-						'connection'     => admin_url( 'admin.php?page=ssc-connection' ),
-						'identity_test'  => '#ssc-identity-test',
-						'appearance'     => admin_url( 'admin.php?page=ssc-appearance' ),
-						'privacy'        => '#ssc-privacy-ack',
+						'identity'   => admin_url( 'admin.php?page=ssc-wizard&step=identity' ),
+						'knowledge'  => admin_url( 'admin.php?page=ssc-wizard&step=knowledge' ),
+						'connection' => admin_url( 'admin.php?page=ssc-wizard&step=connection' ),
+						'appearance' => admin_url( 'admin.php?page=ssc-wizard&step=appearance' ),
 					);
 					foreach ( $readiness as $item ) :
 						if ( ! $item['done'] ) {
 							$all_ready = false;
 						}
 						?>
-						<li class="<?php echo $item['done'] ? 'is-done' : ''; ?>">
+						<li class="<?php echo $item['done'] ? 'is-done' : ''; ?>" data-item="<?php echo esc_attr( $item['id'] ); ?>" data-done="<?php echo $item['done'] ? '1' : '0'; ?>">
 							<span class="ssc-checklist__mark" aria-hidden="true"><?php echo $item['done'] ? '✓' : '○'; ?></span>
-							<span><?php echo esc_html( $item['label'] ); ?></span>
-							<?php if ( ! $item['done'] ) : ?>
-								<a href="<?php echo esc_attr( $links[ $item['id'] ] ); ?>"><?php esc_html_e( 'Fix', 'nexachat-ai' ); ?></a>
+							<span class="ssc-checklist__label"><?php echo esc_html( $item['label'] ); ?></span>
+							<?php if ( 'identity_test' === $item['id'] ) : ?>
+								<button type="button" class="ssc-checklist__action" data-action="identity" <?php echo $item['done'] ? 'hidden' : ''; ?>><?php esc_html_e( 'Run the test', 'nexachat-ai' ); ?></button>
+							<?php elseif ( 'privacy' === $item['id'] ) : ?>
+								<button type="button" class="ssc-checklist__action" data-action="privacy" <?php echo $item['done'] ? 'hidden' : ''; ?>><?php esc_html_e( 'Confirm below', 'nexachat-ai' ); ?></button>
+							<?php elseif ( ! $item['done'] && isset( $links[ $item['id'] ] ) ) : ?>
+								<a class="ssc-checklist__action" href="<?php echo esc_url( $links[ $item['id'] ] ); ?>"><?php esc_html_e( 'Complete this step', 'nexachat-ai' ); ?> <span class="ssc-dir-arrow" aria-hidden="true">→</span></a>
 							<?php endif; ?>
 						</li>
 					<?php endforeach; ?>
@@ -484,10 +489,11 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 
 					<div class="ssc-form__actions">
 						<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ssc-wizard', 'step' => 'appearance' ), admin_url( 'admin.php' ) ) ); ?>"><span class="ssc-dir-arrow" aria-hidden="true">←</span> <?php esc_html_e( 'Back', 'nexachat-ai' ); ?></a>
-						<button type="submit" name="publish" value="1" class="ssc-btn ssc-btn--primary ssc-btn--launch" <?php disabled( ! $all_ready ); ?>>
+						<button type="submit" name="publish" value="1" class="ssc-btn ssc-btn--primary ssc-btn--launch" id="ssc-publish" <?php disabled( ! $all_ready ); ?>>
 							<?php esc_html_e( 'Publish chatbot', 'nexachat-ai' ); ?>
 						</button>
 					</div>
+					<p class="ssc-launch__hint" id="ssc-launch-hint" role="status" aria-live="polite" data-prefix="<?php esc_attr_e( 'To publish, complete:', 'nexachat-ai' ); ?>" <?php echo $all_ready ? 'hidden' : ''; ?>></p>
 				</form>
 
 			<?php

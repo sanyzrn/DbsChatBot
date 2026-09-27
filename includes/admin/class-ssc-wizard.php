@@ -290,10 +290,9 @@ class SSC_Wizard {
 	protected function save_review() {
 		$publish = ! empty( $_POST['publish'] );
 
-		// Privacy disclosure acknowledgment (required before publishing).
-		if ( ! empty( $_POST['privacy_ack'] ) ) {
-			SSC_Settings::update( array( 'privacy_acknowledged' => 'yes' ) );
-		}
+		// Privacy disclosure acknowledgment (required before publishing). The
+		// checkbox is the source of truth: unticking it withdraws it.
+		SSC_Settings::update( array( 'privacy_acknowledged' => empty( $_POST['privacy_ack'] ) ? 'no' : 'yes' ) );
 
 		if ( $publish ) {
 			$ready = true;

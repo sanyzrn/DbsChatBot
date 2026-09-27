@@ -367,11 +367,13 @@
 				var html = '';
 				if (res && res.ok) {
 					html += '<div class="ssc-notice ssc-notice--success">' + esc(res.message) + '</div>';
+					// Saved server-side already: tick the checklist without a reload.
+					document.dispatchEvent(new CustomEvent('ssc:launch-item', { detail: { id: 'identity_test', done: true } }));
 				} else {
 					html += '<div class="ssc-notice ssc-notice--error">' + esc(res && res.message ? res.message : 'Test failed') + '</div>';
 				}
 				if (res && res.reply) {
-					html += '<blockquote>' + esc(res.reply) + '</blockquote>';
+					html += '<blockquote dir="auto">' + esc(String(res.reply).replace(/\*\*/g, '')) + '</blockquote>';
 				}
 				out.innerHTML = html;
 			}).catch(function () {
@@ -507,4 +509,82 @@
 	card.addEventListener('change', sync);
 	if (provider) { provider.addEventListener('change', sync); }
 	sync();
+})();
+
+/* ---------- Launch checklist (wizard review step) ----------
+ * The checklist is rendered once by the server, but two items are completed
+ * on this very screen: the identity test (AJAX) and the privacy confirmation
+ * (a checkbox that is only saved together with Publish). Without live updates
+ * the Publish button stayed disabled forever. The server re-validates every
+ * item when Publish is submitted.
+ */
+(function () {
+	'use strict';
+	var list = document.getElementById('ssc-launch-checklist');
+	var publish = document.getElementById('ssc-publish');
+	if (!list || !publish) { return; }
+	var hint = document.getElementById('ssc-launch-hint');
+	var privacy = document.querySelector('#ssc-privacy-ack input[type="checkbox"]');
+
+	function item(id) { return list.querySelector('[data-item="' + id + '"]'); }
+
+	function setDone(id, done) {
+		var li = item(id);
+		if (!li) { return; }
+		li.setAttribute('data-done', done ? '1' : '0');
+		li.classList.toggle('is-done', !!done);
+		var mark = li.querySelector('.ssc-checklist__mark');
+		if (mark) { mark.textContent = done ? '✓' : '○'; }
+		var action = li.querySelector('button.ssc-checklist__action');
+		if (action) { action.hidden = !!done; }
+		refresh();
+	}
+
+	function refresh() {
+		var missing = [];
+		Array.prototype.forEach.call(list.querySelectorAll('[data-item]'), function (li) {
+			if (li.getAttribute('data-done') !== '1') {
+				var label = li.querySelector('.ssc-checklist__label');
+				missing.push(label ? label.textContent.trim() : li.getAttribute('data-item'));
+			}
+		});
+		publish.disabled = missing.length > 0;
+		if (hint) {
+			hint.hidden = missing.length === 0;
+			hint.textContent = missing.length ? (hint.getAttribute('data-prefix') || '') + ' ' + missing.join(' · ') : '';
+		}
+	}
+
+	function flash(node) {
+		if (!node) { return; }
+		node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		node.classList.remove('ssc-flash');
+		void node.offsetWidth; // Restart the highlight animation.
+		node.classList.add('ssc-flash');
+	}
+
+	list.addEventListener('click', function (e) {
+		var btn = e.target.closest && e.target.closest('button.ssc-checklist__action');
+		if (!btn) { return; }
+		if (btn.getAttribute('data-action') === 'identity') {
+			var run = document.getElementById('ssc-run-identity-test');
+			flash(document.getElementById('ssc-identity-test'));
+			if (run && !run.disabled) { run.click(); }
+		} else if (btn.getAttribute('data-action') === 'privacy') {
+			flash(document.getElementById('ssc-privacy-ack'));
+			if (privacy) { privacy.focus(); }
+		}
+	});
+
+	document.addEventListener('ssc:launch-item', function (e) {
+		if (e.detail && e.detail.id) { setDone(e.detail.id, !!e.detail.done); }
+	});
+
+	if (privacy) {
+		privacy.addEventListener('change', function () { setDone('privacy', privacy.checked); });
+		// Reflect the box as it is now (the browser may restore a ticked state).
+		setDone('privacy', privacy.checked);
+	} else {
+		refresh();
+	}
 })();

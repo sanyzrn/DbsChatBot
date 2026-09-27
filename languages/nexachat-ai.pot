@@ -3,12 +3,12 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: NexaChatAI 1.1.0\n"
+"Project-Id-Version: NexaChatAI 1.1.1\n"
 "Report-Msgid-Bugs-To: https://github.com/sanyzrn/DbsChatBot/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-27 10:15:39+00:00\n"
+"POT-Creation-Date: 2026-09-27 11:45:07+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -37,19 +37,19 @@ msgid "Dashboard"
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:79
-#: includes/admin/class-ssc-wizard.php:341
+#: includes/admin/class-ssc-wizard.php:340
 #: includes/admin/views/page-knowledge.php:23
 msgid "Business Knowledge"
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:80
-#: includes/admin/class-ssc-wizard.php:342
+#: includes/admin/class-ssc-wizard.php:341
 #: includes/admin/views/page-connection.php:24
 msgid "AI Connection"
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:81
-#: includes/admin/class-ssc-wizard.php:343
+#: includes/admin/class-ssc-wizard.php:342
 #: includes/admin/views/page-appearance.php:29
 msgid "Appearance"
 msgstr ""
@@ -62,7 +62,7 @@ msgstr ""
 
 #: includes/admin/class-ssc-admin.php:83
 #: includes/admin/views/page-settings.php:21
-#: includes/core/class-ssc-plugin.php:113
+#: includes/core/class-ssc-plugin.php:115
 msgid "Settings"
 msgstr ""
 
@@ -72,7 +72,7 @@ msgid "Setup Wizard"
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:125
-#: includes/core/class-ssc-plugin.php:157
+#: includes/core/class-ssc-plugin.php:159
 #: widgets/class-ssc-elementor-widget.php:32
 msgid "NexaChatAI"
 msgstr ""
@@ -104,11 +104,11 @@ msgstr ""
 msgid "Offline"
 msgstr ""
 
-#: includes/admin/class-ssc-wizard.php:340
+#: includes/admin/class-ssc-wizard.php:339
 msgid "Business Identity"
 msgstr ""
 
-#: includes/admin/class-ssc-wizard.php:344
+#: includes/admin/class-ssc-wizard.php:343
 msgid "Verify & Launch"
 msgstr ""
 
@@ -732,7 +732,7 @@ msgid "Take offline"
 msgstr ""
 
 #: includes/admin/views/page-dashboard.php:35
-#: includes/admin/views/wizard.php:488
+#: includes/admin/views/wizard.php:493
 msgid "Publish chatbot"
 msgstr ""
 
@@ -2189,7 +2189,7 @@ msgstr ""
 #: includes/admin/views/wizard.php:248
 #: includes/admin/views/wizard.php:342
 #: includes/admin/views/wizard.php:420
-#: includes/admin/views/wizard.php:486
+#: includes/admin/views/wizard.php:491
 msgid "Back"
 msgstr ""
 
@@ -2257,32 +2257,44 @@ msgstr ""
 msgid "Go to dashboard"
 msgstr ""
 
-#: includes/admin/views/wizard.php:457
-msgid "Fix"
+#: includes/admin/views/wizard.php:458
+msgid "Run the test"
 msgstr ""
 
-#: includes/admin/views/wizard.php:464
+#: includes/admin/views/wizard.php:460
+msgid "Confirm below"
+msgstr ""
+
+#: includes/admin/views/wizard.php:462
+msgid "Complete this step"
+msgstr ""
+
+#: includes/admin/views/wizard.php:469
 msgid "Business identity test"
 msgstr ""
 
-#: includes/admin/views/wizard.php:465
+#: includes/admin/views/wizard.php:470
 msgid "Asks the assistant which organization it represents. It must answer correctly before publishing."
 msgstr ""
 
-#: includes/admin/views/wizard.php:466
+#: includes/admin/views/wizard.php:471
 msgid "Run identity test"
 msgstr ""
 
-#: includes/admin/views/wizard.php:471
+#: includes/admin/views/wizard.php:476
 msgid "Try the assistant (preview)"
 msgstr ""
 
-#: includes/admin/views/wizard.php:472
+#: includes/admin/views/wizard.php:477
 msgid "A private preview — visitors cannot see it. Ask anything your customers would ask."
 msgstr ""
 
-#: includes/admin/views/wizard.php:482
+#: includes/admin/views/wizard.php:487
 msgid "I understand chat messages are sent to the AI provider I configured (an external service) and form data is stored on my site. I will inform my visitors."
+msgstr ""
+
+#: includes/admin/views/wizard.php:496
+msgid "To publish, complete:"
 msgstr ""
 
 #: includes/bootstrap.php:68
@@ -2382,7 +2394,7 @@ msgstr ""
 msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
 msgstr ""
 
-#: includes/core/class-ssc-cron.php:65
+#: includes/core/class-ssc-cron.php:67
 msgid "NexaChatAI: every five minutes"
 msgstr ""
 
@@ -2651,15 +2663,15 @@ msgstr ""
 msgid "Industry Extensions"
 msgstr ""
 
-#: includes/core/class-ssc-plugin.php:112
+#: includes/core/class-ssc-plugin.php:114
 msgid "Setup"
 msgstr ""
 
-#: includes/core/class-ssc-plugin.php:143
+#: includes/core/class-ssc-plugin.php:145
 msgid "This site uses an AI chat assistant. Messages you type are processed by this website and sent to the AI provider selected by the site owner (an external service) to generate replies. If you submit a contact form, your name, phone number and message are stored so we can follow up."
 msgstr ""
 
-#: includes/core/class-ssc-plugin.php:144
+#: includes/core/class-ssc-plugin.php:146
 msgid "Server conversation history is optional and follows the configured retention policy. Outside pharmaceutical mode, the browser may keep a short-lived conversation and the server may cache answers. In pharmaceutical mode these two caches are disabled; submitted safety reports are still stored for review. Deleting a browser conversation does not delete server records. Contact the site owner about access or deletion requests."
 msgstr ""
 
