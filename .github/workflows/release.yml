@@ -5,9 +5,12 @@ name: Release
 # what the tagged commit produces.
 #
 # If the release was already created in the GitHub UI (which also creates the
-# tag), the ZIP is attached to that release instead of failing. The workflow
-# can also be run by hand for an existing tag (Actions -> Release -> Run
-# workflow) to repair a release that is missing its ZIP.
+# tag), the ZIP is attached to that release instead of failing.
+#
+# It can also be run by hand (Actions -> Release -> Run workflow):
+#   - for an existing tag: rebuilds from that tag and repairs its release;
+#   - for a new tag: builds the branch you run it on (normally main) and
+#     GitHub creates the tag together with the release.
 on:
   push:
     tags:
@@ -15,7 +18,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing tag to (re)build and publish, e.g. v1.1.0'
+        description: 'Tag to publish, e.g. v1.1.1 (created from the selected branch if it does not exist yet)'
         required: true
         type: string
 
@@ -36,7 +39,23 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: refs/tags/${{ env.TAG }}
+          fetch-depth: 0
+
+      - name: Select the source (existing tag, or the branch for a new tag)
+        run: |
+          set -e
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            git checkout -q "refs/tags/$TAG"
+            echo "TAG_EXISTS=1" >> "$GITHUB_ENV"
+            echo "Building existing tag $TAG ($(git rev-parse --short HEAD))"
+          else
+            if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+              echo "::error::Tag $TAG not found"; exit 1
+            fi
+            echo "TAG_EXISTS=0" >> "$GITHUB_ENV"
+            echo "TARGET_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+            echo "Tag $TAG does not exist yet: building $(git rev-parse --short HEAD) from ${{ github.ref_name }}"
+          fi
 
       - uses: actions/setup-python@v6
         with:
@@ -99,8 +118,14 @@ jobs:
             echo "Release $TAG already exists: attaching the ZIP and refreshing its notes."
             gh release upload "$TAG" dist/*.zip dist/*.zip.sha256 --clobber
             gh release edit "$TAG" --title "$title" --notes-file RELEASE_NOTES.md
-          else
+          elif [ "$TAG_EXISTS" = "1" ]; then
             gh release create "$TAG" --verify-tag \
+              --title "$title" \
+              --notes-file RELEASE_NOTES.md \
+              dist/*.zip dist/*.zip.sha256
+          else
+            # New tag: GitHub creates it on the exact commit that was built.
+            gh release create "$TAG" --target "$TARGET_SHA" \
               --title "$title" \
               --notes-file RELEASE_NOTES.md \
               dist/*.zip dist/*.zip.sha256

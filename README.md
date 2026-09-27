@@ -153,13 +153,15 @@ Releases are built by GitHub Actions — never upload a ZIP by hand.
    `Stable tag` in `readme.txt`.
 2. Add a `= x.y.z =` section under `== Changelog ==` in `readme.txt` (it becomes the
    release notes).
-3. Merge to `main`, then push a tag: `git tag vX.Y.Z && git push origin vX.Y.Z`.
+3. Merge to `main`, then either push a tag (`git tag vX.Y.Z && git push origin vX.Y.Z`)
+   or run **Actions → Release → Run workflow** on `main` with the tag `vX.Y.Z` — the
+   workflow then creates the tag on the commit it built.
 
 The **Release** workflow checks that the tag matches the plugin version, builds the ZIP
 from an allowlist, verifies it contains no development files or credentials, and
 publishes it with its SHA-256 checksum. If a release for that tag was already created
 in the GitHub UI, the workflow attaches the ZIP to it instead of failing. It can also be
-re-run for an existing tag from **Actions → Release → Run workflow**.
+re-run for an existing tag from **Actions → Release → Run workflow** to repair it.
 
 To build locally: `python tools/build-release.py && python tools/verify-release.py`
 (output in `dist/`).
@@ -287,8 +289,9 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 ۲. بخش `= x.y.z =` را در changelog فایل `readme.txt` بنویسید. این متن یادداشت انتشار
 می‌شود.
 
-۳. تغییرات را در `main` ادغام کنید و تگ `vX.Y.Z` را push کنید. GitHub Actions فایل
-ZIP را می‌سازد، بررسی می‌کند و منتشر می‌کند.
+۳. تغییرات را در `main` ادغام کنید. سپس یا تگ `vX.Y.Z` را push کنید، یا از
+**Actions ← Release ← Run workflow** روی `main` با تگ `vX.Y.Z` اجرا کنید. GitHub
+Actions فایل ZIP را می‌سازد، بررسی و منتشر می‌کند.
 
 ZIP را دستی بارگذاری نکنید. اگر انتشار را از صفحهٔ GitHub ساخته باشید، workflow فایل
 ZIP را به همان انتشار اضافه می‌کند.
