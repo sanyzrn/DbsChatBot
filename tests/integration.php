@@ -47,6 +47,64 @@ foreach ( array( array( 'product' => '' ), array( 'consent' => 'false' ), array(
 check( SSC_Schema::update_status( $case_id, 'follow_up', 'Test follow-up' ), 'Follow-up workflow status saved' );
 check( last_case()['status'] === 'follow_up', 'Follow-up status persisted' );
 check( ! SSC_Schema::update_status( 99999999, 'done' ), 'Missing cases cannot produce false status audit records' );
+
+// Persian product names: ids must survive request sanitizing (reports and chat).
+check( 0 === strpos( SSC_Settings::make_unique_id( '', 'قرص سرماخوردگی' ), 'p-' ) && SSC_Settings::make_unique_id( '', 'قرص سرماخوردگی' ) === sanitize_text_field( SSC_Settings::make_unique_id( '', 'قرص سرماخوردگی' ) ), 'Non-Latin product names get ids that survive sanitize_text_field' );
+$products_before = SSC_Settings::get( 'products', array() );
+SSC_Settings::update( array( 'products' => array( array( 'id' => 'ignored', 'name' => 'x' ) ) ) );
+update_option( SSC_Settings::SPLIT_OPTIONS['products'], array( array( 'id' => '%d9%82%d8%b1%d8%b5', 'name' => 'قرص', 'summary' => '', 'brochure' => '', 'image' => '', 'attributes' => array() ) ) );
+wp_cache_flush();
+$GLOBALS['wpdb']->insert( SSC_Schema::table_name(), array( 'type' => 'pharma_adr', 'name' => 'Migration probe', 'product' => '%d9%82%d8%b1%d8%b5', 'created_at' => current_time( 'mysql' ) ) );
+$probe_id = (int) $GLOBALS['wpdb']->insert_id;
+SSC_Schema::migrate_product_ids();
+$migrated_id = SSC_Settings::get( 'products' )[0]['id'];
+check( 0 === strpos( $migrated_id, 'p-' ) && $migrated_id === $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( 'SELECT product FROM ' . SSC_Schema::table_name() . ' WHERE id = %d', $probe_id ) ), 'Percent-encoded product ids are migrated together with stored reports' );
+$result = $pharma->handle_submission( array_merge( $valid, array( 'product' => $migrated_id ) ) );
+check( ! is_wp_error( $result ), 'A side-effect report for a Persian-named product is accepted' );
+SSC_Settings::update( array( 'products' => $products_before ) );
+
+// Configurable ADR form: presets, per-question switches, admin-defined questions.
+$adr_form_before = SSC_Settings::get( 'adr_form', array() );
+SSC_Settings::update( array( 'adr_form' => array( 'preset' => 'short' ) ) );
+$short_keys = array_column( SSC_Module_Pharma::adr_options_public(), 'key' );
+check( array( 'name', 'phone', 'product', 'description', 'seriousness' ) === $short_keys, 'Short preset shows only the essential questions' );
+$result = $pharma->handle_submission( array_merge( $valid, array( 'patient_age' => 999, 'dose' => 'ignored' ) ) );
+$short_extra = json_decode( last_case()['extra_fields'], true );
+check( ! is_wp_error( $result ) && ! isset( $short_extra['dose'] ) && ! isset( $short_extra['patient_age'] ), 'Switched-off questions are ignored, never validated or stored' );
+SSC_Settings::update(
+    array(
+        'adr_form' => array(
+            'preset' => 'custom',
+            'fields' => array(
+                'name'         => array( 'on' => '', 'req' => '', 'label' => 'نام شما' ),
+                'batch_number' => array( 'on' => '', 'label' => '' ),
+                'dose'         => array( 'on' => '1', 'req' => '1', 'label' => '' ),
+            ),
+            'custom' => array(
+                array( 'label' => 'کدام داروخانه؟', 'type' => 'select', 'options' => 'مرکزی، شعبه ۲', 'required' => '1' ),
+                array( 'label' => 'Anything else?', 'type' => 'textarea' ),
+                array( 'label' => '', 'type' => 'text' ),
+            ),
+        ),
+    )
+);
+$custom_fields = array();
+foreach ( SSC_Module_Pharma::adr_options_public() as $f ) { $custom_fields[ $f['key'] ] = $f; }
+$pharmacy_key  = SSC_Module_Pharma::form_config()['custom'][0]['key'];
+check( isset( $custom_fields['name'] ) && 'نام شما' === $custom_fields['name']['label'] && $custom_fields['name']['required'], 'Essential questions cannot be switched off, only reworded' );
+check( ! isset( $custom_fields['batch_number'] ) && $custom_fields['dose']['required'] && isset( $custom_fields['severity'] ), 'Custom mode applies per-question switches; unconfigured questions stay on' );
+check( 2 === count( SSC_Module_Pharma::form_config()['custom'] ) && 0 === strpos( $pharmacy_key, 'q_' ) && array( 'مرکزی', 'شعبه ۲' ) === array_column( $custom_fields[ $pharmacy_key ]['options'], 'value' ), 'Admin questions get stable keys and choices; empty ones are dropped' );
+check( SSC_Module_Pharma::sanitize_form_config( SSC_Module_Pharma::form_config() )['custom'][0]['key'] === $pharmacy_key, 'Question keys survive a re-save' );
+$result = $pharma->handle_submission( array_merge( $valid, array( 'dose' => '10 mg' ) ) );
+check( is_wp_error( $result ), 'A required admin question must be answered' );
+$result = $pharma->handle_submission( array_merge( $valid, array( 'dose' => '10 mg', $pharmacy_key => 'نامعتبر' ) ) );
+check( is_wp_error( $result ), 'Admin dropdown answers must be one of the choices' );
+$result = $pharma->handle_submission( array_merge( $valid, array( 'dose' => '10 mg', $pharmacy_key => 'شعبه ۲' ) ) );
+$custom_extra = json_decode( last_case()['extra_fields'], true );
+$answers      = SSC_Module_Pharma::custom_answers( $custom_extra );
+check( ! is_wp_error( $result ) && array( 'کدام داروخانه؟' => 'شعبه ۲' ) === $answers[0] && false !== strpos( SSC_Module_Pharma::custom_answers_text( $custom_extra ), 'شعبه ۲' ), 'Admin question answers are stored with the question text' );
+SSC_Settings::update( array( 'adr_form' => $adr_form_before ) );
+
 $leads = new SSC_Module_Leads();
 SSC_Settings::update( array( 'consent_enabled' => 'yes', 'form_fields' => array() ) );
 $lead = $leads->handle_submission( array( 'name' => 'Test lead', 'phone' => '+442012345678', 'description' => 'Testing a contact request.', 'consent' => '1' ) );
@@ -149,6 +207,7 @@ check( false !== strpos( $script_data, '"nonce":"' . wp_create_nonce( 'wp_rest' 
 remove_filter( 'ssc_enforce_rest_nonce', '__return_true' );
 load_textdomain( 'nexachat-ai', dirname( __DIR__ ) . '/languages/nexachat-ai-fa_IR.mo', 'fa_IR' );
 check( __( 'Report a side effect', 'nexachat-ai' ) === 'گزارش عارضهٔ دارویی', 'Bundled Persian gettext catalog loads' );
+unload_textdomain( 'nexachat-ai', true ); // Later checks expect the site's own language.
 check( SSC_Settings::clamp_int( 'font_size', 0 ) === 12 && SSC_Settings::clamp_int( 'window_width', 5000 ) === 520 && SSC_Settings::clamp_int( 'ai_max_tokens', 0 ) === 100, 'Integer settings are clamped to usable ranges' );
 $raw_fields = array(
     array( 'label' => 'Company', 'type' => 'text', 'key' => '' ),
@@ -367,5 +426,8 @@ $widget_clean = false === has_filter( 'gettext_nexachat-ai', array( 'SSC_I18n', 
 SSC_Settings::update( array( 'widget_language' => $widget_language_before ) );
 check( $widget_active && 'منوی اصلی' === $widget_fa && $widget_clean, 'Widget language overrides the English site language, and only while active' );
 
+require __DIR__ . '/live.php';
+require __DIR__ . '/woo.php';
+require __DIR__ . '/sitesync.php';
 require __DIR__ . '/notification-queue.php';
 echo "\n$checks integration checks passed.\n";

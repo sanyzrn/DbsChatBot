@@ -31,6 +31,9 @@ class SSC_Admin_Settings {
 	public function handle_actions() {
 		if ( isset( $_POST['ssc_settings_save'] ) && check_admin_referer( 'ssc_settings' ) ) {
 			$patch = array();
+			if ( isset( $_POST['adr_form'] ) && is_array( $_POST['adr_form'] ) ) {
+				$patch['adr_form'] = SSC_Settings::sanitize_value( 'adr_form', wp_unslash( $_POST['adr_form'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by sanitize_value().
+			}
 			if ( isset( $_POST['pharma_answer_mode'] ) ) {
 				$patch['pharma_answer_mode'] = SSC_Settings::sanitize_value( 'pharma_answer_mode', wp_unslash( $_POST['pharma_answer_mode'] ) );
 			}
@@ -91,17 +94,65 @@ class SSC_Admin_Settings {
 			$patch['notify_email_enabled'] = isset( $_POST['notify_email_enabled'] ) ? 'yes' : 'no';
 			$patch['notify_email_to'] = isset( $_POST['notify_email_to'] ) ? sanitize_email( wp_unslash( $_POST['notify_email_to'] ) ) : '';
 
-			// Secrets for notifications.
+			// Live chat and messenger bot.
+			$patch['messenger_mode'] = isset( $_POST['messenger_mode'] ) ? SSC_Settings::sanitize_value( 'messenger_mode', wp_unslash( $_POST['messenger_mode'] ) ) : 'webhook';
+			$patch['live_operators'] = SSC_Settings::sanitize_value( 'live_operators', isset( $_POST['live_operators'] ) ? (array) wp_unslash( $_POST['live_operators'] ) : array() ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by sanitize_value().
+			foreach ( array( 'live_assign', 'live_canned', 'live_join_text', 'live_offline_text', 'messenger_welcome' ) as $key ) {
+				$patch[ $key ] = isset( $_POST[ $key ] ) ? SSC_Settings::sanitize_value( $key, wp_unslash( $_POST[ $key ] ) ) : '';
+			}
+			foreach ( array( 'live_wait_minutes', 'live_retention_days' ) as $key ) {
+				if ( isset( $_POST[ $key ] ) ) {
+					$patch[ $key ] = SSC_Settings::clamp_int( $key, wp_unslash( $_POST[ $key ] ) );
+				}
+			}
+
+			// WooCommerce sales assistant and SMS.
+			foreach ( array( 'woo_product_search', 'woo_order_tracking', 'woo_coupon_enabled', 'woo_abandoned_enabled', 'sms_notify_admin' ) as $key ) {
+				$patch[ $key ] = isset( $_POST[ $key ] ) ? 'yes' : 'no';
+			}
+			foreach ( array( 'woo_coupon_trigger', 'woo_coupon_type', 'woo_coupon_text', 'woo_abandoned_text', 'sms_provider', 'sms_sender', 'sms_username', 'sms_admin_phone' ) as $key ) {
+				if ( isset( $_POST[ $key ] ) ) {
+					$patch[ $key ] = SSC_Settings::sanitize_value( $key, wp_unslash( $_POST[ $key ] ) );
+				}
+			}
+			foreach ( array( 'woo_cards', 'woo_coupon_idle', 'woo_coupon_amount', 'woo_coupon_min', 'woo_coupon_hours', 'woo_coupon_daily', 'woo_abandoned_hours' ) as $key ) {
+				if ( isset( $_POST[ $key ] ) ) {
+					$patch[ $key ] = SSC_Settings::clamp_int( $key, wp_unslash( $_POST[ $key ] ) );
+				}
+			}
+			if ( SSC_Modules::is_active( 'sms' ) && isset( $_POST['sms_api_key'] ) && '' !== trim( (string) wp_unslash( $_POST['sms_api_key'] ) ) ) {
+				SSC_Settings::set_secret( 'sms_api_key', sanitize_text_field( wp_unslash( $_POST['sms_api_key'] ) ) );
+			}
+
+			// The shared bot (alerts, live chat, messenger bot).
+			$bot_in_use    = self::bot_in_use();
 			$secret_failed = false;
-			if ( SSC_Modules::is_active( 'notifications' ) && isset( $_POST['notify_token'] ) && '' !== trim( (string) wp_unslash( $_POST['notify_token'] ) ) ) {
+			if ( $bot_in_use && isset( $_POST['notify_token'] ) && '' !== trim( (string) wp_unslash( $_POST['notify_token'] ) ) ) {
 				$secret_failed = ! SSC_Settings::set_secret( 'notify_token', sanitize_text_field( wp_unslash( $_POST['notify_token'] ) ) );
-			} elseif ( SSC_Modules::is_active( 'notifications' ) && isset( $_POST['notify_token_clear'] ) ) {
+			} elseif ( $bot_in_use && isset( $_POST['notify_token_clear'] ) ) {
 				SSC_Settings::set_secret( 'notify_token', '' );
 			}
 
 			SSC_Settings::update( self::active_module_patch( $patch ) );
 			if ( $secret_failed ) {
 				self::prg( array( 'saved' => 1, 'secret_error' => 1 ) );
+			}
+			if ( isset( $_POST['ssc_sms_test'] ) && SSC_Modules::is_active( 'sms' ) ) {
+				$to     = isset( $_POST['sms_test_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['sms_test_phone'] ) ) : '';
+				$result = SSC_Module_Sms::send( $to, __( 'Test message from your website assistant. SMS is working.', 'nexachat-ai' ) );
+				set_transient(
+					'ssc_sms_status',
+					array(
+						'ok'   => true === $result,
+						'text' => true === $result ? __( 'The test SMS was accepted by the panel.', 'nexachat-ai' ) : $result->get_error_message(),
+					),
+					HOUR_IN_SECONDS
+				);
+				self::prg( array( 'saved' => 1, 'tab' => 'modules' ) );
+			}
+			if ( isset( $_POST['ssc_messenger_connect'] ) && SSC_Messenger::needed() ) {
+				self::connect_bot();
+				self::prg( array( 'saved' => 1, 'tab' => 'modules' ) );
 			}
 			self::prg( array( 'saved' => 1 ) );
 		}
@@ -120,18 +171,70 @@ class SSC_Admin_Settings {
 		}
 	}
 
+	/**
+	 * Is the shared bot card on screen (a module that uses it is active)?
+	 *
+	 * @return bool
+	 */
+	protected static function bot_in_use() {
+		return SSC_Modules::is_active( 'notifications' ) || SSC_Messenger::needed();
+	}
+
+	/**
+	 * Apply the bot connection and keep a short status for the settings card.
+	 */
+	protected static function connect_bot() {
+		if ( ! SSC_Messenger::ready() ) {
+			$status = array(
+				'ok'   => false,
+				'text' => __( 'Add the bot token first.', 'nexachat-ai' ),
+			);
+		} else {
+			$me     = SSC_Messenger::bot_info( true );
+			$result = SSC_Messenger::connect();
+			if ( is_wp_error( $result ) ) {
+				$status = array(
+					'ok'   => false,
+					/* translators: %s: error from the messenger. */
+					'text' => sprintf( __( 'The bot could not be connected: %s', 'nexachat-ai' ), $result->get_error_message() ),
+				);
+			} else {
+				$name   = ! empty( $me['username'] ) ? '@' . $me['username'] : SSC_Messenger::platform_label();
+				$status = array(
+					'ok'   => true,
+					'text' => 'polling' === SSC_Messenger::mode()
+						/* translators: %s: bot username. */
+						? sprintf( __( 'Connected to %s. New messages are checked every minute, and every few seconds while the Live chat screen is open.', 'nexachat-ai' ), $name )
+						/* translators: %s: bot username. */
+						: sprintf( __( 'Connected to %s. Messages arrive instantly.', 'nexachat-ai' ), $name ),
+				);
+			}
+		}
+		set_transient( 'ssc_messenger_status', $status, DAY_IN_SECONDS );
+	}
+
 	/** Hidden module controls must not erase their saved configuration. */
 	public static function active_module_patch( $patch ) {
 		$groups = array(
-			'pharma' => array( 'pharma_answer_mode' ),
+			'pharma' => array( 'pharma_answer_mode', 'adr_form' ),
 			'voice' => array( 'voice_input', 'voice_output', 'voice_language' ),
 			'history' => array( 'chatlog_enabled' ),
 			'csat' => array( 'csat_enabled' ),
 			'handoff' => array( 'handoff_text' ),
 			'proactive' => array( 'proactive_delay', 'proactive_text', 'proactive_trigger', 'proactive_scroll', 'proactive_rules' ),
 			'leads' => array( 'form_fields' ),
-			'notifications' => array( 'notify_platform', 'notify_chat_id', 'notify_email_enabled', 'notify_email_to' ),
+			'notifications' => array( 'notify_chat_id', 'notify_email_enabled', 'notify_email_to' ),
+			'live' => array( 'live_operators', 'live_assign', 'live_canned', 'live_join_text', 'live_offline_text', 'live_wait_minutes', 'live_retention_days' ),
+			'messenger' => array( 'messenger_welcome' ),
+			'woocommerce' => array( 'woo_product_search', 'woo_cards', 'woo_order_tracking', 'woo_coupon_enabled', 'woo_coupon_trigger', 'woo_coupon_idle', 'woo_coupon_type', 'woo_coupon_amount', 'woo_coupon_min', 'woo_coupon_hours', 'woo_coupon_daily', 'woo_coupon_text', 'woo_abandoned_enabled', 'woo_abandoned_hours', 'woo_abandoned_text' ),
+			'sms' => array( 'sms_provider', 'sms_sender', 'sms_username', 'sms_admin_phone', 'sms_notify_admin' ),
 		);
+		if ( ! self::bot_in_use() ) {
+			unset( $patch['notify_platform'] );
+		}
+		if ( ! SSC_Messenger::needed() ) {
+			unset( $patch['messenger_mode'] );
+		}
 		foreach ( $groups as $module => $keys ) {
 			if ( ! SSC_Modules::is_active( $module ) ) {
 				foreach ( $keys as $key ) {

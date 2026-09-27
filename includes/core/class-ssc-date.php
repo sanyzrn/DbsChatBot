@@ -24,7 +24,9 @@ class SSC_Date {
 	 * @return bool
 	 */
 	public static function use_jalali() {
-		$jalali = 0 === strpos( (string) determine_locale(), 'fa' ) && ! function_exists( 'parsidate' ) && ! function_exists( 'jdate' );
+		// Visitor-facing text follows the widget language when it overrides the site's.
+		$locale = class_exists( 'SSC_I18n' ) && SSC_I18n::active_locale() ? SSC_I18n::active_locale() : (string) determine_locale();
+		$jalali = 0 === strpos( $locale, 'fa' ) && ! function_exists( 'parsidate' ) && ! function_exists( 'jdate' );
 		/**
 		 * Force (true) or disable (false) Solar Hijri dates in the plugin admin.
 		 *

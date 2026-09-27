@@ -66,6 +66,20 @@ class SSC_Wizard {
 		$step = sanitize_key( wp_unslash( $_POST['ssc_wizard_step'] ) );
 		check_admin_referer( 'ssc_wizard_' . $step );
 
+		// Industry template: fill empty fields, then show the step again.
+		if ( 'identity' === $step && isset( $_POST['ssc_template'] ) ) {
+			// Keep what was already typed; the template fills only what is still empty.
+			SSC_Settings::update( array( 'business' => SSC_Settings::sanitize_business( array_merge( SSC_Settings::business(), array_filter( $this->posted_business(), 'strlen' ) ) ) ) );
+			$result = SSC_Templates::apply( sanitize_key( wp_unslash( $_POST['ssc_template'] ) ) );
+			self::prg(
+				'identity',
+				is_wp_error( $result ) ? array( 'error' => 'template' ) : array(
+					'template' => sanitize_key( wp_unslash( $_POST['ssc_template'] ) ),
+					'modules'  => implode( ',', $result['modules'] ),
+				)
+			);
+		}
+
 		switch ( $step ) {
 			case 'identity':
 				$this->save_identity();
@@ -86,9 +100,12 @@ class SSC_Wizard {
 	}
 
 	/**
-	 * Step 1: business identity.
+	 * Business fields posted by the identity step (sanitized; nonce checked by the caller).
+	 *
+	 * @return array
 	 */
-	protected function save_identity() {
+	protected function posted_business() {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified in handle_posts().
 		$business = array();
 		$fields   = array( 'org_name', 'brand_name', 'category', 'industry', 'location', 'phone', 'email', 'support_phone', 'support_email', 'hours', 'assistant_name', 'assistant_role', 'tone', 'language' );
 		foreach ( $fields as $f ) {
@@ -98,6 +115,15 @@ class SSC_Wizard {
 			$business[ $f ] = isset( $_POST['business'][ $f ] ) ? wp_kses_post( wp_unslash( $_POST['business'][ $f ] ) ) : '';
 		}
 		$business['url'] = isset( $_POST['business']['url'] ) ? esc_url_raw( wp_unslash( $_POST['business']['url'] ) ) : '';
+		// phpcs:enable
+		return $business;
+	}
+
+	/**
+	 * Step 1: business identity.
+	 */
+	protected function save_identity() {
+		$business = $this->posted_business();
 
 		// Mandatory: organization name. Everything else is optional detail.
 		if ( '' === trim( $business['org_name'] ) ) {

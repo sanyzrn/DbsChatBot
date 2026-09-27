@@ -567,6 +567,53 @@
  * Forms inside the chat
  * ------------------------------------------------------------------ */
 
+/* WooCommerce: product cards, order status, coupon. */
+.ssc-root .ssc-pcards { display: flex; gap: 8px; overflow-x: auto; padding-block: 8px 4px; margin-inline: -4px; padding-inline: 4px; scroll-snap-type: x proximity; }
+.ssc-root .ssc-pcard { flex: 0 0 148px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 4px; background: var(--ssc-card); border: 1px solid var(--ssc-line); border-radius: 12px; padding: 8px; font-size: 12px; color: var(--ssc-ink); }
+.ssc-root .ssc-pcard.is-out { opacity: 0.75; }
+.ssc-root .ssc-pcard__media { display: block; aspect-ratio: 1 / 1; border-radius: 8px; overflow: hidden; background: var(--ssc-bg); }
+.ssc-root .ssc-pcard__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ssc-root .ssc-pcard__name { color: var(--ssc-ink); font-weight: 600; text-decoration: none; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.9em; }
+.ssc-root .ssc-pcard__price { display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; font-weight: 700; }
+.ssc-root .ssc-pcard__price del { color: var(--ssc-muted); font-weight: 400; font-size: 11px; }
+.ssc-root .ssc-pcard__stock { font-size: 11px; color: var(--ssc-muted); }
+.ssc-root .ssc-pcard.is-out .ssc-pcard__stock { color: #b42318; }
+.ssc-root .ssc-pcard__btn { margin-block-start: auto; display: inline-flex; justify-content: center; align-items: center; border: 0; border-radius: 999px; padding: 6px 10px; background: var(--ssc-primary); color: var(--ssc-primary-contrast); font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; }
+.ssc-root .ssc-pcard__btn--ghost { background: transparent; color: var(--ssc-primary); border: 1px solid var(--ssc-primary); }
+.ssc-root[data-theme="dark"] .ssc-pcard__btn--ghost { color: var(--ssc-ink); border-color: var(--ssc-line); }
+.ssc-root .ssc-pcard__btn.is-done { background: #067647; color: #fff; }
+.ssc-root .ssc-pcard__btn:disabled { cursor: default; opacity: 0.85; }
+.ssc-root .ssc-pcard__cart { text-align: center; font-size: 11.5px; color: var(--ssc-primary); }
+.ssc-root[data-theme="dark"] .ssc-pcard__cart { color: var(--ssc-ink); }
+.ssc-root .ssc-order__title { display: block; margin-block-end: 6px; }
+.ssc-root .ssc-order__list { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; margin: 0; font-size: 12.5px; }
+.ssc-root .ssc-order__list dt { color: var(--ssc-muted); }
+.ssc-root .ssc-order__list dd { margin: 0; }
+.ssc-root .ssc-order__track { margin-block-start: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12.5px; }
+.ssc-root .ssc-order__copy, .ssc-root .ssc-order__link { border: 0; background: none; color: var(--ssc-primary); font: inherit; cursor: pointer; text-decoration: underline; padding: 0; }
+.ssc-root .ssc-coupon__text { margin: 0 0 8px; }
+.ssc-root .ssc-coupon__code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 20px; font-weight: 700; letter-spacing: 2px; text-align: center; padding: 8px; border: 2px dashed var(--ssc-primary); border-radius: 10px; }
+.ssc-root .ssc-coupon__exp { margin: 6px 0; font-size: 11.5px; color: var(--ssc-muted); }
+.ssc-root .ssc-coupon__row { display: flex; gap: 6px; flex-wrap: wrap; }
+.ssc-root .ssc-proactive--offer .ssc-proactive__text { font-weight: 600; }
+
+/* Live chat: operator bubbles, system notes and the status bar. */
+.ssc-root .ssc-msg--operator { align-self: flex-start; background: var(--ssc-bot-bubble); color: var(--ssc-bot-ink); border: 1px solid var(--ssc-line); border-inline-start: 3px solid var(--ssc-primary); }
+.ssc-root .ssc-msg__who { display: block; font-size: 11px; font-weight: 700; color: var(--ssc-primary); margin-block-end: 2px; }
+.ssc-root[data-theme="dark"] .ssc-msg__who { color: var(--ssc-ink); }
+.ssc-root .ssc-msg--note { align-self: center; background: none; border: 0; box-shadow: none; color: var(--ssc-muted); font-size: 11.5px; padding: 2px 8px; max-width: 90%; text-align: center; }
+.ssc-root .ssc-livebar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 14px; font-size: 12px; background: color-mix(in srgb, var(--ssc-primary) 10%, var(--ssc-card)); color: var(--ssc-ink); border-block-start: 1px solid var(--ssc-line); }
+.ssc-root .ssc-livebar[hidden] { display: none; }
+.ssc-root .ssc-livebar__back { border: 0; background: none; color: var(--ssc-primary); font: inherit; font-weight: 600; cursor: pointer; padding: 2px 4px; text-decoration: underline; }
+.ssc-root[data-theme="dark"] .ssc-livebar__back { color: var(--ssc-ink); }
+
+.ssc-root .ssc-cardform__intro { margin: 0 0 10px; font-size: 12.5px; color: var(--ssc-muted); line-height: 1.6; }
+.ssc-root .ssc-cardform__more { border: 1px dashed var(--ssc-line); border-radius: 12px; padding: 4px 10px; margin-block: 4px 10px; }
+.ssc-root .ssc-cardform__more[open] { padding-block-end: 10px; }
+.ssc-root .ssc-cardform__more-toggle { cursor: pointer; padding: 6px 0; font-size: 12.5px; font-weight: 600; color: var(--ssc-primary); list-style-position: inside; }
+.ssc-root[data-theme="dark"] .ssc-cardform__more-toggle { color: var(--ssc-ink); }
+.ssc-root .ssc-cardform__more > .ssc-f:first-of-type { margin-block-start: 6px; }
+
 .ssc-root .ssc-cardform {
 	align-self: stretch;
 	background: var(--ssc-card);

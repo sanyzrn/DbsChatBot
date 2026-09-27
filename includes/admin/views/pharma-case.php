@@ -79,6 +79,21 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 			</table></div>
 		</section>
 
+		<?php foreach ( SSC_Module_Pharma::custom_answers( $extra ) as $ssc_answer_group ) : ?>
+			<?php if ( $ssc_answer_group ) : ?>
+				<section class="ssc-card">
+					<h2><?php esc_html_e( 'Additional questions', 'nexachat-ai' ); ?></h2>
+					<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--kv">
+						<tbody>
+							<?php foreach ( $ssc_answer_group as $ssc_question => $ssc_answer ) : ?>
+								<tr><th dir="auto"><?php echo esc_html( $ssc_question ); ?></th><td dir="auto"><?php echo esc_html( $ssc_answer ); ?></td></tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table></div>
+				</section>
+			<?php endif; ?>
+		<?php endforeach; ?>
+
 		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Case workflow', 'nexachat-ai' ); ?></h2>
 			<form method="post" class="ssc-form">

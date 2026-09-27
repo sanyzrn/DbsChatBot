@@ -41,6 +41,11 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 	}
 	wp_clear_scheduled_hook( 'ssc_daily_cleanup' );
 	wp_clear_scheduled_hook( 'ssc_notification_retry' );
+	wp_clear_scheduled_hook( 'ssc_messenger_poll' );
+	wp_clear_scheduled_hook( 'ssc_woo_reminders' );
+	wp_clear_scheduled_hook( 'ssc_sitesync_batch' );
+	wp_clear_scheduled_hook( 'ssc_sitesync_daily' );
+	wp_unschedule_hook( 'ssc_sitesync_post' );
 	wp_clear_scheduled_hook( 'ssc_chatbot_daily_cleanup' );
 	wp_clear_scheduled_hook( 'nafas_chatbot_daily_cleanup' );
 
@@ -70,6 +75,9 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 		'ssc_chatbot_delete_on_uninstall',
 		'ssc_notify_queue',
 		'ssc_pharma_setup',
+		'ssc_messenger_secret',
+		'ssc_messenger_offset',
+		'ssc_sitesync_state',
 		// Legacy namespace leftovers.
 		'nafas_chatbot_settings',
 		'nafas_chatbot_chat_stats',
@@ -82,7 +90,11 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 		delete_option( $option );
 	}
 
-	$suffixes = array( 'submissions', 'chatlog', 'qa', 'kb', 'stats', 'audit', 'notifications' );
+	$suffixes = array( 'submissions', 'chatlog', 'qa', 'kb', 'stats', 'audit', 'notifications', 'live_threads', 'live_messages', 'live_refs', 'carts' );
+	// Operator presence and messenger links.
+	foreach ( array( 'ssc_live_seen', 'ssc_live_available', 'ssc_messenger_user', 'ssc_messenger_chat' ) as $meta_key ) {
+		delete_metadata( 'user', 0, $meta_key, '', true );
+	}
 	foreach ( array( 'ssc_chatbot_', 'nafas_chatbot_' ) as $prefix ) {
 		foreach ( $suffixes as $suffix ) {
 			$table = $wpdb->prefix . $prefix . $suffix;

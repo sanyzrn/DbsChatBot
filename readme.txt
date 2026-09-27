@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.3
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,14 @@ NexaChatAI is a professional AI assistant for WordPress: install it, run the set
 = Optional modules =
 
 Voice, proactive invite, notifications (Bale/Telegram/email), handoff, analytics, CSAT, FAQ bank, consultation forms, and a pharmaceutical ADR (pharmacovigilance) extension.
+
+All of the following are off by default and appear only after you switch them on under Modules:
+
+* **Live chat:** an operator inbox to take over from the assistant, with queue and assignment, online/offline status, canned replies and an AI summary of the conversation. Operators can also answer from Bale or Telegram.
+* **Messenger bot:** customers chat with the same assistant inside Bale or Telegram.
+* **WooCommerce sales assistant:** product cards with real price and stock and an add-to-cart button, order tracking by order number and mobile, product comparison, a capped smart coupon on exit or hesitation, and an SMS cart reminder.
+* **SMS gateway:** Kavenegar, Melipayamak, IPPanel or SMS.ir, for cart reminders and new-request alerts.
+* **Learn from my website:** published pages, posts and products become knowledge automatically and stay up to date.
 
 == Installation ==
 
@@ -79,6 +87,20 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.2.0 =
+
+* New module, Live chat: operators take over a conversation from the assistant in a two-pane inbox. Includes a waiting queue, automatic or manual assignment, online/offline status with an offline message, canned replies, an AI summary for the operator and transcript retention. Operators can reply from Bale or Telegram.
+* New: one shared Bale / Telegram bot connection (webhook with a secret, or polling when the site cannot receive webhooks). Used by notifications, live chat and the messenger bot.
+* New module, Messenger bot: customers talk to the assistant inside Bale or Telegram and can ask for a human.
+* New module, WooCommerce sales assistant: product cards with real price and stock and an add-to-cart button, and order tracking by order number plus the order's mobile number. It can also compare products, offer a smart coupon on exit or hesitation (with an amount, a minimum cart, validity and a daily cap), and send a cart reminder SMS when the visitor leaves a mobile number.
+* New module, SMS gateway: Kavenegar, Melipayamak, IPPanel and SMS.ir; optional admin alert for new requests.
+* New module, Learn from my website: published pages, posts and products become knowledge automatically. They are re-indexed within a minute of an edit, removed when trashed or unpublished, and fully re-synced daily.
+* New: PDF and Word (.docx) import in the knowledge base, including Persian PDFs.
+* New: AI-suggested FAQs and assistant persona, written only from your own material and added only after you review them.
+* New: six industry templates in the setup wizard (online store, clinic, school, pharmaceutical, real estate, services). They fill only empty fields and recommend modules without switching them on.
+* New: the pharmaceutical side-effect form is configurable. Choose a short or standard preset, or switch questions on/off, make them optional, reword them and add your own questions. Optional questions are folded under "More details" so the form looks short.
+* Fixed: side-effect reports for products with non-Latin (e.g. Persian) names were refused. Existing product ids are migrated.
 
 = 1.1.3 =
 

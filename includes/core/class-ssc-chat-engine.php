@@ -92,6 +92,24 @@ class SSC_Chat_Engine {
 		$this->flags = array();
 
 		/**
+		 * Hand the message to another responder before the assistant sees it
+		 * (e.g. a human operator in the Live inbox). Return
+		 * array( 'reply' => '', 'flags' => array() ) to keep the assistant quiet;
+		 * an empty reply tells the widget not to render a bot bubble.
+		 *
+		 * @param null|array      $intercept    Null to continue normally.
+		 * @param string          $message      Visitor message.
+		 * @param string          $conversation Server conversation id ('' = none).
+		 * @param SSC_Chat_Engine $engine       Engine.
+		 */
+		$intercept = apply_filters( 'ssc_intercept_message', null, $message, $this->conversation, $this );
+		if ( is_array( $intercept ) ) {
+			$this->flags       = array_merge( $this->flags, isset( $intercept['flags'] ) ? (array) $intercept['flags'] : array() );
+			$this->last_source = 'live';
+			return $this->envelope( true, isset( $intercept['reply'] ) ? (string) $intercept['reply'] : '', 'live' );
+		}
+
+		/**
 		 * Replace the whole reply pipeline (integrations). The engine instance
 		 * is passed so modules can attach response flags.
 		 */
@@ -257,6 +275,8 @@ class SSC_Chat_Engine {
 			'log_token' => '',
 			'flags'     => $this->flags,
 			'sources'   => array(),
+			'cards'     => array(),
+			'actions'   => array(),
 		);
 		// Citations: the documents the answer was grounded on (AI answers only).
 		if ( $ok && in_array( $source, array( 'ai', 'cache' ), true ) && 'yes' === SSC_Settings::get( 'show_sources', 'yes' ) ) {
@@ -265,6 +285,31 @@ class SSC_Chat_Engine {
 
 		if ( $ok && '' !== $reply ) {
 			SSC_Conversation::append( $this->conversation, $this->current_question, $reply );
+		}
+
+		if ( $ok ) {
+			/**
+			 * Extend a reply for the widget: product cards, suggested actions.
+			 *
+			 * @param array           $out    Envelope (reply, source, cards, actions…).
+			 * @param string          $source Source.
+			 * @param string          $question Visitor message.
+			 * @param SSC_Chat_Engine $engine Engine.
+			 */
+			$out = apply_filters( 'ssc_chat_envelope', $out, $source, $this->current_question, $this );
+		}
+
+		if ( $ok && '' !== $reply && 'live' !== $source && '' !== $this->conversation ) {
+			/**
+			 * One answered exchange (Live inbox transcript, integrations).
+			 *
+			 * @param string $conversation Server conversation id.
+			 * @param string $question     Visitor message.
+			 * @param string $reply        Assistant reply.
+			 * @param string $source       ai|cache|bank|filter|unanswered.
+			 * @param array  $context      channel (web|bale|telegram), channel_chat, page.
+			 */
+			do_action( 'ssc_chat_exchange', $this->conversation, $this->current_question, $reply, $source, $this->channel );
 		}
 
 		if ( $ok && SSC_Modules::is_active( 'history' ) && 'yes' === SSC_Settings::get( 'chatlog_enabled', 'no' ) && '' !== $reply ) {
@@ -318,6 +363,36 @@ class SSC_Chat_Engine {
 	 * @var string
 	 */
 	protected $conversation = '';
+
+	/**
+	 * Where the conversation happens: channel (web|bale|telegram),
+	 * channel_chat (messenger chat id), page (URL the widget was on).
+	 *
+	 * @var array
+	 */
+	protected $channel = array(
+		'channel'      => 'web',
+		'channel_chat' => '',
+		'page'         => '',
+	);
+
+	/**
+	 * Set the conversation's channel (messenger bot, page URL…).
+	 *
+	 * @param array $channel Keys: channel, channel_chat, page.
+	 */
+	public function set_channel( $channel ) {
+		$this->channel = array_merge( $this->channel, array_intersect_key( (array) $channel, $this->channel ) );
+	}
+
+	/**
+	 * Current server conversation id ('' = none).
+	 *
+	 * @return string
+	 */
+	public function conversation_id() {
+		return $this->conversation;
+	}
 
 	/**
 	 * Capture request context (called by transports right before chat()).

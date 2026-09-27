@@ -293,7 +293,16 @@ class SSC_Prompt_Builder {
 			}
 		}
 
-		$knowledge = trim( SSC_Knowledge::business_context( $product_id ) . "\n\n" . $kb );
+		/**
+		 * Extra, question-specific reference data for the model (e.g. live
+		 * WooCommerce products). Wrap untrusted text with SSC_Prompt_Builder::fence().
+		 *
+		 * @param string $context    Extra context ('' = none).
+		 * @param string $message    Visitor message.
+		 * @param string $product_id Focused product.
+		 */
+		$live_context = trim( (string) apply_filters( 'ssc_prompt_context', '', $message, $product_id ) );
+		$knowledge    = trim( SSC_Knowledge::business_context( $product_id ) . "\n\n" . $kb . ( '' !== $live_context ? "\n\n" . $live_context : '' ) );
 
 		// Focused product name.
 		$product_name = '';

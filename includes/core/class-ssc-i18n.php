@@ -140,6 +140,24 @@ class SSC_I18n {
 	}
 
 	/**
+	 * Run a callback with visitor-facing strings in the widget language
+	 * (e.g. a greeting an operator triggers from the admin), then restore.
+	 *
+	 * @param callable $callback Callback.
+	 * @return mixed Its return value.
+	 */
+	public static function in_widget_locale( $callback ) {
+		$switched = null === self::$active && self::use_widget_locale();
+		try {
+			return call_user_func( $callback );
+		} finally {
+			if ( $switched ) {
+				self::restore();
+			}
+		}
+	}
+
+	/**
 	 * Back to WordPress's own locale for this plugin's strings.
 	 */
 	public static function restore() {
@@ -172,8 +190,9 @@ class SSC_I18n {
 	 * @return mixed
 	 */
 	public static function rest_pre_dispatch( $result, $server, $request ) {
-		$route = is_object( $request ) && method_exists( $request, 'get_route' ) ? (string) $request->get_route() : '';
-		if ( 0 === strpos( $route, '/ssc/v1/' ) && ! in_array( $route, array( '/ssc/v1/test-connection', '/ssc/v1/test-identity' ), true ) ) {
+		$route       = is_object( $request ) && method_exists( $request, 'get_route' ) ? (string) $request->get_route() : '';
+		$admin_route = in_array( $route, array( '/ssc/v1/test-connection', '/ssc/v1/test-identity' ), true ) || 0 === strpos( $route, '/ssc/v1/live/admin/' );
+		if ( 0 === strpos( $route, '/ssc/v1/' ) && ! $admin_route ) {
 			self::use_widget_locale();
 		}
 		return $result;
