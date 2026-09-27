@@ -22,6 +22,18 @@ class SSC_Settings {
 	const OPTION_KEY = 'ssc_chatbot_settings';
 
 	/**
+	 * Large lists live in their own options: saving appearance no longer
+	 * rewrites (and cannot clobber) a catalog edited in another tab, and the
+	 * main settings row stays small.
+	 *
+	 * @var array<string,string> setting key => option name.
+	 */
+	const SPLIT_OPTIONS = array(
+		'products'        => 'ssc_chatbot_products',
+		'knowledge_items' => 'ssc_chatbot_knowledge',
+	);
+
+	/**
 	 * Runtime cache.
 	 *
 	 * @var array|null
@@ -211,10 +223,45 @@ class SSC_Settings {
 		if ( null !== self::$cache ) {
 			return self::$cache;
 		}
-		$saved       = get_option( self::OPTION_KEY, array() );
-		$saved       = is_array( $saved ) ? $saved : array();
+		$saved = get_option( self::OPTION_KEY, array() );
+		$saved = is_array( $saved ) ? $saved : array();
+		foreach ( self::SPLIT_OPTIONS as $key => $option ) {
+			$list = get_option( $option, null );
+			if ( is_array( $list ) ) {
+				$saved[ $key ] = $list;
+			}
+		}
 		self::$cache = self::merge_defaults( $saved, self::defaults() );
 		return self::$cache;
+	}
+
+	/**
+	 * Write settings: lists to their own options, the rest to the main row.
+	 *
+	 * @param array      $all     Complete settings.
+	 * @param array|null $touched Keys changed by this call (null = all). A
+	 *                            list is only rewritten when touched, or when
+	 *                            its option does not exist yet (migration).
+	 */
+	protected static function persist( $all, $touched = null ) {
+		foreach ( self::SPLIT_OPTIONS as $key => $option ) {
+			$exists = is_array( get_option( $option, null ) );
+			if ( array_key_exists( $key, $all ) && ( ! $exists || null === $touched || array_key_exists( $key, $touched ) ) ) {
+				update_option( $option, is_array( $all[ $key ] ) ? array_values( $all[ $key ] ) : array(), false );
+			}
+			unset( $all[ $key ] );
+		}
+		// Autoload off: the plugin reads it on its own requests only.
+		update_option( self::OPTION_KEY, $all, false );
+		self::$cache = null;
+	}
+
+	/**
+	 * One-time move of the lists out of the main option (idempotent).
+	 */
+	public static function split_storage() {
+		self::$cache = null;
+		self::persist( self::all(), array() );
 	}
 
 	/**
@@ -268,10 +315,8 @@ class SSC_Settings {
 	 * @param array $settings Partial or full settings.
 	 */
 	public static function update( $settings ) {
-		$merged = self::merge_defaults( is_array( $settings ) ? $settings : array(), self::all() );
-		// The option can grow large with product catalogs: autoload off.
-		update_option( self::OPTION_KEY, $merged, false );
-		self::$cache = null;
+		$settings = is_array( $settings ) ? $settings : array();
+		self::persist( self::merge_defaults( $settings, self::all() ), $settings );
 		self::flush_ai_cache();
 	}
 
@@ -284,8 +329,10 @@ class SSC_Settings {
 		$all = self::all();
 		if ( array_key_exists( $key, $all ) ) {
 			unset( $all[ $key ] );
-			update_option( self::OPTION_KEY, $all, false );
-			self::$cache = null;
+			if ( isset( self::SPLIT_OPTIONS[ $key ] ) ) {
+				delete_option( self::SPLIT_OPTIONS[ $key ] );
+			}
+			self::persist( $all, array() );
 		}
 	}
 
@@ -299,9 +346,22 @@ class SSC_Settings {
 	}
 
 	/**
+	 * Current AI answer cache generation (part of every cache key).
+	 *
+	 * @return int
+	 */
+	public static function ai_cache_generation() {
+		return (int) get_option( 'ssc_ai_cache_gen', 1 );
+	}
+
+	/**
 	 * Invalidate AI response cache when anything that influences answers changes.
 	 */
 	public static function flush_ai_cache() {
+		// Bumping the generation invalidates every cached answer at once, in
+		// the options table AND in a persistent object cache (Redis etc.),
+		// where the SQL purge below cannot reach.
+		update_option( 'ssc_ai_cache_gen', self::ai_cache_generation() + 1, true );
 		global $wpdb;
 		if ( ! isset( $wpdb ) || ! is_object( $wpdb ) || empty( $wpdb->options ) ) {
 			return;
@@ -443,8 +503,7 @@ class SSC_Settings {
 		$value = trim( (string) $value );
 		if ( '' === $value ) {
 			unset( $all[ $key ] );
-			update_option( self::OPTION_KEY, $all, false );
-			self::$cache = null;
+			self::persist( $all, array() );
 			return true;
 		}
 		$encrypted = self::encrypt( $value );
@@ -452,8 +511,7 @@ class SSC_Settings {
 			return false;
 		}
 		$all[ $key ] = $encrypted;
-		update_option( self::OPTION_KEY, $all, false );
-		self::$cache = null;
+		self::persist( $all, array() );
 		return true;
 	}
 

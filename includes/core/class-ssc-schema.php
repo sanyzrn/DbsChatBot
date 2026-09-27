@@ -27,7 +27,7 @@ class SSC_Schema {
 	const KB_TABLE          = 'ssc_chatbot_kb';
 	const STATS_TABLE       = 'ssc_chatbot_stats';
 	const AUDIT_TABLE       = 'ssc_chatbot_audit';
-	const DB_VERSION        = '10';
+	const DB_VERSION        = '11';
 	const DB_VERSION_OPTION = 'ssc_chatbot_db_version';
 
 	/*
@@ -278,6 +278,7 @@ class SSC_Schema {
 			self::migrate_submission_types();
 			self::migrate_qa_from_options();
 			self::migrate_stats_from_options();
+			SSC_Settings::split_storage();
 			// Setup state safety net for IN-PLACE updates (activation hooks do
 			// not re-run): a legacy live chatbot must stay live.
 			SSC_Setup::initialize_state();
@@ -1076,6 +1077,28 @@ class SSC_Schema {
 	}
 
 	/**
+	 * Daily counter for rate limiting.
+	 *
+	 * With a persistent object cache (Redis, Memcached) the counter is an
+	 * atomic in-memory increment, so a chat message no longer costs several
+	 * database writes. Without one, the stats table upsert is used.
+	 *
+	 * @param string $metric Counter name.
+	 * @return int Count after this hit.
+	 */
+	public static function counter_hit( $metric ) {
+		if ( function_exists( 'wp_using_ext_object_cache' ) && wp_using_ext_object_cache() ) {
+			$key = $metric . ':' . current_time( 'Y-m-d' );
+			wp_cache_add( $key, 0, 'ssc_rl', DAY_IN_SECONDS + HOUR_IN_SECONDS );
+			$count = wp_cache_incr( $key, 1, 'ssc_rl' );
+			if ( false !== $count ) {
+				return (int) $count;
+			}
+		}
+		return self::stat_hit( $metric );
+	}
+
+	/**
 	 * Rate limit check-and-hit for a bucket.
 	 *
 	 * @param string $bucket Bucket (chat|submit|suggest|csat|feedback).
@@ -1093,7 +1116,7 @@ class SSC_Schema {
 		$blocked = false;
 
 		if ( in_array( $mode, array( 'ip', 'both' ), true ) && $limit_ip > 0 ) {
-			$count = self::stat_hit( 'rl:' . $bucket . ':ip:' . md5( $ip ) );
+			$count = self::counter_hit( 'rl:' . $bucket . ':ip:' . md5( $ip ) );
 			if ( $count > $limit_ip ) {
 				$blocked = true;
 			}
@@ -1101,13 +1124,13 @@ class SSC_Schema {
 		if ( ! $blocked && in_array( $mode, array( 'session', 'both' ), true ) && $limit_session > 0 ) {
 			// Omitting cid must not disable session quotas.
 			$cid   = '' !== $cid ? $cid : 'missing:' . $ip;
-			$count = self::stat_hit( 'rl:' . $bucket . ':sess:' . md5( $cid ) );
+			$count = self::counter_hit( 'rl:' . $bucket . ':sess:' . md5( $cid ) );
 			if ( $count > $limit_session ) {
 				$blocked = true;
 			}
 			// Backstop: sessions can be regenerated; an IP ceiling guards it.
 			$cap = max( 10, $limit_session * 10 );
-			if ( self::stat_hit( 'rl:' . $bucket . ':ipcap:' . md5( $ip ) ) > $cap ) {
+			if ( self::counter_hit( 'rl:' . $bucket . ':ipcap:' . md5( $ip ) ) > $cap ) {
 				$blocked = true;
 			}
 		}

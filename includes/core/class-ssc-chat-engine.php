@@ -173,7 +173,7 @@ class SSC_Chat_Engine {
 		$cache_enabled = ! SSC_Modules::is_active( 'pharma' ) && ( 'yes' === SSC_Settings::get( 'ai_cache_enabled', 'yes' ) ) && empty( $history );
 		$cache_key     = '';
 		if ( $cache_enabled ) {
-			$cache_key = 'ssc_ai_' . md5( $provider->id() . '|' . $product . '|' . mb_strtolower( trim( $message ) ) . '|' . md5( $system ) . '|' . SSC_Setup::connection_fingerprint() );
+			$cache_key = 'ssc_ai_' . md5( SSC_Settings::ai_cache_generation() . '|' . $provider->id() . '|' . $product . '|' . mb_strtolower( trim( $message ) ) . '|' . md5( $system ) . '|' . SSC_Setup::connection_fingerprint() );
 			$cached    = get_transient( $cache_key );
 			if ( false !== $cached && '' !== $cached ) {
 				$this->last_source = 'cache';

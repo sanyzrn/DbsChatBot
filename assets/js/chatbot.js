@@ -354,7 +354,37 @@
                         return; // No mount point on this page.
                 }
         }
-        var launcher, win, thread, composer, input, live;
+        var launcher, win, thread, composer, input, live, statusLine;
+        var statusCheckedAt = 0;
+
+        /** Header status line + launcher dot from the current availability. */
+        function paintStatus() {
+                var offline = avail && avail.online === false;
+                if (offline) { root.setAttribute('data-status', 'offline'); } else { root.removeAttribute('data-status'); }
+                if (statusLine) {
+                        statusLine.textContent = offline ? ((cfg.i18n && cfg.i18n.offline) || 'Offline') + ' · ' + (cfg.orgName || '') : (cfg.orgName || '');
+                }
+        }
+
+        /*
+         * Business hours are evaluated at render time; a cached page would keep
+         * showing that moment's status for hours. Re-read it live (at most once
+         * every five minutes) when business hours are enabled.
+         */
+        function refreshStatus() {
+                if (!avail || !avail.dynamic || !cfg.restUrl || cfg.preview || !window.fetch) { return; }
+                if (Date.now() - statusCheckedAt < 300000) { return; }
+                statusCheckedAt = Date.now();
+                var url = cfg.restUrl + 'status';
+                fetch(url, { credentials: 'same-origin', cache: 'no-store' }).then(function (res) {
+                        return res.ok ? res.json() : null;
+                }).then(function (data) {
+                        if (!data || typeof data.online !== 'boolean') { return; }
+                        avail.online = data.online;
+                        avail.offlineMessage = data.offlineMessage || '';
+                        paintStatus();
+                }).catch(function () { /* keep the rendered status */ });
+        }
 
         function cssVars() {
                 var vars = {
@@ -401,10 +431,7 @@
                 launcher.appendChild(badge);
                 launcher.addEventListener('click', toggleWindow);
                 root.appendChild(launcher);
-
-                if (avail && avail.online === false) {
-                        root.setAttribute('data-status', 'offline');
-                }
+                paintStatus();
         }
 
         function bumpUnread() {
@@ -482,12 +509,9 @@
                 head.appendChild(avatar);
                 var titles = el('div', 'ssc-head__titles');
                 titles.appendChild(el('strong', 'ssc-head__title', esc(cfg.assistantName || '')));
-                var statusLine = el('span', 'ssc-head__status', esc(cfg.orgName || ''));
-                if (avail && avail.online === false) {
-                        statusLine.textContent = ((cfg.i18n && cfg.i18n.offline) || 'Offline') + ' · ' + (cfg.orgName || '');
-                        root.setAttribute('data-status', 'offline');
-                }
+                statusLine = el('span', 'ssc-head__status', '');
                 titles.appendChild(statusLine);
+                paintStatus();
                 titles.id = 'ssc-title';
                 head.appendChild(titles);
 
@@ -607,6 +631,7 @@
 
                 if (open) {
                         lastFocus = document.activeElement;
+                        refreshStatus();
                         if (!state.started) { startConversation(); }
                         // On touch devices an immediate focus pops the keyboard over the welcome message.
                         if (!COARSE_POINTER) { window.setTimeout(function () { input.focus(); }, 60); }
@@ -1507,6 +1532,7 @@
                 }
 
                 setupProactive();
+                refreshStatus();
 
                 window.addEventListener('beforeunload', function () {
                         if (window.speechSynthesis) { window.speechSynthesis.cancel(); }

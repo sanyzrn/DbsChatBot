@@ -256,6 +256,17 @@ class SSC_REST {
 			)
 		);
 
+		/* Public: live availability (business hours), never cached. */
+		register_rest_route(
+			self::NS,
+			'/status',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'permission_callback' => '__return_true',
+				'callback'            => array( $this, 'status' ),
+			)
+		);
+
 		/* Admin: connection test with UNSAVED credentials (wizard). */
 		register_rest_route(
 			self::NS,
@@ -343,6 +354,21 @@ class SSC_REST {
 			(string) $request->get_param( 'product' ),
 			is_array( $history ) ? $history : array()
 		);
+	}
+
+	/**
+	 * Live availability. Read-only and cheap (no DB writes), so it is not
+	 * rate-limited; responses are marked uncacheable for proxies and CDNs.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function status() {
+		if ( ! SSC_Setup::is_live() ) {
+			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'smart-support-chatbot' ), array( 'status' => 403 ) );
+		}
+		$response = rest_ensure_response( SSC_Availability::live_status() );
+		$response->header( 'Cache-Control', 'no-store, max-age=0' );
+		return $response;
 	}
 
 	/**

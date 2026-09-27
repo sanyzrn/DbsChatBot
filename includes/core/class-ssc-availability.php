@@ -137,6 +137,22 @@ class SSC_Availability {
 			'device'         => (string) SSC_Settings::get( 'display_devices', 'all' ),
 			'sound'          => 'yes' === SSC_Settings::get( 'sound_enabled', 'no' ),
 			'streaming'      => 'yes' === SSC_Settings::get( 'streaming_enabled', 'yes' ),
+			// Page caches freeze the rendered status; when business hours are
+			// on, the widget re-reads it live from the REST status endpoint.
+			'dynamic'        => 'yes' === SSC_Settings::get( 'business_hours_enabled', 'no' ),
+		);
+	}
+
+	/**
+	 * Live, cache-independent status (REST GET /status).
+	 *
+	 * @return array
+	 */
+	public static function live_status() {
+		$online = self::is_online();
+		return array(
+			'online'         => $online,
+			'offlineMessage' => $online ? '' : self::offline_message(),
 		);
 	}
 
@@ -227,7 +243,7 @@ class SSC_Availability {
 	 * @param string $pattern Pattern.
 	 * @return bool
 	 */
-	protected static function path_matches( $current, $pattern ) {
+	public static function path_matches( $current, $pattern ) {
 		$pattern = trim( $pattern );
 		if ( '' === $pattern ) {
 			return false;

@@ -55,6 +55,9 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 
 	$options = array(
 		'ssc_chatbot_settings',
+		'ssc_chatbot_products',
+		'ssc_chatbot_knowledge',
+		'ssc_ai_cache_gen',
 		'ssc_chatbot_setup',
 		'ssc_chatbot_modules',
 		'ssc_chatbot_db_version',
