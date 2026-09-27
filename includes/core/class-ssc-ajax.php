@@ -47,10 +47,21 @@ class SSC_Ajax {
 	}
 
 	/**
-	 * POST param helper.
+	 * Unsanitized scalar POST value (the caller must sanitize it).
 	 *
-	 * @param string $key     Key.
-	 * @param bool   $textarea Textarea sanitization.
+	 * @param string $key Key.
+	 * @return string
+	 */
+	protected function post_raw( $key ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- caller sanitizes (SSC_Input::message); public endpoint is rate-limited.
+		return isset( $_POST[ $key ] ) && is_scalar( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : '';
+	}
+
+	/**
+	 * Sanitized POST value.
+	 *
+	 * @param string $key      Key.
+	 * @param bool   $textarea Keep line breaks.
 	 * @return string
 	 */
 	protected function post( $key, $textarea = false ) {
@@ -97,8 +108,8 @@ class SSC_Ajax {
 			wp_send_json_error( array( 'message' => __( 'You have reached the daily usage limit. Please try again tomorrow.', 'smart-support-chatbot' ) ), 429 );
 		}
 		$history = json_decode( $this->post( 'history' ), true );
-		$this->engine->set_context( $this->engine->client_ip() );
-		$result = $this->engine->chat( $this->post( 'message', true ), $this->post( 'product' ), is_array( $history ) ? $history : array() );
+		$this->engine->set_context( $this->engine->client_ip(), $this->post( 'conv' ) );
+		$result = $this->engine->chat( SSC_Input::message( $this->post_raw( 'message' ) ), $this->post( 'product' ), is_array( $history ) ? $history : array() );
 
 		if ( ! $result['ok'] ) {
 			wp_send_json_error( array( 'message' => __( 'The message could not be processed.', 'smart-support-chatbot' ) ), 400 );

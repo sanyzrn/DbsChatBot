@@ -69,6 +69,46 @@ abstract class SSC_Provider_OpenAI_Compat extends SSC_Provider {
 	}
 
 	/**
+	 * Chat Completions streams natively.
+	 *
+	 * @return bool
+	 */
+	public function supports_streaming() {
+		return true;
+	}
+
+	/**
+	 * Streaming request (PURE).
+	 *
+	 * @param string $api_key  Key.
+	 * @param string $model    Model.
+	 * @param string $system   System prompt.
+	 * @param array  $messages Messages.
+	 * @param array  $opts     Options.
+	 * @return array
+	 */
+	public function stream_parts( $api_key, $model, $system, $messages, $opts = array() ) {
+		$parts                   = $this->request_parts( $api_key, $model, $system, $messages, $opts );
+		$parts['body']['stream'] = true;
+		return $parts;
+	}
+
+	/**
+	 * One Chat Completions chunk (PURE).
+	 *
+	 * @param array $event Decoded chunk.
+	 * @return array{text:string,done:bool,error:bool}
+	 */
+	public function parse_stream_event( $event ) {
+		$delta = isset( $event['choices'][0]['delta']['content'] ) ? $event['choices'][0]['delta']['content'] : '';
+		return array(
+			'text'  => is_string( $delta ) ? $delta : '',
+			'done'  => ! empty( $event['choices'][0]['finish_reason'] ),
+			'error' => isset( $event['error'] ),
+		);
+	}
+
+	/**
 	 * Extract text (PURE).
 	 *
 	 * @param array $data Payload.

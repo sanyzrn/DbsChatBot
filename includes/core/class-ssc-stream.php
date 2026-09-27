@@ -2,7 +2,7 @@
 /**
  * Streaming chat transport (Server-Sent Events).
  *
- * Streams OpenAI-compatible tokens to the browser as they arrive so the
+ * Streams provider tokens (OpenAI-compatible, Claude, Gemini) to the browser as they arrive so the
  * visitor can read partial output before the full reply is ready.
  * Falls back inside the common engine when the provider or server cannot stream.
  *
@@ -34,8 +34,8 @@ class SSC_Stream {
 		if ( 'yes' !== SSC_Settings::get( 'streaming_enabled', 'yes' ) ) {
 			return false;
 		}
-		// Only OpenAI-compatible chat/completions adapters stream today.
-		return $provider instanceof SSC_Provider_OpenAI_Compat;
+		// OpenAI-compatible, Claude and Gemini adapters implement stream parsing.
+		return $provider->supports_streaming();
 	}
 
 	/**
@@ -78,7 +78,7 @@ class SSC_Stream {
 			)
 		);
 		$model  = '' !== (string) $creds['model'] ? $creds['model'] : $provider->default_model();
-		$parts  = $provider->request_parts( $creds['api_key'], $model, $system, $messages, $opts );
+		$parts  = $provider->stream_parts( $creds['api_key'], $model, $system, $messages, $opts );
 		$full   = '';
 		$status = self::curl_stream(
 			$parts['url'],
@@ -87,7 +87,8 @@ class SSC_Stream {
 			function ( $delta ) use ( &$full, $on_delta ) {
 				$full .= $delta;
 				call_user_func( $on_delta, $delta );
-			}
+			},
+			array( $provider, 'parse_stream_event' )
 		);
 		if ( connection_aborted() ) {
 			return array(
@@ -112,6 +113,21 @@ class SSC_Stream {
 				'ok'    => true,
 				'text'  => $full,
 				'error' => null,
+			);
+		}
+
+		/*
+		 * Text already reached the visitor but the stream broke off. Retrying
+		 * over plain HTTP would bill the provider a second time and replace
+		 * the words being read with a different answer, so the partial reply
+		 * is kept, clearly marked, and never cached.
+		 */
+		if ( $status['got'] && '' !== trim( $full ) ) {
+			return array(
+				'ok'      => true,
+				'text'    => rtrim( $full ) . "\n\n" . __( '(The answer was interrupted. Ask again to continue.)', 'smart-support-chatbot' ),
+				'error'   => null,
+				'partial' => true,
 			);
 		}
 
@@ -223,15 +239,16 @@ class SSC_Stream {
 	}
 
 	/**
-	 * Stream an OpenAI-compatible chat completion via cURL.
+	 * Stream a provider response via cURL (SSE framing).
 	 *
 	 * @param string   $url      Endpoint.
 	 * @param array    $headers  Headers.
-	 * @param array    $body     JSON body (stream forced true).
+	 * @param array    $body     JSON body (already prepared for streaming).
 	 * @param callable $on_delta function(string $text).
+	 * @param callable $parse    Provider parser: array $event => {text, done, error}.
 	 * @return array{got:bool,finished:bool,failed:bool,errno:int} Stream outcome.
 	 */
-	protected static function curl_stream( $url, $headers, $body, $on_delta ) {
+	protected static function curl_stream( $url, $headers, $body, $on_delta, $parse ) {
 		$aborted = array(
 			'got'      => false,
 			'finished' => false,
@@ -249,10 +266,9 @@ class SSC_Stream {
 		if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
 			return $aborted;
 		}
-		$parsed_port    = wp_parse_url( $url, PHP_URL_PORT );
-		$port           = $parsed_port ? (int) $parsed_port : 443;
-		$body['stream'] = true;
-		$json           = wp_json_encode( $body );
+		$parsed_port = wp_parse_url( $url, PHP_URL_PORT );
+		$port        = $parsed_port ? (int) $parsed_port : 443;
+		$json        = wp_json_encode( $body );
 		if ( false === $json ) {
 			return $aborted;
 		}
@@ -280,7 +296,7 @@ class SSC_Stream {
 				CURLOPT_HTTPHEADER     => $header_lines,
 				CURLOPT_TIMEOUT        => 45,
 				CURLOPT_RETURNTRANSFER => false,
-				CURLOPT_WRITEFUNCTION  => function ( $ch, $chunk ) use ( &$buf, &$got, &$finished, &$failed, &$bytes, $on_delta ) {
+				CURLOPT_WRITEFUNCTION  => function ( $ch, $chunk ) use ( &$buf, &$got, &$finished, &$failed, &$bytes, $on_delta, $parse ) {
 					$bytes += strlen( $chunk );
 					if ( $bytes > 2097152 || connection_aborted() || 200 !== (int) curl_getinfo( $ch, CURLINFO_HTTP_CODE ) ) {
 						return 0;
@@ -302,16 +318,16 @@ class SSC_Stream {
 						if ( ! is_array( $decoded ) ) {
 							continue;
 						}
-						if ( isset( $decoded['error'] ) ) {
+						$event = call_user_func( $parse, $decoded );
+						if ( ! empty( $event['error'] ) ) {
 							$failed = true;
 						}
-						if ( ! empty( $decoded['choices'][0]['finish_reason'] ) ) {
+						if ( ! empty( $event['done'] ) ) {
 							$finished = true;
 						}
-						$delta = isset( $decoded['choices'][0]['delta']['content'] ) ? $decoded['choices'][0]['delta']['content'] : '';
-						if ( is_string( $delta ) && '' !== $delta ) {
+						if ( isset( $event['text'] ) && is_string( $event['text'] ) && '' !== $event['text'] ) {
 							$got = true;
-							call_user_func( $on_delta, $delta );
+							call_user_func( $on_delta, $event['text'] );
 						}
 					}
 					return strlen( $chunk );

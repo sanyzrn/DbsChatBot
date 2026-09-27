@@ -126,6 +126,7 @@ class SSC_Settings {
 			'consent_text'               => '',
 			'consent_link'               => '',
 			'privacy_acknowledged'       => 'no',
+			'ip_storage'                 => 'anonymize', // anonymize | full | none (logs + requests).
 			'chatlog_retention_days'     => 90,
 			'submissions_retention_days' => 0,
 
@@ -519,6 +520,9 @@ class SSC_Settings {
 
 			case 'direction':
 				return in_array( $value, array( 'rtl', 'ltr', 'auto' ), true ) ? $value : 'rtl';
+
+			case 'ip_storage':
+				return in_array( $value, array( 'anonymize', 'full', 'none' ), true ) ? $value : 'anonymize';
 
 			case 'rate_limit_mode':
 				return in_array( $value, array( 'ip', 'session', 'both', 'off' ), true ) ? $value : 'ip';

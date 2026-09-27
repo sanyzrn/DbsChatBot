@@ -220,7 +220,7 @@
                 return transport(chatRoute(), {
                         message: message,
                         product: state.product || 'general',
-                        history: JSON.stringify(historyItems())
+                        conv: getConv()
                 });
         }
 
@@ -247,7 +247,7 @@
                 var body = new URLSearchParams();
                 body.append('message', message);
                 body.append('product', state.product || 'general');
-                body.append('history', JSON.stringify(historyItems()));
+                body.append('conv', getConv());
                 body.append('cid', getCid());
                 var headers = { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' };
                 if (cfg.nonce) { headers['X-WP-Nonce'] = cfg.nonce; }
@@ -303,10 +303,42 @@
         var avail = cfg.availability || {};
         var canStream = !!(!cfg.preview && avail.streaming && cfg.restUrl && typeof ReadableStream !== 'undefined' && typeof TextDecoder !== 'undefined');
 
-        function historyItems() {
-                return state.items.slice(0, -1)
-                        .filter(function (item) { return item.history; }).slice(-20)
-                        .map(function (item) { return { role: item.kind === 'user' ? 'user' : 'assistant', content: item.text }; });
+        /*
+         * Conversation id: 128 random bits. The server keeps the transcript it
+         * actually produced under this id, so the browser never supplies the
+         * model's context (and cannot forge assistant turns).
+         */
+        var CONV_KEY = 'ssc_conv_v1';
+        var convId = null;
+
+        function newConvId() {
+                var bytes = new Uint8Array(16), hex = '';
+                if (window.crypto && window.crypto.getRandomValues) {
+                        window.crypto.getRandomValues(bytes);
+                } else {
+                        for (var i = 0; i < 16; ++i) { bytes[i] = Math.floor(Math.random() * 256); }
+                }
+                for (var j = 0; j < 16; ++j) { hex += ('0' + bytes[j].toString(16)).slice(-2); }
+                return hex;
+        }
+
+        function getConv() {
+                if (convId) { return convId; }
+                if (state.persist) {
+                        try { convId = sessionStorage.getItem(CONV_KEY); } catch (e) { convId = null; }
+                }
+                if (!convId || !/^[a-f0-9]{32}$/.test(convId)) {
+                        convId = newConvId();
+                        if (state.persist) {
+                                try { sessionStorage.setItem(CONV_KEY, convId); } catch (e) { /* storage unavailable */ }
+                        }
+                }
+                return convId;
+        }
+
+        function resetConv() {
+                convId = null;
+                try { sessionStorage.removeItem(CONV_KEY); } catch (e) { /* storage unavailable */ }
         }
 
         /* ------------------------------------------------------------------ *
@@ -471,6 +503,7 @@
                         if (csatTimer) { window.clearTimeout(csatTimer); csatTimer = null; }
                         thread.textContent = '';
                         try { sessionStorage.removeItem(THREAD_KEY); } catch (e) {}
+                        resetConv();
                         startConversation(); input.focus();
                 });
                 actions.appendChild(resetBtn);

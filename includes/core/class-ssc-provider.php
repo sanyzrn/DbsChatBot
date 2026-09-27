@@ -68,6 +68,44 @@ abstract class SSC_Provider {
 	abstract public function extract_text( $data );
 
 	/**
+	 * Can this adapter stream tokens over Server-Sent Events?
+	 *
+	 * @return bool
+	 */
+	public function supports_streaming() {
+		return false;
+	}
+
+	/**
+	 * Request parts for a streaming call (PURE). Default: the normal request.
+	 *
+	 * @param string $api_key  Key.
+	 * @param string $model    Model.
+	 * @param string $system   System prompt.
+	 * @param array  $messages Messages.
+	 * @param array  $opts     Options.
+	 * @return array
+	 */
+	public function stream_parts( $api_key, $model, $system, $messages, $opts = array() ) {
+		return $this->request_parts( $api_key, $model, $system, $messages, $opts );
+	}
+
+	/**
+	 * Interpret one decoded SSE data payload (PURE - unit tested).
+	 *
+	 * @param array $event Decoded JSON of one `data:` line.
+	 * @return array{text:string,done:bool,error:bool}
+	 */
+	public function parse_stream_event( $event ) {
+		unset( $event );
+		return array(
+			'text'  => '',
+			'done'  => false,
+			'error' => false,
+		);
+	}
+
+	/**
 	 * Credential-bearing? (drives HTTPS enforcement)
 	 *
 	 * @return bool

@@ -129,4 +129,23 @@ foreach ( array(
 	check( ! $screen( $message ), 'a routine side-effect question is not escalated' );
 }
 
+// Streaming parsers: realistic event payloads per provider.
+$claude = new SSC_Provider_Claude();
+$ev     = $claude->parse_stream_event( array( 'type' => 'content_block_delta', 'index' => 0, 'delta' => array( 'type' => 'text_delta', 'text' => 'سلام' ) ) );
+check( 'سلام' === $ev['text'] && ! $ev['done'] && ! $ev['error'], 'Claude text_delta streams text' );
+check( $claude->parse_stream_event( array( 'type' => 'message_stop' ) )['done'], 'Claude message_stop completes the stream' );
+check( $claude->parse_stream_event( array( 'type' => 'error', 'error' => array( 'type' => 'overloaded_error' ) ) )['error'], 'Claude error event fails the stream' );
+check( '' === $claude->parse_stream_event( array( 'type' => 'content_block_delta', 'delta' => array( 'type' => 'input_json_delta', 'partial_json' => '{' ) ) )['text'], 'Claude non-text deltas are ignored' );
+check( true === $claude->stream_parts( 'k', 'claude-haiku-4-5', 'sys', array( array( 'role' => 'user', 'content' => 'hi' ) ) )['body']['stream'], 'Claude stream request sets stream=true' );
+$gemini = new SSC_Provider_Gemini();
+$parts  = $gemini->stream_parts( 'k', 'gemini-2.5-flash', 'sys', array( array( 'role' => 'user', 'content' => 'hi' ) ) );
+check( false !== strpos( $parts['url'], ':streamGenerateContent?alt=sse' ), 'Gemini stream uses streamGenerateContent with SSE framing' );
+$ev = $gemini->parse_stream_event( array( 'candidates' => array( array( 'content' => array( 'parts' => array( array( 'text' => 'hidden', 'thought' => true ), array( 'text' => 'Hi' ) ) ) ) ) ) );
+check( 'Hi' === $ev['text'] && ! $ev['done'], 'Gemini chunk text excludes thoughts' );
+check( $gemini->parse_stream_event( array( 'candidates' => array( array( 'content' => array( 'parts' => array( array( 'text' => '!' ) ) ), 'finishReason' => 'STOP' ) ) ) )['done'], 'Gemini finishReason completes the stream' );
+check( $gemini->parse_stream_event( array( 'candidates' => array( array( 'finishReason' => 'SAFETY' ) ) ) )['error'], 'Gemini safety stop fails the stream' );
+$openai = new SSC_Provider_Openai();
+$ev     = $openai->parse_stream_event( array( 'choices' => array( array( 'delta' => array( 'content' => 'x' ), 'finish_reason' => null ) ) ) );
+check( 'x' === $ev['text'] && ! $ev['done'] && $openai->supports_streaming() && $claude->supports_streaming() && $gemini->supports_streaming(), 'OpenAI-compatible chunk parsing unchanged' );
+
 echo "$count unit checks passed.\n";

@@ -114,6 +114,55 @@ class SSC_Provider_Gemini extends SSC_Provider {
 	}
 
 	/**
+	 * Gemini streams via streamGenerateContent.
+	 *
+	 * @return bool
+	 */
+	public function supports_streaming() {
+		return true;
+	}
+
+	/**
+	 * Streaming request (PURE): streamGenerateContent with SSE framing.
+	 *
+	 * @param string $api_key  Key.
+	 * @param string $model    Model.
+	 * @param string $system   System prompt.
+	 * @param array  $messages Messages.
+	 * @param array  $opts     Options.
+	 * @return array
+	 */
+	public function stream_parts( $api_key, $model, $system, $messages, $opts = array() ) {
+		$parts        = $this->request_parts( $api_key, $model, $system, $messages, $opts );
+		$parts['url'] = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode( (string) $model ) . ':streamGenerateContent?alt=sse';
+		return $parts;
+	}
+
+	/**
+	 * One streamed GenerateContentResponse (PURE). Thought parts are skipped;
+	 * a finishReason marks the final chunk (SAFETY counts as a failure).
+	 *
+	 * @param array $event Decoded chunk.
+	 * @return array{text:string,done:bool,error:bool}
+	 */
+	public function parse_stream_event( $event ) {
+		$text = '';
+		if ( isset( $event['candidates'][0]['content']['parts'] ) && is_array( $event['candidates'][0]['content']['parts'] ) ) {
+			foreach ( $event['candidates'][0]['content']['parts'] as $part ) {
+				if ( isset( $part['text'] ) && empty( $part['thought'] ) ) {
+					$text .= (string) $part['text'];
+				}
+			}
+		}
+		$finish = isset( $event['candidates'][0]['finishReason'] ) ? (string) $event['candidates'][0]['finishReason'] : '';
+		return array(
+			'text'  => $text,
+			'done'  => '' !== $finish && 'SAFETY' !== $finish,
+			'error' => isset( $event['error'] ) || 'SAFETY' === $finish,
+		);
+	}
+
+	/**
 	 * Gemini embeds errors as {error:{code,message}} with 200 sometimes.
 	 *
 	 * @param array $data Payload.

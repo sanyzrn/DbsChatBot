@@ -101,7 +101,7 @@ class SSC_REST {
 							'validate_callback' => 'rest_validate_request_arg',
 							'minLength'         => 1,
 							'type'              => 'string',
-							'sanitize_callback' => 'sanitize_textarea_field',
+							'sanitize_callback' => array( 'SSC_Input', 'rest_message' ),
 						),
 						'product' => array(
 							'type'              => 'string',
@@ -113,6 +113,11 @@ class SSC_REST {
 							'validate_callback' => 'rest_validate_request_arg',
 							'type'              => 'string',
 							'default'           => '',
+						),
+						'conv'    => array(
+							'type'              => 'string',
+							'default'           => '',
+							'sanitize_callback' => array( 'SSC_Conversation', 'sanitize_id' ),
 						),
 						'cid'     => array(
 							'type'              => 'string',
@@ -139,7 +144,7 @@ class SSC_REST {
 							'validate_callback' => 'rest_validate_request_arg',
 							'minLength'         => 1,
 							'type'              => 'string',
-							'sanitize_callback' => 'sanitize_textarea_field',
+							'sanitize_callback' => array( 'SSC_Input', 'rest_message' ),
 						),
 						'product' => array(
 							'type'              => 'string',
@@ -151,6 +156,11 @@ class SSC_REST {
 							'validate_callback' => 'rest_validate_request_arg',
 							'type'              => 'string',
 							'default'           => '',
+						),
+						'conv'    => array(
+							'type'              => 'string',
+							'default'           => '',
+							'sanitize_callback' => array( 'SSC_Conversation', 'sanitize_id' ),
 						),
 						'cid'     => array(
 							'type'              => 'string',
@@ -273,7 +283,7 @@ class SSC_REST {
 							'validate_callback' => 'rest_validate_request_arg',
 							'minLength'         => 1,
 							'type'              => 'string',
-							'sanitize_callback' => 'sanitize_textarea_field',
+							'sanitize_callback' => array( 'SSC_Input', 'rest_message' ),
 						),
 						'product' => array(
 							'type'              => 'string',
@@ -285,6 +295,11 @@ class SSC_REST {
 							'validate_callback' => 'rest_validate_request_arg',
 							'type'              => 'string',
 							'default'           => '',
+						),
+						'conv'    => array(
+							'type'              => 'string',
+							'default'           => '',
+							'sanitize_callback' => array( 'SSC_Conversation', 'sanitize_id' ),
 						),
 					),
 				)
@@ -320,7 +335,7 @@ class SSC_REST {
 		}
 
 		$history = json_decode( (string) $request->get_param( 'history' ), true );
-		$this->engine->set_context( $this->engine->client_ip() );
+		$this->engine->set_context( $this->engine->client_ip(), (string) $request->get_param( 'conv' ) );
 
 		SSC_Stream::serve(
 			$this->engine,
@@ -346,7 +361,7 @@ class SSC_REST {
 		}
 
 		$history = json_decode( (string) $request->get_param( 'history' ), true );
-		$this->engine->set_context( $this->engine->client_ip() );
+		$this->engine->set_context( $this->engine->client_ip(), (string) $request->get_param( 'conv' ) );
 		$result = $this->engine->chat(
 			(string) $request->get_param( 'message' ),
 			(string) $request->get_param( 'product' ),
@@ -549,7 +564,7 @@ class SSC_REST {
 	 */
 	public function preview_chat( $request ) {
 		$history = json_decode( (string) $request->get_param( 'history' ), true );
-		$this->engine->set_context( $this->engine->client_ip() );
+		$this->engine->set_context( $this->engine->client_ip(), (string) $request->get_param( 'conv' ) );
 		$result = $this->engine->chat(
 			(string) $request->get_param( 'message' ),
 			(string) $request->get_param( 'product' ),

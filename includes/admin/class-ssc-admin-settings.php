@@ -42,6 +42,8 @@ class SSC_Admin_Settings {
 			$patch['chatlog_retention_days'] = isset( $_POST['chatlog_retention_days'] ) ? SSC_Settings::clamp_int( 'chatlog_retention_days', wp_unslash( $_POST['chatlog_retention_days'] ) ) : 90;
 			$patch['submissions_retention_days'] = isset( $_POST['submissions_retention_days'] ) ? SSC_Settings::clamp_int( 'submissions_retention_days', wp_unslash( $_POST['submissions_retention_days'] ) ) : 0;
 
+			$patch['ip_storage'] = isset( $_POST['ip_storage'] ) ? SSC_Settings::sanitize_value( 'ip_storage', wp_unslash( $_POST['ip_storage'] ) ) : 'anonymize';
+
 			// Security & abuse protection.
 			$patch['rate_limit_mode']    = isset( $_POST['rate_limit_mode'] ) ? SSC_Settings::sanitize_value( 'rate_limit_mode', wp_unslash( $_POST['rate_limit_mode'] ) ) : 'ip';
 			$patch['chat_rate_limit']    = isset( $_POST['chat_rate_limit'] ) ? SSC_Settings::clamp_int( 'chat_rate_limit', wp_unslash( $_POST['chat_rate_limit'] ) ) : 100;

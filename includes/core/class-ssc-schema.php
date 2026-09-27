@@ -470,7 +470,7 @@ class SSC_Schema {
 				'reporter_type'     => isset( $data['reporter_type'] ) ? (string) $data['reporter_type'] : '',
 				'extra_fields'      => isset( $data['extra_fields'] ) ? (string) $data['extra_fields'] : '',
 				'status'            => 'new',
-				'ip'                => isset( $data['ip'] ) ? (string) $data['ip'] : '',
+				'ip'                => isset( $data['ip'] ) ? SSC_Input::stored_ip( (string) $data['ip'], (string) SSC_Settings::get( 'ip_storage', 'anonymize' ) ) : '',
 				'created_at'        => current_time( 'mysql' ),
 			),
 			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )

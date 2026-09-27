@@ -63,16 +63,28 @@ class SSC_Chat_Engine {
 		$this->last_source = 'fallback';
 		$this->last_error  = '';
 
-		$message = trim( (string) $message );
+		// Hard ceiling on message size (token + abuse protection).
+		$message = SSC_Input::message( $message, 2000 );
 		if ( '' === $message ) {
 			return $this->envelope( false, '', 'empty' );
 		}
-		// Hard ceiling on message size (token + abuse protection).
-		if ( mb_strlen( $message ) > 2000 ) {
-			$message = mb_substr( $message, 0, 2000 );
-		}
 
-		$product                = $this->sanitize_product( $product );
+		$product = $this->sanitize_product( $product );
+		// Context is what THIS server answered; the browser cannot author
+		// assistant turns. Without a conversation id (an older cached widget),
+		// only the visitor's own earlier messages are accepted.
+		if ( '' !== $this->conversation ) {
+			$history = SSC_Conversation::load( $this->conversation );
+		} else {
+			$history = array_values(
+				array_filter(
+					is_array( $history ) ? $history : array(),
+					function ( $item ) {
+						return is_array( $item ) && isset( $item['role'] ) && 'user' === $item['role'];
+					}
+				)
+			);
+		}
 		$history                = $this->sanitize_history( $history );
 		$this->current_question = $message;
 		$this->current_product  = $product;
@@ -193,7 +205,7 @@ class SSC_Chat_Engine {
 		}
 
 		$reply = $result['text'];
-		if ( $cache_enabled && $cache_key ) {
+		if ( $cache_enabled && $cache_key && empty( $result['partial'] ) ) {
 			$ttl = (int) apply_filters( 'ssc_ai_cache_ttl', 6 * HOUR_IN_SECONDS );
 			set_transient( $cache_key, $reply, $ttl );
 		}
@@ -239,13 +251,17 @@ class SSC_Chat_Engine {
 			'flags'     => $this->flags,
 		);
 
+		if ( $ok && '' !== $reply ) {
+			SSC_Conversation::append( $this->conversation, $this->current_question, $reply );
+		}
+
 		if ( $ok && SSC_Modules::is_active( 'history' ) && 'yes' === SSC_Settings::get( 'chatlog_enabled', 'no' ) && '' !== $reply ) {
 			$log_id = SSC_Schema::log_chat(
 				$this->current_question,
 				$reply,
 				( 'unanswered' === $source ) ? 'unanswered' : $source,
 				$this->current_product,
-				$this->current_ip
+				SSC_Input::stored_ip( $this->current_ip, (string) SSC_Settings::get( 'ip_storage', 'anonymize' ) )
 			);
 			if ( $log_id ) {
 				$out['log_id']    = $log_id;
@@ -278,12 +294,21 @@ class SSC_Chat_Engine {
 	protected $current_ip = '';
 
 	/**
+	 * Server-side conversation id ('' = none).
+	 *
+	 * @var string
+	 */
+	protected $conversation = '';
+
+	/**
 	 * Capture request context (called by transports right before chat()).
 	 *
-	 * @param string $ip  Client ip.
+	 * @param string $ip           Client ip.
+	 * @param string $conversation Conversation id from the widget (optional).
 	 */
-	public function set_context( $ip ) {
-		$this->current_ip = (string) $ip;
+	public function set_context( $ip, $conversation = '' ) {
+		$this->current_ip   = (string) $ip;
+		$this->conversation = SSC_Conversation::sanitize_id( $conversation );
 	}
 
 	/**
@@ -390,7 +415,7 @@ class SSC_Chat_Engine {
 				continue;
 			}
 			$role = $item['role'];
-			$text = sanitize_textarea_field( (string) $item['content'] );
+			$text = SSC_Input::message( $item['content'], 4000 );
 			if ( '' === trim( $text ) ) {
 				continue;
 			}

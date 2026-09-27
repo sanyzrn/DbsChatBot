@@ -117,4 +117,49 @@ class SSC_Provider_Claude extends SSC_Provider {
 		}
 		return '';
 	}
+
+	/**
+	 * The Messages API streams natively.
+	 *
+	 * @return bool
+	 */
+	public function supports_streaming() {
+		return true;
+	}
+
+	/**
+	 * Streaming request (PURE).
+	 *
+	 * @param string $api_key  Key.
+	 * @param string $model    Model.
+	 * @param string $system   System prompt.
+	 * @param array  $messages Messages.
+	 * @param array  $opts     Options.
+	 * @return array
+	 */
+	public function stream_parts( $api_key, $model, $system, $messages, $opts = array() ) {
+		$parts                   = $this->request_parts( $api_key, $model, $system, $messages, $opts );
+		$parts['body']['stream'] = true;
+		return $parts;
+	}
+
+	/**
+	 * One Messages API stream event (PURE): content_block_delta carries text,
+	 * message_stop ends the answer, an error event aborts it.
+	 *
+	 * @param array $event Decoded event.
+	 * @return array{text:string,done:bool,error:bool}
+	 */
+	public function parse_stream_event( $event ) {
+		$type = isset( $event['type'] ) ? (string) $event['type'] : '';
+		$text = '';
+		if ( 'content_block_delta' === $type && isset( $event['delta']['type'], $event['delta']['text'] ) && 'text_delta' === $event['delta']['type'] ) {
+			$text = (string) $event['delta']['text'];
+		}
+		return array(
+			'text'  => $text,
+			'done'  => 'message_stop' === $type,
+			'error' => 'error' === $type,
+		);
+	}
 }

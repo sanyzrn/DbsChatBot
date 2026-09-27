@@ -32,11 +32,16 @@ test('Escaping protects quote-bearing URLs and model output from HTML injection'
   assert.ok(!md('<img src=x onerror=alert(1)>').includes('<img'));
   assert.ok(!md('[x](javascript:alert)').includes('<a'));
 });
-test('History excludes the current question and caps payload size', () => {
-  const state = { items: Array.from({ length: 45 }, (_, i) => ({ history: true, kind: 'user', text: `question-${i}` })) };
-  const { historyItems } = load('        function historyItems(', '        /* ------------------------------------------------------------------ *\n         * DOM construction', { state });
-  const history = historyItems();
-  assert.equal(history.length, 20); assert.equal(history.at(-1).content, 'question-43');
+test('Conversation ids are 128-bit hex, reused within a tab and replaced on reset', () => {
+  const store = {};
+  const sessionStorage = { getItem: (k) => store[k] || null, setItem: (k, v) => { store[k] = v; }, removeItem: (k) => { delete store[k]; } };
+  const window = { crypto: require('node:crypto').webcrypto };
+  const ctx = load('        var CONV_KEY', '        /* ------------------------------------------------------------------ *\n         * DOM construction', { state: { persist: true }, sessionStorage, window, Uint8Array, Math });
+  const first = ctx.getConv();
+  assert.match(first, /^[a-f0-9]{32}$/);
+  assert.equal(ctx.getConv(), first);
+  ctx.resetConv();
+  assert.notEqual(ctx.getConv(), first);
 });
 test('A failed POST is never automatically replayed via AJAX', async () => {
   const calls = [];

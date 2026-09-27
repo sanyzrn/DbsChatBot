@@ -73,6 +73,15 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 					<input id="submissions_retention_days" name="submissions_retention_days" type="number" min="0" max="3650" value="<?php echo esc_attr( (string) $s['submissions_retention_days'] ); ?>" />
 				</div>
 			</div>
+			<div class="ssc-field">
+				<label for="ip_storage"><?php esc_html_e( 'Visitor IP addresses in logs and requests', 'smart-support-chatbot' ); ?></label>
+				<select id="ip_storage" name="ip_storage">
+					<option value="anonymize" <?php selected( $s['ip_storage'], 'anonymize' ); ?>><?php esc_html_e( 'Anonymized (network part only — recommended)', 'smart-support-chatbot' ); ?></option>
+					<option value="full" <?php selected( $s['ip_storage'], 'full' ); ?>><?php esc_html_e( 'Full address', 'smart-support-chatbot' ); ?></option>
+					<option value="none" <?php selected( $s['ip_storage'], 'none' ); ?>><?php esc_html_e( 'Do not store', 'smart-support-chatbot' ); ?></option>
+				</select>
+				<p class="ssc-field__hint"><?php esc_html_e( 'Rate limiting still works in every mode: it uses a one-way hash that is never stored with the conversation.', 'smart-support-chatbot' ); ?></p>
+			</div>
 		</section>
 
 		<section class="ssc-card">
@@ -140,7 +149,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 
 		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Widget behaviour', 'smart-support-chatbot' ); ?></h2>
-			<label class="ssc-check"><input type="checkbox" name="streaming_enabled" value="yes" <?php checked( 'yes', $s['streaming_enabled'] ); ?> /> <span><?php esc_html_e( 'Stream AI answers as they are generated (faster first word; OpenAI-compatible providers)', 'smart-support-chatbot' ); ?></span></label>
+			<label class="ssc-check"><input type="checkbox" name="streaming_enabled" value="yes" <?php checked( 'yes', $s['streaming_enabled'] ); ?> /> <span><?php esc_html_e( 'Stream AI answers as they are generated (faster first word; OpenAI, Claude, Gemini and compatible providers)', 'smart-support-chatbot' ); ?></span></label>
 			<label class="ssc-check"><input type="checkbox" name="sound_enabled" value="yes" <?php checked( 'yes', $s['sound_enabled'] ); ?> /> <span><?php esc_html_e( 'Play a soft ping when a reply arrives while the chat is closed', 'smart-support-chatbot' ); ?></span></label>
 		</section>
 
