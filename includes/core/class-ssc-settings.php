@@ -205,6 +205,8 @@ class SSC_Settings {
 
 			// Knowledge retrieval tuning (core-adjacent, advanced).
 			'kb_max_chunks'              => 3,
+			'kb_semantic'                => 'no', // Embedding-based retrieval (OpenAI / Gemini / custom).
+			'show_sources'               => 'yes', // Cite knowledge documents under AI answers.
 
 			/*
 			 * Legacy keys kept for backward read compatibility: old keys such as
@@ -561,6 +563,8 @@ class SSC_Settings {
 			case 'business_hours_enabled':
 			case 'sound_enabled':
 			case 'streaming_enabled':
+			case 'kb_semantic':
+			case 'show_sources':
 				return ( 'yes' === $value || '1' === (string) $value || true === $value ) ? 'yes' : 'no';
 
 			case 'ai_provider':

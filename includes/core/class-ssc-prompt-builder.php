@@ -29,6 +29,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SSC_Prompt_Builder {
 
 	/**
+	 * Documents retrieved for the last build_for_chat() call.
+	 *
+	 * @var array<string, array{title:string,url:string}>
+	 */
+	protected static $sources = array();
+
+	/**
+	 * Knowledge documents used as references for the last prompt.
+	 *
+	 * @return array[] title, url.
+	 */
+	public static function last_sources() {
+		return array_values( self::$sources );
+	}
+
+	/**
 	 * Build the complete system prompt (pure function).
 	 *
 	 * @param array  $business   Business profile (SSC_Settings::business() shape).
@@ -215,10 +231,19 @@ class SSC_Prompt_Builder {
 		$business = SSC_Settings::business();
 
 		// Retrieval-augmented chunks when the question needs them.
-		$chunks = SSC_Knowledge::retrieve_chunks( $product_id, $message, (int) SSC_Settings::get( 'kb_max_chunks', 3 ) );
-		$kb     = '';
+		$chunks        = SSC_Knowledge::retrieve_chunks( $product_id, $message, (int) SSC_Settings::get( 'kb_max_chunks', 3 ) );
+		$kb            = '';
+		self::$sources = array();
 		foreach ( $chunks as $c ) {
 			$kb .= self::fence( 'DOC', $c['title'], $c['chunk'] ) . "\n\n";
+			// One citation per document, in relevance order.
+			$key = '' !== $c['doc_id'] ? $c['doc_id'] : $c['title'];
+			if ( ! isset( self::$sources[ $key ] ) ) {
+				self::$sources[ $key ] = array(
+					'title' => wp_strip_all_tags( (string) $c['title'] ),
+					'url'   => (string) $c['url'],
+				);
+			}
 		}
 
 		$knowledge = trim( SSC_Knowledge::business_context( $product_id ) . "\n\n" . $kb );

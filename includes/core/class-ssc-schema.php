@@ -27,7 +27,7 @@ class SSC_Schema {
 	const KB_TABLE          = 'ssc_chatbot_kb';
 	const STATS_TABLE       = 'ssc_chatbot_stats';
 	const AUDIT_TABLE       = 'ssc_chatbot_audit';
-	const DB_VERSION        = '11';
+	const DB_VERSION        = '12';
 	const DB_VERSION_OPTION = 'ssc_chatbot_db_version';
 
 	/*
@@ -188,8 +188,11 @@ class SSC_Schema {
 			doc_id VARCHAR(40) NOT NULL DEFAULT '',
 			product_id VARCHAR(100) NOT NULL DEFAULT 'general',
 			source_title VARCHAR(191) NOT NULL DEFAULT '',
+			source_url VARCHAR(255) NOT NULL DEFAULT '',
 			chunk LONGTEXT NOT NULL,
 			search_text LONGTEXT NULL,
+			embedding LONGTEXT NULL,
+			embedding_model VARCHAR(100) NOT NULL DEFAULT '',
 			created_at DATETIME NULL,
 			PRIMARY KEY  (id),
 			KEY product_id (product_id),
@@ -923,9 +926,10 @@ class SSC_Schema {
 	 * @param string $title    Source title.
 	 * @param string $text     Full text.
 	 * @param string $product  Product scope.
+	 * @param string $url      Source URL for citations ('' for files).
 	 * @return int Chunks inserted.
 	 */
-	public static function kb_insert_document( $doc_id, $title, $text, $product = 'general' ) {
+	public static function kb_insert_document( $doc_id, $title, $text, $product = 'general', $url = '' ) {
 		global $wpdb;
 		$chunks = SSC_Knowledge::chunk_text( $text );
 		$n      = 0;
@@ -937,32 +941,88 @@ class SSC_Schema {
 					'doc_id'       => sanitize_key( $doc_id ),
 					'product_id'   => sanitize_text_field( $product ),
 					'source_title' => sanitize_text_field( $title ),
+					'source_url'   => esc_url_raw( (string) $url ),
 					'chunk'        => $chunk,
 					'search_text'  => SSC_Knowledge::normalize( $chunk ),
 					'created_at'   => current_time( 'mysql' ),
 				),
-				array( '%s', '%s', '%s', '%s', '%s', '%s' )
+				array( '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
 			);
 			if ( false !== $inserted ) {
 				++$n;
 			}
 		}
+		if ( $n > 0 && class_exists( 'SSC_Embeddings' ) ) {
+			SSC_Embeddings::schedule();
+		}
 		return $n;
+	}
+
+	/**
+	 * Chunks still missing a vector for the given embedding model.
+	 *
+	 * @param string $model Embedding model.
+	 * @param int    $limit Batch size.
+	 * @return array id, source_title, chunk.
+	 */
+	public static function kb_pending_embeddings( $model, $limit ) {
+		global $wpdb;
+		$table = self::kb_table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- indexing batch.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT id, source_title, chunk FROM {$table} WHERE embedding_model <> %s ORDER BY id ASC LIMIT %d", $model, (int) $limit ), ARRAY_A );
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * Number of chunks missing a vector for the model.
+	 *
+	 * @param string $model Embedding model.
+	 * @return int
+	 */
+	public static function kb_pending_count( $model ) {
+		global $wpdb;
+		$table = self::kb_table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- indexing progress.
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE embedding_model <> %s", $model ) );
+	}
+
+	/**
+	 * Store one chunk vector.
+	 *
+	 * @param int    $id    Chunk id.
+	 * @param string $blob  Packed vector.
+	 * @param string $model Embedding model.
+	 */
+	public static function kb_set_embedding( $id, $blob, $model ) {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- indexing write.
+		$wpdb->update(
+			self::kb_table_name(),
+			array(
+				'embedding'       => $blob,
+				'embedding_model' => $model,
+			),
+			array( 'id' => (int) $id ),
+			array( '%s', '%s' ),
+			array( '%d' )
+		);
 	}
 
 	/**
 	 * KB candidates (deterministic order).
 	 *
-	 * @param string $product_id Scope.
+	 * @param string $product_id   Scope.
+	 * @param bool   $with_vectors Include stored embeddings.
 	 * @return array
 	 */
-	public static function kb_candidates( $product_id ) {
+	public static function kb_candidates( $product_id, $with_vectors = false ) {
 		global $wpdb;
-		$table = self::kb_table_name();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- candidate window.
+		$table   = self::kb_table_name();
+		$columns = $with_vectors ? 'id, doc_id, source_title, source_url, chunk, embedding, embedding_model' : 'id, doc_id, source_title, source_url, chunk';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- candidate window; column list is a fixed literal.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id, source_title, chunk FROM {$table}
+				"SELECT {$columns} FROM {$table}
 				 WHERE product_id IN (%s, 'general') ORDER BY id ASC LIMIT 800",
 				sanitize_text_field( $product_id )
 			),

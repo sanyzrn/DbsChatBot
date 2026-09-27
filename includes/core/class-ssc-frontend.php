@@ -234,6 +234,7 @@ class SSC_Frontend {
 			'csatSkip'        => __( 'Skip', 'smart-support-chatbot' ),
 			'copy'            => __( 'Copy answer', 'smart-support-chatbot' ),
 			'copied'          => __( 'Copied ✓', 'smart-support-chatbot' ),
+			'sources'         => __( 'Sources:', 'smart-support-chatbot' ),
 			'consentRequired' => __( 'Your consent is required to continue.', 'smart-support-chatbot' ),
 			'privacy'         => __( 'Privacy policy', 'smart-support-chatbot' ),
 			'formName'        => __( 'Full name', 'smart-support-chatbot' ),

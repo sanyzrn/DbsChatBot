@@ -412,6 +412,7 @@ class SSC_REST {
 				'log_id'    => (int) $result['log_id'],
 				'log_token' => (string) $result['log_token'],
 				'flags'     => isset( $result['flags'] ) ? (object) $result['flags'] : new stdClass(),
+				'sources'   => isset( $result['sources'] ) ? $result['sources'] : array(),
 			)
 		);
 	}
@@ -605,6 +606,7 @@ class SSC_REST {
 				'source'  => $result['source'],
 				'handoff' => ! empty( $result['handoff'] ),
 				'flags'   => isset( $result['flags'] ) ? (object) $result['flags'] : new stdClass(),
+				'sources' => isset( $result['sources'] ) ? $result['sources'] : array(),
 			)
 		);
 	}

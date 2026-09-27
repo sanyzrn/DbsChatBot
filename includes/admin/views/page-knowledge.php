@@ -38,6 +38,10 @@ $kb_state = isset( $_GET['kb'] ) ? sanitize_key( wp_unslash( $_GET['kb'] ) ) : '
 		<div class="ssc-notice ssc-notice--error" role="alert"><?php esc_html_e( 'The page could not be imported (check the URL or try later).', 'smart-support-chatbot' ); ?></div>
 	<?php elseif ( 'deleted' === $kb_state ) : ?>
 		<div class="ssc-notice ssc-notice--info" role="status"><?php esc_html_e( 'Document removed.', 'smart-support-chatbot' ); ?></div>
+	<?php elseif ( 'semantic' === $kb_state ) : ?>
+		<div class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Search settings saved.', 'smart-support-chatbot' ); ?></div>
+	<?php elseif ( 'semantic_error' === $kb_state ) : ?>
+		<div class="ssc-notice ssc-notice--error" role="alert"><?php echo esc_html( __( 'Indexing failed:', 'smart-support-chatbot' ) . ' ' . (string) get_transient( 'ssc_kb_embed_error' ) ); ?></div>
 	<?php endif; ?>
 
 	<form method="post" class="ssc-form" enctype="multipart/form-data">
@@ -171,6 +175,33 @@ $kb_state = isset( $_GET['kb'] ) ? sanitize_key( wp_unslash( $_GET['kb'] ) ) : '
 				</tbody>
 			</table></div>
 		<?php endif; ?>
+
+		<form method="post" class="ssc-kb-semantic">
+			<?php wp_nonce_field( 'ssc_kb' ); ?>
+			<input type="hidden" name="ssc_kb_semantic_save" value="1" />
+			<h3><?php esc_html_e( 'Semantic search', 'smart-support-chatbot' ); ?></h3>
+			<?php $ssc_embed_model = SSC_Embeddings::model(); ?>
+			<?php if ( '' === $ssc_embed_model ) : ?>
+				<p class="ssc-field__hint"><?php esc_html_e( 'Available with OpenAI, Gemini or an OpenAI-compatible custom endpoint. The connected provider has no embeddings API, so keyword search is used.', 'smart-support-chatbot' ); ?></p>
+			<?php else : ?>
+				<label class="ssc-check"><input type="checkbox" name="kb_semantic" value="yes" <?php checked( 'yes', SSC_Settings::get( 'kb_semantic', 'no' ) ); ?> /> <span><?php esc_html_e( 'Find answers by meaning, not only matching words (uses the provider\'s embeddings API: one small request per question)', 'smart-support-chatbot' ); ?></span></label>
+				<?php if ( 'yes' === SSC_Settings::get( 'kb_semantic', 'no' ) ) : ?>
+					<?php $ssc_pending = SSC_Schema::kb_pending_count( $ssc_embed_model ); ?>
+					<p class="ssc-field__hint">
+						<?php
+						echo esc_html(
+							0 === $ssc_pending
+								? __( 'Index is up to date.', 'smart-support-chatbot' )
+								/* translators: %d: number of chunks still waiting for indexing. */
+								: sprintf( __( '%d chunks are waiting to be indexed (continues in the background).', 'smart-support-chatbot' ), $ssc_pending )
+						);
+						?>
+					</p>
+				<?php endif; ?>
+			<?php endif; ?>
+			<label class="ssc-check"><input type="checkbox" name="show_sources" value="yes" <?php checked( 'yes', SSC_Settings::get( 'show_sources', 'yes' ) ); ?> /> <span><?php esc_html_e( 'Show the source documents under AI answers', 'smart-support-chatbot' ); ?></span></label>
+			<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Save and index now', 'smart-support-chatbot' ); ?></button>
+		</form>
 
 		<div class="ssc-kb-import">
 			<form method="post" class="ssc-kb-import__form">

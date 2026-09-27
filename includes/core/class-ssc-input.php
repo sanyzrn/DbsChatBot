@@ -36,7 +36,7 @@ class SSC_Input {
 	/**
 	 * Chat message text: keeps what the visitor actually typed.
 	 *
-	 * sanitize_textarea_field() strips anything that looks like a tag, so a
+	 * WordPress sanitize_textarea_field() strips anything that looks like a tag, so a
 	 * question such as "is 2<5?" or a pasted code snippet reached the model
 	 * truncated. Chat text is never rendered as HTML (the widget escapes it
 	 * and admin screens use esc_html), so only invalid UTF-8 and control

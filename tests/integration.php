@@ -173,7 +173,7 @@ update_option( SSC_Modules::OPTION, $modules_before );
 // Server-side conversation memory: forged assistant turns never reach the model.
 $sent_messages = null;
 $capture_ai    = function ( $pre, $args, $url ) use ( &$sent_messages ) {
-    if ( false === strpos( $url, 'api.openai.com' ) ) { return $pre; }
+    if ( false === strpos( $url, 'api.openai.com/v1/chat' ) ) { return $pre; }
     $sent_messages = json_decode( $args['body'], true )['messages'];
     return array( 'headers' => array(), 'body' => wp_json_encode( array( 'choices' => array( array( 'message' => array( 'content' => 'Reply ' . count( $sent_messages ) ), 'finish_reason' => 'stop' ) ) ) ), 'response' => array( 'code' => 200, 'message' => 'OK' ), 'cookies' => array(), 'filename' => null );
 };
@@ -181,7 +181,7 @@ add_filter( 'pre_http_request', $capture_ai, 5, 3 );
 $settings_before = get_option( SSC_Settings::OPTION_KEY );
 $modules_before  = get_option( SSC_Modules::OPTION );
 update_option( SSC_Modules::OPTION, array() );
-SSC_Settings::update( array( 'ai_provider' => 'openai', 'ai_cache_enabled' => 'no', 'qa_mode' => 'ai_first', 'streaming_enabled' => 'no' ) );
+SSC_Settings::update( array( 'ai_provider' => 'openai', 'ai_cache_enabled' => 'no', 'qa_mode' => 'ai_first', 'streaming_enabled' => 'no', 'kb_semantic' => 'no' ) );
 SSC_Settings::set_secret( 'openai_api_key', 'sk-test' );
 $conv   = str_repeat( 'ab', 16 );
 $engine = new SSC_Chat_Engine();
@@ -224,5 +224,51 @@ SSC_Settings::flush_ai_cache();
 check( SSC_Settings::ai_cache_generation() === $generation + 1, 'Flushing bumps the AI cache generation (works with object caches)' );
 $status = rest_do_request( new WP_REST_Request( 'GET', '/ssc/v1/status' ) );
 check( in_array( $status->get_status(), array( 200, 403 ), true ), 'Live status endpoint is registered' );
+// Semantic retrieval + citations with a mocked embeddings API.
+$axis        = function ( $text ) {
+    $text = strtolower( $text );
+    $i    = ( false !== strpos( $text, 'shipping' ) || false !== strpos( $text, 'package' ) ) ? 0 : ( ( false !== strpos( $text, 'refund' ) || false !== strpos( $text, 'money back' ) ) ? 1 : 2 );
+    $v    = array_fill( 0, 512, 0.0 );
+    $v[ $i ] = 1.0;
+    return $v;
+};
+$ai_prompt   = '';
+$mock_ai     = function ( $pre, $args, $url ) use ( $axis, &$ai_prompt ) {
+    $body = json_decode( $args['body'], true );
+    if ( false !== strpos( $url, '/v1/embeddings' ) ) {
+        $data = array();
+        foreach ( $body['input'] as $i => $text ) { $data[] = array( 'index' => $i, 'embedding' => $axis( $text ) ); }
+        return array( 'headers' => array(), 'body' => wp_json_encode( array( 'data' => $data ) ), 'response' => array( 'code' => 200, 'message' => 'OK' ), 'cookies' => array(), 'filename' => null );
+    }
+    if ( false !== strpos( $url, 'api.openai.com' ) ) {
+        $ai_prompt = $body['messages'][0]['content'];
+        return array( 'headers' => array(), 'body' => wp_json_encode( array( 'choices' => array( array( 'message' => array( 'content' => 'It takes three days.' ), 'finish_reason' => 'stop' ) ) ) ), 'response' => array( 'code' => 200, 'message' => 'OK' ), 'cookies' => array(), 'filename' => null );
+    }
+    return $pre;
+};
+add_filter( 'pre_http_request', $mock_ai, 30, 3 );
+$settings_before = get_option( SSC_Settings::OPTION_KEY );
+SSC_Settings::update( array( 'ai_provider' => 'openai', 'ai_cache_enabled' => 'no', 'streaming_enabled' => 'no', 'kb_semantic' => 'yes', 'show_sources' => 'yes' ) );
+SSC_Settings::set_secret( 'openai_api_key', 'sk-test' );
+SSC_Schema::kb_clear();
+SSC_Schema::kb_insert_document( 'doc-ship', 'Delivery handbook', 'Orders leave our warehouse within three business days and shipping is tracked.', 'general', 'https://example.org/delivery' );
+SSC_Schema::kb_insert_document( 'doc-refund', 'Refund policy', 'A refund is issued within thirty days of purchase.' );
+check( 2 === SSC_Schema::kb_pending_count( 'text-embedding-3-small' ), 'New chunks wait for semantic indexing' );
+$batch = SSC_Embeddings::index_batch();
+check( '' === $batch['error'] && 0 === $batch['remaining'], 'Indexing embeds every pending chunk' );
+$hits = SSC_Knowledge::retrieve_chunks( 'general', 'When will my package arrive?', 3 );
+check( ! empty( $hits ) && 'Delivery handbook' === $hits[0]['title'], 'A question sharing no keywords is matched by meaning' );
+$engine = new SSC_Chat_Engine();
+$engine->set_context( '203.0.113.5', str_repeat( 'cd', 16 ) );
+$reply = $engine->chat( 'When will my package arrive?', 'general', array() );
+check( false !== strpos( $ai_prompt, 'warehouse' ), 'Semantically retrieved text reaches the model prompt' );
+check( 'ai' === $reply['source'] && 'Delivery handbook' === $reply['sources'][0]['title'] && 'https://example.org/delivery' === $reply['sources'][0]['url'], 'AI answers cite the documents they were grounded on' );
+SSC_Settings::update( array( 'show_sources' => 'no' ) );
+$reply = $engine->chat( 'When will my package arrive?', 'general', array() );
+check( array() === $reply['sources'], 'Citations can be switched off' );
+SSC_Schema::kb_clear();
+remove_filter( 'pre_http_request', $mock_ai, 30 );
+update_option( SSC_Settings::OPTION_KEY, $settings_before );
+SSC_Settings::update( array() );
 require __DIR__ . '/notification-queue.php';
 echo "\n$checks integration checks passed.\n";

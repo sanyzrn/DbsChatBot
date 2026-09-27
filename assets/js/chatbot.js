@@ -865,6 +865,7 @@
                                 // The final DOM is stable: feedback handlers must not be replaced by an animation.
                         }
                         handleFlags(data);
+                        renderSources(node, data.sources);
                         var tools = messageTools(node, reply);
                         if (cfg.features && cfg.features.feedback && data.log_id) {
                                 feedbackControls(tools, data.log_id, data.log_token);
@@ -893,6 +894,29 @@
                 if (cfg.features && cfg.features.faq) {
                         suggestRelated();
                 }
+        }
+
+        /** Knowledge documents the answer was grounded on (links when imported from a URL). */
+        function renderSources(node, sources) {
+                if (!sources || !sources.length) { return; }
+                var i18n = cfg.i18n || {};
+                var wrap = el('div', 'ssc-sources');
+                wrap.appendChild(el('span', 'ssc-sources__label', esc(i18n.sources || 'Sources:')));
+                sources.slice(0, 3).forEach(function (src) {
+                        if (!src || !src.title) { return; }
+                        var item;
+                        if (src.url && /^https?:\/\//.test(src.url)) {
+                                item = el('a', 'ssc-sources__item', esc(src.title));
+                                item.href = src.url;
+                                item.target = '_blank';
+                                item.rel = 'noopener noreferrer nofollow';
+                        } else {
+                                item = el('span', 'ssc-sources__item', esc(src.title));
+                        }
+                        item.setAttribute('dir', 'auto');
+                        wrap.appendChild(item);
+                });
+                node.appendChild(wrap);
         }
 
         /** Action row under an answer (copy; feedback is appended when enabled). */

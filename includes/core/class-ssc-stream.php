@@ -221,6 +221,7 @@ class SSC_Stream {
 				'log_id'    => isset( $result['log_id'] ) ? (int) $result['log_id'] : 0,
 				'log_token' => isset( $result['log_token'] ) ? (string) $result['log_token'] : '',
 				'flags'     => isset( $result['flags'] ) ? $result['flags'] : (object) array(),
+				'sources'   => isset( $result['sources'] ) ? $result['sources'] : array(),
 			)
 		);
 		exit;

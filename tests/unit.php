@@ -10,7 +10,7 @@ class SSC_Settings {
     public static $values = array();
     public static function get( $key, $default = null ) { return self::$values[ $key ] ?? $default; }
 }
-foreach ( array( 'input', 'availability', 'http', 'provider' ) as $file ) {
+foreach ( array( 'input', 'availability', 'http', 'provider', 'embeddings' ) as $file ) {
     require __DIR__ . '/../includes/core/class-ssc-' . $file . '.php';
 }
 foreach ( array( 'openai-compat', 'openai', 'claude', 'gemini' ) as $file ) {
@@ -147,5 +147,20 @@ check( $gemini->parse_stream_event( array( 'candidates' => array( array( 'finish
 $openai = new SSC_Provider_Openai();
 $ev     = $openai->parse_stream_event( array( 'choices' => array( array( 'delta' => array( 'content' => 'x' ), 'finish_reason' => null ) ) ) );
 check( 'x' === $ev['text'] && ! $ev['done'] && $openai->supports_streaming() && $claude->supports_streaming() && $gemini->supports_streaming(), 'OpenAI-compatible chunk parsing unchanged' );
+
+// Embeddings: request shapes, response parsing and vector math.
+$parts = SSC_Embeddings::request_parts( 'openai', 'sk', 'text-embedding-3-small', array( 'a', 'b' ) );
+check( 'https://api.openai.com/v1/embeddings' === $parts['url'] && 512 === $parts['body']['dimensions'] && array( 'a', 'b' ) === $parts['body']['input'], 'OpenAI embeddings request' );
+$parts = SSC_Embeddings::request_parts( 'custom', 'k', 'm', array( 'a' ), 'https://llm.example.com/v1/chat/completions' );
+check( 'https://llm.example.com/v1/embeddings' === $parts['url'] && ! isset( $parts['body']['dimensions'] ), 'Custom endpoint derives /embeddings and omits dimensions' );
+$parts = SSC_Embeddings::request_parts( 'gemini', 'k', 'gemini-embedding-001', array( 'a' ) );
+check( false !== strpos( $parts['url'], ':batchEmbedContents' ) && 512 === $parts['body']['requests'][0]['outputDimensionality'], 'Gemini batch embeddings request' );
+check( null === SSC_Embeddings::request_parts( 'claude', 'k', 'm', array( 'a' ) ), 'Providers without embeddings are refused' );
+check( array( array( 1 ), array( 2 ) ) === SSC_Embeddings::extract_vectors( 'openai', array( 'data' => array( array( 'index' => 1, 'embedding' => array( 2 ) ), array( 'index' => 0, 'embedding' => array( 1 ) ) ) ) ), 'OpenAI vectors are returned in input order' );
+check( array( array( 3 ) ) === SSC_Embeddings::extract_vectors( 'gemini', array( 'embeddings' => array( array( 'values' => array( 3 ) ) ) ) ), 'Gemini vectors parsed' );
+$v = SSC_Embeddings::normalize( array( 3, 4 ) );
+check( abs( $v[0] - 0.6 ) < 1e-9 && abs( SSC_Embeddings::cosine( $v, $v ) - 1 ) < 1e-9, 'Vectors are unit length; self-similarity is 1' );
+$round = SSC_Embeddings::unpack( SSC_Embeddings::pack( $v ) );
+check( abs( $round[1] - 0.8 ) < 1e-6 && array() === SSC_Embeddings::unpack( 'not base64 !!' ), 'Vectors survive storage; corrupt blobs are ignored' );
 
 echo "$count unit checks passed.\n";

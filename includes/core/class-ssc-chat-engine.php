@@ -249,7 +249,12 @@ class SSC_Chat_Engine {
 			'log_id'    => 0,
 			'log_token' => '',
 			'flags'     => $this->flags,
+			'sources'   => array(),
 		);
+		// Citations: the documents the answer was grounded on (AI answers only).
+		if ( $ok && in_array( $source, array( 'ai', 'cache' ), true ) && 'yes' === SSC_Settings::get( 'show_sources', 'yes' ) ) {
+			$out['sources'] = array_slice( SSC_Prompt_Builder::last_sources(), 0, 3 );
+		}
 
 		if ( $ok && '' !== $reply ) {
 			SSC_Conversation::append( $this->conversation, $this->current_question, $reply );
