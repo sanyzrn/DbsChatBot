@@ -79,6 +79,11 @@ class SSC_Admin_Settings {
 			$patch['handoff_text']  = isset( $_POST['handoff_text'] ) ? wp_kses_post( wp_unslash( $_POST['handoff_text'] ) ) : '';
 			$patch['proactive_delay'] = isset( $_POST['proactive_delay'] ) ? SSC_Settings::clamp_int( 'proactive_delay', wp_unslash( $_POST['proactive_delay'] ) ) : 12;
 			$patch['proactive_text'] = isset( $_POST['proactive_text'] ) ? wp_kses_post( wp_unslash( $_POST['proactive_text'] ) ) : '';
+			foreach ( array( 'proactive_trigger', 'proactive_scroll', 'proactive_rules' ) as $key ) {
+				if ( isset( $_POST[ $key ] ) ) {
+					$patch[ $key ] = SSC_Settings::sanitize_value( $key, wp_unslash( $_POST[ $key ] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize_value().
+				}
+			}
 			// Sanitized (and given stable keys) at save time, not only on read.
 			$patch['form_fields'] = SSC_Settings::sanitize_value( 'form_fields', isset( $_POST['form_fields'] ) ? (array) wp_unslash( $_POST['form_fields'] ) : array() ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by sanitize_value().
 			$patch['notify_platform'] = isset( $_POST['notify_platform'] ) ? SSC_Settings::sanitize_value( 'notify_platform', wp_unslash( $_POST['notify_platform'] ) ) : 'bale';
@@ -123,7 +128,7 @@ class SSC_Admin_Settings {
 			'history' => array( 'chatlog_enabled' ),
 			'csat' => array( 'csat_enabled' ),
 			'handoff' => array( 'handoff_text' ),
-			'proactive' => array( 'proactive_delay', 'proactive_text' ),
+			'proactive' => array( 'proactive_delay', 'proactive_text', 'proactive_trigger', 'proactive_scroll', 'proactive_rules' ),
 			'leads' => array( 'form_fields' ),
 			'notifications' => array( 'notify_platform', 'notify_chat_id', 'notify_email_enabled', 'notify_email_to' ),
 		);

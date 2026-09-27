@@ -192,6 +192,9 @@ class SSC_Settings {
 			// Proactive module.
 			'proactive_delay'            => 12,
 			'proactive_text'             => '',
+			'proactive_trigger'          => 'delay', // delay | scroll | exit.
+			'proactive_scroll'           => 50,
+			'proactive_rules'            => '', // "path | message" per line.
 
 			// Notifications module.
 			'notify_platform'            => 'bale',
@@ -586,6 +589,12 @@ class SSC_Settings {
 			case 'ip_storage':
 				return in_array( $value, array( 'anonymize', 'full', 'none' ), true ) ? $value : 'anonymize';
 
+			case 'proactive_trigger':
+				return in_array( $value, array( 'delay', 'scroll', 'exit' ), true ) ? $value : 'delay';
+
+			case 'proactive_rules':
+				return sanitize_textarea_field( (string) $value );
+
 			case 'rate_limit_mode':
 				return in_array( $value, array( 'ip', 'session', 'both', 'off' ), true ) ? $value : 'ip';
 
@@ -711,6 +720,7 @@ class SSC_Settings {
 			'submit_rate_limit'          => array( 0, 10000 ),
 			'session_rate_limit'         => array( 0, 100000 ),
 			'proactive_delay'            => array( 2, 120 ),
+			'proactive_scroll'           => array( 10, 100 ),
 			'kb_max_chunks'              => array( 1, 8 ),
 		);
 	}

@@ -93,40 +93,40 @@ class SSC_Frontend {
 
 		$config = array(
 			// Transports (REST first, admin-ajax fallback for cached pages).
-			'restUrl'         => esc_url_raw( rest_url( SSC_REST::NS . '/' ) ),
-			'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
+			'restUrl'          => esc_url_raw( rest_url( SSC_REST::NS . '/' ) ),
+			'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
 			// Public traffic is cache-safe; strict mode uses WordPress's REST action.
-			'nonce'           => apply_filters( 'ssc_enforce_rest_nonce', false ) ? wp_create_nonce( 'wp_rest' ) : '',
+			'nonce'            => apply_filters( 'ssc_enforce_rest_nonce', false ) ? wp_create_nonce( 'wp_rest' ) : '',
 
 			// Identity & texts.
-			'assistantName'   => $display_name,
-			'orgName'         => '' !== trim( (string) $business['org_name'] ) ? $business['org_name'] : get_bloginfo( 'name' ),
-			'welcomeTitle'    => '' !== trim( (string) $s['welcome_title'] ) ? $s['welcome_title'] : __( 'Hello! 👋', 'smart-support-chatbot' ),
-			'welcomeText'     => '' !== trim( (string) $s['welcome_text'] ) ? $s['welcome_text'] : __( 'How can I help you today?', 'smart-support-chatbot' ),
-			'disclaimer'      => (string) $s['disclaimer'],
-			'direction'       => $direction,
+			'assistantName'    => $display_name,
+			'orgName'          => '' !== trim( (string) $business['org_name'] ) ? $business['org_name'] : get_bloginfo( 'name' ),
+			'welcomeTitle'     => '' !== trim( (string) $s['welcome_title'] ) ? $s['welcome_title'] : __( 'Hello! 👋', 'smart-support-chatbot' ),
+			'welcomeText'      => '' !== trim( (string) $s['welcome_text'] ) ? $s['welcome_text'] : __( 'How can I help you today?', 'smart-support-chatbot' ),
+			'disclaimer'       => (string) $s['disclaimer'],
+			'direction'        => $direction,
 
 			// Appearance.
-			'themeMode'       => $s['theme_mode'],
-			'position'        => $s['position'],
-			'primaryColor'    => $s['primary_color'],
-			'fontSize'        => (int) $s['font_size'],
-			'windowWidth'     => (int) $s['window_width'],
-			'windowRadius'    => (int) $s['window_radius'],
-			'bubbleRadius'    => (int) $s['bubble_radius'],
-			'userBubble'      => $s['user_bubble_color'],
-			'botBubble'       => $s['bot_bubble_color'],
-			'fontStack'       => $font_stack,
-			'avatarUrl'       => $s['avatar_url'],
-			'launcherSize'    => (int) $s['launcher_size'],
-			'launcherIconUrl' => $s['launcher_icon_url'],
-			'supportPhone'    => $business['support_phone'] ? $business['support_phone'] : $business['phone'],
+			'themeMode'        => $s['theme_mode'],
+			'position'         => $s['position'],
+			'primaryColor'     => $s['primary_color'],
+			'fontSize'         => (int) $s['font_size'],
+			'windowWidth'      => (int) $s['window_width'],
+			'windowRadius'     => (int) $s['window_radius'],
+			'bubbleRadius'     => (int) $s['bubble_radius'],
+			'userBubble'       => $s['user_bubble_color'],
+			'botBubble'        => $s['bot_bubble_color'],
+			'fontStack'        => $font_stack,
+			'avatarUrl'        => $s['avatar_url'],
+			'launcherSize'     => (int) $s['launcher_size'],
+			'launcherIconUrl'  => $s['launcher_icon_url'],
+			'supportPhone'     => $business['support_phone'] ? $business['support_phone'] : $business['phone'],
 
 			// Catalog.
-			'products'        => array_values( $products ),
+			'products'         => array_values( $products ),
 
 			// Module-gated capabilities (server-enforced mirror).
-			'features'        => array(
+			'features'         => array(
 				'leads'       => SSC_Modules::is_active( 'leads' ),
 				'faq'         => SSC_Modules::is_active( 'faq' ),
 				'voice'       => SSC_Modules::is_active( 'voice' ),
@@ -140,25 +140,27 @@ class SSC_Frontend {
 			),
 
 			// Availability + behaviour (server-computed).
-			'availability'    => SSC_Availability::public_status(),
-			'handoffText'     => (string) $s['handoff_text'],
-			'proactiveDelay'  => (int) $s['proactive_delay'],
-			'proactiveText'   => (string) $s['proactive_text'],
-			'voiceLanguage'   => $this->voice_language(),
+			'availability'     => SSC_Availability::public_status(),
+			'handoffText'      => (string) $s['handoff_text'],
+			'proactiveDelay'   => (int) $s['proactive_delay'],
+			'proactiveText'    => SSC_Availability::proactive_text_for( (string) $s['proactive_rules'], (string) $s['proactive_text'] ),
+			'proactiveTrigger' => (string) $s['proactive_trigger'],
+			'proactiveScroll'  => (int) $s['proactive_scroll'],
+			'voiceLanguage'    => $this->voice_language(),
 
 			// Leads form (module-gated).
-			'formFields'      => ( SSC_Modules::is_active( 'leads' ) ) ? SSC_Settings::form_fields() : array(),
-			'consent'         => array(
+			'formFields'       => ( SSC_Modules::is_active( 'leads' ) ) ? SSC_Settings::form_fields() : array(),
+			'consent'          => array(
 				'enabled' => 'yes' === $s['consent_enabled'],
 				'text'    => SSC_Input::consent_text( SSC_Modules::is_active( 'pharma' ) ),
 				'link'    => (string) $s['consent_link'],
 			),
 
 			// Pharma ADR options (module-gated).
-			'adrOptions'      => SSC_Modules::is_active( 'pharma' ) ? SSC_Module_Pharma::adr_options_public() : null,
+			'adrOptions'       => SSC_Modules::is_active( 'pharma' ) ? SSC_Module_Pharma::adr_options_public() : null,
 
 			// i18n strings for the widget.
-			'i18n'            => $this->strings(),
+			'i18n'             => $this->strings(),
 		);
 
 		$config = apply_filters( 'ssc_frontend_config', $this->apply_overrides( $config, $overrides ) );

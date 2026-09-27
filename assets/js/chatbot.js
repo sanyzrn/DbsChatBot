@@ -516,6 +516,31 @@
                 head.appendChild(titles);
 
                 var actions = el('div', 'ssc-head__actions');
+                var i18nHead = cfg.i18n || {};
+
+                // Call the support line (tap-to-call on phones).
+                var tel = String(cfg.supportPhone || '').replace(/[^\d+]/g, '');
+                if (tel.length >= 5) {
+                        var callBtn = el('a', 'ssc-iconbtn ssc-call', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>');
+                        callBtn.href = 'tel:' + tel;
+                        callBtn.title = (i18nHead.callUs || 'Call us') + ' ' + cfg.supportPhone;
+                        callBtn.setAttribute('aria-label', callBtn.title);
+                        actions.appendChild(callBtn);
+                }
+
+                // Bring the main menu back at any point in the conversation.
+                var menuBtn = el('button', 'ssc-iconbtn ssc-menu', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>');
+                menuBtn.type = 'button';
+                menuBtn.title = i18nHead.mainMenu || 'Main menu';
+                menuBtn.setAttribute('aria-label', menuBtn.title);
+                menuBtn.addEventListener('click', function () {
+                        if (state.loading) { return; }
+                        var stale = thread.querySelectorAll('.ssc-chips--menu');
+                        Array.prototype.forEach.call(stale, function (node) { node.parentElement.removeChild(node); });
+                        mainMenu();
+                });
+                actions.appendChild(menuBtn);
+
                 var resetBtn = el('button', 'ssc-iconbtn', '&#8635;');
                 resetBtn.type = 'button';
                 resetBtn.title = (cfg.i18n && cfg.i18n.newConversation) || 'New conversation';
@@ -570,14 +595,23 @@
                 // Composer.
                 composer = el('form', 'ssc-composer');
                 composer.setAttribute('novalidate', 'novalidate');
-                input = el('input', 'ssc-input');
-                input.type = 'text';
+                // Multi-line composer: Enter sends, Shift+Enter adds a line.
+                input = el('textarea', 'ssc-input');
+                input.rows = 1;
                 input.id = uid();
                 input.setAttribute('placeholder', (cfg.i18n && cfg.i18n.placeholder) || '');
                 input.setAttribute('aria-label', (cfg.i18n && cfg.i18n.inputLabel) || 'Message');
                 input.autocomplete = 'off';
                 input.setAttribute('dir', 'auto');
                 input.maxLength = 2000;
+                input.addEventListener('input', autosize);
+                input.addEventListener('keydown', function (e) {
+                        // Never submit mid-composition (Persian/CJK input methods use Enter).
+                        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229) {
+                                e.preventDefault();
+                                if (composer.requestSubmit) { composer.requestSubmit(); } else { composer.dispatchEvent(new Event('submit', { cancelable: true })); }
+                        }
+                });
 
                 var left = el('div', 'ssc-composer__left');
                 if (cfg.features && cfg.features.voiceInput && voiceSupported()) {
@@ -603,6 +637,7 @@
                         var text = input.value.trim();
                         if (text && !state.loading) {
                                 input.value = '';
+                                autosize();
                                 userSend(text);
                         }
                 });
@@ -672,13 +707,26 @@
                 saveThread();
         }
 
-        function addChips(chips) {
+        /** Grow the composer with its content, up to five lines. */
+        function autosize() {
+                if (!input) { return; }
+                input.style.height = 'auto';
+                input.style.height = Math.min(input.scrollHeight, 132) + 'px';
+        }
+
+        function addChips(chips, label) {
                 if (!chips || !chips.length) { return; }
                 var wrap = el('div', 'ssc-chips');
+                if (label) {
+                        var caption = el('span', 'ssc-chips__label', esc(label));
+                        caption.setAttribute('dir', 'auto');
+                        wrap.appendChild(caption);
+                }
                 chips.forEach(function (chip) {
                         var btn = el('button', 'ssc-chip', esc(chip.label));
                         btn.type = 'button';
                         btn.setAttribute('dir', 'auto');
+                        if (chip.title) { btn.title = chip.title; }
                         btn.addEventListener('click', function () {
                                 wrap.parentElement.removeChild(wrap);
                                 chip.onClick();
@@ -690,7 +738,8 @@
         }
 
         function showTyping() {
-                var typing = el('div', 'ssc-msg ssc-msg--bot ssc-typing', '<span class="ssc-typing__dot"></span><span class="ssc-typing__dot"></span><span class="ssc-typing__dot"></span>');
+                var typing = el('div', 'ssc-msg ssc-msg--bot ssc-typing', '<span class="ssc-typing__dot"></span><span class="ssc-typing__dot"></span><span class="ssc-typing__dot"></span><span class="ssc-sr">' + esc((cfg.i18n && cfg.i18n.typing) || 'Typing…') + '</span>');
+                typing.setAttribute('role', 'status');
                 thread.appendChild(typing);
                 scrollDown();
                 return typing;
@@ -740,9 +789,9 @@
         function mainMenu() {
                 var chips = [];
                 var i18n = cfg.i18n || {};
-                chips.push({ label: i18n.askUs || 'Ask us', onClick: function () { focusProduct(null); } });
+                chips.push({ label: i18n.askUs || 'Ask us', title: i18n.askUsDesc || '', onClick: function () { focusProduct(null); if (input && !COARSE_POINTER) { input.focus(); } } });
                 if (cfg.products && cfg.products.length) {
-                        chips.push({ label: i18n.products || 'Products', onClick: chooseProduct });
+                        chips.push({ label: i18n.products || 'Products', title: i18n.productsDesc || '', onClick: chooseProduct });
                 }
                 if (cfg.features && cfg.features.leads) {
                         chips.push({ label: i18n.requestForm || 'Request', onClick: showLeadForm });
@@ -751,6 +800,8 @@
                         chips.push({ label: i18n.reportAdr || 'Report side effect', onClick: showAdrForm });
                 }
                 addChips(chips);
+                var menus = thread.querySelectorAll('.ssc-chips');
+                if (menus.length) { menus[menus.length - 1].classList.add('ssc-chips--menu'); }
         }
 
         function restoreThread(saved) {
@@ -969,9 +1020,9 @@
                         var items = res && res.data && res.data.items;
                         if (!items || !items.length) { return; }
                         var chips = items.slice(0, 3).map(function (item) {
-                                return { label: item.question.slice(0, 48), onClick: function () { userSend(item.question); } };
+                                return { label: item.question.slice(0, 48), title: item.question, onClick: function () { userSend(item.question); } };
                         });
-                        addChips(chips);
+                        addChips(chips, (cfg.i18n && cfg.i18n.suggestions) || '');
                 }).catch(function () { /* silent */ });
         }
 
@@ -1032,7 +1083,23 @@
                                 if (f.placeholder) { ta.placeholder = f.placeholder; }
                                 wrap.appendChild(ta);
                                 form.appendChild(wrap);
-                        } else if (f.type === 'select' || f.type === 'radio') {
+                        } else if (f.type === 'radio') {
+                                // A real radio group (was rendered as a dropdown).
+                                var group = el('fieldset', 'ssc-f ssc-f--group ssc-f--radios');
+                                group.appendChild(el('legend', 'ssc-f__label', esc(f.label) + (f.required ? ' *' : '')));
+                                (f.options || []).forEach(function (opt, idx) {
+                                        var lab = el('label', 'ssc-f--check');
+                                        var rb = el('input', 'ssc-f__check');
+                                        rb.type = 'radio';
+                                        rb.name = 'extra[' + f.key + ']';
+                                        rb.value = opt;
+                                        if (f.required && 0 === idx) { rb.required = true; }
+                                        lab.appendChild(rb);
+                                        lab.appendChild(el('span', 'ssc-f__label', esc(opt)));
+                                        group.appendChild(lab);
+                                });
+                                form.appendChild(group);
+                        } else if (f.type === 'select') {
                                 var wrap2 = el('label', 'ssc-f');
                                 wrap2.appendChild(el('span', 'ssc-f__label', esc(f.label) + (f.required ? ' *' : '')));
                                 var sel = el('select', 'ssc-f__input');
@@ -1393,8 +1460,10 @@
                 recognition.continuous = false;
                 var base = input.value;
 
+                var placeholder = input.getAttribute('placeholder') || '';
                 recognition.onstart = function () {
                         if (micBtn) { micBtn.classList.add('is-live'); micBtn.setAttribute('aria-pressed', 'true'); }
+                        input.setAttribute('placeholder', (cfg.i18n && cfg.i18n.micListening) || 'Listening…');
                 };
                 recognition.onresult = function (event) {
                         var text = '';
@@ -1402,13 +1471,17 @@
                                 text += event.results[i][0].transcript;
                         }
                         input.value = (base ? base + ' ' : '') + text;
+                        autosize();
                 };
                 recognition.onerror = function () {
                         recognition = null;
+                        input.setAttribute('placeholder', placeholder);
                         if (micBtn) { micBtn.classList.remove('is-live'); micBtn.setAttribute('aria-pressed', 'false'); micBtn.classList.add('is-error'); }
                 };
                 recognition.onend = function () {
                         recognition = null;
+                        input.setAttribute('placeholder', placeholder);
+                        autosize();
                         if (micBtn) { micBtn.classList.remove('is-live'); micBtn.setAttribute('aria-pressed', 'false'); }
                 };
                 recognition.start();
@@ -1444,7 +1517,12 @@
 
         function setSpeaking(on, btn) {
                 speakingNode = on ? btn : null;
-                if (btn) { btn.classList.toggle('is-speaking', on); }
+                if (btn) {
+                        var i18n = cfg.i18n || {};
+                        btn.classList.toggle('is-speaking', on);
+                        btn.title = on ? (i18n.speakStop || 'Stop audio') : (i18n.speak || 'Listen');
+                        btn.setAttribute('aria-label', btn.title);
+                }
         }
 
         if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
@@ -1461,7 +1539,37 @@
                 if (!cfg.features || !cfg.features.proactive || cfg.preview) { return; }
                 try { if (sessionStorage.getItem('ssc_proactive') === 'off') { return; } } catch (e) { /* ignore */ }
 
+                if (!String(cfg.proactiveText || '').trim()) { return; } // "-" rule or empty text.
+
                 var delay = Math.max(2, (cfg.proactiveDelay || 12)) * 1000;
+                var trigger = cfg.proactiveTrigger || 'delay';
+
+                if ('scroll' === trigger) {
+                        var depth = Math.min(100, Math.max(10, cfg.proactiveScroll || 50)) / 100;
+                        var onScroll = function () {
+                                var doc = document.documentElement;
+                                var max = Math.max(1, doc.scrollHeight - window.innerHeight);
+                                if ((window.scrollY || doc.scrollTop) / max >= depth) {
+                                        window.removeEventListener('scroll', onScroll);
+                                        showProactive();
+                                }
+                        };
+                        window.addEventListener('scroll', onScroll, { passive: true });
+                        return;
+                }
+
+                // Exit intent needs a mouse; phones fall back to the delay.
+                if ('exit' === trigger && !COARSE_POINTER) {
+                        var onLeave = function (e) {
+                                if (!e.relatedTarget && e.clientY <= 0) {
+                                        document.removeEventListener('mouseout', onLeave);
+                                        showProactive();
+                                }
+                        };
+                        window.setTimeout(function () { document.addEventListener('mouseout', onLeave); }, 3000);
+                        return;
+                }
+
                 window.setTimeout(showProactive, delay);
         }
 

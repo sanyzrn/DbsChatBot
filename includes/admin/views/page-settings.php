@@ -241,6 +241,23 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 						<label for="proactive_text"><?php esc_html_e( 'Invitation text', 'smart-support-chatbot' ); ?></label>
 						<input id="proactive_text" name="proactive_text" type="text" value="<?php echo esc_attr( (string) $s['proactive_text'] ); ?>" />
 					</div>
+					<div class="ssc-field">
+						<label for="proactive_trigger"><?php esc_html_e( 'Show the invitation', 'smart-support-chatbot' ); ?></label>
+						<select id="proactive_trigger" name="proactive_trigger">
+							<option value="delay" <?php selected( $s['proactive_trigger'], 'delay' ); ?>><?php esc_html_e( 'After the delay', 'smart-support-chatbot' ); ?></option>
+							<option value="scroll" <?php selected( $s['proactive_trigger'], 'scroll' ); ?>><?php esc_html_e( 'After scrolling part of the page', 'smart-support-chatbot' ); ?></option>
+							<option value="exit" <?php selected( $s['proactive_trigger'], 'exit' ); ?>><?php esc_html_e( 'When the visitor is about to leave (desktop; delay on phones)', 'smart-support-chatbot' ); ?></option>
+						</select>
+					</div>
+					<div class="ssc-field">
+						<label for="proactive_scroll"><?php esc_html_e( 'Scroll depth (%)', 'smart-support-chatbot' ); ?></label>
+						<input id="proactive_scroll" name="proactive_scroll" type="number" min="10" max="100" value="<?php echo esc_attr( (string) $s['proactive_scroll'] ); ?>" />
+					</div>
+				</div>
+				<div class="ssc-field">
+					<label for="proactive_rules"><?php esc_html_e( 'Page-specific messages (one per line: path | message)', 'smart-support-chatbot' ); ?></label>
+					<textarea id="proactive_rules" name="proactive_rules" rows="3" dir="auto" placeholder="/pricing* | Questions about plans? Ask me!&#10;/product/* | Need help choosing?"><?php echo esc_textarea( (string) $s['proactive_rules'] ); ?></textarea>
+					<p class="ssc-field__hint"><?php esc_html_e( 'The first matching path wins; * matches anything. Pages without a match use the invitation text above. Use "-" as the message to show no invitation on those pages.', 'smart-support-chatbot' ); ?></p>
 				</div>
 			</section>
 		<?php endif; ?>

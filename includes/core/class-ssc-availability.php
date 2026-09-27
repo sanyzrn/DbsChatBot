@@ -157,6 +157,30 @@ class SSC_Availability {
 	}
 
 	/**
+	 * Proactive invitation text for the current page: the first matching
+	 * "path | message" rule, else the default text. "-" disables it.
+	 *
+	 * @param string $rules    Rule lines.
+	 * @param string $fallback Default text.
+	 * @param string $path     Request path (null = current request).
+	 * @return string
+	 */
+	public static function proactive_text_for( $rules, $fallback, $path = null ) {
+		$path = null === $path ? self::current_request_path() : (string) $path;
+		foreach ( preg_split( '/\r\n|\r|\n/', (string) $rules ) as $line ) {
+			$parts = explode( '|', $line, 2 );
+			if ( 2 !== count( $parts ) || '' === trim( $parts[0] ) ) {
+				continue;
+			}
+			if ( self::path_matches( $path, trim( $parts[0] ) ) ) {
+				$message = trim( $parts[1] );
+				return '-' === $message ? '' : $message;
+			}
+		}
+		return (string) $fallback;
+	}
+
+	/**
 	 * Allowed weekdays (1–7, Monday-first).
 	 *
 	 * @return int[]
