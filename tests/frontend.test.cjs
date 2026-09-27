@@ -84,3 +84,10 @@ test('Only real conversation turns are persisted (welcome never duplicates)', ()
   saveThread();
   assert.deepEqual(stored.items.map((i) => i.t), ['Hi', 'Hello!']);
 });
+
+test('The launcher can close the window it opened', () => {
+  // Passing toggleWindow straight to addEventListener hands it the click event,
+  // which read as "force open": the launcher opened the chat but never closed it.
+  assert.ok(!/addEventListener\(\s*'click'\s*,\s*toggleWindow\s*\)/.test(source), 'toggleWindow must not be a bare event listener');
+  assert.match(source, /'boolean' === typeof force/, 'only a real boolean may force a state');
+});

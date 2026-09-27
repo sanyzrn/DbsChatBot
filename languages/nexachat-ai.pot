@@ -3,12 +3,12 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: NexaChatAI 1.1.1\n"
+"Project-Id-Version: NexaChatAI 1.1.2\n"
 "Report-Msgid-Bugs-To: https://github.com/sanyzrn/DbsChatBot/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-27 11:45:07+00:00\n"
+"POT-Creation-Date: 2026-09-27 12:00:06+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -95,12 +95,12 @@ msgstr ""
 
 #: includes/admin/class-ssc-admin.php:221
 #: includes/admin/views/wizard.php:407
-#: includes/core/class-ssc-frontend.php:294
+#: includes/core/class-ssc-frontend.php:295
 msgid "Online"
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:222
-#: includes/core/class-ssc-frontend.php:293
+#: includes/core/class-ssc-frontend.php:294
 msgid "Offline"
 msgstr ""
 
@@ -817,7 +817,7 @@ msgstr ""
 
 #: includes/admin/views/page-dashboard.php:114
 #: includes/admin/views/page-knowledge.php:122
-#: includes/core/class-ssc-frontend.php:263
+#: includes/core/class-ssc-frontend.php:264
 msgid "Products & services"
 msgstr ""
 
@@ -2445,132 +2445,136 @@ msgid "Main menu"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:261
-msgid "Ask us"
+msgid "How can I help you?"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:262
+msgid "Ask us"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:263
 msgid "About us, services and contact info"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:264
+#: includes/core/class-ssc-frontend.php:265
 msgid "Product information"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:265
+#: includes/core/class-ssc-frontend.php:266
 msgid "Which one?"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:266
+#: includes/core/class-ssc-frontend.php:267
 #: includes/core/class-ssc-schema.php:411
 #: includes/core/class-ssc-schema.php:435
 msgid "Consultation request"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:267
+#: includes/core/class-ssc-frontend.php:268
 msgid "Report a side effect"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:268
+#: includes/core/class-ssc-frontend.php:269
 msgid "View brochure"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:269
+#: includes/core/class-ssc-frontend.php:270
 msgid "Call us"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:270
+#: includes/core/class-ssc-frontend.php:271
 msgid "Listen to this answer"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:271
+#: includes/core/class-ssc-frontend.php:272
 msgid "Stop audio"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:272
+#: includes/core/class-ssc-frontend.php:273
 msgid "Speak"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:273
+#: includes/core/class-ssc-frontend.php:274
 msgid "Listening…"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:274
+#: includes/core/class-ssc-frontend.php:275
 msgid "Talk to a human expert"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:275
+#: includes/core/class-ssc-frontend.php:276
 msgid "How was this conversation?"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:276
+#: includes/core/class-ssc-frontend.php:277
 msgid "Thanks for your rating 🙏"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:277
+#: includes/core/class-ssc-frontend.php:278
 msgid "Skip"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:278
+#: includes/core/class-ssc-frontend.php:279
 msgid "Copy answer"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:279
+#: includes/core/class-ssc-frontend.php:280
 msgid "Copied ✓"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:280
+#: includes/core/class-ssc-frontend.php:281
 msgid "Sources:"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:281
+#: includes/core/class-ssc-frontend.php:282
 msgid "Your consent is required to continue."
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:282
+#: includes/core/class-ssc-frontend.php:283
 msgid "Privacy policy"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:283
+#: includes/core/class-ssc-frontend.php:284
 msgid "Full name"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:284
+#: includes/core/class-ssc-frontend.php:285
 msgid "Phone number"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:285
+#: includes/core/class-ssc-frontend.php:286
 msgid "Good answer"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:286
+#: includes/core/class-ssc-frontend.php:287
 msgid "Poor answer"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:287
+#: includes/core/class-ssc-frontend.php:288
 msgid "Your message"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:288
+#: includes/core/class-ssc-frontend.php:289
 msgid "Submit"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:289
+#: includes/core/class-ssc-frontend.php:290
 msgid "Received ✓ We will contact you soon."
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:290
+#: includes/core/class-ssc-frontend.php:291
 msgid "The form could not be submitted. Please try again."
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:291
+#: includes/core/class-ssc-frontend.php:292
 msgid "Related questions:"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:292
+#: includes/core/class-ssc-frontend.php:293
 msgid "Typing…"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:295
+#: includes/core/class-ssc-frontend.php:296
 msgid "Press Alt+C to open chat"
 msgstr ""
 

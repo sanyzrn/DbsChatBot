@@ -258,6 +258,7 @@ class SSC_Frontend {
 			'connectionError' => __( 'Connection error. Please check your internet and try again.', 'nexachat-ai' ),
 			'rateLimited'     => __( 'You have reached the daily usage limit. Please try again tomorrow.', 'nexachat-ai' ),
 			'mainMenu'        => __( 'Main menu', 'nexachat-ai' ),
+			'menuPrompt'      => __( 'How can I help you?', 'nexachat-ai' ),
 			'askUs'           => __( 'Ask us', 'nexachat-ai' ),
 			'askUsDesc'       => __( 'About us, services and contact info', 'nexachat-ai' ),
 			'products'        => __( 'Products & services', 'nexachat-ai' ),

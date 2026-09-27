@@ -429,7 +429,9 @@
                 badge.setAttribute('aria-hidden', 'true');
                 badge.hidden = true;
                 launcher.appendChild(badge);
-                launcher.addEventListener('click', toggleWindow);
+                // A wrapper, not toggleWindow itself: the click event would be read as
+                // "force open" and the launcher could then never close the window.
+                launcher.addEventListener('click', function () { toggleWindow(); });
                 root.appendChild(launcher);
                 paintStatus();
         }
@@ -535,9 +537,23 @@
                 menuBtn.setAttribute('aria-label', menuBtn.title);
                 menuBtn.addEventListener('click', function () {
                         if (state.loading) { return; }
-                        var stale = thread.querySelectorAll('.ssc-chips--menu');
-                        Array.prototype.forEach.call(stale, function (node) { node.parentElement.removeChild(node); });
-                        mainMenu();
+                        var last = thread.lastElementChild;
+                        if (!last || !last.classList.contains('ssc-chips--menu')) {
+                                // Move the menu to the end of the conversation, with a caption so it reads as a reply.
+                                var stale = thread.querySelectorAll('.ssc-chips--menu');
+                                Array.prototype.forEach.call(stale, function (node) { node.parentElement.removeChild(node); });
+                                mainMenu(i18nHead.menuPrompt || 'How can I help you?');
+                                last = thread.lastElementChild;
+                        }
+                        // Always give visible feedback, even when the menu was already on screen.
+                        scrollDown();
+                        if (last) {
+                                last.classList.remove('ssc-flash');
+                                void last.offsetWidth; // Restart the animation on repeated clicks.
+                                last.classList.add('ssc-flash');
+                                var first = last.querySelector('.ssc-chip');
+                                if (first && !COARSE_POINTER) { first.focus(); }
+                        }
                 });
                 actions.appendChild(menuBtn);
 
@@ -653,7 +669,7 @@
         var lastFocus = null;
 
         function toggleWindow(force) {
-                var open = (force !== undefined) ? force : !state.open;
+                var open = ('boolean' === typeof force) ? force : !state.open;
                 if (open === state.open) { return; }
                 state.open = open;
 
@@ -787,7 +803,7 @@
                 return new DOMParser().parseFromString(String(text || ''), 'text/html').body.textContent || '';
         }
 
-        function mainMenu() {
+        function mainMenu(caption) {
                 var chips = [];
                 var i18n = cfg.i18n || {};
                 chips.push({ label: i18n.askUs || 'Ask us', title: i18n.askUsDesc || '', onClick: function () { focusProduct(null); if (input && !COARSE_POINTER) { input.focus(); } } });
@@ -800,7 +816,7 @@
                 if (cfg.features && cfg.features.pharma) {
                         chips.push({ label: i18n.reportAdr || 'Report side effect', onClick: showAdrForm });
                 }
-                addChips(chips);
+                addChips(chips, caption);
                 var menus = thread.querySelectorAll('.ssc-chips');
                 if (menus.length) { menus[menus.length - 1].classList.add('ssc-chips--menu'); }
         }
@@ -1639,6 +1655,15 @@
                         }
                 }
         });
+
+        // A click anywhere outside the widget closes it (the floating widget only:
+        // admin previews stay open). Pointerdown runs before chips remove themselves,
+        // so clicks inside the conversation are never mistaken for outside ones.
+        document.addEventListener('pointerdown', function (e) {
+                if (!state.open || previewMount || !root || root.contains(e.target)) { return; }
+                if (e.target && e.target.isConnected === false) { return; }
+                toggleWindow(false);
+        }, true);
 
         /* ------------------------------------------------------------------ *
          * Boot

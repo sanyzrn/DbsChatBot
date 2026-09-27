@@ -877,6 +877,9 @@ msgstr "بستری"
 msgid "How can I help you today?"
 msgstr "چطور می‌توانم کمکتان کنم؟"
 
+msgid "How can I help you?"
+msgstr "چه کمکی از دستم برمی‌آید؟"
+
 msgid "How this extension works:"
 msgstr "این افزونه چگونه کار می‌کند:"
 

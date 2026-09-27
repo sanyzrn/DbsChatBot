@@ -521,6 +521,14 @@
 	margin-block-start: 2px;
 }
 
+/* Header "Main menu" feedback: the menu briefly glows so the click visibly lands. */
+.ssc-root .ssc-chips.ssc-flash { animation: ssc-menu-flash 1.2s ease; border-radius: 12px; }
+
+@keyframes ssc-menu-flash {
+	0%, 100% { box-shadow: 0 0 0 0 transparent; }
+	25% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--ssc-primary) 30%, transparent); }
+}
+
 .ssc-root .ssc-chip {
 	border: 1px solid var(--ssc-line);
 	background: var(--ssc-card);
