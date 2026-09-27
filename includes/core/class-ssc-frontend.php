@@ -329,8 +329,13 @@ class SSC_Frontend {
 			'bot_bubble_color'       => 'botBubble',
 		);
 		foreach ( $map as $from => $to ) {
-			if ( isset( $overrides[ $from ] ) && '' !== $overrides[ $from ] ) {
-				$config[ $to ] = $overrides[ $from ];
+			if ( ! isset( $overrides[ $from ] ) || '' === $overrides[ $from ] ) {
+				continue;
+			}
+			// Overrides come from shortcode/block/Elementor input: validate like saved settings.
+			$value = SSC_Settings::sanitize_value( $from, $overrides[ $from ] );
+			if ( null !== $value && '' !== $value ) {
+				$config[ $to ] = $value;
 			}
 		}
 		return $config;

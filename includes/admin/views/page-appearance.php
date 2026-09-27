@@ -187,11 +187,11 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 							</div>
 						</div>
 						<div class="ssc-pv__body">
-							<p class="ssc-pv__msg ssc-pv__msg--bot">
+							<p class="ssc-pv__msg ssc-pv__msg--bot" dir="auto">
 								<strong id="ssc-pv-wtitle"><?php echo esc_html( $w_title ); ?></strong>
 								<span id="ssc-pv-wtext"><?php echo esc_html( $w_text ); ?></span>
 							</p>
-							<p class="ssc-pv__msg ssc-pv__msg--user"><?php esc_html_e( 'Hi! Do you ship internationally?', 'smart-support-chatbot' ); ?></p>
+							<p class="ssc-pv__msg ssc-pv__msg--user" dir="auto"><?php esc_html_e( 'Hi! Do you ship internationally?', 'smart-support-chatbot' ); ?></p>
 							<div class="ssc-pv__chips">
 								<span class="ssc-pv__chip"><?php esc_html_e( 'Ask us', 'smart-support-chatbot' ); ?></span>
 								<span class="ssc-pv__chip"><?php esc_html_e( 'Products', 'smart-support-chatbot' ); ?></span>

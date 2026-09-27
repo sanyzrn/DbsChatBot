@@ -19,6 +19,10 @@
         if (!cfg || (!cfg.restUrl && !cfg.ajaxUrl)) { return; }
 
         var REDUCED_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var COARSE_POINTER = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+        var ICON_CHAT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
+        var ICON_CLOSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+        var ICON_BOT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 16.5h5"/></svg>';
 
         /* ------------------------------------------------------------------ *
          * Utilities
@@ -37,15 +41,72 @@
                 return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
-        /** Minimal safe markdown: **bold**, links, line breaks. Escapes first. */
-        function md(text) {
-                var escaped = esc(text);
-                escaped = escaped.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+        /** Inline markdown on already-escaped text: code, links, bare URLs, bold, italic. */
+        function inlineMd(escaped) {
+                var codes = [];
+                escaped = escaped.replace(/`([^`\n]+)`/g, function (m, code) {
+                        codes.push(code);
+                        return '\u0000' + (codes.length - 1) + '\u0000';
+                });
                 escaped = escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, function (m, label, url) {
                         return '<a href="' + url + '" target="_blank" rel="noopener noreferrer nofollow">' + label + '</a>';
                 });
-                escaped = escaped.replace(/\n/g, '<br>');
-                return escaped;
+                // Bare URLs (never inside an attribute: those are preceded by a quote).
+                escaped = escaped.replace(/(^|[\s(])(https?:\/\/[^\s<]*[^\s<.,;:!?)])/g, function (m, lead, url) {
+                        return lead + '<a href="' + url + '" target="_blank" rel="noopener noreferrer nofollow">' + url + '</a>';
+                });
+                escaped = escaped.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+                escaped = escaped.replace(/(^|[^*\w])\*([^*\s][^*\n]*?)\*(?![*\w])/g, '$1<em>$2</em>');
+                return escaped.replace(/\u0000(\d+)\u0000/g, function (m, i) { return '<code>' + codes[+i] + '</code>'; });
+        }
+
+        /**
+         * Safe markdown subset for AI replies: paragraphs, headings, bullet and
+         * numbered lists plus inline formatting. Everything is escaped first, so
+         * model output can never inject markup.
+         */
+        function md(text) {
+                var lines = esc(text).replace(/\r\n?/g, '\n').split('\n');
+                var html = '', para = [], list = null;
+                function flushPara() {
+                        if (para.length) { html += '<p>' + para.map(inlineMd).join('<br>') + '</p>'; }
+                        para = [];
+                }
+                function flushList() {
+                        if (list) { html += '</' + list + '>'; }
+                        list = null;
+                }
+                lines.forEach(function (line) {
+                        var m;
+                        if ((m = /^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$/.exec(line))) {
+                                flushPara(); flushList();
+                                html += '<p class="ssc-md-h"><strong>' + inlineMd(m[1]) + '</strong></p>';
+                        } else if ((m = /^\s*[-*\u2022]\s+(.+)$/.exec(line))) {
+                                flushPara();
+                                if (list !== 'ul') { flushList(); html += '<ul>'; list = 'ul'; }
+                                html += '<li>' + inlineMd(m[1]) + '</li>';
+                        } else if ((m = /^\s*(\d{1,3})[.)]\s+(.+)$/.exec(line))) {
+                                flushPara();
+                                if (list !== 'ol') { flushList(); html += '<ol' + (m[1] !== '1' ? ' start="' + (+m[1]) + '"' : '') + '>'; list = 'ol'; }
+                                html += '<li>' + inlineMd(m[2]) + '</li>';
+                        } else if (/^\s*$/.test(line)) {
+                                flushPara(); flushList();
+                        } else {
+                                flushList();
+                                para.push(line);
+                        }
+                });
+                flushPara(); flushList();
+                return html;
+        }
+
+        /** Markdown-free text (screen readers, speech, clipboard). */
+        function plainText(text) {
+                return String(text || '')
+                        .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '$1 ($2)')
+                        .replace(/^\s{0,3}#{1,6}\s+/gm, '')
+                        .replace(/\*\*([^*\n]+)\*\*/g, '$1')
+                        .replace(/`([^`\n]+)`/g, '$1');
         }
 
         function uid() {
@@ -79,7 +140,9 @@
                         var slim = {
                                 at: Date.now(),
                                 product: state.product,
-                                items: state.items.slice(-60).map(function (item) {
+                                // Only real conversation turns are persisted: the welcome message,
+                                // menus and one-shot notices are rebuilt on every page.
+                                items: state.items.filter(function (item) { return item.history && !item.transient; }).slice(-60).map(function (item) {
                                         return { k: item.kind, t: item.text, h: !!item.history };
                                 })
                         };
@@ -295,8 +358,10 @@
                 } else if (cfg.avatarUrl) {
                         launcher.appendChild(el('span', 'ssc-launcher__img', '<img src="' + esc(cfg.avatarUrl) + '" alt="" />'));
                 } else {
-                        launcher.appendChild(el('span', 'ssc-launcher__icon', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>'));
+                        launcher.appendChild(el('span', 'ssc-launcher__icon', ICON_CHAT));
                 }
+                // Swapped in while the window is open so the same button reads as "close".
+                launcher.appendChild(el('span', 'ssc-launcher__close', ICON_CLOSE));
                 launcher.appendChild(el('span', 'ssc-launcher__dot', ''));
                 var badge = el('span', 'ssc-launcher__badge', '');
                 badge.setAttribute('aria-hidden', 'true');
@@ -376,7 +441,12 @@
                 // Header.
                 var head = el('div', 'ssc-head');
                 var avatar = el('span', 'ssc-head__avatar');
-                if (cfg.avatarUrl) { avatar.innerHTML = '<img src="' + esc(cfg.avatarUrl) + '" alt="" />'; }
+                if (cfg.avatarUrl) {
+                        avatar.innerHTML = '<img src="' + esc(cfg.avatarUrl) + '" alt="" />';
+                        avatar.classList.add('has-img');
+                } else {
+                        avatar.innerHTML = ICON_BOT;
+                }
                 head.appendChild(avatar);
                 var titles = el('div', 'ssc-head__titles');
                 titles.appendChild(el('strong', 'ssc-head__title', esc(cfg.assistantName || '')));
@@ -398,6 +468,7 @@
                         if (state.loading) { return; }
                         if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
                         state.items = []; state.product = null; state.hadConversation = false; state.csatDone = false;
+                        if (csatTimer) { window.clearTimeout(csatTimer); csatTimer = null; }
                         thread.textContent = '';
                         try { sessionStorage.removeItem(THREAD_KEY); } catch (e) {}
                         startConversation(); input.focus();
@@ -434,7 +505,9 @@
 
                 // Disclaimer.
                 if (cfg.disclaimer) {
-                        win.appendChild(el('p', 'ssc-disclaimer', esc(cfg.disclaimer)));
+                        var disclaimer = el('p', 'ssc-disclaimer', esc(cfg.disclaimer));
+                        disclaimer.setAttribute('dir', 'auto');
+                        win.appendChild(disclaimer);
                 }
 
                 // Composer.
@@ -446,6 +519,7 @@
                 input.setAttribute('placeholder', (cfg.i18n && cfg.i18n.placeholder) || '');
                 input.setAttribute('aria-label', (cfg.i18n && cfg.i18n.inputLabel) || 'Message');
                 input.autocomplete = 'off';
+                input.setAttribute('dir', 'auto');
                 input.maxLength = 2000;
 
                 var left = el('div', 'ssc-composer__left');
@@ -492,6 +566,8 @@
                 state.open = open;
 
                 launcher.setAttribute('aria-expanded', open ? 'true' : 'false');
+                launcher.setAttribute('aria-label', open ? ((cfg.i18n && cfg.i18n.close) || 'Close chat') : ((cfg.i18n && cfg.i18n.open) || 'Open chat'));
+                root.classList.toggle('is-open', open);
                 win.classList.toggle('is-closed', !open);
                 win.classList.toggle('is-open', open);
                 if (win.inert !== undefined) { win.inert = !open; }
@@ -499,12 +575,14 @@
                 if (open) {
                         lastFocus = document.activeElement;
                         if (!state.started) { startConversation(); }
-                        window.setTimeout(function () { input.focus(); }, 60);
+                        // On touch devices an immediate focus pops the keyboard over the welcome message.
+                        if (!COARSE_POINTER) { window.setTimeout(function () { input.focus(); }, 60); }
                         proactiveDismiss();
                         clearUnread();
                 } else {
                         if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
                         if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
+                        if (state.hadConversation && !state.loading) { maybeOfferCsat(); }
                 }
         }
 
@@ -519,14 +597,12 @@
         function addItem(kind, text, opts) {
                 opts = opts || {};
                 var bubble = el('div', 'ssc-msg ssc-msg--' + kind);
-                if (kind === 'user') {
-                        bubble.innerHTML = md(text);
-                } else {
-                        bubble.innerHTML = md(text);
-                }
+                // Each bubble follows its own text direction (English inside an RTL widget and vice versa).
+                bubble.setAttribute('dir', 'auto');
+                bubble.innerHTML = md(text);
                 if (opts.id) { bubble.id = opts.id; }
                 thread.appendChild(bubble);
-                state.items.push({ kind: kind, text: text, node: bubble, history: opts.history !== false });
+                state.items.push({ kind: kind, text: text, node: bubble, history: opts.history !== false, transient: !!opts.transient });
                 scrollDown();
                 saveThread();
                 return bubble;
@@ -544,6 +620,7 @@
                 chips.forEach(function (chip) {
                         var btn = el('button', 'ssc-chip', esc(chip.label));
                         btn.type = 'button';
+                        btn.setAttribute('dir', 'auto');
                         btn.addEventListener('click', function () {
                                 wrap.parentElement.removeChild(wrap);
                                 chip.onClick();
@@ -593,9 +670,9 @@
                 if (avail && avail.online === false && avail.offlineMessage) {
                         welcome += '\n\n' + avail.offlineMessage;
                 }
-                addItem('bot', welcome, { history: false });
-                mainMenu();
+                addItem('bot', welcome, { history: false, transient: true });
                 restoreThread(saved);
+                mainMenu();
         }
 
         function stripHtml(text) {
@@ -620,14 +697,17 @@
 
         function restoreThread(saved) {
                 if (!saved || !saved.items || cfg.preview) { return; }
-                // Restore only the message transcript (forms/CSAT are one-shot).
+                // Restore only real conversation turns (older versions also stored the
+                // welcome message and notices, which then duplicated on every page).
+                var restored = 0;
                 saved.items.forEach(function (item) {
-                        if ((item.k === 'user' || item.k === 'bot') && item.t) {
-                                addItem(item.k, item.t, { history: item.h });
+                        if ((item.k === 'user' || item.k === 'bot') && item.t && item.h) {
+                                addItem(item.k, item.t, { history: true });
+                                ++restored;
                         }
                 });
                 state.product = saved.product || null;
-                state.hadConversation = true;
+                state.hadConversation = restored > 0;
         }
 
         function chooseProduct() {
@@ -679,6 +759,7 @@
                         if (!bubble) {
                                 if (typing && typing.parentElement) { typing.parentElement.removeChild(typing); typing = null; }
                                 bubble = el('div', 'ssc-msg ssc-msg--bot is-streaming');
+                                bubble.setAttribute('dir', 'auto');
                                 bubble.textContent = '';
                                 thread.appendChild(bubble);
                                 scrollDown();
@@ -726,9 +807,11 @@
                                 // The final DOM is stable: feedback handlers must not be replaced by an animation.
                         }
                         handleFlags(data);
+                        var tools = messageTools(node, reply);
                         if (cfg.features && cfg.features.feedback && data.log_id) {
-                                feedbackControls(node, data.log_id, data.log_token);
+                                feedbackControls(tools, data.log_id, data.log_token);
                         }
+                        scheduleCsat();
                         if (!state.open) { bumpUnread(); maybeBeep(); }
                 }).catch(function () {
                         if (typing && typing.parentElement) { typing.parentElement.removeChild(typing); }
@@ -754,15 +837,38 @@
                 }
         }
 
+        /** Action row under an answer (copy; feedback is appended when enabled). */
+        function messageTools(node, text) {
+                var bar = el('div', 'ssc-msgtools');
+                if (navigator.clipboard && window.isSecureContext !== false) {
+                        var i18n = cfg.i18n || {};
+                        var copy = el('button', 'ssc-msgtools__btn', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>');
+                        copy.type = 'button';
+                        copy.title = i18n.copy || 'Copy answer';
+                        copy.setAttribute('aria-label', copy.title);
+                        copy.addEventListener('click', function () {
+                                navigator.clipboard.writeText(plainText(text)).then(function () {
+                                        copy.title = i18n.copied || 'Copied';
+                                        copy.classList.add('is-done');
+                                        window.setTimeout(function () { copy.classList.remove('is-done'); copy.title = i18n.copy || 'Copy answer'; }, 1500);
+                                }).catch(function () { /* clipboard denied */ });
+                        });
+                        bar.appendChild(copy);
+                }
+                node.appendChild(bar);
+                return bar;
+        }
+
         function feedbackControls(node, logId, logToken) {
-                var bar = el('div', 'ssc-feedback');
+                var bar = el('span', 'ssc-feedback');
                 ['👍', '👎'].forEach(function (face, idx) {
                         var btn = el('button', 'ssc-feedback__btn', face);
                         btn.type = 'button';
                         btn.title = idx === 0 ? '👍' : '👎';
                         btn.setAttribute('aria-label', idx === 0 ? ((cfg.i18n && cfg.i18n.goodAnswer) || 'Good answer') : ((cfg.i18n && cfg.i18n.poorAnswer) || 'Poor answer'));
                         btn.addEventListener('click', function () {
-                                bar.innerHTML = '✓';
+                                bar.textContent = '✓';
+                                bar.setAttribute('role', 'status');
                                 transport('feedback', {
                                         log_id: String(logId),
                                         rating: idx === 0 ? '1' : '-1',
@@ -849,8 +955,8 @@
                                 wrap2.appendChild(el('span', 'ssc-f__label', esc(f.label) + (f.required ? ' *' : '')));
                                 var sel = el('select', 'ssc-f__input');
                                 sel.name = 'extra[' + f.key + ']';
-                                var emptyProduct = el('option', '', '—'); emptyProduct.value = ''; sel.appendChild(emptyProduct);
-                                
+                                if (f.required) { sel.required = true; }
+                                var emptyChoice0 = el('option', '', '—'); emptyChoice0.value = ''; sel.appendChild(emptyChoice0);
                                 (f.options || []).forEach(function (opt) {
                                         var o = el('option', '', esc(opt));
                                         o.value = opt;
@@ -864,8 +970,9 @@
                                 cb.type = 'checkbox';
                                 cb.name = 'extra[' + f.key + ']';
                                 cb.value = 'yes';
+                                if (f.required) { cb.required = true; }
                                 wrap3.appendChild(cb);
-                                wrap3.appendChild(el('span', 'ssc-f__label', esc(f.label)));
+                                wrap3.appendChild(el('span', 'ssc-f__label', esc(f.label) + (f.required ? ' *' : '')));
                                 form.appendChild(wrap3);
                         } else {
                                 field(f.label, 'extra[' + f.key + ']', f.type, !!f.required, { placeholder: f.placeholder });
@@ -979,7 +1086,6 @@
                                 sel.name = f.key;
                                 if (f.required) { sel.required = true; }
                                 var emptyProduct = el('option', '', '—'); emptyProduct.value = ''; sel.appendChild(emptyProduct);
-                                
                                 (cfg.products || []).forEach(function (p) {
                                         var o = el('option', '', esc(p.name));
                                         o.value = p.id;
@@ -1125,24 +1231,43 @@
          * CSAT (module)
          * ------------------------------------------------------------------ */
 
+        var csatTimer = null;
+
+        /** Offer the survey after a quiet minute following an answer. */
+        function scheduleCsat() {
+                if (!cfg.features || !cfg.features.csat || state.csatDone) { return; }
+                if (csatTimer) { window.clearTimeout(csatTimer); }
+                csatTimer = window.setTimeout(function () {
+                        csatTimer = null;
+                        if (state.open && !state.loading) { maybeOfferCsat(); }
+                }, 60000);
+        }
+
+        /*
+         * Shown after a quiet period or when the visitor closes the window after a
+         * real conversation (it is then waiting in the thread when they return).
+         * It previously required the window to be OPEN while only ever being
+         * triggered by closing it, so the survey never appeared.
+         */
         function maybeOfferCsat() {
-                if (!cfg.features || !cfg.features.csat || state.csatDone || !state.hadConversation) { return; }
-                if (!state.open) { return; }
+                if (!cfg.features || !cfg.features.csat || state.csatDone || !state.hadConversation || !thread) { return; }
+                if (csatTimer) { window.clearTimeout(csatTimer); csatTimer = null; }
                 state.csatDone = true;
                 var i18n = cfg.i18n || {};
                 var card = el('div', 'ssc-cardform ssc-cardform--csat');
                 card.appendChild(el('h3', 'ssc-cardform__title', esc(i18n.csatTitle || 'How was it?')));
                 var group = el('div', 'ssc-csat');
-                group.setAttribute('role', 'radiogroup');
+                group.setAttribute('role', 'group');
                 group.setAttribute('aria-label', i18n.csatTitle || 'Rating');
                 for (var i = 1; i <= 5; ++i) {
                         (function (score) {
                                 var star = el('button', 'ssc-csat__star', '★');
                                 star.type = 'button';
-                                star.setAttribute('role', 'radio');
-                                star.setAttribute('aria-label', String(score));
+                                star.setAttribute('aria-label', score + ' / 5');
                                 star.addEventListener('click', function () {
-                                        group.innerHTML = esc(i18n.csatThanks || 'Thanks!');
+                                        group.textContent = i18n.csatThanks || 'Thanks!';
+                                        group.setAttribute('role', 'status');
+                                        if (skip.parentElement) { skip.parentElement.removeChild(skip); }
                                         transport('csat', { score: String(score) }).catch(function () { /* silent */ });
                                 });
                                 group.appendChild(star);
@@ -1223,7 +1348,7 @@
                         if (state.items[i].kind === 'bot') { text = state.items[i].text; break; }
                 }
                 if (!text) { return; }
-                var utter = new window.SpeechSynthesisUtterance(stripHtml(text));
+                var utter = new window.SpeechSynthesisUtterance(plainText(stripHtml(text)));
                 utter.lang = cfg.voiceLanguage || 'fa-IR';
                 var voices = window.speechSynthesis.getVoices();
                 var voice = voices.filter(function (v) { return v.lang && v.lang.indexOf(utter.lang.slice(0, 2)) === 0; })[0];
@@ -1260,14 +1385,24 @@
 
         function showProactive() {
                 if (state.open || proactiveBubble) { return; }
+                if (!String(cfg.proactiveText || '').trim()) { return; }
                 proactiveBubble = el('div', 'ssc-proactive');
-                proactiveBubble.appendChild(el('p', 'ssc-proactive__text', esc(cfg.proactiveText || '')));
-                proactiveBubble.addEventListener('click', function () {
+                proactiveBubble.setAttribute('role', 'status');
+                var invite = el('button', 'ssc-proactive__text', esc(cfg.proactiveText));
+                invite.type = 'button';
+                invite.setAttribute('dir', 'auto');
+                invite.addEventListener('click', function () {
                         proactiveDismiss();
                         toggleWindow(true);
                 });
+                var dismiss = el('button', 'ssc-proactive__close', ICON_CLOSE);
+                dismiss.type = 'button';
+                dismiss.setAttribute('aria-label', (cfg.i18n && cfg.i18n.close) || 'Close');
+                dismiss.addEventListener('click', proactiveDismiss);
+                proactiveBubble.appendChild(invite);
+                proactiveBubble.appendChild(dismiss);
                 root.appendChild(proactiveBubble);
-                window.setTimeout(proactiveDismiss, 8000);
+                window.setTimeout(proactiveDismiss, 12000);
         }
 
         function proactiveDismiss() {
@@ -1286,7 +1421,8 @@
                 // Global toggle: Alt+C (or Alt+Shift+C on some layouts).
                 if (e.altKey && !e.ctrlKey && !e.metaKey && (e.key === 'c' || e.key === 'C' || e.code === 'KeyC')) {
                         var tag = (e.target && e.target.tagName) || '';
-                        if ('INPUT' !== tag && 'TEXTAREA' !== tag && 'SELECT' !== tag) {
+                        // Never steal a keystroke from an editor (Option+C types "ç" on macOS).
+                        if ('INPUT' !== tag && 'TEXTAREA' !== tag && 'SELECT' !== tag && !(e.target && e.target.isContentEditable)) {
                                 e.preventDefault();
                                 toggleWindow();
                                 return;
@@ -1312,15 +1448,14 @@
                 }
         });
 
-        // CSAT offered when the visitor closes after a real conversation.
-        var csatHook = function () { maybeOfferCsat(); };
-
         /* ------------------------------------------------------------------ *
          * Boot
          * ------------------------------------------------------------------ */
 
         function boot() {
                 root.setAttribute('dir', cfg.direction || 'rtl');
+                // Position lives on the root so the window and invitation follow the launcher.
+                if ('left' === cfg.position) { root.classList.add('ssc-pos-left'); }
                 var vars = cssVars();
                 Object.keys(vars).forEach(function (k) { root.style.setProperty(k, vars[k]); });
                 applyTheme();
@@ -1339,13 +1474,6 @@
                 }
 
                 setupProactive();
-
-                // Offer CSAT when closing the window after a conversation.
-                document.addEventListener('click', function (e) {
-                        if (state.open) { return; }
-                        var closeBtn = e.target.closest && e.target.closest('.ssc-close');
-                        if (closeBtn) { window.setTimeout(csatHook, 50); }
-                });
 
                 window.addEventListener('beforeunload', function () {
                         if (window.speechSynthesis) { window.speechSynthesis.cancel(); }

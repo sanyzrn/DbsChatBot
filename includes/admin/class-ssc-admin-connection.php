@@ -45,7 +45,7 @@ class SSC_Admin_Connection {
 			'ai_provider' => $provider,
 			'qa_mode'     => isset( $_POST['qa_mode'] ) ? SSC_Settings::sanitize_value( 'qa_mode', wp_unslash( $_POST['qa_mode'] ) ) : 'ai_first',
 			'ai_temperature' => isset( $_POST['ai_temperature'] ) ? SSC_Settings::sanitize_value( 'ai_temperature', wp_unslash( $_POST['ai_temperature'] ) ) : '0.4',
-			'ai_max_tokens'  => isset( $_POST['ai_max_tokens'] ) ? (int) $_POST['ai_max_tokens'] : 800,
+			'ai_max_tokens'  => isset( $_POST['ai_max_tokens'] ) ? SSC_Settings::clamp_int( 'ai_max_tokens', wp_unslash( $_POST['ai_max_tokens'] ) ) : 800,
 			'ai_history_limit' => isset( $_POST['ai_history_limit'] ) ? max( 0, min( 20, (int) $_POST['ai_history_limit'] ) ) : 8,
 			'ai_strict_knowledge' => isset( $_POST['ai_strict_knowledge'] ) ? 'yes' : 'no',
 			'ai_cache_enabled' => isset( $_POST['ai_cache_enabled'] ) ? 'yes' : 'no',

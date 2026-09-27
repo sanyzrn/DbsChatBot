@@ -44,7 +44,7 @@ class SSC_Admin_Appearance {
 		}
 		foreach ( array( 'launcher_size', 'font_size', 'window_width', 'window_radius', 'bubble_radius' ) as $key ) {
 			if ( isset( $_POST[ $key ] ) ) {
-				$patch[ $key ] = (int) $_POST[ $key ];
+				$patch[ $key ] = SSC_Settings::clamp_int( $key, wp_unslash( $_POST[ $key ] ) );
 			}
 		}
 		SSC_Settings::update( $patch );

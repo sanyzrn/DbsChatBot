@@ -149,5 +149,26 @@ check( false !== strpos( $script_data, '"nonce":"' . wp_create_nonce( 'wp_rest' 
 remove_filter( 'ssc_enforce_rest_nonce', '__return_true' );
 load_textdomain( 'smart-support-chatbot', dirname( __DIR__ ) . '/languages/smart-support-chatbot-fa_IR.mo', 'fa_IR' );
 check( __( 'Report a side effect', 'smart-support-chatbot' ) === 'گزارش عارضهٔ دارویی', 'Bundled Persian gettext catalog loads' );
+check( SSC_Settings::clamp_int( 'font_size', 0 ) === 12 && SSC_Settings::clamp_int( 'window_width', 5000 ) === 520 && SSC_Settings::clamp_int( 'ai_max_tokens', 0 ) === 100, 'Integer settings are clamped to usable ranges' );
+$raw_fields = array(
+    array( 'label' => 'Company', 'type' => 'text', 'key' => '' ),
+    array( 'label' => 'Topic', 'type' => 'select', 'key' => '', 'options' => "Sales, Support\nBilling" ),
+    array( 'label' => 'Topic', 'type' => 'radio', 'key' => '', 'options' => 'A,B' ),
+    array( 'label' => 'Dup', 'type' => 'text', 'key' => 'field-company' ),
+);
+$first  = SSC_Settings::sanitize_value( 'form_fields', $raw_fields );
+$second = SSC_Settings::sanitize_value( 'form_fields', $raw_fields );
+check( $first === $second, 'New form fields get deterministic keys (render and submit agree)' );
+check( count( array_unique( array_column( $first, 'key' ) ) ) === 4, 'Form field keys are unique, even for copied rows' );
+check( $first[1]['options'] === array( 'Sales', 'Support', 'Billing' ), 'Dropdown choices typed in the builder are stored' );
+check( SSC_Settings::sanitize_value( 'form_fields', $first ) === $first, 'Saved form field definitions are stable on re-read' );
+SSC_Settings::update( array( 'form_fields' => $first ) );
+$modules_before = get_option( SSC_Modules::OPTION );
+update_option( SSC_Modules::OPTION, array( 'leads' ) );
+$leads = new SSC_Module_Leads();
+$lead  = $leads->handle_submission( array( 'name' => 'Field test', 'phone' => '+442012345678', 'description' => 'Custom field round trip.', 'consent' => '1', 'extra' => wp_json_encode( array( $first[1]['key'] => 'Billing' ) ) ) );
+check( ! is_wp_error( $lead ) && $lead['ok'], 'A required dropdown chosen in the widget passes server validation' );
+SSC_Settings::update( array( 'form_fields' => array() ) );
+update_option( SSC_Modules::OPTION, $modules_before );
 require __DIR__ . '/notification-queue.php';
 echo "\n$checks integration checks passed.\n";

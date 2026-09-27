@@ -56,3 +56,26 @@ test('Explicit missing route permits one legacy fallback; 403 and 429 do not', a
     assert.equal(calls.length, status === 404 ? 2 : 1);
   }
 });
+test('Markdown answers render lists, headings and code without allowing markup', () => {
+  const document = { createElement() { return { textContent: '', get innerHTML() { return this.textContent.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); } }; } };
+  const { md } = load('        function esc(', '        function uid(', { document });
+  const html = md('### Title\n- one `x<y`\n- two\n\n1. first\n2. second\nSee https://example.org/a.');
+  assert.ok(html.includes('<ul><li>one <code>x&lt;y</code></li><li>two</li></ul>'));
+  assert.ok(html.includes('<ol><li>first</li><li>second</li></ol>'));
+  assert.ok(html.includes('<p class="ssc-md-h"><strong>Title</strong></p>'));
+  assert.ok(html.includes('<a href="https://example.org/a"'), 'bare URL linked without trailing period');
+  assert.ok(!md('- <script>x</script>').includes('<script'));
+});
+test('Only real conversation turns are persisted (welcome never duplicates)', () => {
+  let stored = null;
+  const state = { persist: true, product: null, items: [
+    { kind: 'bot', text: 'Welcome', history: false, transient: true },
+    { kind: 'bot', text: 'Which one?', history: false },
+    { kind: 'user', text: 'Hi', history: true },
+    { kind: 'bot', text: 'Hello!', history: true },
+  ] };
+  const sessionStorage = { setItem(k, v) { stored = JSON.parse(v); } };
+  const { saveThread } = load('        function saveThread(', '        function loadThread(', { state, sessionStorage, THREAD_KEY: 't', JSON, Date });
+  saveThread();
+  assert.deepEqual(stored.items.map((i) => i.t), ['Hi', 'Hello!']);
+});
