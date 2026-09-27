@@ -191,6 +191,7 @@ check( null === SSC_Module_Live::thread( (int) $thread['id'] ) && ! SSC_Module_L
 
 // 12. Messenger bot: a customer chats with the assistant inside Bale.
 $setup_before = get_option( 'ssc_chatbot_setup' );
+SSC_Setup::update_state( array( 'steps' => array_fill_keys( SSC_Setup::steps(), true ) ) );
 SSC_Setup::publish();
 SSC_Settings::update( array( 'enabled' => 'yes' ) );
 check( SSC_Setup::is_live(), 'The assistant is published for the messenger test' );

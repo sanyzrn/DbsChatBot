@@ -34,6 +34,16 @@ msgstr "%d اعلان در انتظار ارسال دوباره است (آخری
 msgid "%d notifications exhausted automatic retries. Check delivery settings, then retry them."
 msgstr "تلاش خودکار برای ارسال %d اعلان ناموفق بوده است. تنظیمات ارسال را بررسی و سپس دوباره تلاش کنید."
 
+msgid "%d page from your website is kept up to date automatically (see \"Learn from my website\" below)."
+msgid_plural "%d pages from your website are kept up to date automatically (see \"Learn from my website\" below)."
+msgstr[0] "%d صفحه از سایت شما به‌طور خودکار به‌روز نگه داشته می‌شود (بخش «یادگیری از سایت من» در پایین)."
+msgstr[1] "%d صفحه از سایت شما به‌طور خودکار به‌روز نگه داشته می‌شود (بخش «یادگیری از سایت من» در پایین)."
+
+msgid "%d page in the knowledge base."
+msgid_plural "%d pages in the knowledge base."
+msgstr[0] "%d صفحه در پایگاه دانش."
+msgstr[1] "%d صفحه در پایگاه دانش."
+
 msgid "%d question went unanswered in the last 14 days — consider adding it to your FAQ bank."
 msgid_plural "%d questions went unanswered in the last 14 days — consider adding them to your FAQ bank."
 msgstr[0] "%d پرسش در ۱۴ روز اخیر بی‌پاسخ ماند — آن را به بانک پرسش‌وپاسخ اضافه کنید."
@@ -102,6 +112,9 @@ msgstr "شرح کوتاه و دقیقی که دستیار بتواند به آن
 
 msgid "A single, dismissible invitation bubble after a delay - shown at most once per browser session."
 msgstr "یک حباب دعوت قابل بستن پس از تأخیر — حداکثر یک بار در هر نشست مرورگر."
+
+msgid "A template only fills empty fields (role, tone, welcome text, answer rules, request-form fields); your own text is never replaced."
+msgstr "قالب فقط فیلدهای خالی را پر می‌کند (نقش، لحن، متن خوشامد، قواعد پاسخ، فیلدهای فرم درخواست)؛ متن‌های خودتان هرگز جایگزین نمی‌شوند."
 
 msgid "A token is stored — type to replace"
 msgstr "یک توکن ذخیره شده است — برای جایگزینی تایپ کنید"
@@ -184,6 +197,9 @@ msgstr "افزودن پاسخ"
 msgid "Add answer"
 msgstr "افزودن پاسخ"
 
+msgid "Add selected"
+msgstr "افزودن موارد انتخاب‌شده"
+
 msgid "Add the bot token first."
 msgstr "ابتدا توکن ربات را وارد کنید."
 
@@ -222,6 +238,9 @@ msgstr "اعلان فقط برای مدیر — خطای موتور هوش مص�
 
 msgid "Administrators can always answer. Choose other team members who may answer chats, too; each operator can connect their own Bale/Telegram account on the Live chat screen."
 msgstr "مدیران همیشه می‌توانند پاسخ دهند. اعضای دیگر تیم را که اجازهٔ پاسخ‌گویی دارند هم انتخاب کنید؛ هر اپراتور می‌تواند حساب بله یا تلگرام خودش را در صفحهٔ گفتگوی زنده وصل کند."
+
+msgid "Admissions advisor"
+msgstr "مشاور ثبت‌نام"
 
 msgid "Advanced engine options"
 msgstr "گزینه‌های پیشرفتهٔ موتور"
@@ -340,11 +359,17 @@ msgstr "اعمال روی سبد خرید من"
 msgid "Approved company sources only"
 msgstr "فقط منابع تأییدشدهٔ شرکت"
 
+msgid "Approved product information and side-effect reporting."
+msgstr "اطلاعات تأییدشده محصولات و گزارش عوارض دارویی."
+
 msgid "Archived"
 msgstr "بایگانی‌شده"
 
 msgid "Ask"
 msgstr "پرسیده شود"
+
+msgid "Ask for budget, area and size when they are missing. Quote prices and availability only from the knowledge provided and offer a viewing request for serious interest."
+msgstr "اگر بودجه، منطقه و متراژ گفته نشده، بپرس. قیمت و موجودی را فقط از دانش ارائه‌شده بگو و برای مشتریان جدی درخواست بازدید پیشنهاد بده."
 
 msgid "Ask us"
 msgstr "از ما بپرسید"
@@ -372,6 +397,9 @@ msgstr "نام دستیار"
 
 msgid "Assistant name (empty = global)"
 msgstr "نام دستیار (خالی = تنظیم کلی)"
+
+msgid "Assistant persona"
+msgstr "پرسونای دستیار"
 
 msgid "Assistant personality"
 msgstr "شخصیت دستیار"
@@ -462,6 +490,9 @@ msgstr "لینک بروشور (اختیاری)"
 
 msgid "Browser session"
 msgstr "نشست مرورگر"
+
+msgid "Budget"
+msgstr "بودجه"
 
 msgid "Bulk import / export"
 msgstr "ورود / خروجی گروهی"
@@ -604,6 +635,12 @@ msgstr "تکه‌ها"
 msgid "Clear cached AI answers"
 msgstr "پاک کردن پاسخ‌های کش‌شدهٔ هوش مصنوعی"
 
+msgid "Clinic"
+msgstr "کلینیک"
+
+msgid "Clinic or doctor's office"
+msgstr "کلینیک یا مطب"
+
 msgid "Clinical severity"
 msgstr "شدت بالینی"
 
@@ -664,6 +701,9 @@ msgstr "ناهنجاری مادرزادی یا نقص هنگام تولد"
 msgid "Connect an AI provider"
 msgstr "اتصال به ارائه‌دهندهٔ هوش مصنوعی"
 
+msgid "Connect an AI provider first (AI Connection)."
+msgstr "ابتدا یک سرویس هوش مصنوعی متصل کنید (اتصال هوش مصنوعی)."
+
 msgid "Connect your SMS panel (Kavenegar, Melipayamak, IPPanel/Faraz SMS or SMS.ir) to text yourself about new requests and to send cart reminders."
 msgstr "پنل پیامک خود (کاوه‌نگار، ملی‌پیامک، آی‌پی‌پنل/فراز اس‌ام‌اس یا SMS.ir) را وصل کنید تا از درخواست‌های جدید باخبر شوید و یادآوری سبد خرید ارسال شود."
 
@@ -712,6 +752,9 @@ msgstr "شمارهٔ تماس"
 msgid "Content"
 msgstr "محتوا"
 
+msgid "Content to learn from"
+msgstr "محتوایی که یاد گرفته شود"
+
 msgid "Continue"
 msgstr "ادامه"
 
@@ -754,6 +797,12 @@ msgstr "کپی"
 msgid "Copy answer"
 msgstr "کپی پاسخ"
 
+msgid "Course of interest"
+msgstr "دوره موردنظر"
+
+msgid "Courses, schedules, fees and registration."
+msgstr "دوره‌ها، زمان‌بندی، شهریه و ثبت‌نام."
+
 msgid "Creativity (temperature)"
 msgstr "خلاقیت (temperature)"
 
@@ -783,6 +832,9 @@ msgstr "دلخواه — انتخاب تک‌تک سؤال‌ها"
 
 msgid "Customer Engagement"
 msgstr "تعامل با مشتری"
+
+msgid "Customer advisor"
+msgstr "مشاور مشتریان"
 
 msgid "Customers can talk to your assistant inside Bale or Telegram, with the same knowledge and rules as the website chat."
 msgstr "مشتریان می‌توانند داخل بله یا تلگرام با دستیار شما گفتگو کنند؛ با همان دانش و قوانین چت سایت."
@@ -838,6 +890,9 @@ msgstr "وجه تمایزها"
 msgid "Direct identifiers removed"
 msgstr "شناسه‌های مستقیم حذف شد"
 
+msgid "Discard"
+msgstr "کنار گذاشتن"
+
 msgid "Disclaimer (shown under the chat)"
 msgstr "متن هشدار (زیر گفتگو نمایش داده می‌شود)"
 
@@ -871,6 +926,11 @@ msgstr "سند حذف شد."
 msgid "Done"
 msgstr "انجام‌شده"
 
+msgid "Done. %d question was added."
+msgid_plural "Done. %d questions were added."
+msgstr[0] "انجام شد. %d پرسش اضافه شد."
+msgstr[1] "انجام شد. %d پرسش اضافه شد."
+
 msgid "Done. If you do not finish your order, we will send you one reminder by SMS."
 msgstr "انجام شد. اگر سفارشتان را تکمیل نکنید، یک پیامک یادآوری برایتان ارسال می‌کنیم."
 
@@ -886,8 +946,14 @@ msgstr "فهرست کشویی"
 msgid "Dropdown (one choice)"
 msgstr "فهرست کشویی (یک گزینه)"
 
+msgid "E-commerce"
+msgstr "تجارت الکترونیک"
+
 msgid "Each report becomes a case with a review workflow (triage → assessment → follow-up → closed) and a permanent audit trail of every change."
 msgstr "هر گزارش به پرونده‌ای با گردش کار بررسی (غربالگری ← ارزیابی ← پیگیری ← بسته‌شده) و سابقهٔ ممیزی دائمی از همهٔ تغییرات تبدیل می‌شود."
+
+msgid "Education"
+msgstr "آموزش"
 
 msgid "Email"
 msgstr "ایمیل"
@@ -1069,17 +1135,44 @@ msgstr "پیام ارجاع"
 msgid "Hands-free conversations and accessible answers for visitors on the go."
 msgstr "گفتگوی بدون دست و پاسخ‌های دسترس‌پذیر برای بازدیدکنندگان در حرکت."
 
+msgid "Healthcare"
+msgstr "سلامت و درمان"
+
 msgid "Hello! Ask me anything about our products and services."
 msgstr "سلام! هر سؤالی دربارهٔ محصولات و خدمات ما دارید بپرسید."
 
+msgid "Hello! Tell me what kind of property you are looking for and your budget, and I will point you to the right listings."
+msgstr "سلام! بگویید دنبال چه ملکی هستید و بودجه‌تان چقدر است تا فایل‌های مناسب را معرفی کنم."
+
+msgid "Hello! Tell me what you need and I will explain our services, prices and how to get a quote."
+msgstr "سلام! بگویید به چه چیزی نیاز دارید تا خدمات، قیمت‌ها و نحوه دریافت استعلام را توضیح دهم."
+
 msgid "Hello! 👋"
 msgstr "سلام! 👋"
+
+msgid "Hello, welcome to our clinic. I can help with services, working hours and booking a visit."
+msgstr "سلام، به کلینیک ما خوش آمدید. درباره خدمات، ساعات کاری و رزرو نوبت می‌توانم کمکتان کنم."
+
+msgid "Hello. I can share approved information about our products and help you report a side effect."
+msgstr "سلام. می‌توانم اطلاعات تأییدشده محصولاتمان را ارائه کنم و در گزارش عارضه دارویی کمکتان کنم."
+
+msgid "Help visitors choose the right product and complete their purchase. Mention shipping times and return rules only from the knowledge provided."
+msgstr "به بازدیدکنندگان در انتخاب محصول مناسب و تکمیل خرید کمک کن. زمان ارسال و شرایط مرجوعی را فقط از دانش ارائه‌شده بگو."
+
+msgid "Help visitors find the right course for their level and goal; ask about their level when it matters. Quote fees, dates and certificates only from the knowledge provided."
+msgstr "به بازدیدکنندگان کمک کن دوره مناسب سطح و هدفشان را پیدا کنند؛ هر جا لازم است سطحشان را بپرس. شهریه، تاریخ‌ها و مدارک را فقط از دانش ارائه‌شده بگو."
 
 msgid "Helps with your products, services, orders and support, and can explain general concepts of your industry. Politely declines unrelated requests such as trivia, homework, coding or news."
 msgstr "دربارهٔ محصولات، خدمات، سفارش‌ها و پشتیبانی شما کمک می‌کند و می‌تواند مفاهیم عمومی صنعت شما را توضیح دهد. درخواست‌های نامرتبط مثل اطلاعات عمومی، تکلیف درسی، برنامه‌نویسی یا اخبار را مؤدبانه رد می‌کند."
 
 msgid "Hi! Do you ship internationally?"
 msgstr "سلام! به خارج از کشور هم ارسال دارید؟"
+
+msgid "Hi! Looking for something? Ask me about products, prices, shipping or your order."
+msgstr "سلام! دنبال چیزی هستید؟ درباره محصولات، قیمت، ارسال یا سفارشتان از من بپرسید."
+
+msgid "Hi! Want to know about our courses, schedules or how to register? Just ask."
+msgstr "سلام! درباره دوره‌ها، زمان‌بندی یا نحوه ثبت‌نام سؤالی دارید؟ بپرسید."
 
 msgid "Hi, this is %s from the support team. How can I help?"
 msgstr "سلام، %s از تیم پشتیبانی هستم. چطور می‌توانم کمکتان کنم؟"
@@ -1243,6 +1336,9 @@ msgstr "کاوه‌نگار"
 msgid "Keep chat transcripts for (days)"
 msgstr "نگهداری متن گفتگوها به مدت (روز)"
 
+msgid "Keep this question"
+msgstr "این پرسش نگه داشته شود"
+
 msgid "Keep waiting"
 msgstr "منتظر می‌مانم"
 
@@ -1276,8 +1372,14 @@ msgstr "چپ‌به‌راست (لاتین)"
 msgid "Last 14 days. Only what helps you improve the assistant."
 msgstr "۱۴ روز اخیر؛ فقط آنچه به بهبود دستیار کمک می‌کند."
 
+msgid "Last full sync: %s"
+msgstr "آخرین همگام‌سازی کامل: %s"
+
 msgid "Latest update"
 msgstr "آخرین وضعیت"
+
+msgid "Learn from my website"
+msgstr "یادگیری از سایت من"
 
 msgid "Leave my number"
 msgstr "شماره‌ام را می‌گذارم"
@@ -1308,6 +1410,9 @@ msgstr "شنیدن پاسخ"
 
 msgid "Listening…"
 msgstr "در حال شنیدن…"
+
+msgid "Listings, neighbourhoods and viewing requests."
+msgstr "فایل‌های ملکی، محله‌ها و درخواست بازدید."
 
 msgid "Live chat"
 msgstr "گفتگوی زنده"
@@ -1447,6 +1552,12 @@ msgstr "نام: %s"
 msgid "Needs the SMS module."
 msgstr "به ماژول پیامک نیاز دارد."
 
+msgid "Never diagnose or suggest treatment; for symptoms, recommend booking a visit or, in an emergency, calling emergency services. Share services, doctors, hours and insurance information only from the knowledge provided."
+msgstr "هرگز تشخیص نده و درمان پیشنهاد نکن؛ برای علائم، رزرو نوبت و در شرایط اورژانسی تماس با اورژانس را توصیه کن. اطلاعات خدمات، پزشکان، ساعات و بیمه را فقط از دانش ارائه‌شده بگو."
+
+msgid "Never include these IDs (comma separated)"
+msgstr "این شناسه‌ها هرگز اضافه نشوند (با ویرگول جدا کنید)"
+
 msgid "Never miss a lead, and bring back customers who left their cart."
 msgstr "هیچ مشتری بالقوه‌ای را از دست ندهید و مشتریانی را که سبد را رها کرده‌اند برگردانید."
 
@@ -1534,6 +1645,9 @@ msgstr "هنوز عضو دیگری در تیم نیست (ویرایشگر، مد
 msgid "No product conversations recorded yet."
 msgstr "هنوز گفتگویی دربارهٔ محصولات ثبت نشده است."
 
+msgid "No readable text was found. If this is a scanned document, upload a text version (Word, or a PDF saved from a text editor)."
+msgstr "متن قابل خواندنی پیدا نشد. اگر سند اسکن‌شده است، نسخه متنی آن را بارگذاری کنید (Word یا PDF ذخیره‌شده از ویرایشگر متن)."
+
 msgid "No requests yet. When visitors submit the consultation form, they appear here."
 msgstr "هنوز درخواستی ثبت نشده است. وقتی بازدیدکنندگان فرم مشاوره را ارسال کنند، این‌جا نمایش داده می‌شود."
 
@@ -1606,6 +1720,9 @@ msgstr "یک ربات برای اعلان‌ها، پاسخ اپراتورها �
 msgid "Online"
 msgstr "آمادهٔ پاسخ‌گویی"
 
+msgid "Online store"
+msgstr "فروشگاه اینترنتی"
+
 msgid "Only %d left"
 msgid_plural "Only %d left"
 msgstr[0] "فقط %d عدد باقی مانده"
@@ -1616,6 +1733,9 @@ msgstr "فقط فایل‌های ‎.csv، ‎.json و ‎.txt قابل ورود
 
 msgid "Only .txt, .md, .csv and .json files can be imported."
 msgstr "فقط فایل‌های ‎.txt، ‎.md، ‎.csv و ‎.json قابل ورود هستند."
+
+msgid "Only PDF, Word (.docx), .txt, .md, .csv and .json files can be imported."
+msgstr "فقط فایل‌های PDF، Word (.docx)، .txt، .md، .csv و .json قابل وارد کردن هستند."
 
 msgid "Only from my knowledge"
 msgstr "فقط از دانش من"
@@ -1749,11 +1869,20 @@ msgstr "این پرونده برای همیشه حذف شود؟ داده‌ها�
 msgid "Persistent or significant disability"
 msgstr "ناتوانی پایدار یا قابل‌توجه"
 
+msgid "Pharmaceutical"
+msgstr "دارویی"
+
 msgid "Pharmaceutical Extension"
 msgstr "افزونهٔ دارویی"
 
 msgid "Pharmaceutical answer policy"
 msgstr "سیاست پاسخ‌گویی دارویی"
+
+msgid "Pharmaceutical company"
+msgstr "شرکت دارویی"
+
+msgid "Pharmaceutical manufacturer"
+msgstr "تولیدکننده دارو"
 
 msgid "Pharmacist"
 msgstr "داروساز"
@@ -1818,6 +1947,12 @@ msgstr "سیاست‌ها"
 msgid "Poor answer"
 msgstr "پاسخ نامناسب"
 
+msgid "Preferred area"
+msgstr "منطقه دلخواه"
+
+msgid "Preferred day and time"
+msgstr "روز و ساعت دلخواه"
+
 msgid "Press Alt+C to open chat"
 msgstr "برای باز کردن گفتگو Alt+C را بزنید"
 
@@ -1872,8 +2007,14 @@ msgstr "نام محصول / خدمت"
 msgid "Product information"
 msgstr "اطلاعات محصول"
 
+msgid "Product information assistant"
+msgstr "دستیار اطلاعات محصول"
+
 msgid "Product name"
 msgstr "نام محصول"
+
+msgid "Product questions, prices, shipping and order tracking."
+msgstr "پرسش درباره محصول، قیمت، ارسال و پیگیری سفارش."
 
 msgid "Product: %s"
 msgstr "محصول: %s"
@@ -1893,6 +2034,12 @@ msgstr "تعداد محصول در هر پاسخ"
 msgid "Professional"
 msgstr "حرفه‌ای"
 
+msgid "Professional services"
+msgstr "خدمات تخصصی"
+
+msgid "Property advisor"
+msgstr "مشاور ملک"
+
 msgid "Protection"
 msgstr "حفاظت"
 
@@ -1905,6 +2052,9 @@ msgstr "ارائه‌دهنده"
 msgid "Publish chatbot"
 msgstr "انتشار چت‌بات"
 
+msgid "Published content becomes knowledge automatically. Edits are picked up within a minute; trashed or unpublished content is removed."
+msgstr "محتوای منتشرشده خودکار به دانش دستیار تبدیل می‌شود. ویرایش‌ها ظرف یک دقیقه اعمال می‌شوند و محتوای حذف‌شده یا لغو انتشارشده کنار گذاشته می‌شود."
+
 msgid "Published! Your assistant is now live on your site."
 msgstr "منتشر شد! دستیار شما اکنون روی سایت فعال است."
 
@@ -1913,6 +2063,12 @@ msgstr "پرسش"
 
 msgid "Question text"
 msgstr "متن سؤال"
+
+msgid "Questions for the FAQ bank"
+msgstr "پرسش‌ها برای بانک پرسش‌های متداول"
+
+msgid "Questions to add as knowledge entries"
+msgstr "پرسش‌ها برای افزودن به‌عنوان ورودی دانش"
 
 msgid "RTL (Persian/Arabic)"
 msgstr "راست‌به‌چپ (فارسی/عربی)"
@@ -1932,6 +2088,15 @@ msgstr "خواندن پاسخ‌ها با صدای بلند"
 msgid "Readiness"
 msgstr "آمادگی"
 
+msgid "Reading your material… (up to a minute)"
+msgstr "در حال خواندن محتوای شما… (تا یک دقیقه)"
+
+msgid "Real estate"
+msgstr "املاک"
+
+msgid "Real estate agency"
+msgstr "مشاور املاک"
+
 msgid "Real prices and stock in answers, product cards with \"Add to cart\", order tracking, comparisons, a smart discount for hesitating visitors and SMS cart reminders."
 msgstr "قیمت و موجودی واقعی در پاسخ‌ها، کارت محصول با «افزودن به سبد»، پیگیری سفارش، مقایسهٔ محصولات، تخفیف هوشمند برای بازدیدکنندگان مردد و یادآوری سبد خرید با پیامک."
 
@@ -1941,8 +2106,14 @@ msgstr "دریافت‌شده"
 msgid "Received ✓ We will contact you soon."
 msgstr "دریافت شد ✓ درخواست شما برای پیگیری ثبت شد."
 
+msgid "Reception assistant"
+msgstr "دستیار پذیرش"
+
 msgid "Recognition language (or \"auto\")"
 msgstr "زبان تشخیص گفتار (یا \"auto\")"
+
+msgid "Recommended modules (switch them on later in Modules): %s"
+msgstr "ماژول‌های پیشنهادی (بعداً از بخش ماژول‌ها فعالشان کنید): %s"
 
 msgid "Recovered"
 msgstr "بهبودیافته"
@@ -1977,6 +2148,9 @@ msgstr "حذف شناسه‌های مستقیم"
 msgid "Remove entry"
 msgstr "حذف مورد"
 
+msgid "Remove every page that came from the website from the knowledge base? Your own entries and uploaded documents stay."
+msgstr "همه صفحه‌هایی که از سایت آمده‌اند از پایگاه دانش حذف شوند؟ ورودی‌های خودتان و اسناد بارگذاری‌شده باقی می‌مانند."
+
 msgid "Remove field"
 msgstr "حذف فیلد"
 
@@ -1994,6 +2168,9 @@ msgstr "حذف کلید ذخیره‌شده"
 
 msgid "Remove the stored token"
 msgstr "حذف توکن ذخیره‌شده"
+
+msgid "Remove website pages"
+msgstr "حذف صفحه‌های سایت"
 
 msgid "Replace all answers"
 msgstr "جایگزینی همهٔ پاسخ‌ها"
@@ -2106,11 +2283,17 @@ msgstr "پنل پیامک"
 msgid "SMS.ir"
 msgstr "SMS.ir"
 
+msgid "Sales and support assistant"
+msgstr "دستیار فروش و پشتیبانی"
+
 msgid "Satisfaction Survey (CSAT)"
 msgstr "نظرسنجی رضایت (CSAT)"
 
 msgid "Satisfaction survey module"
 msgstr "ماژول نظرسنجی رضایت"
+
+msgid "Save"
+msgstr "ذخیره"
 
 msgid "Save and connect the bot"
 msgstr "ذخیره و اتصال ربات"
@@ -2120,6 +2303,9 @@ msgstr "ذخیره و نمایه‌سازی اکنون"
 
 msgid "Save and send a test SMS"
 msgstr "ذخیره و ارسال پیامک آزمایشی"
+
+msgid "Save and sync now"
+msgstr "ذخیره و همگام‌سازی همین حالا"
 
 msgid "Save appearance"
 msgstr "ذخیرهٔ ظاهر"
@@ -2147,6 +2333,9 @@ msgstr "پاسخ‌های آماده"
 
 msgid "Saved replies (one per line)"
 msgstr "پاسخ‌های آماده (هر خط یک پاسخ)"
+
+msgid "School or training center"
+msgstr "آموزشگاه یا مرکز آموزشی"
 
 msgid "Scroll depth (%)"
 msgstr "عمق پیمایش (%)"
@@ -2217,8 +2406,20 @@ msgstr "معیارهای جدی بودن"
 msgid "Server conversation history is optional and follows the configured retention policy. Outside pharmaceutical mode, the browser may keep a short-lived conversation and the server may cache answers. In pharmaceutical mode these two caches are disabled; submitted safety reports are still stored for review. Deleting a browser conversation does not delete server records. Contact the site owner about access or deletion requests."
 msgstr "ذخیرهٔ تاریخچهٔ گفتگو روی سرور اختیاری است و از سیاست نگهداری تنظیم‌شده پیروی می‌کند. خارج از حالت دارویی، ممکن است گفتگو برای مدت کوتاهی در مرورگر و پاسخ‌ها در کش سرور نگهداری شوند. در حالت دارویی این دو نوع ذخیره‌سازی غیرفعال‌اند، اما گزارش‌های ایمنی ارسالی برای بررسی ثبت می‌شوند. حذف گفتگوی مرورگر، سوابق سرور را حذف نمی‌کند. برای درخواست دسترسی یا حذف اطلاعات با مدیر سایت تماس بگیرید."
 
+msgid "Service needed"
+msgstr "خدمت موردنیاز"
+
 msgid "Services"
 msgstr "خدمات"
+
+msgid "Services company"
+msgstr "شرکت خدماتی"
+
+msgid "Services, doctors, hours, insurance and appointment requests."
+msgstr "خدمات، پزشکان، ساعات کاری، بیمه و درخواست نوبت."
+
+msgid "Services, pricing, coverage area and quote requests."
+msgstr "خدمات، قیمت‌ها، محدوده خدمت‌رسانی و درخواست استعلام قیمت."
 
 msgid "Set up your AI assistant"
 msgstr "دستیار هوش مصنوعی خود را راه‌اندازی کنید"
@@ -2258,6 +2459,9 @@ msgstr "شدید"
 
 msgid "Severity"
 msgstr "شدت"
+
+msgid "Share only approved product information from the knowledge provided. For personal medical questions, refer the visitor to their doctor or pharmacist."
+msgstr "فقط اطلاعات تأییدشده محصول را از دانش ارائه‌شده بگو. برای پرسش‌های پزشکی شخصی، بازدیدکننده را به پزشک یا داروساز ارجاع بده."
 
 msgid "Shared secret (HMAC)"
 msgstr "رمز مشترک (HMAC)"
@@ -2325,6 +2529,9 @@ msgstr "صحبت کنید"
 msgid "Standard — essentials plus patient and outcome"
 msgstr "استاندارد — موارد ضروری به‌همراه اطلاعات بیمار و پیامد"
 
+msgid "Start from a template for your business (optional)"
+msgstr "شروع با قالب مخصوص کسب‌وکار شما (اختیاری)"
+
 msgid "Status"
 msgstr "وضعیت"
 
@@ -2370,8 +2577,14 @@ msgstr "درخواست حذف شد"
 msgid "Submit"
 msgstr "ثبت و ارسال"
 
+msgid "Suggest FAQs and a persona with AI"
+msgstr "پیشنهاد پرسش‌های متداول و پرسونا با هوش مصنوعی"
+
 msgid "Suggested from your site title — edit if needed."
 msgstr "از عنوان سایت پیشنهاد شده — در صورت نیاز ویرایش کنید."
+
+msgid "Suggestions are ready below. Review them before adding."
+msgstr "پیشنهادها در پایین آماده است. پیش از افزودن، آن‌ها را بررسی کنید."
 
 msgid "Support"
 msgstr "پشتیبانی"
@@ -2390,6 +2603,12 @@ msgstr "محصول مشکوک"
 
 msgid "Suspected reaction"
 msgstr "عارضهٔ احتمالی"
+
+msgid "Sync started. Pages are being added in the background; this page shows the progress."
+msgstr "همگام‌سازی شروع شد. صفحه‌ها در پس‌زمینه اضافه می‌شوند و پیشرفت کار همین‌جا نمایش داده می‌شود."
+
+msgid "Syncing… %1$d of %2$d"
+msgstr "در حال همگام‌سازی… %1$d از %2$d"
 
 msgid "System default"
 msgstr "پیش‌فرض سیستم"
@@ -2411,6 +2630,9 @@ msgstr "امکان صحبت با اپراتور در این‌جا فعال نی
 
 msgid "Telegram"
 msgstr "تلگرام"
+
+msgid "Template \"%s\" applied to the empty fields."
+msgstr "قالب «%s» روی فیلدهای خالی اعمال شد."
 
 msgid "Test connection"
 msgstr "آزمون اتصال"
@@ -2436,14 +2658,26 @@ msgstr "این کار امکان‌پذیر نیست."
 msgid "That did not work. Please try again."
 msgstr "انجام نشد. لطفاً دوباره تلاش کنید."
 
+msgid "The AI answer could not be read. Please try again."
+msgstr "پاسخ هوش مصنوعی قابل خواندن نبود. دوباره امتحان کنید."
+
 msgid "The AI assistant is locked to strict pharmacovigilance answer rules: no invented medical claims, no personalized treatment advice."
 msgstr "دستیار هوش مصنوعی به قواعد سخت‌گیرانهٔ پاسخ‌دهی ایمنی دارو محدود است: بدون ادعای پزشکی ساختگی و بدون توصیهٔ درمانی شخصی."
+
+msgid "The AI provider did not answer. Please try again in a minute."
+msgstr "سرویس هوش مصنوعی پاسخ نداد. یک دقیقه دیگر دوباره امتحان کنید."
+
+msgid "The AI reads your business profile, knowledge and pages, then proposes the questions visitors are most likely to ask (answered only from your material) and a name, role and welcome text for the assistant. You review everything before it is added."
+msgstr "هوش مصنوعی پروفایل کسب‌وکار، دانش و صفحه‌های شما را می‌خواند و پرسش‌هایی را که بازدیدکنندگان به احتمال زیاد می‌پرسند (با پاسخ فقط از محتوای خودتان) به‌همراه نام، نقش و متن خوشامد دستیار پیشنهاد می‌دهد. پیش از افزودن، همه‌چیز را خودتان بررسی می‌کنید."
 
 msgid "The API key could not be encrypted (OpenSSL unavailable or AUTH_KEY missing). It was NOT saved in plaintext. Fix the server crypto setup and try again."
 msgstr "کلید API رمزنگاری نشد (OpenSSL در دسترس نیست یا AUTH_KEY تعریف نشده). کلید به‌صورت متن ساده ذخیره نشد. تنظیمات رمزنگاری سرور را اصلاح کنید و دوباره تلاش کنید."
 
 msgid "The API key was rejected. Double-check the key and that it belongs to the selected provider."
 msgstr "کلید API رد شد. کلید و تعلق آن به ارائه‌دهندهٔ انتخاب‌شده را دوباره بررسی کنید."
+
+msgid "The PDF could not be read."
+msgstr "PDF خوانده نشد."
 
 msgid "The SMS panel could not be reached."
 msgstr "اتصال به پنل پیامک برقرار نشد."
@@ -2471,6 +2705,9 @@ msgstr "دستیار هنوز در دسترس نیست. لطفاً بعداً د
 
 msgid "The assistant is published without an AI engine — it can only answer from your FAQ bank."
 msgstr "دستیار بدون موتور هوش مصنوعی منتشر شده است — فقط می‌تواند از بانک پرسش‌وپاسخ شما پاسخ دهد."
+
+msgid "The assistant knows your site from minute one, without copying anything by hand."
+msgstr "دستیار از همان دقیقه اول سایتتان را می‌شناسد، بدون هیچ کپی دستی."
 
 msgid "The available operator with the fewest open chats"
 msgstr "اپراتور در دسترس با کمترین گفتگوی باز"
@@ -2520,8 +2757,14 @@ msgstr "فیلد «%s» باید عدد باشد."
 msgid "The field \"%s\" must be a valid email."
 msgstr "فیلد «%s» باید نشانی ایمیل معتبر باشد."
 
+msgid "The file could not be opened. Is it a valid .docx document?"
+msgstr "فایل باز نشد. آیا یک سند .docx معتبر است؟"
+
 msgid "The file is larger than 2 MB and was NOT imported."
 msgstr "حجم فایل بیش از ۲ مگابایت است و وارد نشد."
+
+msgid "The file is too large and was NOT imported (text files up to 2 MB, PDF and Word up to 10 MB)."
+msgstr "حجم فایل زیاد است و وارد نشد (فایل متنی تا ۲ مگابایت، PDF و Word تا ۱۰ مگابایت)."
 
 msgid "The first matching path wins; * matches anything. Pages without a match use the invitation text above. Use \"-\" as the message to show no invitation on those pages."
 msgstr "اولین مسیر منطبق اعمال می‌شود؛ * با هر چیزی منطبق است. صفحه‌های بدون تطابق از متن دعوت بالا استفاده می‌کنند. برای عدم نمایش دعوت در آن صفحه‌ها، پیام را \"-\" بگذارید."
@@ -2631,14 +2874,23 @@ msgstr "تم"
 msgid "Theme (empty = global)"
 msgstr "تم (خالی = تنظیم کلی)"
 
+msgid "There is not enough material yet. Fill in the business profile, add knowledge or import pages first."
+msgstr "هنوز محتوای کافی وجود ندارد. ابتدا پروفایل کسب‌وکار را کامل کنید، دانش اضافه کنید یا صفحه‌ها را وارد کنید."
+
 msgid "There is nothing to summarize yet."
 msgstr "هنوز چیزی برای خلاصه کردن نیست."
+
+msgid "This PDF is password-protected or encrypted. Remove the protection and upload it again."
+msgstr "این PDF رمزدار یا رمزگذاری‌شده است. محافظت را بردارید و دوباره بارگذاری کنید."
 
 msgid "This chat is closed."
 msgstr "این گفتگو بسته شده است."
 
 msgid "This chat is closed; the visitor will not see new messages."
 msgstr "این گفتگو بسته شده است؛ بازدیدکننده پیام‌های جدید را نمی‌بیند."
+
+msgid "This does not look like a PDF file."
+msgstr "این فایل PDF به نظر نمی‌رسد."
 
 msgid "This is not available right now."
 msgstr "این امکان در حال حاضر در دسترس نیست."
@@ -2667,11 +2919,17 @@ msgstr "این پیشنهاد برای سبدهای خرید %s و بیشتر ا
 msgid "This provider is not verified yet. Run the connection test below and wait for the green result before continuing."
 msgstr "این ارائه‌دهنده هنوز تأیید نشده است. آزمون اتصال زیر را اجرا کنید و پیش از ادامه منتظر نتیجهٔ سبز بمانید."
 
+msgid "This server cannot open Word files (the PHP zip extension is missing). Save the document as PDF or TXT and upload that."
+msgstr "این سرور نمی‌تواند فایل Word را باز کند (افزونه zip در PHP نصب نیست). سند را به‌صورت PDF یا TXT ذخیره و بارگذاری کنید."
+
 msgid "This site uses an AI chat assistant. Messages you type are processed by this website and sent to the AI provider selected by the site owner (an external service) to generate replies. If you submit a contact form, your name, phone number and message are stored so we can follow up."
 msgstr "این سایت از یک دستیار گفتگوی هوش مصنوعی استفاده می‌کند. پیام‌هایی که می‌نویسید توسط این سایت پردازش و برای تولید پاسخ به ارائه‌دهندهٔ هوش مصنوعی انتخاب‌شده توسط مالک سایت (یک سرویس خارجی) ارسال می‌شوند. اگر فرم تماس را ارسال کنید، نام، شماره تلفن و پیام شما برای پیگیری ذخیره می‌شود."
 
 msgid "This tool supports your workflow but does not certify regulatory compliance. Verify your national reporting obligations (e.g., your pharmacovigilance center's timelines and formats) before relying on it for submissions."
 msgstr "این ابزار از فرایند شما پشتیبانی می‌کند اما انطباق قانونی را گواهی نمی‌کند. پیش از اتکا برای ارسال گزارش، الزامات گزارش‌دهی ملی (مانند زمان‌بندی و قالب مرکز ایمنی دارو) را بررسی کنید."
+
+msgid "Tick what you want to keep and edit freely. Nothing is saved until you press \"Add selected\"."
+msgstr "موارد دلخواه را تیک بزنید و آزادانه ویرایش کنید. تا «افزودن موارد انتخاب‌شده» را نزنید چیزی ذخیره نمی‌شود."
 
 msgid "Time"
 msgstr "زمان"
@@ -2745,6 +3003,9 @@ msgstr "پرسش‌های بی‌پاسخ (۱۴ روز)"
 msgid "Under assessment"
 msgstr "در حال ارزیابی"
 
+msgid "Understand the visitor's need before recommending a service. Offer the quote request form for anything that needs a custom price."
+msgstr "پیش از پیشنهاد خدمت، نیاز بازدیدکننده را بفهم. برای هر موردی که قیمت اختصاصی لازم دارد، فرم استعلام قیمت را پیشنهاد بده."
+
 msgid "Unknown"
 msgstr "نامشخص"
 
@@ -2756,6 +3017,12 @@ msgstr "لطفاً محصول را از فهرست انتخاب کنید."
 
 msgid "Unknown provider."
 msgstr "ارائه‌دهندهٔ ناشناخته."
+
+msgid "Unknown template."
+msgstr "قالب ناشناخته است."
+
+msgid "Unsupported document type."
+msgstr "این نوع سند پشتیبانی نمی‌شود."
 
 msgid "Update case"
 msgstr "به‌روزرسانی پرونده"
@@ -2847,6 +3114,12 @@ msgstr "نشانی وب‌هوک"
 msgid "Website"
 msgstr "وب‌سایت"
 
+msgid "Website learning settings saved."
+msgstr "تنظیمات یادگیری از سایت ذخیره شد."
+
+msgid "Website pages were removed from the knowledge base."
+msgstr "صفحه‌های سایت از پایگاه دانش حذف شدند."
+
 msgid "Welcome message"
 msgstr "پیام خوش‌آمد"
 
@@ -2855,6 +3128,9 @@ msgstr "پیام خوش‌آمد (خالی = تنظیم کلی)"
 
 msgid "Welcome message for /start (empty = the website welcome text)"
 msgstr "پیام خوشامد برای ‎/start (خالی = همان پیام خوشامد سایت)"
+
+msgid "Welcome text"
+msgstr "متن خوشامد"
 
 msgid "Welcome title"
 msgstr "عنوان خوش‌آمد"
@@ -2937,6 +3213,9 @@ msgstr "ابتدا پیامی بنویسید."
 msgid "Write a summary"
 msgstr "نوشتن خلاصه"
 
+msgid "Write suggestions"
+msgstr "نوشتن پیشنهادها"
+
 msgid "Write your message…"
 msgstr "پیام خود را بنویسید…"
 
@@ -2975,6 +3254,9 @@ msgstr "پیام شما"
 
 msgid "Your own questions"
 msgstr "سؤال‌های اختصاصی شما"
+
+msgid "Your published pages, posts and products become the assistant's knowledge automatically, and stay up to date when you edit them."
+msgstr "صفحه‌ها، نوشته‌ها و محصولات منتشرشده شما خودکار به دانش دستیار تبدیل می‌شوند و با هر ویرایش به‌روز می‌مانند."
 
 msgid "Your session expired. Please refresh the page and try again."
 msgstr "نشست شما منقضی شده است. صفحه را تازه کنید و دوباره تلاش کنید."

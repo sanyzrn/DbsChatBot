@@ -43,6 +43,9 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 	wp_clear_scheduled_hook( 'ssc_notification_retry' );
 	wp_clear_scheduled_hook( 'ssc_messenger_poll' );
 	wp_clear_scheduled_hook( 'ssc_woo_reminders' );
+	wp_clear_scheduled_hook( 'ssc_sitesync_batch' );
+	wp_clear_scheduled_hook( 'ssc_sitesync_daily' );
+	wp_unschedule_hook( 'ssc_sitesync_post' );
 	wp_clear_scheduled_hook( 'ssc_chatbot_daily_cleanup' );
 	wp_clear_scheduled_hook( 'nafas_chatbot_daily_cleanup' );
 
@@ -74,6 +77,7 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 		'ssc_pharma_setup',
 		'ssc_messenger_secret',
 		'ssc_messenger_offset',
+		'ssc_sitesync_state',
 		// Legacy namespace leftovers.
 		'nafas_chatbot_settings',
 		'nafas_chatbot_chat_stats',

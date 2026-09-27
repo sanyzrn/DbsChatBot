@@ -157,6 +157,71 @@ class SSC_Admin_Knowledge {
 			self::prg( $args );
 		}
 
+		// Learn from my website: settings, sync now, remove.
+		if ( isset( $_POST['ssc_sitesync_action'] ) && check_admin_referer( 'ssc_kb' ) && SSC_Modules::is_active( 'sitesync' ) ) {
+			$action = sanitize_key( wp_unslash( $_POST['ssc_sitesync_action'] ) );
+			if ( 'save' === $action || 'run' === $action ) {
+				$types   = isset( $_POST['sitesync_types'] ) ? (array) wp_unslash( $_POST['sitesync_types'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by sanitize_value().
+				$exclude = isset( $_POST['sitesync_exclude'] ) ? preg_split( '/[\s,،]+/u', sanitize_text_field( wp_unslash( $_POST['sitesync_exclude'] ) ) ) : array();
+				SSC_Settings::update(
+					array(
+						'sitesync_types'   => SSC_Settings::sanitize_value( 'sitesync_types', $types ),
+						'sitesync_exclude' => SSC_Settings::sanitize_value( 'sitesync_exclude', $exclude ),
+					)
+				);
+			}
+			if ( 'run' === $action ) {
+				SSC_Module_Sitesync::start();
+				SSC_Module_Sitesync::run_batch( 15 ); // A head start; the rest continues in the background.
+			}
+			if ( 'clear' === $action ) {
+				SSC_Module_Sitesync::clear();
+			}
+			self::prg( array( 'kb' => 'sitesync_' . $action ) );
+		}
+
+		// AI suggestions (FAQs and persona): generate, then apply what the admin picks.
+		if ( isset( $_POST['ssc_suggest'] ) && check_admin_referer( 'ssc_kb' ) ) {
+			$result = SSC_Suggest::generate();
+			if ( is_wp_error( $result ) ) {
+				set_transient( 'ssc_suggest_error_' . get_current_user_id(), $result->get_error_message(), 5 * MINUTE_IN_SECONDS );
+				self::prg( array( 'kb' => 'suggest_error' ) );
+			}
+			set_transient( 'ssc_suggest_' . get_current_user_id(), $result, HOUR_IN_SECONDS );
+			self::prg( array( 'kb' => 'suggest_ready' ) );
+		}
+		if ( isset( $_POST['ssc_suggest_apply'] ) && check_admin_referer( 'ssc_kb' ) ) {
+			$persona = array();
+			$picked  = isset( $_POST['persona_pick'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['persona_pick'] ) ) : array();
+			foreach ( $picked as $key ) {
+				if ( isset( $_POST['persona'][ $key ] ) ) {
+					$persona[ $key ] = sanitize_text_field( wp_unslash( $_POST['persona'][ $key ] ) );
+				}
+			}
+			$faqs = array();
+			foreach ( isset( $_POST['faq'] ) ? (array) wp_unslash( $_POST['faq'] ) : array() as $faq ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each field sanitized below.
+				if ( ! empty( $faq['pick'] ) && ! empty( $faq['q'] ) && ! empty( $faq['a'] ) ) {
+					$faqs[] = array(
+						'q' => sanitize_text_field( $faq['q'] ),
+						'a' => sanitize_textarea_field( $faq['a'] ),
+					);
+				}
+			}
+			$applied = SSC_Suggest::apply( $persona, $faqs );
+			delete_transient( 'ssc_suggest_' . get_current_user_id() );
+			self::prg(
+				array(
+					'kb'     => 'suggest_applied',
+					'faqs'   => $applied['faqs'],
+					'target' => $applied['target'],
+				)
+			);
+		}
+		if ( isset( $_POST['ssc_suggest_discard'] ) && check_admin_referer( 'ssc_kb' ) ) {
+			delete_transient( 'ssc_suggest_' . get_current_user_id() );
+			self::prg( array() );
+		}
+
 		// KB document delete.
 		if ( isset( $_GET['ssc_kb_action'], $_GET['doc'], $_GET['_wpnonce'] ) ) {
 			$doc = sanitize_key( wp_unslash( $_GET['doc'] ) );
@@ -207,17 +272,28 @@ class SSC_Admin_Knowledge {
 			$out['status'] = 'nofile';
 			return $out;
 		}
-		if ( (int) $_FILES['kb_file']['size'] > 2 * MB_IN_BYTES ) {
-			$out['status'] = 'toobig'; // Reported honestly (4.x bug fixed).
-			return $out;
-		}
-		$allowed = array( 'txt', 'md', 'csv', 'json' );
+		$allowed = array( 'txt', 'md', 'csv', 'json', 'pdf', 'docx' );
 		$ext     = strtolower( pathinfo( (string) $_FILES['kb_file']['name'], PATHINFO_EXTENSION ) );
 		if ( ! in_array( $ext, $allowed, true ) ) {
 			$out['status'] = 'badtype';
 			return $out;
 		}
-		$content = (string) file_get_contents( $_FILES['kb_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- validated upload with whitelisted extension.
+		// Documents (brochures, catalogues) may be larger than plain text files.
+		$limit = in_array( $ext, array( 'pdf', 'docx' ), true ) ? 10 * MB_IN_BYTES : 2 * MB_IN_BYTES;
+		if ( (int) $_FILES['kb_file']['size'] > $limit ) {
+			$out['status'] = 'toobig'; // Reported honestly (4.x bug fixed).
+			return $out;
+		}
+		if ( in_array( $ext, array( 'pdf', 'docx' ), true ) ) {
+			$content = SSC_Doc_Extract::file( $_FILES['kb_file']['tmp_name'], $ext ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- is_uploaded_file() checked above.
+			if ( is_wp_error( $content ) ) {
+				set_transient( 'ssc_kb_import_error_' . get_current_user_id(), $content->get_error_message(), 5 * MINUTE_IN_SECONDS );
+				$out['status'] = 'docerror';
+				return $out;
+			}
+		} else {
+			$content = (string) file_get_contents( $_FILES['kb_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- validated upload with whitelisted extension.
+		}
 		if ( '' === trim( $content ) ) {
 			$out['status'] = 'empty';
 			return $out;

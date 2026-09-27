@@ -88,6 +88,44 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 						<div class="ssc-notice ssc-notice--error" role="alert"><?php esc_html_e( 'Please enter the official organization name.', 'nexachat-ai' ); ?></div>
 					<?php endif; ?>
 
+					<?php
+					$ssc_templates = SSC_Templates::all();
+					$ssc_applied   = isset( $_GET['template'] ) ? sanitize_key( wp_unslash( $_GET['template'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+					$ssc_suggested = isset( $_GET['modules'] ) ? array_filter( explode( ',', sanitize_text_field( wp_unslash( $_GET['modules'] ) ) ) ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+					$ssc_current   = isset( SSC_Setup::state()['template'] ) ? SSC_Setup::state()['template'] : '';
+					?>
+					<div class="ssc-templates" role="group" aria-labelledby="ssc-templates-title">
+						<p class="ssc-templates__title" id="ssc-templates-title"><?php esc_html_e( 'Start from a template for your business (optional)', 'nexachat-ai' ); ?></p>
+						<div class="ssc-templates__grid">
+							<?php foreach ( $ssc_templates as $ssc_tid => $ssc_t ) : ?>
+								<button type="submit" name="ssc_template" value="<?php echo esc_attr( $ssc_tid ); ?>" formnovalidate class="ssc-template<?php echo $ssc_tid === $ssc_current ? ' is-current' : ''; ?>">
+									<span class="ssc-template__icon" aria-hidden="true"><?php echo esc_html( $ssc_t['icon'] ); ?></span>
+									<span class="ssc-template__label"><?php echo esc_html( $ssc_t['label'] ); ?></span>
+									<span class="ssc-template__hint"><?php echo esc_html( $ssc_t['hint'] ); ?></span>
+								</button>
+							<?php endforeach; ?>
+						</div>
+						<p class="ssc-field__hint"><?php esc_html_e( 'A template only fills empty fields (role, tone, welcome text, answer rules, request-form fields); your own text is never replaced.', 'nexachat-ai' ); ?></p>
+					</div>
+					<?php if ( $ssc_applied && isset( $ssc_templates[ $ssc_applied ] ) ) : ?>
+						<div class="ssc-notice ssc-notice--success" role="status">
+							<?php echo esc_html( sprintf( /* translators: %s: template name. */ __( 'Template "%s" applied to the empty fields.', 'nexachat-ai' ), $ssc_templates[ $ssc_applied ]['label'] ) ); ?>
+							<?php
+							$ssc_module_names = array();
+							foreach ( $ssc_suggested as $ssc_mid ) {
+								$ssc_module = SSC_Modules::get( sanitize_key( $ssc_mid ) );
+								if ( $ssc_module ) {
+									$ssc_module_names[] = $ssc_module->title();
+								}
+							}
+							?>
+							<?php if ( $ssc_module_names ) : ?>
+								<br /><?php echo esc_html( sprintf( /* translators: %s: module names. */ __( 'Recommended modules (switch them on later in Modules): %s', 'nexachat-ai' ), implode( '، ', $ssc_module_names ) ) ); ?>
+							<?php endif; ?>
+						</div>
+					<?php endif; ?>
+
+
 					<div class="ssc-grid ssc-grid--2">
 						<div class="ssc-field">
 							<label for="b_org_name"><?php esc_html_e( 'Official organization name', 'nexachat-ai' ); ?> <span class="ssc-req">*</span></label>

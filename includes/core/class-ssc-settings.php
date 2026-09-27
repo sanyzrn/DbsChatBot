@@ -234,6 +234,10 @@ class SSC_Settings {
 			'sms_admin_phone'            => '',
 			'sms_notify_admin'           => 'no',
 
+			// Learn-from-my-website module.
+			'sitesync_types'             => array(), // Empty = pages, posts and products.
+			'sitesync_exclude'           => array(), // Post ids never indexed.
+
 			// WooCommerce sales module.
 			'woo_product_search'         => 'yes',
 			'woo_cards'                  => 4,
@@ -977,7 +981,12 @@ class SSC_Settings {
 				break;
 
 			case 'live_operators':
+			case 'sitesync_exclude':
 				$out = array_values( array_unique( array_filter( array_map( 'absint', $value ) ) ) );
+				break;
+
+			case 'sitesync_types':
+				$out = array_values( array_unique( array_filter( array_map( 'sanitize_key', $value ) ) ) );
 				break;
 
 			case 'form_fields':

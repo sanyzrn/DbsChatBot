@@ -1132,3 +1132,26 @@ tr.is-serious { background: var(--ssc-danger-soft); }
         .ssc-live { grid-template-columns: 1fr; }
         .ssc-live__threads { max-height: 260px; }
 }
+
+/* Knowledge: AI suggestions review, sync card. */
+.ssc-form__actions--start { justify-content: flex-start; flex-wrap: wrap; gap: 8px; }
+.ssc-suggest__row { display: grid; grid-template-columns: minmax(160px, 220px) minmax(0, 1fr); gap: 10px; align-items: center; margin-bottom: 8px; }
+.ssc-suggest__row input[type="text"] { width: 100%; }
+.ssc-suggest__faq { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px; padding: 10px 0; border-top: 1px solid var(--ssc-line); }
+.ssc-suggest__faq input[type="text"] { width: 100%; font-weight: 600; margin-bottom: 6px; }
+.ssc-suggest__faq textarea { width: 100%; }
+.ssc-btn.is-busy { opacity: 0.7; pointer-events: none; }
+@media (max-width: 600px) {
+        .ssc-suggest__row { grid-template-columns: 1fr; }
+}
+
+/* Wizard: industry templates. */
+.ssc-templates { margin: 6px 0 18px; }
+.ssc-templates__title { font-weight: 600; margin: 0 0 8px; }
+.ssc-templates__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+.ssc-template { display: grid; gap: 2px; text-align: start; padding: 10px 12px; border: 1px solid var(--ssc-line); border-radius: 10px; background: #fff; cursor: pointer; font: inherit; color: var(--ssc-ink); }
+.ssc-template:hover, .ssc-template:focus-visible { border-color: var(--ssc-accent); box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15); }
+.ssc-template.is-current { border-color: var(--ssc-accent); background: #eef4ff; }
+.ssc-template__icon { font-size: 20px; }
+.ssc-template__label { font-weight: 600; }
+.ssc-template__hint { font-size: 12px; color: var(--ssc-muted); }
