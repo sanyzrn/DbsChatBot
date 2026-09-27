@@ -13,10 +13,12 @@
 	--ssc-line: #e4e7ec;
 	--ssc-ink: #101322;
 	--ssc-muted: #5b6472;
-	--ssc-user-bubble: var(--ssc-primary);
-	--ssc-user-ink: #fff;
-	--ssc-bot-bubble: var(--ssc-card);
-	--ssc-bot-ink: var(--ssc-ink);
+	/* Custom bubble colours arrive as *-custom (set by the script with a
+	 * contrast-picked ink); without them the theme colours apply. */
+	--ssc-user-bubble: var(--ssc-user-bubble-custom, var(--ssc-primary));
+	--ssc-user-ink: var(--ssc-user-ink-custom, var(--ssc-primary-contrast));
+	--ssc-bot-bubble: var(--ssc-bot-bubble-custom, var(--ssc-card));
+	--ssc-bot-ink: var(--ssc-bot-ink-custom, var(--ssc-ink));
 	--ssc-font: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
 	--ssc-font-size: 14px;
 	--ssc-win-width: 384px;
@@ -51,7 +53,14 @@
 	white-space: normal;
 }
 
+/* Native controls (checkboxes, select lists, scrollbars) follow the widget
+ * theme, not the host page's. */
+.ssc-root[data-theme="light"] { color-scheme: light; }
+.ssc-root input[type="checkbox"],
+.ssc-root input[type="radio"] { accent-color: var(--ssc-primary); }
+
 .ssc-root[data-theme="dark"] {
+	color-scheme: dark;
 	--ssc-bg: #15181f;
 	--ssc-card: #1d212b;
 	--ssc-line: #2b3140;
@@ -60,8 +69,16 @@
 	--ssc-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
 }
 
+/* A light bot bubble chosen for the light theme (e.g. white) would be a
+ * glaring block in dark mode: dark mode uses its own card colour instead. */
+.ssc-root[data-theme="dark"][data-bot-bubble="light"] {
+	--ssc-bot-bubble: var(--ssc-card);
+	--ssc-bot-ink: var(--ssc-ink);
+}
+
 @media (prefers-color-scheme: dark) {
 	.ssc-root[data-theme="auto"] {
+		color-scheme: dark;
 		--ssc-bg: #15181f;
 		--ssc-card: #1d212b;
 		--ssc-line: #2b3140;

@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,19 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.1.3 =
+
+* New: "Chat widget language" setting (Appearance and the setup wizard). The chat's buttons, forms and messages can be Persian on an English WordPress, or the other way round. Automatic follows the assistant's answer language. Admin screens keep the admin's language.
+* Fixed: the Persian translation did not load at all on WordPress versions before 6.5. The bundled .mo file had an invalid header for the classic reader.
+* Fixed: the chat could not be closed by clicking the launcher again. A click outside the chat now closes it too.
+* Fixed: the header "Main menu" button looked dead when the menu was already shown. It now moves the menu to the end of the conversation with a caption and highlights it.
+* Fixed: "+ Add product" did nothing while the product list was empty. Product rows have a proper layout and a "+ Add attribute" button.
+* Fixed: product attributes were never saved, and non-Latin attribute names (e.g. Persian) were stripped.
+* Fixed: importing a web page reported "0 chunks" although the page was imported.
+* Fixed: dark mode. A light custom bot bubble (e.g. white) no longer shows near-white text; dark mode uses its own card colour instead. Text on custom colours is picked by contrast. Native checkboxes, selects and scrollbars follow the widget theme.
+* Fixed: the message box showed a scrollbar on a single line of text.
+* Improved: knowledge-entry and product text areas span the full width.
 
 = 1.1.2 =
 
@@ -185,6 +198,10 @@ First stable release. Everything from the 0.6.x beta line, plus:
 * composer / PHPCS / CI scaffolding
 
 == Upgrade Notice ==
+
+= 1.1.3 =
+
+Widget language setting, Persian translation fix for WordPress < 6.5, dark-mode colours and several admin fixes. No data changes.
 
 = 1.1.2 =
 

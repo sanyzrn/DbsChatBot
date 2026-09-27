@@ -396,9 +396,53 @@
                         '--ssc-launcher-size': (cfg.launcherSize || 60) + 'px'
                 };
                 if (cfg.fontStack) { vars['--ssc-font'] = cfg.fontStack; }
-                if (cfg.userBubble) { vars['--ssc-user-bubble'] = cfg.userBubble; }
-                if (cfg.botBubble) { vars['--ssc-bot-bubble'] = cfg.botBubble; }
+                // Text on a coloured surface is picked by contrast, so a light brand
+                // colour (yellow, white…) never gets white text on it.
+                vars['--ssc-primary-contrast'] = inkFor(cfg.primaryColor || '#16203a');
+                vars['--ssc-user-bubble-custom'] = cfg.userBubble || '';
+                vars['--ssc-user-ink-custom'] = cfg.userBubble ? inkFor(cfg.userBubble) : '';
+                vars['--ssc-bot-bubble-custom'] = cfg.botBubble || '';
+                vars['--ssc-bot-ink-custom'] = cfg.botBubble ? inkFor(cfg.botBubble) : '';
                 return vars;
+        }
+
+        /** Relative luminance (0 dark … 1 light) of a #rgb / #rrggbb colour, or -1. */
+        function luminance(color) {
+                var m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(color || '').trim());
+                if (!m) { return -1; }
+                var hex = m[1].length === 3 ? m[1].replace(/./g, '$&$&') : m[1];
+                var ch = [0, 2, 4].map(function (i) {
+                        var c = parseInt(hex.substr(i, 2), 16) / 255;
+                        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+                });
+                return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+        }
+
+        /** Dark or white text, whichever reads better on the given background. */
+        function inkFor(color) {
+                var l = luminance(color);
+                if (l < 0) { return '#fff'; }
+                // Contrast against white vs. against #101322 (the light-theme ink).
+                return (1.05 / (l + 0.05)) >= ((l + 0.05) / 0.0567) ? '#fff' : '#101322';
+        }
+
+        /**
+         * Apply the colour/size variables to a host. Empty custom colours are
+         * removed so the theme defaults apply, and a light custom bot bubble is
+         * flagged so the dark theme can swap it for its own card colour.
+         */
+        function paintVars(host) {
+                var vars = cssVars();
+                Object.keys(vars).forEach(function (k) {
+                        if ('' === vars[k]) { host.style.removeProperty(k); } else { host.style.setProperty(k, vars[k]); }
+                });
+                host.style.removeProperty('--ssc-user-bubble');
+                host.style.removeProperty('--ssc-bot-bubble');
+                if (cfg.botBubble && luminance(cfg.botBubble) > 0.5) {
+                        host.setAttribute('data-bot-bubble', 'light');
+                } else {
+                        host.removeAttribute('data-bot-bubble');
+                }
         }
 
         function applyTheme() {
@@ -728,7 +772,12 @@
         function autosize() {
                 if (!input) { return; }
                 input.style.height = 'auto';
-                input.style.height = Math.min(input.scrollHeight, 132) + 'px';
+                // scrollHeight excludes the border; without it the box is 2px short
+                // and shows a scrollbar on a single line.
+                var border = input.offsetHeight - input.clientHeight;
+                var wanted = input.scrollHeight + border;
+                input.style.height = Math.min(wanted, 132) + 'px';
+                input.style.overflowY = wanted > 132 ? 'auto' : 'hidden';
         }
 
         function addChips(chips, label) {
@@ -1673,8 +1722,7 @@
                 root.setAttribute('dir', cfg.direction || 'rtl');
                 // Position lives on the root so the window and invitation follow the launcher.
                 if ('left' === cfg.position) { root.classList.add('ssc-pos-left'); }
-                var vars = cssVars();
-                Object.keys(vars).forEach(function (k) { root.style.setProperty(k, vars[k]); });
+                paintVars(root);
                 applyTheme();
 
                 if (!deviceAllowed()) {
@@ -1713,11 +1761,7 @@
         function applyConfig(patch) {
                 Object.keys(patch || {}).forEach(function (k) { cfg[k] = patch[k]; });
                 var host = previewMount || root;
-                var vars = cssVars();
-                Object.keys(vars).forEach(function (k) { host.style.setProperty(k, vars[k]); });
-                ['--ssc-user-bubble', '--ssc-bot-bubble'].forEach(function (k) {
-                        if ((k === '--ssc-user-bubble' && !cfg.userBubble) || (k === '--ssc-bot-bubble' && !cfg.botBubble)) { host.style.removeProperty(k); }
-                });
+                paintVars(host);
                 host.setAttribute('dir', cfg.direction || 'rtl');
                 host.classList.toggle('ssc-pos-left', 'left' === cfg.position);
                 var mode = cfg.themeMode || 'light';
@@ -1757,8 +1801,7 @@
                         previewMount = mountNode;
                         mountNode.classList.add('ssc-root', 'ssc-preview-mount');
                         mountNode.setAttribute('dir', cfg.direction || 'rtl');
-                        var vars = cssVars();
-                        Object.keys(vars).forEach(function (k) { mountNode.style.setProperty(k, vars[k]); });
+                        paintVars(mountNode);
                         applyTheme();
                         mountNode.appendChild(launcher);
                         mountNode.appendChild(win);
