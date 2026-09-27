@@ -181,6 +181,9 @@ msgstr "ابتدا توکن ربات را وارد کنید."
 msgid "Add the bot token in Settings → Modules first."
 msgstr "ابتدا توکن ربات را در تنظیمات ← ماژول‌ها وارد کنید."
 
+msgid "Add the bot token in the \"Bale / Telegram bot\" card, then press \"Save and connect the bot\"."
+msgstr "توکن ربات را در کارت «ربات بله / تلگرام» وارد کنید و سپس «ذخیره و اتصال ربات» را بزنید."
+
 msgid "Add the facts visitors usually ask about. No AI jargon needed — just type what you would tell a new employee."
 msgstr "اطلاعاتی را که بازدیدکنندگان معمولاً می‌پرسند اضافه کنید. اصطلاحات فنی لازم نیست — همان چیزی را بنویسید که به یک همکار تازه‌وارد می‌گفتید."
 
@@ -393,6 +396,9 @@ msgstr "سری ساخت / بچ"
 
 msgid "Batch / lot number"
 msgstr "شمارهٔ سری ساخت / بچ"
+
+msgid "Be where your customers already are: one assistant, on your site and in their messenger."
+msgstr "همان‌جایی باشید که مشتریانتان هستند: یک دستیار، هم در سایت و هم در پیام‌رسان آن‌ها."
 
 msgid "Before you go live"
 msgstr "پیش از راه‌اندازی"
@@ -730,6 +736,12 @@ msgstr "دلخواه — انتخاب تک‌تک سؤال‌ها"
 msgid "Customer Engagement"
 msgstr "تعامل با مشتری"
 
+msgid "Customers can talk to your assistant inside Bale or Telegram, with the same knowledge and rules as the website chat."
+msgstr "مشتریان می‌توانند داخل بله یا تلگرام با دستیار شما گفتگو کنند؛ با همان دانش و قوانین چت سایت."
+
+msgid "Customers open your bot and chat with the assistant: same knowledge, same rules and limits as the website chat. Share the bot link on your site, Instagram bio and invoices."
+msgstr "مشتریان ربات شما را باز می‌کنند و با دستیار گفتگو می‌کنند؛ با همان دانش، قوانین و محدودیت‌های چت سایت. لینک ربات را در سایت، بیو اینستاگرام و فاکتورها قرار دهید."
+
 msgid "Custom…"
 msgstr "سفارشی…"
 
@@ -997,6 +1009,9 @@ msgstr "پیام ارجاع"
 msgid "Hands-free conversations and accessible answers for visitors on the go."
 msgstr "گفتگوی بدون دست و پاسخ‌های دسترس‌پذیر برای بازدیدکنندگان در حرکت."
 
+msgid "Hello! Ask me anything about our products and services."
+msgstr "سلام! هر سؤالی دربارهٔ محصولات و خدمات ما دارید بپرسید."
+
 msgid "Hello! 👋"
 msgstr "سلام! 👋"
 
@@ -1032,6 +1047,9 @@ msgstr "ارجاع به کارشناس"
 
 msgid "Human handoff module"
 msgstr "ماژول ارجاع به انسان"
+
+msgid "I can read text messages only. Please type your question."
+msgstr "فعلاً فقط پیام متنی را می‌خوانم. لطفاً سؤالتان را بنویسید."
 
 msgid "I consent to the processing of my contact and health information for safety review and follow-up."
 msgstr "با پردازش اطلاعات تماس و سلامت خود برای بررسی ایمنی و پیگیری این گزارش موافقم."
@@ -1266,6 +1284,12 @@ msgstr "متن پیام"
 
 msgid "Message when nobody can answer"
 msgstr "پیام وقتی کسی برای پاسخ در دسترس نیست"
+
+msgid "Messenger bot (Bale / Telegram)"
+msgstr "ربات پیام‌رسان (بله / تلگرام)"
+
+msgid "Messenger bot module"
+msgstr "ماژول ربات پیام‌رسان"
 
 msgid "Messenger connected"
 msgstr "پیام‌رسان متصل است"
@@ -2086,6 +2110,9 @@ msgstr "برخی موارد آمادگی کامل نیستند — ابتدا آ
 msgid "Something went wrong. Please try again."
 msgstr "مشکلی پیش آمد. لطفاً دوباره تلاش کنید."
 
+msgid "Sorry, something went wrong. Please try again."
+msgstr "متأسفم، مشکلی پیش آمد. لطفاً دوباره تلاش کنید."
+
 msgid "Source"
 msgstr "منبع"
 
@@ -2173,6 +2200,9 @@ msgstr "ارتباط با کارشناس"
 msgid "Talk to a person"
 msgstr "صحبت با یک نفر"
 
+msgid "Talking to a person is not available here. Please leave your question and contact details, or call us."
+msgstr "امکان صحبت با اپراتور در این‌جا فعال نیست. لطفاً سؤال و شمارهٔ تماستان را بنویسید یا با ما تماس بگیرید."
+
 msgid "Telegram"
 msgstr "تلگرام"
 
@@ -2214,6 +2244,9 @@ msgstr "تا وقتی جادوگر کامل نشده و آن را منتشر ن�
 
 msgid "The assistant is not available yet."
 msgstr "دستیار هنوز در دسترس نیست."
+
+msgid "The assistant is not available yet. Please try again later."
+msgstr "دستیار هنوز در دسترس نیست. لطفاً بعداً دوباره تلاش کنید."
 
 msgid "The assistant is published without an AI engine — it can only answer from your FAQ bank."
 msgstr "دستیار بدون موتور هوش مصنوعی منتشر شده است — فقط می‌تواند از بانک پرسش‌وپاسخ شما پاسخ دهد."
@@ -2554,6 +2587,9 @@ msgstr "پیام خوش‌آمد"
 msgid "Welcome message (empty = global)"
 msgstr "پیام خوش‌آمد (خالی = تنظیم کلی)"
 
+msgid "Welcome message for /start (empty = the website welcome text)"
+msgstr "پیام خوشامد برای ‎/start (خالی = همان پیام خوشامد سایت)"
+
 msgid "Welcome title"
 msgstr "عنوان خوش‌آمد"
 
@@ -2605,6 +2641,9 @@ msgstr "رفتار ویجت"
 msgid "Window corner radius (px)"
 msgstr "گردی گوشه‌های پنجره (پیکسل)"
 
+msgid "With Live chat on, these chats appear in the Live chat inbox and customers can ask for a person with the button or /human."
+msgstr "وقتی گفتگوی زنده فعال است، این گفتگوها در صندوق گفتگوی زنده نمایش داده می‌شوند و مشتری می‌تواند با دکمه یا دستور ‎/human درخواست صحبت با یک نفر بدهد."
+
 msgid "With an operator"
 msgstr "در حال گفتگو با اپراتور"
 
@@ -2637,6 +2676,9 @@ msgstr "اجازهٔ دسترسی به پرونده‌ها را ندارید."
 
 msgid "You have reached the daily usage limit. Please try again tomorrow."
 msgstr "به سقف استفادهٔ روزانه رسیده‌اید. لطفاً فردا دوباره تلاش کنید."
+
+msgid "Your bot:"
+msgstr "ربات شما:"
 
 msgid "Your consent is required to continue."
 msgstr "برای ادامه، رضایت شما لازم است."

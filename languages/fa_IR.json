@@ -909,5 +909,19 @@
   "Open the bot and send this code: %s (valid for 15 minutes).": "ربات را باز کنید و این کد را بفرستید: %s (تا ۱۵ دقیقه معتبر است).",
   "Open the bot": "باز کردن ربات",
   "Something went wrong. Please try again.": "مشکلی پیش آمد. لطفاً دوباره تلاش کنید.",
-  "This chat is closed.": "این گفتگو بسته شده است."
+  "This chat is closed.": "این گفتگو بسته شده است.",
+  "Messenger bot module": "ماژول ربات پیام‌رسان",
+  "Customers open your bot and chat with the assistant: same knowledge, same rules and limits as the website chat. Share the bot link on your site, Instagram bio and invoices.": "مشتریان ربات شما را باز می‌کنند و با دستیار گفتگو می‌کنند؛ با همان دانش، قوانین و محدودیت‌های چت سایت. لینک ربات را در سایت، بیو اینستاگرام و فاکتورها قرار دهید.",
+  "Your bot:": "ربات شما:",
+  "Add the bot token in the \"Bale / Telegram bot\" card, then press \"Save and connect the bot\".": "توکن ربات را در کارت «ربات بله / تلگرام» وارد کنید و سپس «ذخیره و اتصال ربات» را بزنید.",
+  "Welcome message for /start (empty = the website welcome text)": "پیام خوشامد برای ‎/start (خالی = همان پیام خوشامد سایت)",
+  "With Live chat on, these chats appear in the Live chat inbox and customers can ask for a person with the button or /human.": "وقتی گفتگوی زنده فعال است، این گفتگوها در صندوق گفتگوی زنده نمایش داده می‌شوند و مشتری می‌تواند با دکمه یا دستور ‎/human درخواست صحبت با یک نفر بدهد.",
+  "Messenger bot (Bale / Telegram)": "ربات پیام‌رسان (بله / تلگرام)",
+  "Customers can talk to your assistant inside Bale or Telegram, with the same knowledge and rules as the website chat.": "مشتریان می‌توانند داخل بله یا تلگرام با دستیار شما گفتگو کنند؛ با همان دانش و قوانین چت سایت.",
+  "Be where your customers already are: one assistant, on your site and in their messenger.": "همان‌جایی باشید که مشتریانتان هستند: یک دستیار، هم در سایت و هم در پیام‌رسان آن‌ها.",
+  "The assistant is not available yet. Please try again later.": "دستیار هنوز در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.",
+  "I can read text messages only. Please type your question.": "فعلاً فقط پیام متنی را می‌خوانم. لطفاً سؤالتان را بنویسید.",
+  "Talking to a person is not available here. Please leave your question and contact details, or call us.": "امکان صحبت با اپراتور در این‌جا فعال نیست. لطفاً سؤال و شمارهٔ تماستان را بنویسید یا با ما تماس بگیرید.",
+  "Hello! Ask me anything about our products and services.": "سلام! هر سؤالی دربارهٔ محصولات و خدمات ما دارید بپرسید.",
+  "Sorry, something went wrong. Please try again.": "متأسفم، مشکلی پیش آمد. لطفاً دوباره تلاش کنید."
 }

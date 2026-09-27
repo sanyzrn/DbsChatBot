@@ -848,7 +848,8 @@ class SSC_Module_Live extends SSC_Module {
 		$reply_to = isset( $message['reply_to_message']['message_id'] ) ? (int) $message['reply_to_message']['message_id'] : 0;
 		$thread   = $reply_to ? self::thread_by_ref( $context['chat'], $reply_to ) : null;
 		if ( ! $thread ) {
-			if ( $context['private'] ) {
+			// With the Messenger bot on, an operator's own messages are a normal chat (handy for testing).
+			if ( $context['private'] && ! SSC_Modules::is_active( 'messenger' ) ) {
 				SSC_Messenger::send( $context['chat'], __( 'Reply to a chat message (swipe or long-press it, then Reply) to answer that visitor.', 'nexachat-ai' ) );
 			}
 			return;

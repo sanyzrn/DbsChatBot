@@ -494,6 +494,27 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			</section>
 		<?php endif; ?>
 
+		<?php if ( SSC_Modules::is_active( 'messenger' ) ) : ?>
+			<section data-ssc-tab="modules" class="ssc-card" id="ssc-messenger-settings">
+				<h2><?php esc_html_e( 'Messenger bot module', 'nexachat-ai' ); ?></h2>
+				<p class="ssc-card__sub"><?php esc_html_e( 'Customers open your bot and chat with the assistant: same knowledge, same rules and limits as the website chat. Share the bot link on your site, Instagram bio and invoices.', 'nexachat-ai' ); ?></p>
+				<?php $ssc_me = SSC_Messenger::ready() ? SSC_Messenger::bot_info() : array(); ?>
+				<?php if ( ! empty( $ssc_me['username'] ) ) : ?>
+					<?php $ssc_bot_link = ( 'telegram' === SSC_Messenger::platform() ? 'https://t.me/' : 'https://ble.ir/' ) . $ssc_me['username']; ?>
+					<p><?php esc_html_e( 'Your bot:', 'nexachat-ai' ); ?> <a href="<?php echo esc_url( $ssc_bot_link ); ?>" target="_blank" rel="noopener noreferrer" dir="ltr"><?php echo esc_html( $ssc_bot_link ); ?></a></p>
+				<?php elseif ( ! SSC_Messenger::ready() ) : ?>
+					<p class="ssc-notice ssc-notice--warn"><?php esc_html_e( 'Add the bot token in the "Bale / Telegram bot" card, then press "Save and connect the bot".', 'nexachat-ai' ); ?></p>
+				<?php endif; ?>
+				<div class="ssc-field">
+					<label for="messenger_welcome"><?php esc_html_e( 'Welcome message for /start (empty = the website welcome text)', 'nexachat-ai' ); ?></label>
+					<textarea id="messenger_welcome" name="messenger_welcome" rows="3" dir="auto"><?php echo esc_textarea( (string) $s['messenger_welcome'] ); ?></textarea>
+				</div>
+				<?php if ( SSC_Modules::is_active( 'live' ) ) : ?>
+					<p class="ssc-field__hint"><?php esc_html_e( 'With Live chat on, these chats appear in the Live chat inbox and customers can ask for a person with the button or /human.', 'nexachat-ai' ); ?></p>
+				<?php endif; ?>
+			</section>
+		<?php endif; ?>
+
 		<?php if ( SSC_Modules::is_active( 'notifications' ) ) : ?>
 			<section data-ssc-tab="modules" class="ssc-card">
 				<h2><?php esc_html_e( 'Notifications module', 'nexachat-ai' ); ?></h2>
