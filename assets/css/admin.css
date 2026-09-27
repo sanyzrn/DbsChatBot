@@ -445,6 +445,39 @@ textarea { resize: vertical; }
 .ssc-checklist a { margin-inline-start: auto; color: var(--ssc-accent); text-decoration: none; font-size: 12px; }
 .ssc-checklist a:hover { text-decoration: underline; }
 
+/* Launch checklist: a clear, coloured action right next to each open item. */
+.ssc-checklist--launch li:not(.is-done) { background: #fffbeb; border-radius: 8px; padding-inline: 10px; }
+.ssc-checklist--launch li:not(.is-done) .ssc-checklist__mark { color: #b45309; }
+.ssc-checklist .ssc-checklist__action,
+.ssc-checklist a.ssc-checklist__action {
+	margin-inline-start: 12px;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px 12px;
+	border: 0;
+	border-radius: 999px;
+	background: #2271b1;
+	color: #fff;
+	font: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.6;
+	text-decoration: none;
+	cursor: pointer;
+}
+.ssc-checklist .ssc-checklist__action:hover,
+.ssc-checklist a.ssc-checklist__action:hover { background: #135e96; color: #fff; text-decoration: none; }
+.ssc-checklist .ssc-checklist__action:focus-visible { outline: 2px solid #2271b1; outline-offset: 2px; }
+.ssc-checklist .ssc-checklist__action[hidden] { display: none; }
+
+.ssc-launch__hint { margin: 10px 0 0; color: #b45309; font-size: 12.5px; text-align: end; }
+.ssc-launch__hint[hidden] { display: none; }
+
+@keyframes ssc-flash { 0% { box-shadow: 0 0 0 0 rgba(34, 113, 177, 0.55); } 100% { box-shadow: 0 0 0 12px rgba(34, 113, 177, 0); } }
+.ssc-flash { animation: ssc-flash 0.9s ease-out 2; border-radius: 8px; }
+@media (prefers-reduced-motion: reduce) { .ssc-flash { animation: none; outline: 2px solid #2271b1; } }
+
 /* ---------- Tables ---------- */
 
 .ssc-table {

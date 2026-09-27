@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,12 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.1.2 =
+
+* Fixed: the setup wizard's "Final check & launch" step could leave Publish disabled for good. The privacy acknowledgement was only saved by Publish itself, and a passing identity test did not update the checklist. The checklist now updates live, and Publish enables as soon as every item is done. The server still re-checks everything on publish.
+* Improved: each unfinished checklist item now has a clear, coloured action button ("Run the test", "Confirm below", "Complete this step") instead of a small "Fix" link, and a hint under Publish lists what is still missing.
+* Fixed: the live preview in the admin no longer scrolls the page to the chat input on load.
 
 = 1.1.1 =
 
@@ -179,6 +185,10 @@ First stable release. Everything from the 0.6.x beta line, plus:
 * composer / PHPCS / CI scaffolding
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+
+Fixes the setup wizard's Publish button staying disabled on the final step. No data changes.
 
 = 1.1.1 =
 

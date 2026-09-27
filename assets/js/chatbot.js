@@ -669,7 +669,8 @@
                         refreshStatus();
                         if (!state.started) { startConversation(); }
                         // On touch devices an immediate focus pops the keyboard over the welcome message.
-                        if (!COARSE_POINTER) { window.setTimeout(function () { input.focus(); }, 60); }
+                        // Admin previews must not steal focus (the page would jump to them).
+                        if (!COARSE_POINTER && !cfg.preview) { window.setTimeout(function () { input.focus(); }, 60); }
                         proactiveDismiss();
                         clearUnread();
                 } else {
