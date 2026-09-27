@@ -77,6 +77,9 @@ function ssc_chatbot_load_textdomain() {
 }
 add_action( 'init', 'ssc_chatbot_load_textdomain' );
 
+// Visitor-facing strings follow the widget language setting, not the site language.
+SSC_I18n::init();
+
 /**
  * Back-compat shim for 4.x integrations that called SSC_Chatbot().
  *

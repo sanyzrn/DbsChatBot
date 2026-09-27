@@ -326,8 +326,46 @@ check( 'Opening hours changed today.' === $reply['reply'] && 'https://acme.examp
 $engine->chat( 'Any news today?', 'general', array() );
 check( 2 === $web_calls, 'Web-searched answers are never served from the answer cache' );
 remove_filter( 'pre_http_request', $mock_web, 30 );
+
+// Product attributes: the form posts a flat name/value list, and Persian names must survive.
+$_POST    = array(
+    '_wpnonce'           => wp_create_nonce( 'ssc_knowledge' ),
+    'ssc_knowledge_save' => '1',
+    'products'           => array( array( 'id' => '', 'name' => 'قرص الف', 'summary' => 'x' ) ),
+    'product_attributes' => array( array( 'گارانتی', 'دو سال', 'Dose', '10 mg', '', 'orphan value' ) ),
+);
+$_REQUEST = $_POST;
+$stop     = function () { throw new RuntimeException( 'redirect' ); };
+add_filter( 'wp_redirect', $stop );
+try {
+    ( new ReflectionClass( 'SSC_Admin_Knowledge' ) )->newInstanceWithoutConstructor()->handle_actions();
+} catch ( RuntimeException $e ) {
+    unset( $e );
+}
+remove_filter( 'wp_redirect', $stop );
+$_POST    = array();
+$_REQUEST = array();
+$saved_products = SSC_Settings::get( 'products', array() );
+check( array( 'گارانتی' => 'دو سال', 'Dose' => '10 mg' ) === $saved_products[0]['attributes'], 'Product attributes are saved from the flat form list, Persian names included' );
+
 update_option( SSC_Settings::OPTION_KEY, $settings_before );
 update_option( SSC_Modules::OPTION, $modules_before );
 SSC_Settings::update( array() );
+
+// Translations: the bundled catalog must load with the classic MO reader
+// (WordPress < 6.5 uses nothing else), and the widget language must be
+// independent of the site language.
+$classic_mo = new MO();
+check( $classic_mo->import_from_file( SSC_CHATBOT_DIR . 'languages/nexachat-ai-fa_IR.mo' ) && 'منوی اصلی' === $classic_mo->translate( 'Main menu' ), 'Persian catalog loads with the classic MO reader' );
+check( 'fa_IR' === SSC_I18n::locale_from_language( 'فارسی' ) && 'fa_IR' === SSC_I18n::locale_from_language( 'fa-IR' ) && 'en_US' === SSC_I18n::locale_from_language( 'English' ) && '' === SSC_I18n::locale_from_language( 'Deutsch' ), 'Answer-language names map to widget locales' );
+$widget_language_before = SSC_Settings::get( 'widget_language', 'auto' );
+SSC_Settings::update( array( 'widget_language' => 'fa_IR' ) );
+$widget_active = SSC_I18n::use_widget_locale();
+$widget_fa     = __( 'Main menu', 'nexachat-ai' );
+SSC_I18n::restore();
+$widget_clean = false === has_filter( 'gettext_nexachat-ai', array( 'SSC_I18n', 'gettext' ) );
+SSC_Settings::update( array( 'widget_language' => $widget_language_before ) );
+check( $widget_active && 'منوی اصلی' === $widget_fa && $widget_clean, 'Widget language overrides the English site language, and only while active' );
+
 require __DIR__ . '/notification-queue.php';
 echo "\n$checks integration checks passed.\n";

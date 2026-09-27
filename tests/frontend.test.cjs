@@ -84,3 +84,20 @@ test('Only real conversation turns are persisted (welcome never duplicates)', ()
   saveThread();
   assert.deepEqual(stored.items.map((i) => i.t), ['Hi', 'Hello!']);
 });
+
+test('The launcher can close the window it opened', () => {
+  // Passing toggleWindow straight to addEventListener hands it the click event,
+  // which read as "force open": the launcher opened the chat but never closed it.
+  assert.ok(!/addEventListener\(\s*'click'\s*,\s*toggleWindow\s*\)/.test(source), 'toggleWindow must not be a bare event listener');
+  assert.match(source, /'boolean' === typeof force/, 'only a real boolean may force a state');
+});
+
+test('Text on custom colours is picked by contrast', () => {
+  const { inkFor, luminance } = load('        /** Relative luminance', '        /**\n         * Apply the colour');
+  assert.equal(inkFor('#ffffff'), '#101322', 'white bubble gets dark text');
+  assert.equal(inkFor('#fde047'), '#101322', 'yellow brand colour gets dark text');
+  assert.equal(inkFor('#b61615'), '#fff', 'dark red gets white text');
+  assert.equal(inkFor('#16203a'), '#fff', 'navy gets white text');
+  assert.equal(inkFor('#fff'), '#101322', 'short hex is understood');
+  assert.equal(luminance('rgb(1,2,3)'), -1, 'unknown formats are reported, not guessed');
+});

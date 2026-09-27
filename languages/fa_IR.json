@@ -784,5 +784,10 @@
   "Run the test": "اجرای آزمون",
   "Confirm below": "تأیید در پایین صفحه",
   "Complete this step": "تکمیل این مرحله",
-  "To publish, complete:": "برای انتشار، این موارد را کامل کنید:"
+  "To publish, complete:": "برای انتشار، این موارد را کامل کنید:",
+  "How can I help you?": "چه کمکی از دستم برمی‌آید؟",
+  "+ Add attribute": "+ افزودن ویژگی",
+  "Chat widget language": "زبان پنجرهٔ چت",
+  "Automatic (answer language, else site language)": "خودکار (زبان پاسخ دستیار، وگرنه زبان سایت)",
+  "Buttons, forms and messages visitors see in the chat, independent of the WordPress language. Saved changes apply to the preview after reload.": "دکمه‌ها، فرم‌ها و پیام‌هایی که بازدیدکننده در چت می‌بیند، مستقل از زبان وردپرس. پس از ذخیره، با بارگذاری دوبارهٔ صفحه در پیش‌نمایش هم اعمال می‌شود."
 }

@@ -870,6 +870,23 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 
 .ssc-ki__remove:hover { background: var(--ssc-danger-soft); }
 
+/* Content fields take the full row width (the browser default is ~20 columns). */
+.ssc-ki > textarea,
+.ssc-product > textarea {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        min-height: 84px;
+        resize: vertical;
+        margin-bottom: 8px;
+}
+
+/* Product row: name, brochure link, image link, remove. */
+.ssc-product .ssc-ki__row { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr) 32px; }
+.ssc-product__attradd { margin-top: 8px; }
+.ssc-btn.ssc-btn--sm { padding: 4px 10px; font-size: 12px; min-height: 0; }
+
 .ssc-product__attrs { display: flex; flex-direction: column; gap: 6px; }
 .ssc-product__attrrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
@@ -991,6 +1008,8 @@ tr.is-serious { background: var(--ssc-danger-soft); }
         .ssc-card { padding: 14px; }
         .ssc-ki__row { grid-template-columns: minmax(0, 1fr) 32px; }
         .ssc-ki__row select { grid-column: 1 / -1; }
+        .ssc-product .ssc-ki__row { grid-template-columns: minmax(0, 1fr) 32px; }
+        .ssc-product .ssc-ki__row input[type="url"] { grid-column: 1 / -1; }
         .ssc-fieldrow { grid-template-columns: minmax(0, 1fr) 32px; }
         .ssc-fieldrow select,
         .ssc-fieldrow .ssc-check--tight { grid-column: 1 / -1; }

@@ -127,7 +127,11 @@
 			btn.addEventListener('click', function () {
 				var list = $(btn.getAttribute('data-target'));
 				if (!list) { return; }
-				var first = directRows(list)[0] || list.firstElementChild;
+				var first = directRows(list)[0];
+				// An empty list has no row to copy: start from the blank <template> row.
+				var tpl = btn.getAttribute('data-template') ? $(btn.getAttribute('data-template')) : null;
+				if (!first && tpl && tpl.content) { first = tpl.content.firstElementChild; }
+				if (!first) { first = list.firstElementChild; }
 				if (!first) { return; }
 				var clone = first.cloneNode(true);
 				$$('input[type="text"], input[type="url"], input[type="email"], textarea', clone).forEach(function (i) { i.value = ''; });
@@ -166,6 +170,20 @@
 
 	bindAddButtons();
 	bindRemove();
+
+	// "+ Add attribute" (delegated: product rows are added at runtime).
+	document.addEventListener('click', function (e) {
+		var btn = e.target.closest ? e.target.closest('.ssc-product__attradd') : null;
+		if (!btn) { return; }
+		var product = btn.closest('.ssc-product');
+		var rows = product ? $$('.ssc-product__attrrow', product) : [];
+		if (!rows.length) { return; }
+		var clone = rows[rows.length - 1].cloneNode(true);
+		$$('input', clone).forEach(function (i) { i.value = ''; });
+		rows[rows.length - 1].parentElement.appendChild(clone);
+		var focus = $('input', clone);
+		if (focus) { focus.focus(); }
+	});
 
 	/* ---------- Form builder: choices only for dropdown / single choice ---------- */
 

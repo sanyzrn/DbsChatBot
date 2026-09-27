@@ -52,6 +52,9 @@ msgstr "(پاسخ قطع شد. برای ادامه دوباره بپرسید.)"
 msgid "+ Add another entry"
 msgstr "+ افزودن مورد دیگر"
 
+msgid "+ Add attribute"
+msgstr "+ افزودن ویژگی"
+
 msgid "+ Add entry"
 msgstr "+ افزودن مورد"
 
@@ -307,6 +310,9 @@ msgstr "سابقهٔ ممیزی"
 msgid "Auto (follow site language)"
 msgstr "خودکار (مطابق زبان سایت)"
 
+msgid "Automatic (answer language, else site language)"
+msgstr "خودکار (زبان پاسخ دستیار، وگرنه زبان سایت)"
+
 msgid "Available with OpenAI, Gemini or an OpenAI-compatible custom endpoint. The connected provider has no embeddings API, so keyword search is used."
 msgstr "با OpenAI، Gemini یا endpoint سفارشی سازگار با OpenAI در دسترس است. ارائه‌دهندهٔ فعلی API امبدینگ ندارد، بنابراین جست‌وجوی کلیدواژه‌ای استفاده می‌شود."
 
@@ -394,6 +400,9 @@ msgstr "مشخصات کسب‌وکار"
 msgid "Business profile completed"
 msgstr "مشخصات کسب‌وکار تکمیل شد"
 
+msgid "Buttons, forms and messages visitors see in the chat, independent of the WordPress language. Saved changes apply to the preview after reload."
+msgstr "دکمه‌ها، فرم‌ها و پیام‌هایی که بازدیدکننده در چت می‌بیند، مستقل از زبان وردپرس. پس از ذخیره، با بارگذاری دوبارهٔ صفحه در پیش‌نمایش هم اعمال می‌شود."
+
 msgid "By"
 msgstr "توسط"
 
@@ -447,6 +456,9 @@ msgstr "پیام گفتگو / روز / بازدیدکننده"
 
 msgid "Chat text direction"
 msgstr "جهت متن گفتگو"
+
+msgid "Chat widget language"
+msgstr "زبان پنجرهٔ چت"
 
 msgid "Chat window width (px)"
 msgstr "عرض پنجرهٔ گفتگو (پیکسل)"
@@ -876,6 +888,9 @@ msgstr "بستری"
 
 msgid "How can I help you today?"
 msgstr "چطور می‌توانم کمکتان کنم؟"
+
+msgid "How can I help you?"
+msgstr "چه کمکی از دستم برمی‌آید؟"
 
 msgid "How this extension works:"
 msgstr "این افزونه چگونه کار می‌کند:"

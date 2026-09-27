@@ -121,6 +121,7 @@ class SSC_Settings {
 			'primary_color'              => '#b61615',
 			'position'                   => 'right',
 			'direction'                  => 'rtl',  // rtl | ltr | auto.
+			'widget_language'            => 'auto', // auto | fa_IR | en_US (visitor-facing labels).
 			'assistant_display_name'     => '',
 			'welcome_title'              => '',
 			'welcome_text'               => '',
@@ -593,6 +594,9 @@ class SSC_Settings {
 			case 'direction':
 				return in_array( $value, array( 'rtl', 'ltr', 'auto' ), true ) ? $value : 'rtl';
 
+			case 'widget_language':
+				return in_array( $value, array( 'auto', 'fa_IR', 'en_US' ), true ) ? $value : 'auto';
+
 			case 'ip_storage':
 				return in_array( $value, array( 'anonymize', 'full', 'none' ), true ) ? $value : 'anonymize';
 
@@ -848,7 +852,8 @@ class SSC_Settings {
 					$attrs = array();
 					if ( isset( $p['attributes'] ) && is_array( $p['attributes'] ) ) {
 						foreach ( $p['attributes'] as $ak => $av ) {
-							$ak = sanitize_key( $ak );
+							// sanitize_text_field, not sanitize_key: Persian names must survive.
+							$ak = sanitize_text_field( (string) $ak );
 							$av = sanitize_text_field( (string) $av );
 							if ( '' !== $ak && '' !== $av ) {
 								$attrs[ $ak ] = $av;

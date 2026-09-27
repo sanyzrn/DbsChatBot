@@ -263,7 +263,7 @@ class SSC_Wizard {
 	 */
 	protected function save_appearance() {
 		$patch = array();
-		$plain = array( 'theme_mode', 'position', 'direction', 'font_family', 'assistant_display_name', 'welcome_title', 'welcome_text', 'disclaimer' );
+		$plain = array( 'theme_mode', 'position', 'direction', 'widget_language', 'font_family', 'assistant_display_name', 'welcome_title', 'welcome_text', 'disclaimer' );
 		foreach ( $plain as $key ) {
 			if ( isset( $_POST[ $key ] ) ) {
 				$patch[ $key ] = SSC_Settings::sanitize_value( $key, wp_unslash( $_POST[ $key ] ) );

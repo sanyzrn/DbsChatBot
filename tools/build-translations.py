@@ -29,7 +29,11 @@ for values in (originals, translated):
         chunks.append(value + b'\0')
         offset += len(value) + 1
     tables.append(b''.join(table))
-mo = struct.pack('<7I', 0x950412de, 0, len(ordered), 28, 28 + 8 * len(ordered), 0, 0) + b''.join(tables) + b''.join(chunks)
+# No hash table (size 0), but its offset must point just past the two index
+# tables: WordPress's classic MO reader (every version before 6.5) sizes the
+# translation index as hash_offset - translations_offset and rejects the file
+# when the offset is 0.
+mo = struct.pack('<7I', 0x950412de, 0, len(ordered), 28, 28 + 8 * len(ordered), 0, 28 + 16 * len(ordered)) + b''.join(tables) + b''.join(chunks)
 (root / 'nexachat-ai-fa_IR.mo').write_bytes(mo)
 
 quote = lambda value: json.dumps(value, ensure_ascii=False)

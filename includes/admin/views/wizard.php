@@ -383,6 +383,16 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 										<option value="auto" <?php selected( $s['direction'], 'auto' ); ?>><?php esc_html_e( 'Auto (follow site language)', 'nexachat-ai' ); ?></option>
 									</select>
 								</div>
+								<div class="ssc-field">
+									<label for="widget_language"><?php esc_html_e( 'Chat widget language', 'nexachat-ai' ); ?></label>
+									<select id="widget_language" name="widget_language" aria-describedby="widget_language_hint">
+										<?php $wl = isset( $s['widget_language'] ) ? $s['widget_language'] : 'auto'; ?>
+										<option value="auto" <?php selected( $wl, 'auto' ); ?>><?php esc_html_e( 'Automatic (answer language, else site language)', 'nexachat-ai' ); ?></option>
+										<option value="fa_IR" <?php selected( $wl, 'fa_IR' ); ?>>فارسی (Persian)</option>
+										<option value="en_US" <?php selected( $wl, 'en_US' ); ?>>English</option>
+									</select>
+									<p class="ssc-field__hint" id="widget_language_hint"><?php esc_html_e( 'Buttons, forms and messages visitors see in the chat, independent of the WordPress language. Saved changes apply to the preview after reload.', 'nexachat-ai' ); ?></p>
+								</div>
 							</div>
 							<div class="ssc-field">
 								<label for="assistant_display_name"><?php esc_html_e( 'Assistant display name', 'nexachat-ai' ); ?></label>
