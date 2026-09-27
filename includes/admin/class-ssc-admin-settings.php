@@ -39,14 +39,14 @@ class SSC_Admin_Settings {
 			$patch['consent_enabled'] = isset( $_POST['consent_enabled'] ) ? 'yes' : 'no';
 			$patch['consent_text']    = isset( $_POST['consent_text'] ) ? wp_kses_post( wp_unslash( $_POST['consent_text'] ) ) : '';
 			$patch['consent_link']    = isset( $_POST['consent_link'] ) ? esc_url_raw( wp_unslash( $_POST['consent_link'] ) ) : '';
-			$patch['chatlog_retention_days'] = isset( $_POST['chatlog_retention_days'] ) ? max( 0, min( 3650, (int) $_POST['chatlog_retention_days'] ) ) : 90;
-			$patch['submissions_retention_days'] = isset( $_POST['submissions_retention_days'] ) ? max( 0, min( 3650, (int) $_POST['submissions_retention_days'] ) ) : 0;
+			$patch['chatlog_retention_days'] = isset( $_POST['chatlog_retention_days'] ) ? SSC_Settings::clamp_int( 'chatlog_retention_days', wp_unslash( $_POST['chatlog_retention_days'] ) ) : 90;
+			$patch['submissions_retention_days'] = isset( $_POST['submissions_retention_days'] ) ? SSC_Settings::clamp_int( 'submissions_retention_days', wp_unslash( $_POST['submissions_retention_days'] ) ) : 0;
 
 			// Security & abuse protection.
 			$patch['rate_limit_mode']    = isset( $_POST['rate_limit_mode'] ) ? SSC_Settings::sanitize_value( 'rate_limit_mode', wp_unslash( $_POST['rate_limit_mode'] ) ) : 'ip';
-			$patch['chat_rate_limit']    = isset( $_POST['chat_rate_limit'] ) ? max( 0, (int) $_POST['chat_rate_limit'] ) : 100;
-			$patch['submit_rate_limit']  = isset( $_POST['submit_rate_limit'] ) ? max( 0, (int) $_POST['submit_rate_limit'] ) : 20;
-			$patch['session_rate_limit'] = isset( $_POST['session_rate_limit'] ) ? max( 0, (int) $_POST['session_rate_limit'] ) : 50;
+			$patch['chat_rate_limit']    = isset( $_POST['chat_rate_limit'] ) ? SSC_Settings::clamp_int( 'chat_rate_limit', wp_unslash( $_POST['chat_rate_limit'] ) ) : 100;
+			$patch['submit_rate_limit']  = isset( $_POST['submit_rate_limit'] ) ? SSC_Settings::clamp_int( 'submit_rate_limit', wp_unslash( $_POST['submit_rate_limit'] ) ) : 20;
+			$patch['session_rate_limit'] = isset( $_POST['session_rate_limit'] ) ? SSC_Settings::clamp_int( 'session_rate_limit', wp_unslash( $_POST['session_rate_limit'] ) ) : 50;
 			$patch['trusted_proxy_header'] = isset( $_POST['trusted_proxy_header'] ) ? SSC_Settings::sanitize_value( 'trusted_proxy_header', wp_unslash( $_POST['trusted_proxy_header'] ) ) : '';
 
 			// Display targeting.
@@ -75,9 +75,10 @@ class SSC_Admin_Settings {
 			$patch['chatlog_enabled'] = isset( $_POST['chatlog_enabled'] ) ? 'yes' : 'no';
 			$patch['csat_enabled']  = isset( $_POST['csat_enabled'] ) ? 'yes' : 'no';
 			$patch['handoff_text']  = isset( $_POST['handoff_text'] ) ? wp_kses_post( wp_unslash( $_POST['handoff_text'] ) ) : '';
-			$patch['proactive_delay'] = isset( $_POST['proactive_delay'] ) ? max( 2, min( 120, (int) $_POST['proactive_delay'] ) ) : 12;
+			$patch['proactive_delay'] = isset( $_POST['proactive_delay'] ) ? SSC_Settings::clamp_int( 'proactive_delay', wp_unslash( $_POST['proactive_delay'] ) ) : 12;
 			$patch['proactive_text'] = isset( $_POST['proactive_text'] ) ? wp_kses_post( wp_unslash( $_POST['proactive_text'] ) ) : '';
-			$patch['form_fields']   = isset( $_POST['form_fields'] ) ? (array) wp_unslash( $_POST['form_fields'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized via Settings::sanitize_list.
+			// Sanitized (and given stable keys) at save time, not only on read.
+			$patch['form_fields'] = SSC_Settings::sanitize_value( 'form_fields', isset( $_POST['form_fields'] ) ? (array) wp_unslash( $_POST['form_fields'] ) : array() ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by sanitize_value().
 			$patch['notify_platform'] = isset( $_POST['notify_platform'] ) ? SSC_Settings::sanitize_value( 'notify_platform', wp_unslash( $_POST['notify_platform'] ) ) : 'bale';
 			$patch['notify_chat_id'] = isset( $_POST['notify_chat_id'] ) ? sanitize_text_field( wp_unslash( $_POST['notify_chat_id'] ) ) : '';
 			$patch['notify_email_enabled'] = isset( $_POST['notify_email_enabled'] ) ? 'yes' : 'no';

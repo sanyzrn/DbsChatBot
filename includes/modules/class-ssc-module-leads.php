@@ -386,26 +386,41 @@ class SSC_Module_Leads extends SSC_Module {
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename=ssc-requests-' . gmdate( 'Ymd-Hi' ) . '.csv' );
 
+		// Custom form fields become their own columns (they were silently dropped).
+		$fields = SSC_Settings::form_fields();
+		$header = array( 'id', 'type', 'name', 'phone', 'product', 'description', 'status', 'created_at' );
+		foreach ( $fields as $field ) {
+			$header[] = $field['label'];
+		}
+		$header[] = 'consent_at';
+
 		$out = fopen( 'php://output', 'w' );
 		fwrite( $out, "\xEF\xBB\xBF" ); // UTF-8 BOM for Excel.
-		SSC_Input::write_csv( $out, array( 'id', 'type', 'name', 'phone', 'product', 'description', 'status', 'created_at' ) );
+		SSC_Input::write_csv( $out, $header );
 
 		$page = 1;
 		do {
 			$result = SSC_Schema::get_submissions(
 				array(
-					'type'     => $type,
-					'status'   => $status,
-					'per_page' => 500,
-					'page'     => $page,
+					'type'         => $type,
+					// ADR case records (health data) belong to the capability-gated
+					// pharma workspace and must never ride along in this export.
+					'exclude_type' => 'pharma_adr',
+					'status'       => $status,
+					'per_page'     => 500,
+					'page'         => $page,
 				)
 			);
 			foreach ( $result['items'] as $row ) {
+				$extra = json_decode( (string) $row['extra_fields'], true );
+				$extra = is_array( $extra ) ? $extra : array();
+				$cells = array( $row['id'], $row['type'], $row['name'], $row['phone'], $row['product'], $row['description'], $row['status'], $row['created_at'] );
+				foreach ( $fields as $field ) {
+					$cells[] = isset( $extra[ $field['key'] ] ) && is_scalar( $extra[ $field['key'] ] ) ? (string) $extra[ $field['key'] ] : '';
+				}
+				$cells[] = isset( $extra['_consent']['_consent_at'] ) ? (string) $extra['_consent']['_consent_at'] : '';
 				// write_csv() already runs every cell through csv_cell().
-				SSC_Input::write_csv(
-					$out,
-					array( $row['id'], $row['type'], $row['name'], $row['phone'], $row['product'], $row['description'], $row['status'], $row['created_at'] )
-				);
+				SSC_Input::write_csv( $out, $cells );
 			}
 			++$page;
 		} while ( $page <= $result['total_pages'] );

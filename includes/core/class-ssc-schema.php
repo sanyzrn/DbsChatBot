@@ -780,7 +780,7 @@ class SSC_Schema {
 	public static function unanswered_questions( $days = 14, $limit = 50 ) {
 		global $wpdb;
 		$table = self::chatlog_table_name();
-		$from  = gmdate( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS * max( 1, $days ) );
+		$from  = wp_date( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS * max( 1, $days ) );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregated radar query.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
@@ -1148,7 +1148,7 @@ class SSC_Schema {
 	public static function stats_series( $days, $metric ) {
 		global $wpdb;
 		$table = self::stats_table_name();
-		$from  = gmdate( 'Y-m-d', time() - DAY_IN_SECONDS * max( 1, $days ) );
+		$from  = wp_date( 'Y-m-d', time() - DAY_IN_SECONDS * max( 1, $days ) ); // stat_date is site-local.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregated read.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
@@ -1220,12 +1220,12 @@ class SSC_Schema {
 	public static function purge_old( $chatlog_days, $submission_days ) {
 		global $wpdb;
 		if ( $chatlog_days > 0 ) {
-			$from = gmdate( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS * $chatlog_days );
+			$from = wp_date( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS * $chatlog_days ); // Rows are stored in site time.
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- retention purge.
 			$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . self::chatlog_table_name() . ' WHERE created_at < %s', $from ) );
 		}
 		if ( $submission_days > 0 ) {
-			$from = gmdate( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS * $submission_days );
+			$from = wp_date( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS * $submission_days );
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- retention purge (does not touch archived cases).
 			$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . self::table_name() . " WHERE created_at < %s AND type != 'pharma_adr'", $from ) );
 		}

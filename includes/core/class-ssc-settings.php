@@ -480,7 +480,7 @@ class SSC_Settings {
 			return self::sanitize_list( $key, is_array( $value ) ? $value : array() );
 		}
 		if ( is_int( $dv ) ) {
-			return (int) $value;
+			return self::clamp_int( $key, $value );
 		}
 		if ( is_bool( $dv ) ) {
 			return (bool) $value;
@@ -624,6 +624,48 @@ class SSC_Settings {
 	}
 
 	/**
+	 * Allowed range for every integer setting. Out-of-range values (a 0px
+	 * font, a 5000px window, max_tokens of 0) broke the widget or the provider
+	 * call, and several save paths cast to int without any bounds.
+	 *
+	 * @return array<string, int[]> key => array( min, max ).
+	 */
+	public static function int_bounds() {
+		return array(
+			'ai_max_tokens'              => array( 100, 4000 ),
+			'ai_history_limit'           => array( 0, 20 ),
+			'launcher_size'              => array( 48, 72 ),
+			'font_size'                  => array( 12, 20 ),
+			'window_width'               => array( 320, 520 ),
+			'window_radius'              => array( 0, 32 ),
+			'bubble_radius'              => array( 0, 24 ),
+			'chatlog_retention_days'     => array( 0, 3650 ),
+			'submissions_retention_days' => array( 0, 3650 ),
+			'chat_rate_limit'            => array( 0, 100000 ),
+			'submit_rate_limit'          => array( 0, 10000 ),
+			'session_rate_limit'         => array( 0, 100000 ),
+			'proactive_delay'            => array( 2, 120 ),
+			'kb_max_chunks'              => array( 1, 8 ),
+		);
+	}
+
+	/**
+	 * Clamp an integer setting into its allowed range.
+	 *
+	 * @param string $key   Setting key.
+	 * @param mixed  $value Raw value.
+	 * @return int
+	 */
+	public static function clamp_int( $key, $value ) {
+		$value  = (int) $value;
+		$bounds = self::int_bounds();
+		if ( isset( $bounds[ $key ] ) ) {
+			$value = max( $bounds[ $key ][0], min( $bounds[ $key ][1], $value ) );
+		}
+		return $value;
+	}
+
+	/**
 	 * Sanitize list-type settings (products, knowledge_items, form_fields).
 	 *
 	 * @param string $key   Setting key.
@@ -695,6 +737,12 @@ class SSC_Settings {
 
 			case 'form_fields':
 				$types = self::form_field_types();
+				$taken = array(
+					'name'        => true,
+					'phone'       => true,
+					'description' => true,
+					'consent'     => true,
+				);
 				foreach ( $value as $f ) {
 					if ( ! is_array( $f ) || empty( $f['label'] ) ) {
 						continue;
@@ -708,11 +756,26 @@ class SSC_Settings {
 						'options'     => array(),
 						'placeholder' => isset( $f['placeholder'] ) ? sanitize_text_field( $f['placeholder'] ) : '',
 					);
-					if ( '' === $row['key'] ) {
-						$row['key'] = 'f' . uniqid();
+
+					/*
+					 * The key must be STABLE: it links the rendered form to server
+					 * validation. A random key generated on every read made a new
+					 * field's key differ between page render and submission, so a
+					 * required custom field could never be satisfied. Derive it from
+					 * the label and keep it unique.
+					 */
+					$base = '' !== $row['key'] ? $row['key'] : substr( sanitize_key( sanitize_title( 'field-' . $row['label'] ) ), 0, 40 );
+					$base = '' !== trim( $base, '-_' ) ? $base : 'field';
+					$key  = $base;
+					for ( $n = 2; isset( $taken[ $key ] ); ++$n ) {
+						$key = $base . '-' . $n;
 					}
+					$taken[ $key ] = true;
+					$row['key']    = $key;
 					if ( in_array( $type, array( 'select', 'radio' ), true ) && ! empty( $f['options'] ) ) {
-						$row['options'] = array_values( array_filter( array_map( 'sanitize_text_field', (array) $f['options'] ) ) );
+						// Admin UI posts one option per line (or comma-separated).
+						$options        = is_array( $f['options'] ) ? $f['options'] : preg_split( '/[\r\n,،]+/u', (string) $f['options'] );
+						$row['options'] = array_values( array_unique( array_filter( array_map( 'sanitize_text_field', $options ), 'strlen' ) ) );
 					}
 					$out[] = $row;
 				}
@@ -770,6 +833,24 @@ class SSC_Settings {
 	 */
 	public static function form_field_types() {
 		return array( 'text', 'textarea', 'tel', 'email', 'number', 'select', 'checkbox', 'radio' );
+	}
+
+	/**
+	 * Human-readable labels for the form builder's type picker.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function form_field_type_labels() {
+		return array(
+			'text'     => __( 'Short text', 'smart-support-chatbot' ),
+			'textarea' => __( 'Long text', 'smart-support-chatbot' ),
+			'tel'      => __( 'Phone', 'smart-support-chatbot' ),
+			'email'    => __( 'Email', 'smart-support-chatbot' ),
+			'number'   => __( 'Number', 'smart-support-chatbot' ),
+			'select'   => __( 'Dropdown', 'smart-support-chatbot' ),
+			'radio'    => __( 'Single choice', 'smart-support-chatbot' ),
+			'checkbox' => __( 'Checkbox', 'smart-support-chatbot' ),
+		);
 	}
 
 	/**

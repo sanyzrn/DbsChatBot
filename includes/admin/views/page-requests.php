@@ -20,7 +20,7 @@ $base    = admin_url( 'admin.php' );
 			<h1><?php esc_html_e( 'Requests', 'smart-support-chatbot' ); ?></h1>
 			<p class="ssc-page__sub"><?php echo esc_html( sprintf( _n( '%d request', '%d requests', $result['total'], 'smart-support-chatbot' ), $result['total'] ) ); ?></p>
 		</div>
-		<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'page' => 'ssc-requests', 'type' => $filters['type'], 'status' => $filters['status'] ), $base ), 'ssc_export' ) ); ?>"><?php esc_html_e( 'Export CSV', 'smart-support-chatbot' ); ?></a>
+		<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'ssc_export_submissions', 'type' => $filters['type'], 'status' => $filters['status'] ), admin_url( 'admin-post.php' ) ), 'ssc_export' ) ); ?>"><?php esc_html_e( 'Export CSV', 'smart-support-chatbot' ); ?></a>
 	</header>
 
 	<?php if ( $updated ) : ?>

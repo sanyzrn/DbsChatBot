@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-24 14:41:55+00:00\n"
+"POT-Creation-Date: 2026-09-27 05:16:30+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: smart-support-chatbot\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -1330,6 +1330,7 @@ msgstr ""
 
 #: includes/admin/views/page-requests.php:57
 #: includes/admin/views/pharma-case.php:39
+#: includes/core/class-ssc-settings.php:847
 msgid "Phone"
 msgstr ""
 
@@ -1630,78 +1631,86 @@ msgid "Field type"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:255
-msgid "Required"
+msgid "Choices, comma separated (dropdown / radio only)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:255
+msgid "Choices"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:256
-msgid "Placeholder"
+msgid "Required"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:257
+msgid "Placeholder"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:258
 msgid "Remove field"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:261
+#: includes/admin/views/page-settings.php:262
 msgid "+ Add field"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:267
+#: includes/admin/views/page-settings.php:268
 msgid "Notifications module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:270
+#: includes/admin/views/page-settings.php:271
 msgid "Messenger platform"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:272
+#: includes/admin/views/page-settings.php:273
 msgid "Bale"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:273
+#: includes/admin/views/page-settings.php:274
 msgid "Telegram"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:277
+#: includes/admin/views/page-settings.php:278
 msgid "Chat / channel ID"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:282
+#: includes/admin/views/page-settings.php:283
 msgid "Bot token"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:283
+#: includes/admin/views/page-settings.php:284
 msgid "A token is stored — type to replace"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:285
+#: includes/admin/views/page-settings.php:286
 msgid "Remove the stored token"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:288
+#: includes/admin/views/page-settings.php:289
 msgid "Also send email notifications"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:290
+#: includes/admin/views/page-settings.php:291
 msgid "Email recipient (empty = site admin)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:297
+#: includes/admin/views/page-settings.php:298
 msgid "Save settings"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:302
+#: includes/admin/views/page-settings.php:303
 msgid "Data tools"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:305
+#: includes/admin/views/page-settings.php:306
 msgid "Clear cached AI answers"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:312
+#: includes/admin/views/page-settings.php:313
 msgid "Remove ALL plugin data (settings, knowledge, requests, ADR cases, logs) when the plugin is deleted. Set this policy before deactivation; an inactive plugin cannot display a deletion prompt. Keep this off to preserve your data."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:314
+#: includes/admin/views/page-settings.php:315
 msgid "Save data policy"
 msgstr ""
 
@@ -2545,6 +2554,34 @@ msgid "Submission deleted"
 msgstr ""
 
 #: includes/core/class-ssc-settings.php:845
+msgid "Short text"
+msgstr ""
+
+#: includes/core/class-ssc-settings.php:846
+msgid "Long text"
+msgstr ""
+
+#: includes/core/class-ssc-settings.php:848
+msgid "Email"
+msgstr ""
+
+#: includes/core/class-ssc-settings.php:849
+msgid "Number"
+msgstr ""
+
+#: includes/core/class-ssc-settings.php:850
+msgid "Dropdown"
+msgstr ""
+
+#: includes/core/class-ssc-settings.php:851
+msgid "Single choice"
+msgstr ""
+
+#: includes/core/class-ssc-settings.php:852
+msgid "Checkbox"
+msgstr ""
+
+#: includes/core/class-ssc-settings.php:926
 msgid "About the organization"
 msgstr ""
 

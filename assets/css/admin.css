@@ -901,6 +901,7 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 }
 
 .ssc-pv__msg {
+        unicode-bidi: plaintext;
         max-width: 88%;
         padding: 9px 12px;
         font-size: 12.5px;
@@ -1037,7 +1038,10 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 }
 
 .ssc-ki__row { grid-template-columns: 120px minmax(0, 1fr) 32px; }
-.ssc-fieldrow { grid-template-columns: minmax(0, 1fr) 110px auto minmax(0, 1fr) 32px; }
+.ssc-fieldrow { grid-template-columns: minmax(0, 1fr) 130px auto minmax(0, 1fr) 32px; }
+/* Choices sit on their own line under the row, only for dropdown / single choice. */
+.ssc-fieldrow .ssc-fieldrow__options { grid-column: 1 / -1; order: 10; }
+.ssc-fieldrow .ssc-fieldrow__options[hidden] { display: none; }
 
 .ssc-ki__remove {
         width: 28px;

@@ -132,6 +132,11 @@
 				var clone = first.cloneNode(true);
 				$$('input[type="text"], input[type="url"], input[type="email"], textarea', clone).forEach(function (i) { i.value = ''; });
 				$$('input[type="checkbox"]', clone).forEach(function (i) { i.checked = false; });
+				// Identity fields must not be copied: a cloned key/id made two rows share one key.
+				$$('input[type="hidden"]', clone).forEach(function (i) {
+					if (/\[(key|id)\]$/.test(i.getAttribute('name') || '')) { i.value = ''; }
+				});
+				$$('select', clone).forEach(function (sel) { sel.selectedIndex = 0; });
 				$$('.ssc-product__attrrow', clone).forEach(function (r, i) { if (i > 0) { r.remove(); } });
 				var idx = nextIndex(list);
 				rewriteNames(clone, idx);
@@ -161,6 +166,26 @@
 
 	bindAddButtons();
 	bindRemove();
+
+	/* ---------- Form builder: choices only for dropdown / single choice ---------- */
+
+	function syncFieldRow(row) {
+		var type = $('select', row);
+		var options = $('.ssc-fieldrow__options', row);
+		if (!type || !options) { return; }
+		options.hidden = !(type.value === 'select' || type.value === 'radio');
+	}
+
+	$$('.ssc-fieldrow').forEach(syncFieldRow);
+	document.addEventListener('change', function (e) {
+		var row = e.target && e.target.closest && e.target.closest('.ssc-fieldrow');
+		if (row && e.target.tagName === 'SELECT') { syncFieldRow(row); }
+	});
+	document.addEventListener('click', function (e) {
+		if (e.target && e.target.closest && e.target.closest('.ssc-field__add')) {
+			window.setTimeout(function () { $$('.ssc-fieldrow').forEach(syncFieldRow); }, 0);
+		}
+	});
 
 	/* ---------- Appearance live preview (light + dark) ---------- */
 

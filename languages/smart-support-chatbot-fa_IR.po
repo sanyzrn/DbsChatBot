@@ -43,6 +43,15 @@ msgstr "دانش شرکت"
 msgid "Call us"
 msgstr "تماس با ما"
 
+msgid "Checkbox"
+msgstr "چک‌باکس"
+
+msgid "Choices"
+msgstr "گزینه‌ها"
+
+msgid "Choices, comma separated (dropdown / radio only)"
+msgstr "گزینه‌ها، جدا شده با ویرگول (فقط برای فهرست کشویی و تک‌گزینه‌ای)"
+
 msgid "Clinical severity (how it felt)"
 msgstr "شدت علائم (تجربهٔ بیمار)"
 
@@ -81,6 +90,12 @@ msgstr "مرگ"
 
 msgid "Dose and frequency used"
 msgstr "مقدار و دفعات مصرف‌شده"
+
+msgid "Dropdown"
+msgstr "فهرست کشویی"
+
+msgid "Email"
+msgstr "ایمیل"
 
 msgid "Female"
 msgstr "زن"
@@ -133,6 +148,9 @@ msgstr "شنیدن پاسخ"
 msgid "Listening…"
 msgstr "در حال شنیدن…"
 
+msgid "Long text"
+msgstr "متن بلند"
+
 msgid "Main menu"
 msgstr "منوی اصلی"
 
@@ -162,6 +180,9 @@ msgstr "نکسا"
 
 msgid "Not recovered"
 msgstr "بهبود نیافته"
+
+msgid "Number"
+msgstr "عدد"
 
 msgid "Nurse"
 msgstr "پرستار"
@@ -216,6 +237,9 @@ msgstr "سیاست پاسخ‌گویی دارویی"
 
 msgid "Pharmacist"
 msgstr "داروساز"
+
+msgid "Phone"
+msgstr "تلفن"
 
 msgid "Phone number"
 msgstr "شمارهٔ تماس"
@@ -327,6 +351,12 @@ msgstr "راه‌اندازی گام‌به‌گام"
 
 msgid "Severe"
 msgstr "شدید"
+
+msgid "Short text"
+msgstr "متن کوتاه"
+
+msgid "Single choice"
+msgstr "تک‌گزینه‌ای"
 
 msgid "Skip"
 msgstr "رد کردن"

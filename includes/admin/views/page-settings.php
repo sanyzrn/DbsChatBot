@@ -248,10 +248,11 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 							<input type="hidden" name="form_fields[<?php echo esc_attr( (string) $i ); ?>][key]" value="<?php echo esc_attr( $f['key'] ); ?>" />
 							<input type="text" name="form_fields[<?php echo esc_attr( (string) $i ); ?>][label]" value="<?php echo esc_attr( $f['label'] ); ?>" placeholder="<?php esc_attr_e( 'Field label', 'smart-support-chatbot' ); ?>" />
 							<select name="form_fields[<?php echo esc_attr( (string) $i ); ?>][type]" aria-label="<?php esc_attr_e( 'Field type', 'smart-support-chatbot' ); ?>">
-								<?php foreach ( SSC_Settings::form_field_types() as $ft ) : ?>
-									<option value="<?php echo esc_attr( $ft ); ?>" <?php selected( $f['type'], $ft ); ?>><?php echo esc_html( $ft ); ?></option>
+								<?php foreach ( SSC_Settings::form_field_type_labels() as $ft => $ft_label ) : ?>
+									<option value="<?php echo esc_attr( $ft ); ?>" <?php selected( $f['type'], $ft ); ?>><?php echo esc_html( $ft_label ); ?></option>
 								<?php endforeach; ?>
 							</select>
+							<input type="text" class="ssc-fieldrow__options" name="form_fields[<?php echo esc_attr( (string) $i ); ?>][options]" value="<?php echo esc_attr( implode( ', ', (array) $f['options'] ) ); ?>" placeholder="<?php esc_attr_e( 'Choices, comma separated (dropdown / radio only)', 'smart-support-chatbot' ); ?>" aria-label="<?php esc_attr_e( 'Choices', 'smart-support-chatbot' ); ?>" />
 							<label class="ssc-check ssc-check--tight"><input type="checkbox" name="form_fields[<?php echo esc_attr( (string) $i ); ?>][required]" value="1" <?php checked( ! empty( $f['required'] ) ); ?> /> <?php esc_html_e( 'Required', 'smart-support-chatbot' ); ?></label>
 							<input type="text" name="form_fields[<?php echo esc_attr( (string) $i ); ?>][placeholder]" value="<?php echo esc_attr( isset( $f['placeholder'] ) ? $f['placeholder'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Placeholder', 'smart-support-chatbot' ); ?>" />
 							<button type="button" class="ssc-ki__remove" aria-label="<?php esc_attr_e( 'Remove field', 'smart-support-chatbot' ); ?>">×</button>
