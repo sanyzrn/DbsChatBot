@@ -196,9 +196,12 @@ wp_set_current_user( 1 );
 // Catalog artifacts use the real WordPress translation loader.
 $frontend = new SSC_Frontend();
 $frontend->register_assets();
+wp_set_current_user( 0 );
 $frontend->enqueue_with_config();
 $script_data = wp_scripts()->get_data( 'nexachat-ai', 'data' );
-check( false !== strpos( $script_data, '"nonce":""' ), 'Public widget sends no incompatible or expiring nonce by default' );
+wp_set_current_user( 1 );
+check( false !== strpos( $script_data, '"nonce":""' ), 'Public widget sends no incompatible or expiring nonce to guests by default' );
+check( ! empty( $frontend->build_config()['nonce'] ) && $frontend->build_config()['memory']['threads'], 'Signed-in users get a REST nonce and their conversation list' );
 add_filter( 'ssc_enforce_rest_nonce', '__return_true' );
 $frontend = new SSC_Frontend();
 $frontend->enqueue_with_config();
@@ -429,5 +432,6 @@ check( $widget_active && 'منوی اصلی' === $widget_fa && $widget_clean, 'W
 require __DIR__ . '/live.php';
 require __DIR__ . '/woo.php';
 require __DIR__ . '/sitesync.php';
+require __DIR__ . '/memory.php';
 require __DIR__ . '/notification-queue.php';
 echo "\n$checks integration checks passed.\n";

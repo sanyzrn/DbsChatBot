@@ -45,6 +45,7 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 	wp_clear_scheduled_hook( 'ssc_woo_reminders' );
 	wp_clear_scheduled_hook( 'ssc_sitesync_batch' );
 	wp_clear_scheduled_hook( 'ssc_sitesync_daily' );
+	wp_unschedule_hook( 'ssc_conversation_summary' );
 	wp_unschedule_hook( 'ssc_sitesync_post' );
 	wp_clear_scheduled_hook( 'ssc_chatbot_daily_cleanup' );
 	wp_clear_scheduled_hook( 'nafas_chatbot_daily_cleanup' );
@@ -58,7 +59,7 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 		return;
 	}
 
-	$options = array(
+	$options   = array(
 		'ssc_chatbot_settings',
 		'ssc_chatbot_products',
 		'ssc_chatbot_knowledge',
@@ -86,11 +87,12 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 		'nafas_chatbot_csat',
 		'nafas_chatbot_stats_migrated',
 	);
+	$options[] = 'ssc_chatlog_default_applied';
 	foreach ( $options as $option ) {
 		delete_option( $option );
 	}
 
-	$suffixes = array( 'submissions', 'chatlog', 'qa', 'kb', 'stats', 'audit', 'notifications', 'live_threads', 'live_messages', 'live_refs', 'carts' );
+	$suffixes = array( 'submissions', 'chatlog', 'qa', 'kb', 'stats', 'audit', 'notifications', 'live_threads', 'live_messages', 'live_refs', 'carts', 'conversations' );
 	// Operator presence and messenger links.
 	foreach ( array( 'ssc_live_seen', 'ssc_live_available', 'ssc_messenger_user', 'ssc_messenger_chat' ) as $meta_key ) {
 		delete_metadata( 'user', 0, $meta_key, '', true );

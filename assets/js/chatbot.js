@@ -22,6 +22,33 @@
         var COARSE_POINTER = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
         var ICON_CHAT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
         var ICON_CLOSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+        /*
+         * The assistant's character: a chat bubble with a face, painted in the
+         * widget's own colour. Inline SVG (no image request, follows the theme);
+         * the loops are pure CSS so they never run through JavaScript, and only
+         * the launcher's copy follows the pointer. The face variant (no tail or
+         * antenna, bigger eyes) is for small spots like the chat header.
+         */
+        function mascotSvg(face) {
+                var eyes = face
+                        ? '<g class="ssc-m-eyes"><ellipse cx="36" cy="46" rx="12" ry="13" fill="#fff"/><ellipse cx="64" cy="46" rx="12" ry="13" fill="#fff"/>'
+                        + '<g class="ssc-m-pupils"><circle cx="36" cy="47.5" r="6.8" fill="#1f2433"/><circle cx="64" cy="47.5" r="6.8" fill="#1f2433"/><circle cx="33.6" cy="44.6" r="2.2" fill="#fff"/><circle cx="61.6" cy="44.6" r="2.2" fill="#fff"/></g></g>'
+                        : '<g class="ssc-m-eyes"><ellipse cx="37" cy="44" rx="10.5" ry="11.5" fill="#fff"/><ellipse cx="63" cy="44" rx="10.5" ry="11.5" fill="#fff"/>'
+                        + '<ellipse cx="37" cy="44" rx="10.5" ry="11.5" fill="none" stroke="#000" stroke-opacity=".12" stroke-width=".8"/><ellipse cx="63" cy="44" rx="10.5" ry="11.5" fill="none" stroke="#000" stroke-opacity=".12" stroke-width=".8"/>'
+                        + '<g class="ssc-m-pupils"><circle cx="37" cy="45.5" r="5.8" fill="#1f2433"/><circle cx="63" cy="45.5" r="5.8" fill="#1f2433"/><circle cx="34.9" cy="42.9" r="1.9" fill="#fff"/><circle cx="60.9" cy="42.9" r="1.9" fill="#fff"/></g></g>';
+                return '<svg class="ssc-mascot' + (face ? ' ssc-mascot--face' : '') + '" viewBox="0 0 100 100" aria-hidden="true" focusable="false">'
+                        + '<g class="ssc-m-body">'
+                        + (face ? '' : '<g class="ssc-m-antenna"><path d="M50 13 V5" stroke="var(--ssc-mascot)" stroke-width="3" stroke-linecap="round"/><circle class="ssc-m-tip" cx="50" cy="4.5" r="4" fill="var(--ssc-mascot)"/><circle cx="48.8" cy="3.3" r="1.3" fill="#fff" fill-opacity=".7"/></g>'
+                        + '<path d="M27 68 Q24 84 13 91 Q35 90 45 77 Z" fill="var(--ssc-mascot)"/>')
+                        + '<ellipse cx="50" cy="' + (face ? 50 : 46) + '" rx="' + (face ? 44 : 39) + '" ry="' + (face ? 42 : 35) + '" fill="var(--ssc-mascot)"/>'
+                        + '<ellipse cx="36" cy="' + (face ? 26 : 25) + '" rx="' + (face ? 20 : 17) + '" ry="10" fill="#fff" fill-opacity=".2"/>'
+                        + '<g class="ssc-m-face">' + eyes
+                        + '<ellipse cx="' + (face ? 22 : 26) + '" cy="' + (face ? 63 : 58) + '" rx="5.5" ry="3.2" fill="#ff7a9a" fill-opacity=".45"/><ellipse cx="' + (face ? 78 : 74) + '" cy="' + (face ? 63 : 58) + '" rx="5.5" ry="3.2" fill="#ff7a9a" fill-opacity=".45"/>'
+                        + '<path class="ssc-m-smile" d="' + (face ? 'M41 67 Q50 75 59 67' : 'M42 61 Q50 68 58 61') + '" fill="none" stroke="var(--ssc-mascot-ink)" stroke-width="' + (face ? 3.2 : 2.6) + '" stroke-linecap="round"/>'
+                        + (face ? '' : '<g class="ssc-m-grin"><path d="M41 59 Q50 73 59 59 Z" fill="var(--ssc-mascot-ink)"/><path d="M45 65 Q50 70 55 65 Z" fill="#ff7a8a"/></g>')
+                        + '</g></g></svg>';
+        }
+
         var ICON_BOT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 16.5h5"/></svg>';
 
         /* ------------------------------------------------------------------ *
@@ -133,7 +160,37 @@
                 }
         }
 
-        /** Conversation transcript persisted across pages (2h TTL, 60 items). */
+        /*
+         * Memory storage. The conversation survives closing the tab (local
+         * storage, for the number of days the server remembers it), so a
+         * visitor who comes back continues where they left off. Health
+         * conversations (pharma) are never persisted in the browser.
+         */
+        var MEM = cfg.memory || {};
+        var MEM_TTL = Math.max(1, Number(MEM.days) || 7) * 24 * 60 * 60 * 1000;
+
+        function memStore() {
+                try { return MEM.persist === false ? window.sessionStorage : window.localStorage; } catch (e) { return null; }
+        }
+
+        function memGet(key) {
+                var store = memStore();
+                try { return store ? store.getItem(key) : null; } catch (e) { return null; }
+        }
+
+        function memSet(key, value) {
+                var store = memStore();
+                try { if (store) { store.setItem(key, value); } } catch (e) { /* storage full or blocked */ }
+        }
+
+        function memRemove(key) {
+                var store = memStore();
+                try { if (store) { store.removeItem(key); } } catch (e) { /* storage blocked */ }
+                // Earlier versions kept both in the tab's session storage.
+                try { window.sessionStorage.removeItem(key); } catch (e) { /* storage blocked */ }
+        }
+
+        /** Conversation transcript persisted across pages and visits (60 items). */
         function saveThread() {
                 if (!state.persist) { return; }
                 try {
@@ -146,18 +203,19 @@
                                         return { k: item.kind, t: item.text, h: !!item.history };
                                 })
                         };
-                        sessionStorage.setItem(THREAD_KEY, JSON.stringify(slim));
+                        memSet(THREAD_KEY, JSON.stringify(slim));
+                        if (convId) { memSet(CONV_KEY, JSON.stringify({ id: convId, at: Date.now() })); }
                 } catch (e) { /* storage unavailable */ }
         }
 
         function loadThread() {
                 if (!state.persist) { return null; }
                 try {
-                        var raw = sessionStorage.getItem(THREAD_KEY);
+                        var raw = memGet(THREAD_KEY);
                         if (!raw) { return null; }
                         var data = JSON.parse(raw);
-                        if (!data || !Array.isArray(data.items) || !data.at || Date.now() - data.at > 2 * 60 * 60 * 1000) {
-                                sessionStorage.removeItem(THREAD_KEY);
+                        if (!data || !Array.isArray(data.items) || !data.at || Date.now() - data.at > MEM_TTL) {
+                                memRemove(THREAD_KEY);
                                 return null;
                         }
                         return data;
@@ -328,20 +386,20 @@
         function getConv() {
                 if (convId) { return convId; }
                 if (state.persist) {
-                        try { convId = sessionStorage.getItem(CONV_KEY); } catch (e) { convId = null; }
+                        var stored = null;
+                        try { stored = JSON.parse(memGet(CONV_KEY) || 'null'); } catch (e) { stored = null; }
+                        if (stored && stored.id && stored.at && Date.now() - stored.at <= MEM_TTL) { convId = stored.id; }
                 }
                 if (!convId || !/^[a-f0-9]{32}$/.test(convId)) {
                         convId = newConvId();
-                        if (state.persist) {
-                                try { sessionStorage.setItem(CONV_KEY, convId); } catch (e) { /* storage unavailable */ }
-                        }
                 }
+                if (state.persist) { memSet(CONV_KEY, JSON.stringify({ id: convId, at: Date.now() })); }
                 return convId;
         }
 
         function resetConv() {
                 convId = null;
-                try { sessionStorage.removeItem(CONV_KEY); } catch (e) { /* storage unavailable */ }
+                memRemove(CONV_KEY);
         }
 
         /* ------------------------------------------------------------------ *
@@ -402,6 +460,9 @@
                 // Text on a coloured surface is picked by contrast, so a light brand
                 // colour (yellow, white…) never gets white text on it.
                 vars['--ssc-primary-contrast'] = inkFor(cfg.primaryColor || '#16203a');
+                // The character wears the brand colour; its mouth takes the readable ink.
+                vars['--ssc-mascot'] = cfg.primaryColor || '#16203a';
+                vars['--ssc-mascot-ink'] = inkFor(cfg.primaryColor || '#16203a');
                 vars['--ssc-user-bubble-custom'] = cfg.userBubble || '';
                 vars['--ssc-user-ink-custom'] = cfg.userBubble ? inkFor(cfg.userBubble) : '';
                 vars['--ssc-bot-bubble-custom'] = cfg.botBubble || '';
@@ -464,6 +525,10 @@
                 launcher.setAttribute('aria-label', (cfg.i18n && cfg.i18n.open) || 'Open chat');
                 if (cfg.launcherIconUrl) {
                         launcher.appendChild(el('span', 'ssc-launcher__img', '<img src="' + esc(cfg.launcherIconUrl) + '" alt="" />'));
+                } else if ('mascot' === cfg.launcherStyle) {
+                        launcher.classList.add('ssc-launcher--mascot');
+                        launcher.appendChild(el('span', 'ssc-launcher__mascot', mascotSvg(false)));
+                        followPointer(launcher.querySelector('.ssc-mascot'));
                 } else if (cfg.avatarUrl) {
                         launcher.appendChild(el('span', 'ssc-launcher__img', '<img src="' + esc(cfg.avatarUrl) + '" alt="" />'));
                 } else {
@@ -481,6 +546,42 @@
                 launcher.addEventListener('click', function () { toggleWindow(); });
                 root.appendChild(launcher);
                 paintStatus();
+        }
+
+        /**
+         * The launcher's eyes follow the pointer. Written straight onto the SVG
+         * inside requestAnimationFrame: one attribute per frame, no re-render,
+         * and nothing at all for visitors who asked for less motion.
+         */
+        function followPointer(svg) {
+                if (!svg) { return; }
+                if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+                var pupils = svg.querySelector('.ssc-m-pupils');
+                var face = svg.querySelector('.ssc-m-face');
+                var frame = 0, point = null;
+                function apply() {
+                        frame = 0;
+                        if (!point || state.open || root.classList.contains('is-thinking')) { return; }
+                        var box = svg.getBoundingClientRect();
+                        if (!box.width) { return; }
+                        var dx = point.x - (box.left + box.width / 2);
+                        var dy = point.y - (box.top + box.height * 0.44);
+                        var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                        var pull = Math.min(1, dist / 260);
+                        var x = dx / dist * pull, y = dy / dist * pull;
+                        pupils.setAttribute('transform', 'translate(' + (x * 3.4).toFixed(2) + ' ' + (y * 2.8).toFixed(2) + ')');
+                        face.setAttribute('transform', 'translate(' + (x * 1.4).toFixed(2) + ' ' + (y * 1).toFixed(2) + ')');
+                }
+                window.addEventListener('pointermove', function (e) {
+                        point = { x: e.clientX, y: e.clientY };
+                        if (!frame) { frame = window.requestAnimationFrame(apply); }
+                }, { passive: true });
+        }
+
+        /** Header avatar: the character's face unless an avatar image is set. */
+        function avatarMarkup() {
+                if (cfg.avatarUrl) { return '<img src="' + esc(cfg.avatarUrl) + '" alt="" />'; }
+                return 'mascot' === cfg.launcherStyle ? mascotSvg(true) : ICON_BOT;
         }
 
         function bumpUnread() {
@@ -549,11 +650,12 @@
                 // Header.
                 var head = el('div', 'ssc-head');
                 var avatar = el('span', 'ssc-head__avatar');
+                avatar.classList.toggle('has-mascot', !cfg.avatarUrl && 'mascot' === cfg.launcherStyle);
                 if (cfg.avatarUrl) {
-                        avatar.innerHTML = '<img src="' + esc(cfg.avatarUrl) + '" alt="" />';
+                        avatar.innerHTML = avatarMarkup();
                         avatar.classList.add('has-img');
                 } else {
-                        avatar.innerHTML = ICON_BOT;
+                        avatar.innerHTML = avatarMarkup();
                 }
                 head.appendChild(avatar);
                 var titles = el('div', 'ssc-head__titles');
@@ -610,21 +712,20 @@
                 resetBtn.setAttribute('aria-label', resetBtn.title);
                 resetBtn.addEventListener('click', function () {
                         if (state.loading) { return; }
-                        if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
-                        state.items = []; state.product = null; state.hadConversation = false; state.csatDone = false;
-                        if (csatTimer) { window.clearTimeout(csatTimer); csatTimer = null; }
-                        if (live.status === 'waiting' || live.status === 'human') {
-                                // Leaving a handled chat: tell the operator's side it is over.
-                                transport('live/leave', { conv: getConv() }).catch(function () {});
-                        }
-                        if (live.timer) { window.clearTimeout(live.timer); }
-                        live.status = 'bot'; live.lastId = 0; live.operator = ''; live.offered = false;
-                        if (live.bar) { live.bar.hidden = true; }
-                        thread.textContent = '';
-                        try { sessionStorage.removeItem(THREAD_KEY); } catch (e) {}
-                        resetConv();
+                        clearConversation();
                         startConversation(); input.focus();
                 });
+
+                // Signed-in users: their previous conversations, on any device.
+                if (MEM.threads && !cfg.preview && cfg.restUrl) {
+                        var historyBtn = el('button', 'ssc-iconbtn ssc-history-btn');
+                        historyBtn.type = 'button';
+                        historyBtn.title = (cfg.i18n && cfg.i18n.history) || 'Previous conversations';
+                        historyBtn.setAttribute('aria-label', historyBtn.title);
+                        historyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>';
+                        historyBtn.addEventListener('click', function () { if (!state.loading) { showHistory(); } });
+                        actions.appendChild(historyBtn);
+                }
                 actions.appendChild(resetBtn);
 
                 // Voice output toggle (module-gated).
@@ -660,6 +761,13 @@
                         var disclaimer = el('p', 'ssc-disclaimer', esc(cfg.disclaimer));
                         disclaimer.setAttribute('dir', 'auto');
                         win.appendChild(disclaimer);
+                }
+
+                // Conversations are stored for quality review: say so, quietly.
+                if (MEM.notice && !cfg.preview) {
+                        var saved = el('p', 'ssc-disclaimer ssc-saved-notice', esc((cfg.i18n && cfg.i18n.savedNotice) || ''));
+                        saved.setAttribute('dir', 'auto');
+                        win.appendChild(saved);
                 }
 
                 // Composer.
@@ -860,6 +968,113 @@
                 mainMenu();
         }
 
+        /** Forget the current conversation in this browser (a new one starts). */
+        function clearConversation() {
+                if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
+                state.items = []; state.product = null; state.hadConversation = false; state.csatDone = false;
+                if (csatTimer) { window.clearTimeout(csatTimer); csatTimer = null; }
+                if (live.status === 'waiting' || live.status === 'human') {
+                        // Leaving a handled chat: tell the operator's side it is over.
+                        transport('live/leave', { conv: getConv() }).catch(function () {});
+                }
+                if (live.timer) { window.clearTimeout(live.timer); }
+                live.status = 'bot'; live.lastId = 0; live.operator = ''; live.offered = false;
+                if (live.bar) { live.bar.hidden = true; }
+                thread.textContent = '';
+                memRemove(THREAD_KEY);
+                resetConv();
+        }
+
+        /* ------------------------------------------------------------------ *
+         * Previous conversations (signed-in users)
+         * ------------------------------------------------------------------ */
+
+        function restCall(method, route) {
+                var headers = {};
+                if (cfg.nonce) { headers['X-WP-Nonce'] = cfg.nonce; }
+                return request(cfg.restUrl + route, { method: method, headers: headers, credentials: 'same-origin' }, function (res) {
+                        return res.json().then(function (data) {
+                                if (!res.ok || !data || !data.ok) { throw new Error((data && data.message) || 'Request failed'); }
+                                return data;
+                        });
+                });
+        }
+
+        var historyPanel = null;
+
+        function closeHistory() {
+                if (historyPanel) { historyPanel.remove(); historyPanel = null; }
+        }
+
+        function showHistory() {
+                if (historyPanel) { closeHistory(); return; }
+                var i18n = cfg.i18n || {};
+                historyPanel = el('div', 'ssc-history');
+                historyPanel.setAttribute('role', 'dialog');
+                historyPanel.setAttribute('aria-label', i18n.history || 'Previous conversations');
+                var head = el('div', 'ssc-history__head');
+                var title = el('strong', '', esc(i18n.history || 'Previous conversations'));
+                var back = el('button', 'ssc-history__back', esc(i18n.historyBack || 'Back to chat'));
+                back.type = 'button';
+                back.addEventListener('click', closeHistory);
+                head.appendChild(title);
+                head.appendChild(back);
+                historyPanel.appendChild(head);
+                var list = el('div', 'ssc-history__list');
+                list.appendChild(el('div', 'ssc-history__empty', '<span class="ssc-typing"><span></span><span></span><span></span></span>'));
+                historyPanel.appendChild(list);
+                thread.parentNode.insertBefore(historyPanel, thread);
+                back.focus();
+                restCall('GET', 'conversations').then(function (data) {
+                        list.textContent = '';
+                        if (!data.threads || !data.threads.length) {
+                                list.appendChild(el('p', 'ssc-history__empty', esc(i18n.historyEmpty || 'No previous conversations yet.')));
+                                return;
+                        }
+                        data.threads.forEach(function (item) {
+                                var row = el('div', 'ssc-history__row' + (item.id === convId ? ' is-current' : ''));
+                                var open = el('button', 'ssc-history__open');
+                                open.type = 'button';
+                                open.setAttribute('dir', 'auto');
+                                open.innerHTML = '<span class="ssc-history__title">' + esc(item.title || '…') + '</span><span class="ssc-history__meta">' + esc(item.updated || '') + '</span>';
+                                open.addEventListener('click', function () { openThread(item.id); });
+                                var del = el('button', 'ssc-history__del', '&times;');
+                                del.type = 'button';
+                                del.title = i18n.historyDelete || 'Delete';
+                                del.setAttribute('aria-label', del.title);
+                                del.addEventListener('click', function () {
+                                        restCall('DELETE', 'conversations/' + item.id).then(function () {
+                                                row.remove();
+                                                if (item.id === convId) { clearConversation(); startConversation(); }
+                                        }).catch(function () {});
+                                });
+                                row.appendChild(open);
+                                row.appendChild(del);
+                                list.appendChild(row);
+                        });
+                }).catch(function () {
+                        list.textContent = '';
+                        list.appendChild(el('p', 'ssc-history__empty', esc((cfg.i18n && cfg.i18n.connectionError) || 'Connection error')));
+                });
+        }
+
+        function openThread(id) {
+                restCall('GET', 'conversations/' + id).then(function (data) {
+                        closeHistory();
+                        clearConversation();
+                        convId = data.id;
+                        memSet(CONV_KEY, JSON.stringify({ id: convId, at: Date.now() }));
+                        var items = (data.messages || []).map(function (m) {
+                                return { k: m.role === 'assistant' ? 'bot' : 'user', t: m.content, h: true };
+                        });
+                        memSet(THREAD_KEY, JSON.stringify({ at: Date.now(), product: null, items: items }));
+                        startConversation();
+                }).catch(function () {
+                        closeHistory();
+                        addItem('bot', (cfg.i18n && cfg.i18n.historyGone) || 'This conversation is no longer available.', { history: false, transient: true });
+                });
+        }
+
         function stripHtml(text) {
                 return new DOMParser().parseFromString(String(text || ''), 'text/html').body.textContent || '';
         }
@@ -944,8 +1159,14 @@
                 ask(text);
         }
 
+        /** The character looks up while the answer is being written. */
+        function thinking(on) {
+                if (root) { root.classList.toggle('is-thinking', !!on); }
+        }
+
         function ask(text) {
                 state.loading = true;
+                thinking(true);
                 var typing = showTyping();
                 var streamBuf = '';
                 var bubble = null;
@@ -953,6 +1174,7 @@
 
                 function ensureBubble() {
                         if (!bubble) {
+                                thinking(false);
                                 if (typing && typing.parentElement) { typing.parentElement.removeChild(typing); typing = null; }
                                 bubble = el('div', 'ssc-msg ssc-msg--bot is-streaming');
                                 bubble.setAttribute('dir', 'auto');
@@ -972,6 +1194,7 @@
                 }).then(function (res) {
                         if (typing && typing.parentElement) { typing.parentElement.removeChild(typing); }
                         state.loading = false;
+                        thinking(false);
 
                         var data = (res && res.data) || {};
                         var reply = data.reply;
@@ -1025,6 +1248,7 @@
                 }).catch(function () {
                         if (typing && typing.parentElement) { typing.parentElement.removeChild(typing); }
                         state.loading = false;
+                        thinking(false);
                         if (bubble && bubble.parentElement) { bubble.parentElement.removeChild(bubble); }
                         addItem('bot', (cfg.i18n && cfg.i18n.connectionError) || 'Connection error.', { history: false });
                 });
@@ -2269,7 +2493,9 @@
                 paintStatus();
                 var avatar = win.querySelector('.ssc-head__avatar');
                 if (avatar) {
-                        if (cfg.avatarUrl) { avatar.innerHTML = '<img src="' + esc(cfg.avatarUrl) + '" alt="" />'; avatar.classList.add('has-img'); } else { avatar.innerHTML = ICON_BOT; avatar.classList.remove('has-img'); }
+                        avatar.innerHTML = avatarMarkup();
+                        avatar.classList.toggle('has-img', !!cfg.avatarUrl);
+                        avatar.classList.toggle('has-mascot', !cfg.avatarUrl && 'mascot' === cfg.launcherStyle);
                 }
                 var disclaimer = win.querySelector('.ssc-disclaimer');
                 if (cfg.disclaimer) {

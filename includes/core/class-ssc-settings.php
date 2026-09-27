@@ -100,7 +100,10 @@ class SSC_Settings {
 			// Generation behaviour.
 			'ai_temperature'             => '0.4',
 			'ai_max_tokens'              => 800,
-			'ai_history_limit'           => 8,
+			'ai_history_limit'           => 10,
+			'memory_days'                => 7,
+			'chat_threads'               => 'yes',
+			'chatlog_notice'             => 'yes',
 			'ai_system_prompt_extra'     => '',
 			'ai_strict_knowledge'        => 'no', // Legacy (pre-1.2): migrated into answer_scope.
 			// What the assistant may talk about: knowledge | business | open.
@@ -131,6 +134,7 @@ class SSC_Settings {
 			'avatar_url'                 => '',
 			'launcher_size'              => 60,
 			'launcher_icon'              => 'chat',
+			'launcher_style'             => 'mascot',
 			'launcher_icon_url'          => '',
 			'font_family'                => 'vazirmatn', // vazirmatn | inter | roboto | system | custom.
 			'font_name'                  => '',
@@ -148,7 +152,7 @@ class SSC_Settings {
 			'consent_link'               => '',
 			'privacy_acknowledged'       => 'no',
 			'ip_storage'                 => 'anonymize', // anonymize | full | none (logs + requests).
-			'chatlog_retention_days'     => 90,
+			'chatlog_retention_days'     => 30,
 			'submissions_retention_days' => 0,
 
 			// Abuse protection per bucket (requests / day / identity).
@@ -187,7 +191,7 @@ class SSC_Settings {
 			'voice_language'             => 'auto', // ISO code or auto (= site language).
 
 			// History module (conversation logging).
-			'chatlog_enabled'            => 'no',
+			'chatlog_enabled'            => 'yes',
 
 			// Leads module.
 			'form_fields'                => array(),
@@ -613,6 +617,8 @@ class SSC_Settings {
 			case 'voice_input':
 			case 'voice_output':
 			case 'chatlog_enabled':
+			case 'chat_threads':
+			case 'chatlog_notice':
 			case 'csat_enabled':
 			case 'notify_email_enabled':
 			case 'business_hours_enabled':
@@ -753,6 +759,9 @@ class SSC_Settings {
 			case 'tone':
 				return in_array( $value, array( 'professional', 'friendly', 'formal', 'casual' ), true ) ? $value : 'professional';
 
+			case 'launcher_style':
+				return in_array( $value, array( 'mascot', 'icon' ), true ) ? $value : 'mascot';
+
 			case 'notify_platform':
 				return in_array( $value, array( 'bale', 'telegram' ), true ) ? $value : 'bale';
 
@@ -864,6 +873,7 @@ class SSC_Settings {
 		return array(
 			'ai_max_tokens'              => array( 100, 4000 ),
 			'ai_history_limit'           => array( 0, 20 ),
+			'memory_days'                => array( 1, 90 ),
 			'launcher_size'              => array( 48, 72 ),
 			'font_size'                  => array( 12, 20 ),
 			'window_width'               => array( 320, 520 ),

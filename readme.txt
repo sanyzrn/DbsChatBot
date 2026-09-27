@@ -88,6 +88,17 @@ PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifi
 
 == Changelog ==
 
+= Unreleased =
+
+* New: conversations survive closing the tab. A visitor who comes back within the "remember for" period (default 7 days; pharmaceutical mode: 1 day and never stored in the browser) continues the same conversation, and the assistant still knows what was said.
+* New: long conversations are no longer cut off. The latest messages (default 10) go to the AI word for word; older ones are folded into a short rolling summary, refreshed in the background. A failed summary never breaks an answer.
+* New: signed-in users can list, reopen and delete their previous conversations on any device (header button in the chat).
+* Changed: conversation logging is on by default (History module, 30-day retention) and the chat window says so. Sites updating from an earlier version get it switched on once; turning it off afterwards is respected. The Conversations page can show one whole conversation.
+* Improved: answer quality rules for every provider. The assistant answers in the first sentence, does not greet again in an ongoing chat, asks at most one clarifying question, never claims it booked, saved or sent something, uses no tables, keeps Bale/Telegram replies short and follows Persian writing conventions (Persian digits, Solar Hijri dates, no Latin labels).
+* Improved: when the AI fails, administrators see the reason in plain words (rejected key, no credit, missing model, rate limit…) with the provider detail, and the dashboard warns until answers work again. Visitors still get the polite fallback.
+* New: an animated assistant character for the chat button and header, painted in your brand colour. It breathes, blinks, follows the pointer, hops on hover, winks on click and looks up while it thinks; reduced-motion settings switch the animation off. Choose "Simple chat icon" under Appearance to keep the old button.
+* Fixed: on phones, the WordPress toolbar covered the chat header for signed-in users.
+
 = 1.2.0 =
 
 * New module, Live chat: operators take over a conversation from the assistant in a two-pane inbox. Includes a waiting queue, automatic or manual assignment, online/offline status with an offline message, canned replies, an AI summary for the operator and transcript retention. Operators can reply from Bale or Telegram.

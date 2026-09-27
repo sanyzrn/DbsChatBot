@@ -125,6 +125,8 @@ if ( class_exists( 'WooCommerce' ) ) {
 		return true;
 	};
 	add_filter( 'ssc_sms_pre_send', $capture, 10, 3 );
+	// A number reminded within the week is skipped by design: start clean.
+	$wpdb->query( "DELETE FROM {$carts} WHERE phone IN ('09127778899', '09126665544')" );
 	SSC_Module_Woo::save_reminder( '09127778899', 'sess-test', array( 'کرم × 1' ), '240,000' );
 	$wpdb->query( $wpdb->prepare( "UPDATE {$carts} SET created_at = %s WHERE phone = '09127778899'", gmdate( 'Y-m-d H:i:s', current_time( 'timestamp' ) - 2 * HOUR_IN_SECONDS ) ) );
 	SSC_Module_Woo::send_reminders();

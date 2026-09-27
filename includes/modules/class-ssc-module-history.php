@@ -87,7 +87,7 @@ class SSC_Module_History extends SSC_Module {
 	 * @return bool
 	 */
 	public function is_configured() {
-		return 'yes' === SSC_Settings::get( 'chatlog_enabled', 'no' );
+		return 'yes' === SSC_Settings::get( 'chatlog_enabled', 'yes' );
 	}
 
 	/**
@@ -126,6 +126,7 @@ class SSC_Module_History extends SSC_Module {
 		$filters = array(
 			'source' => isset( $_GET['source'] ) ? sanitize_key( wp_unslash( $_GET['source'] ) ) : '',
 			'rating' => isset( $_GET['rating'] ) ? sanitize_key( wp_unslash( $_GET['rating'] ) ) : '',
+			'conv'   => isset( $_GET['conv'] ) ? sanitize_key( wp_unslash( $_GET['conv'] ) ) : '',
 			'page'   => isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1,
 		);
 		$result  = SSC_Schema::get_chatlog( $filters );

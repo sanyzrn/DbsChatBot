@@ -31,7 +31,8 @@ class SSC_Schema {
 	const LIVE_MESSAGES     = 'ssc_chatbot_live_messages';
 	const LIVE_REFS         = 'ssc_chatbot_live_refs';
 	const CARTS_TABLE       = 'ssc_chatbot_carts';
-	const DB_VERSION        = '16';
+	const MEMORY_TABLE      = 'ssc_chatbot_conversations';
+	const DB_VERSION        = '17';
 	const DB_VERSION_OPTION = 'ssc_chatbot_db_version';
 
 	/*
@@ -113,6 +114,7 @@ class SSC_Schema {
 			'messages' => self::LIVE_MESSAGES,
 			'refs'     => self::LIVE_REFS,
 			'carts'    => self::CARTS_TABLE,
+			'memory'   => self::MEMORY_TABLE,
 		);
 		return $wpdb->prefix . ( isset( $map[ $which ] ) ? $map[ $which ] : self::LIVE_THREADS );
 	}
@@ -181,9 +183,11 @@ class SSC_Schema {
 			in_bank TINYINT(1) NOT NULL DEFAULT 0,
 			rating TINYINT(1) NOT NULL DEFAULT 0,
 			ip VARCHAR(100) NULL,
+			conv_hash CHAR(64) NOT NULL DEFAULT '',
 			created_at DATETIME NULL,
 			PRIMARY KEY  (id),
 			KEY source (source),
+			KEY conv_hash (conv_hash),
 			KEY created_at (created_at)
 		) {$charset};"
 		);
@@ -332,6 +336,27 @@ class SSC_Schema {
 			KEY status_created (status, created_at)
 		) {$charset};"
 		);
+		$memory = self::live_table( 'memory' );
+		dbDelta(
+			"CREATE TABLE {$memory} (
+			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			conv_hash CHAR(64) NOT NULL,
+			conv_id VARCHAR(64) NOT NULL DEFAULT '',
+			user_id BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			channel VARCHAR(20) NOT NULL DEFAULT 'web',
+			title VARCHAR(191) NOT NULL DEFAULT '',
+			messages LONGTEXT NULL,
+			total INT UNSIGNED NOT NULL DEFAULT 0,
+			summary TEXT NULL,
+			summarized INT UNSIGNED NOT NULL DEFAULT 0,
+			created_at DATETIME NULL,
+			updated_at DATETIME NULL,
+			PRIMARY KEY  (id),
+			UNIQUE KEY conv_hash (conv_hash),
+			KEY user_updated (user_id, updated_at),
+			KEY updated_at (updated_at)
+		) {$charset};"
+		);
 		SSC_Notification_Queue::migrate_legacy();
 		// phpcs:enable
 
@@ -369,12 +394,31 @@ class SSC_Schema {
 			SSC_Settings::split_storage();
 			SSC_Settings::migrate_answer_scope();
 			self::migrate_product_ids();
+			self::migrate_chatlog_default();
 			// Setup state safety net for IN-PLACE updates (activation hooks do
 			// not re-run): a legacy live chatbot must stay live.
 			SSC_Setup::initialize_state();
 			update_option( self::DB_VERSION_OPTION, self::DB_VERSION, false );
 		} finally {
 			delete_transient( 'ssc_chatbot_upgrade_lock' );
+		}
+	}
+
+	/**
+	 * Conversation logging became the default in 1.3: switch the History
+	 * module and logging on once for sites upgrading from an earlier version.
+	 * An administrator who turns it off afterwards is never overruled.
+	 */
+	public static function migrate_chatlog_default() {
+		if ( get_option( 'ssc_chatlog_default_applied' ) ) {
+			return;
+		}
+		update_option( 'ssc_chatlog_default_applied', 1, false );
+		SSC_Settings::update( array( 'chatlog_enabled' => 'yes' ) );
+		$active = (array) get_option( SSC_Modules::OPTION, array() );
+		if ( ! in_array( 'history', $active, true ) ) {
+			$active[] = 'history';
+			update_option( SSC_Modules::OPTION, array_values( $active ), false );
 		}
 	}
 
@@ -816,9 +860,10 @@ class SSC_Schema {
 	 * @param string $source   ai|bank|cache|filter|unanswered.
 	 * @param string $product  Product scope.
 	 * @param string $ip       Client ip.
+	 * @param string $conv_hash Conversation hash (groups exchanges of one conversation).
 	 * @return int Row id (0 on failure).
 	 */
-	public static function log_chat( $question, $answer, $source, $product = 'general', $ip = '' ) {
+	public static function log_chat( $question, $answer, $source, $product = 'general', $ip = '', $conv_hash = '' ) {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- custom table insert.
 		$wpdb->insert(
@@ -829,9 +874,10 @@ class SSC_Schema {
 				'answer'     => sanitize_textarea_field( $answer ),
 				'source'     => sanitize_key( $source ),
 				'ip'         => $ip,
+				'conv_hash'  => preg_match( '/^[a-f0-9]{64}$/', (string) $conv_hash ) ? $conv_hash : '',
 				'created_at' => current_time( 'mysql' ),
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s' )
+			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
 		);
 		return (int) $wpdb->insert_id;
 	}
@@ -867,6 +913,7 @@ class SSC_Schema {
 			array(
 				'source'   => '',
 				'rating'   => '',
+				'conv'     => '',
 				'per_page' => 30,
 				'page'     => 1,
 			)
@@ -881,12 +928,19 @@ class SSC_Schema {
 			$where[]  = 'rating = %d';
 			$params[] = (int) $args['rating'];
 		}
+		$order = 'DESC';
+		if ( preg_match( '/^[a-f0-9]{64}$/', (string) $args['conv'] ) ) {
+			// One whole conversation, read top to bottom.
+			$where[]  = 'conv_hash = %s';
+			$params[] = $args['conv'];
+			$order    = 'ASC';
+		}
 		$where_sql = implode( ' AND ', $where );
 		$per_page  = max( 1, min( 200, (int) $args['per_page'] ) );
 		$offset    = ( max( 1, (int) $args['page'] ) - 1 ) * $per_page;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- parameterized.
-		$sql       = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY id DESC LIMIT %d OFFSET %d";
+		$sql       = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY id {$order} LIMIT %d OFFSET %d";
 		$rows      = $wpdb->get_results( $wpdb->prepare( $sql, array_merge( $params, array( $per_page, $offset ) ) ), ARRAY_A );
 		$count_sql = "SELECT COUNT(*) FROM {$table} WHERE {$where_sql}";
 		if ( $params ) {

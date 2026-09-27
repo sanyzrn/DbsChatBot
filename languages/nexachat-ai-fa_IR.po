@@ -125,6 +125,9 @@ msgstr "شمارهٔ موبایل معتبر و متن پیام لازم است.
 msgid "A visitor wants to talk to a person (%s)"
 msgstr "یک بازدیدکننده می‌خواهد با یک نفر صحبت کند (%s)"
 
+msgid "A visitor who comes back within this time continues the same conversation, and the assistant still knows what was said. Pharmaceutical mode always uses one day and never keeps the chat in the browser."
+msgstr "بازدیدکننده‌ای که در این مدت برگردد، همان گفتگو را ادامه می‌دهد و دستیار هنوز می‌داند چه گفته شده است. در حالت دارویی این مدت همیشه یک روز است و گفتگو در مرورگر نگه داشته نمی‌شود."
+
 msgid "ADR Cases"
 msgstr "پرونده‌های عوارض دارویی"
 
@@ -236,6 +239,9 @@ msgstr "سؤال‌های تکمیلی"
 msgid "Admin-only notice — AI engine error:"
 msgstr "اعلان فقط برای مدیر — خطای موتور هوش مصنوعی:"
 
+msgid "Admin-only notice: the AI could not answer."
+msgstr "پیام مخصوص مدیر: هوش مصنوعی نتوانست پاسخ دهد."
+
 msgid "Administrators can always answer. Choose other team members who may answer chats, too; each operator can connect their own Bale/Telegram account on the Live chat screen."
 msgstr "مدیران همیشه می‌توانند پاسخ دهند. اعضای دیگر تیم را که اجازهٔ پاسخ‌گویی دارند هم انتخاب کنید؛ هر اپراتور می‌تواند حساب بله یا تلگرام خودش را در صفحهٔ گفتگوی زنده وصل کند."
 
@@ -299,6 +305,9 @@ msgstr "تحلیل‌ها"
 msgid "Analytics & Insights"
 msgstr "تحلیل و بینش"
 
+msgid "Animated character (brand colour)"
+msgstr "شخصیت متحرک (به رنگ برند)"
+
 msgid "Anonymized (network part only — recommended)"
 msgstr "ناشناس‌شده (فقط بخش شبکه — توصیه‌شده)"
 
@@ -350,6 +359,9 @@ msgstr "ظاهر ذخیره شد."
 msgid "Applied to your cart ✓"
 msgstr "روی سبد خرید شما اعمال شد ✓"
 
+msgid "Applies to every form. Conversations are logged for quality review while the History module is on (the widget says so); browser transcripts and shared answer caching are disabled in pharmaceutical mode. Submitted forms are stored independently of chat history."
+msgstr "برای همهٔ فرم‌ها اعمال می‌شود. تا وقتی ماژول تاریخچه روشن است، گفتگوها برای بررسی کیفیت ثبت می‌شوند (و ویجت هم این را اعلام می‌کند)؛ در حالت دارویی متن گفتگو در مرورگر ذخیره نمی‌شود و پاسخ‌ها کش مشترک ندارند. فرم‌های ارسال‌شده جدا از تاریخچهٔ گفتگو نگهداری می‌شوند."
+
 msgid "Applies to every form. Server transcript logging is opt-in; browser transcripts and shared answer caching are disabled in pharmaceutical mode. Submitted forms are stored independently of chat history."
 msgstr "برای همهٔ فرم‌ها اعمال می‌شود. ثبت گفتگو در سرور اختیاری است؛ در حالت دارویی، ذخیرهٔ گفتگو در مرورگر و کش مشترک پاسخ غیرفعال است. فرم‌های ارسالی مستقل از تاریخچهٔ گفتگو ذخیره می‌شوند."
 
@@ -391,6 +403,9 @@ msgstr "رنگ حباب دستیار"
 
 msgid "Assistant display name"
 msgstr "نام نمایشی دستیار"
+
+msgid "Assistant look"
+msgstr "ظاهر دستیار"
 
 msgid "Assistant name"
 msgstr "نام دستیار"
@@ -436,6 +451,12 @@ msgstr "خارج از دسترس"
 
 msgid "Back"
 msgstr "بازگشت"
+
+msgid "Back to all conversations"
+msgstr "بازگشت به همهٔ گفتگوها"
+
+msgid "Back to chat"
+msgstr "بازگشت به گفتگو"
 
 msgid "Back to the assistant"
 msgstr "بازگشت به دستیار"
@@ -788,6 +809,9 @@ msgstr "گفتگوها (کل دوره)"
 msgid "Conversations appear here as they happen. Take over from the assistant at any time; while you are in the chat, the assistant stays quiet."
 msgstr "گفتگوها همان لحظه این‌جا نمایش داده می‌شوند. هر وقت بخواهید می‌توانید گفتگو را از دستیار تحویل بگیرید؛ تا وقتی شما در گفتگو هستید، دستیار پاسخ نمی‌دهد."
 
+msgid "Conversations are saved to improve our answers."
+msgstr "گفتگوها برای بهبود پاسخ‌ها ذخیره می‌شوند."
+
 msgid "Copied ✓"
 msgstr "کپی شد ✓"
 
@@ -877,6 +901,9 @@ msgstr "حذف"
 
 msgid "Delete case"
 msgstr "حذف پرونده"
+
+msgid "Delete this conversation"
+msgstr "حذف این گفتگو"
 
 msgid "Desktop only"
 msgstr "فقط دسکتاپ"
@@ -1642,6 +1669,9 @@ msgstr "سفارشی با این مشخصات پیدا نشد. شمارهٔ سف
 msgid "No other team members yet (editors, shop managers…). Administrators answer chats."
 msgstr "هنوز عضو دیگری در تیم نیست (ویرایشگر، مدیر فروشگاه و…). مدیران به گفتگوها پاسخ می‌دهند."
 
+msgid "No previous conversations yet."
+msgstr "هنوز گفتگوی قبلی ندارید."
+
 msgid "No product conversations recorded yet."
 msgstr "هنوز گفتگویی دربارهٔ محصولات ثبت نشده است."
 
@@ -1959,6 +1989,9 @@ msgstr "برای باز کردن گفتگو Alt+C را بزنید"
 msgid "Preview theme"
 msgstr "تم پیش‌نمایش"
 
+msgid "Previous conversations"
+msgstr "گفتگوهای قبلی"
+
 msgid "Primary answer language"
 msgstr "زبان اصلی پاسخ"
 
@@ -2049,6 +2082,9 @@ msgstr "حفاظت و محدودیت‌ها"
 msgid "Provider"
 msgstr "ارائه‌دهنده"
 
+msgid "Provider detail:"
+msgstr "جزئیات سرویس‌دهنده:"
+
 msgid "Publish chatbot"
 msgstr "انتشار چت‌بات"
 
@@ -2129,6 +2165,9 @@ msgstr "معیارهای جدی‌بودن عارضه (موارد مرتبط ر�
 
 msgid "Related questions:"
 msgstr "پرسش‌های مرتبط:"
+
+msgid "Remember a visitor's conversation for (days)"
+msgstr "مدت به خاطر سپردن گفتگوی بازدیدکننده (روز)"
 
 msgid "Remind me about my cart by SMS"
 msgstr "یادآوری سبد خریدم با پیامک"
@@ -2493,8 +2532,20 @@ msgstr "زمان نمایش دعوت"
 msgid "Show the source documents under AI answers"
 msgstr "نمایش اسناد منبع زیر پاسخ‌های هوش مصنوعی"
 
+msgid "Showing one whole conversation, oldest message first."
+msgstr "نمایش یک گفتگوی کامل، از قدیمی‌ترین پیام."
+
 msgid "Side-effect report form"
 msgstr "فرم گزارش عارضهٔ دارویی"
+
+msgid "Sign in to see your conversations."
+msgstr "برای دیدن گفتگوهایتان وارد حساب شوید."
+
+msgid "Signed-in users can reopen their previous conversations on any device"
+msgstr "کاربرانِ واردشده بتوانند گفتگوهای قبلی خود را روی هر دستگاهی دوباره باز کنند"
+
+msgid "Simple chat icon"
+msgstr "آیکون ساده گفتگو"
 
 msgid "Single choice"
 msgstr "تک‌گزینه‌ای"
@@ -2631,6 +2682,9 @@ msgstr "امکان صحبت با اپراتور در این‌جا فعال نی
 msgid "Telegram"
 msgstr "تلگرام"
 
+msgid "Tell visitors in the chat window that conversations are saved"
+msgstr "در پنجرهٔ گفتگو به بازدیدکنندگان اطلاع داده شود که گفتگوها ذخیره می‌شوند"
+
 msgid "Template \"%s\" applied to the empty fields."
 msgstr "قالب «%s» روی فیلدهای خالی اعمال شد."
 
@@ -2663,6 +2717,11 @@ msgstr "پاسخ هوش مصنوعی قابل خواندن نبود. دوبار�
 
 msgid "The AI assistant is locked to strict pharmacovigilance answer rules: no invented medical claims, no personalized treatment advice."
 msgstr "دستیار هوش مصنوعی به قواعد سخت‌گیرانهٔ پاسخ‌دهی ایمنی دارو محدود است: بدون ادعای پزشکی ساختگی و بدون توصیهٔ درمانی شخصی."
+
+msgid "The AI engine failed to answer %1$d time in the last day: %2$s"
+msgid_plural "The AI engine failed to answer %1$d times in the last day: %2$s"
+msgstr[0] "موتور هوش مصنوعی در یک روز گذشته %1$d بار نتوانست پاسخ دهد: %2$s"
+msgstr[1] "موتور هوش مصنوعی در یک روز گذشته %1$d بار نتوانست پاسخ دهد: %2$s"
 
 msgid "The AI provider did not answer. Please try again in a minute."
 msgstr "سرویس هوش مصنوعی پاسخ نداد. یک دقیقه دیگر دوباره امتحان کنید."
@@ -2703,6 +2762,9 @@ msgstr "دستیار هنوز در دسترس نیست."
 msgid "The assistant is not available yet. Please try again later."
 msgstr "دستیار هنوز در دسترس نیست. لطفاً بعداً دوباره تلاش کنید."
 
+msgid "The assistant is not available."
+msgstr "دستیار در دسترس نیست."
+
 msgid "The assistant is published without an AI engine — it can only answer from your FAQ bank."
 msgstr "دستیار بدون موتور هوش مصنوعی منتشر شده است — فقط می‌تواند از بانک پرسش‌وپاسخ شما پاسخ دهد."
 
@@ -2714,6 +2776,9 @@ msgstr "اپراتور در دسترس با کمترین گفتگوی باز"
 
 msgid "The bot could not be connected: %s"
 msgstr "اتصال ربات برقرار نشد: %s"
+
+msgid "The character breathes, blinks, follows the pointer and looks up while it thinks. A custom button image or avatar below always wins."
+msgstr "شخصیت نفس می‌کشد، پلک می‌زند، نگاهش نشانگر ماوس را دنبال می‌کند و وقتی در حال فکر کردن است به بالا نگاه می‌کند. اگر تصویر دکمه یا آواتار دلخواه در پایین تعیین کنید، همان نمایش داده می‌شود."
 
 msgid "The chat could not be identified. Please refresh the page."
 msgstr "گفتگو شناسایی نشد. لطفاً صفحه را دوباره بارگذاری کنید."
@@ -2774,6 +2839,9 @@ msgstr "فرم ثبت نشد. لطفاً دوباره تلاش کنید."
 
 msgid "The identity test could not run."
 msgstr "آزمون هویت اجرا نشد."
+
+msgid "The latest messages the AI reads word for word. Older messages are not forgotten: they are kept as a short summary."
+msgstr "تعداد آخرین پیام‌هایی که هوش مصنوعی کلمه‌به‌کلمه می‌خواند. پیام‌های قدیمی‌تر فراموش نمی‌شوند و به‌صورت یک خلاصهٔ کوتاه نگه داشته می‌شوند."
 
 msgid "The live inbox needs JavaScript."
 msgstr "صندوق گفتگوی زنده به جاوااسکریپت نیاز دارد."
@@ -2888,6 +2956,9 @@ msgstr "این گفتگو بسته شده است."
 
 msgid "This chat is closed; the visitor will not see new messages."
 msgstr "این گفتگو بسته شده است؛ بازدیدکننده پیام‌های جدید را نمی‌بیند."
+
+msgid "This conversation is no longer available."
+msgstr "این گفتگو دیگر در دسترس نیست."
 
 msgid "This does not look like a PDF file."
 msgstr "این فایل PDF به نظر نمی‌رسد."
@@ -3179,6 +3250,9 @@ msgstr "دستیار نمایندهٔ چه کسی است؟"
 
 msgid "Who gets a waiting chat"
 msgstr "گفتگوی منتظر به چه کسی برسد"
+
+msgid "Whole conversation"
+msgstr "کل گفتگو"
 
 msgid "Widget behaviour"
 msgstr "رفتار ویجت"

@@ -45,6 +45,7 @@ class SSC_Cron {
 		add_action( self::HOOK, array( __CLASS__, 'run' ) );
 		add_action( self::RETRY_HOOK, array( 'SSC_Module_Notifications', 'retry_failed' ) );
 		add_action( SSC_Embeddings::CRON_HOOK, array( 'SSC_Embeddings', 'cron_run' ) );
+		add_action( SSC_Conversation::SUMMARY_HOOK, array( 'SSC_Conversation', 'refresh_summary' ) );
 		add_filter( 'cron_schedules', array( __CLASS__, 'schedules' ) );
 	}
 
@@ -74,10 +75,11 @@ class SSC_Cron {
 	 */
 	public static function run() {
 		SSC_Schema::purge_old(
-			(int) SSC_Settings::get( 'chatlog_retention_days', 90 ),
+			(int) SSC_Settings::get( 'chatlog_retention_days', 30 ),
 			(int) SSC_Settings::get( 'submissions_retention_days', 0 )
 		);
 		SSC_Notification_Queue::purge_completed();
+		SSC_Conversation::purge();
 		// Provider/model changes leave chunks without a current vector.
 		SSC_Embeddings::schedule();
 	}

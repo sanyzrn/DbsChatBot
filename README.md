@@ -87,6 +87,15 @@ Added in 1.2, also off by default:
 The knowledge base also imports PDF and Word files, and can draft FAQs and a
 persona with AI for review. The wizard offers six industry templates.
 
+### Conversation memory
+
+Conversations are kept server-side (by an unguessable id; the browser never
+supplies the model's context) and survive closing the tab for a configurable
+number of days. The newest messages reach the model word for word; older ones
+are condensed into a rolling summary, fenced as data. Signed-in users can reopen
+their conversations on any device. Conversation logging for quality review is on
+by default and announced in the chat window.
+
 ### Pharmaceutical extension
 
 An independent layer for pharmacovigilance: a structured adverse-reaction form,
@@ -288,6 +297,8 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 - **یادگیری از سایت:** صفحه‌ها، نوشته‌ها و محصولات خودکار به دانش دستیار تبدیل و به‌روز می‌شوند
 
 همچنین: ورود PDF و Word به پایگاه دانش، پیشنهاد پرسش‌های متداول و پرسونا با هوش مصنوعی، و شش قالب صنفی در جادوگر راه‌اندازی.
+
+**حافظهٔ گفتگو:** گفتگو با بستن تب از بین نمی‌رود و بازدیدکننده تا چند روز (قابل تنظیم) همان گفتگو را ادامه می‌دهد. پیام‌های آخر کلمه‌به‌کلمه و پیام‌های قدیمی‌تر به‌صورت خلاصهٔ غلتان به هوش مصنوعی داده می‌شوند. کاربرانِ واردشده گفتگوهای قبلی‌شان را روی هر دستگاهی می‌بینند. ثبت گفتگو برای بررسی کیفیت به‌طور پیش‌فرض روشن است و در پنجرهٔ گفتگو اعلام می‌شود. شخصیت متحرک دستیار هم به رنگ برند شما نمایش داده می‌شود.
 
 ### افزونهٔ دارویی
 

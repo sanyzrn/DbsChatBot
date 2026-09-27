@@ -284,7 +284,8 @@
 			bubble_radius: 'bubbleRadius',
 			user_bubble_color: 'userBubble',
 			bot_bubble_color: 'botBubble',
-			launcher_size: 'launcherSize'
+			launcher_size: 'launcherSize',
+			launcher_style: 'launcherStyle'
 		};
 		var numeric = { font_size: 1, window_radius: 1, bubble_radius: 1, launcher_size: 1 };
 

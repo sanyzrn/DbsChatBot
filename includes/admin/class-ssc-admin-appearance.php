@@ -34,7 +34,7 @@ class SSC_Admin_Appearance {
 		}
 
 		$patch = array();
-		foreach ( array( 'theme_mode', 'position', 'direction', 'widget_language', 'font_family', 'assistant_display_name', 'welcome_title', 'welcome_text', 'disclaimer', 'primary_color', 'user_bubble_color', 'bot_bubble_color', 'avatar_url', 'launcher_icon_url', 'font_name', 'font_url' ) as $key ) {
+		foreach ( array( 'theme_mode', 'position', 'direction', 'widget_language', 'font_family', 'assistant_display_name', 'welcome_title', 'welcome_text', 'disclaimer', 'primary_color', 'user_bubble_color', 'bot_bubble_color', 'avatar_url', 'launcher_icon_url', 'launcher_style', 'font_name', 'font_url' ) as $key ) {
 			if ( isset( $_POST[ $key ] ) ) {
 				$patch[ $key ] = SSC_Settings::sanitize_value( $key, wp_unslash( $_POST[ $key ] ) );
 			} elseif ( in_array( $key, array( 'user_bubble_color', 'bot_bubble_color' ), true ) ) {

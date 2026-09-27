@@ -64,6 +64,14 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 							</select>
 						</div>
 						<div class="ssc-field">
+							<label for="launcher_style"><?php esc_html_e( 'Assistant look', 'nexachat-ai' ); ?></label>
+							<select id="launcher_style" name="launcher_style">
+								<option value="mascot" <?php selected( $s['launcher_style'], 'mascot' ); ?>><?php esc_html_e( 'Animated character (brand colour)', 'nexachat-ai' ); ?></option>
+								<option value="icon" <?php selected( $s['launcher_style'], 'icon' ); ?>><?php esc_html_e( 'Simple chat icon', 'nexachat-ai' ); ?></option>
+							</select>
+							<p class="ssc-field__hint"><?php esc_html_e( 'The character breathes, blinks, follows the pointer and looks up while it thinks. A custom button image or avatar below always wins.', 'nexachat-ai' ); ?></p>
+						</div>
+						<div class="ssc-field">
 							<label for="direction"><?php esc_html_e( 'Chat text direction', 'nexachat-ai' ); ?></label>
 							<select id="direction" name="direction">
 								<option value="rtl" <?php selected( $dir, 'rtl' ); ?>><?php esc_html_e( 'RTL (Persian/Arabic)', 'nexachat-ai' ); ?></option>

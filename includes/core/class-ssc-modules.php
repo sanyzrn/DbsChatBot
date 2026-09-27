@@ -182,7 +182,7 @@ class SSC_Modules {
 
 	/**
 	 * Derive the 5.0 module state from legacy 4.x toggles (upgrade path).
-	 * New installations get an EMPTY list (all modules off).
+	 * New installations get only the History module.
 	 *
 	 * @return string[]
 	 */
@@ -190,7 +190,9 @@ class SSC_Modules {
 		$settings = get_option( SSC_Settings::OPTION_KEY, array() );
 		$legacy   = is_array( $settings ) && ( isset( $settings['company_id'] ) || isset( $settings['show_company'] ) );
 		if ( ! $legacy ) {
-			return array(); // Fresh install: everything optional stays off.
+			// Fresh install: everything optional stays off, except conversation
+			// history, which the assistant's quality review depends on.
+			return array( 'history' );
 		}
 
 		$active = array();
