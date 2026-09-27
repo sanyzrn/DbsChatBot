@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-27 17:10:19+00:00\n"
+"POT-Creation-Date: 2026-09-27 17:28:35+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -29,7 +29,28 @@ msgstr ""
 #: includes/modules/class-ssc-module-history.php:122
 #: includes/modules/class-ssc-module-leads.php:116
 #: includes/modules/class-ssc-module-leads.php:376
+#: includes/modules/class-ssc-module-live.php:1076
+#: includes/modules/class-ssc-module-live.php:1427
 msgid "Insufficient permissions."
+msgstr ""
+
+#: includes/admin/class-ssc-admin-settings.php:159
+msgid "Add the bot token first."
+msgstr ""
+
+#. translators: %s: error from the messenger.
+#: includes/admin/class-ssc-admin-settings.php:168
+msgid "The bot could not be connected: %s"
+msgstr ""
+
+#. translators: %s: bot username.
+#: includes/admin/class-ssc-admin-settings.php:176
+msgid "Connected to %s. New messages are checked every minute, and every few seconds while the Live chat screen is open."
+msgstr ""
+
+#. translators: %s: bot username.
+#: includes/admin/class-ssc-admin-settings.php:178
+msgid "Connected to %s. Messages arrive instantly."
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:78
@@ -113,7 +134,7 @@ msgid "Verify & Launch"
 msgstr ""
 
 #: includes/admin/views/page-analytics.php:16
-#: includes/core/class-ssc-modules.php:236
+#: includes/core/class-ssc-modules.php:237
 #: includes/modules/class-ssc-module-analytics.php:142
 #: includes/modules/class-ssc-module-analytics.php:143
 msgid "Analytics"
@@ -650,6 +671,7 @@ msgid "Save connection"
 msgstr ""
 
 #: includes/admin/views/page-conversations.php:17
+#: includes/admin/views/page-live.php:27
 #: includes/modules/class-ssc-module-history.php:109
 #: includes/modules/class-ssc-module-history.php:110
 msgid "Conversations"
@@ -1109,7 +1131,7 @@ msgstr ""
 
 #: includes/admin/views/page-knowledge.php:107
 #: includes/admin/views/wizard.php:216
-#: includes/core/class-ssc-schema.php:483
+#: includes/core/class-ssc-schema.php:550
 msgid "General"
 msgstr ""
 
@@ -1267,6 +1289,42 @@ msgstr ""
 
 #: includes/admin/views/page-knowledge.php:230
 msgid "Upload file"
+msgstr ""
+
+#: includes/admin/views/page-live.php:13
+#: includes/modules/class-ssc-module-live.php:1362
+#: includes/modules/class-ssc-module-live.php:1364
+msgid "Live chat"
+msgstr ""
+
+#: includes/admin/views/page-live.php:14
+msgid "Conversations appear here as they happen. Take over from the assistant at any time; while you are in the chat, the assistant stays quiet."
+msgstr ""
+
+#: includes/admin/views/page-live.php:20
+#: includes/modules/class-ssc-module-live.php:1405
+msgid "Available"
+msgstr ""
+
+#: includes/admin/views/page-live.php:25
+msgid "The live inbox needs JavaScript."
+msgstr ""
+
+#: includes/admin/views/page-live.php:29
+#: includes/modules/class-ssc-module-live.php:1415
+msgid "Open"
+msgstr ""
+
+#: includes/admin/views/page-live.php:30
+#: includes/modules/class-ssc-module-live.php:1416
+#: includes/modules/class-ssc-module-live.php:877
+#: includes/modules/class-ssc-module-pharma.php:1243
+msgid "Closed"
+msgstr ""
+
+#: includes/admin/views/page-live.php:35
+#: includes/modules/class-ssc-module-live.php:1392
+msgid "Choose a conversation on the left."
 msgstr ""
 
 #: includes/admin/views/page-modules.php:24
@@ -1443,7 +1501,7 @@ msgstr ""
 
 #: includes/admin/views/page-requests.php:57
 #: includes/admin/views/pharma-case.php:39
-#: includes/core/class-ssc-settings.php:1006
+#: includes/core/class-ssc-settings.php:1036
 msgid "Phone"
 msgstr ""
 
@@ -1488,7 +1546,7 @@ msgid "Protection"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:42
-#: includes/admin/views/page-settings.php:440
+#: includes/admin/views/page-settings.php:519
 msgid "Data tools"
 msgstr ""
 
@@ -1916,59 +1974,141 @@ msgstr ""
 msgid "+ Add field"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:405
-msgid "Notifications module"
+#: includes/admin/views/page-settings.php:406
+msgid "Bale / Telegram bot"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:408
-msgid "Messenger platform"
+#: includes/admin/views/page-settings.php:407
+msgid "One bot serves alerts, operator replies and customer chats. Create it with @BotFather (Telegram) or @botfather in Bale, then paste its token here. On servers inside Iran use Bale: Telegram is not reachable from there."
 msgstr ""
 
 #: includes/admin/views/page-settings.php:410
+msgid "Messenger platform"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:412
+#: includes/core/class-ssc-messenger.php:80
 msgid "Bale"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:411
+#: includes/admin/views/page-settings.php:413
+#: includes/core/class-ssc-messenger.php:80
 msgid "Telegram"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:415
-msgid "Chat / channel ID"
-msgstr ""
-
-#: includes/admin/views/page-settings.php:420
+#: includes/admin/views/page-settings.php:417
 msgid "Bot token"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:421
+#: includes/admin/views/page-settings.php:418
 msgid "A token is stored — type to replace"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:423
+#: includes/admin/views/page-settings.php:420
 msgid "Remove the stored token"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:426
-msgid "Also send email notifications"
+msgid "How messages reach this site"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:428
-msgid "Email recipient (empty = site admin)"
+msgid "Instantly (webhook) — recommended for a public HTTPS site"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:435
-msgid "Save settings"
+#: includes/admin/views/page-settings.php:429
+msgid "Checked every minute (polling) — for sites the messenger cannot reach"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:431
+msgid "With polling, replies also arrive within seconds while the Live chat screen is open."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:436
+msgid "Save and connect the bot"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:443
+msgid "Live chat module"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:444
+msgid "Administrators can always answer. Choose other team members who may answer chats, too; each operator can connect their own Bale/Telegram account on the Live chat screen."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:456
+msgid "Operators"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:459
+msgid "No other team members yet (editors, shop managers…). Administrators answer chats."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:467
+msgid "Who gets a waiting chat"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:469
+msgid "The available operator with the fewest open chats"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:470
+msgid "Everyone is notified; the first to take it answers"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:474
+msgid "Offer the request form after (minutes without an answer)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:478
+msgid "Keep chat transcripts for (days)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:483
+msgid "Greeting when an operator joins ({name} = operator name)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:487
+msgid "Message when nobody can answer"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:491
+msgid "Saved replies (one per line)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:499
+msgid "Notifications module"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:501
+msgid "Chat / channel ID for alerts"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:503
+msgid "New requests are posted here through the bot configured in the \"Bale / Telegram bot\" card."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:505
+msgid "Also send email notifications"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:507
+msgid "Email recipient (empty = site admin)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:514
+msgid "Save settings"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:522
 msgid "Clear cached AI answers"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:450
+#: includes/admin/views/page-settings.php:529
 msgid "Remove ALL plugin data (settings, knowledge, requests, ADR cases, logs) when the plugin is deleted. Set this policy before deactivation; an inactive plugin cannot display a deletion prompt. Keep this off to preserve your data."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:452
+#: includes/admin/views/page-settings.php:531
 msgid "Save data policy"
 msgstr ""
 
@@ -2408,63 +2548,65 @@ msgstr ""
 
 #: includes/core/class-ssc-ajax.php:83
 #: includes/core/class-ssc-rest.php:53
+#: includes/modules/class-ssc-module-live.php:1058
 msgid "The request is too large."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:104
 #: includes/core/class-ssc-ajax.php:140
 #: includes/core/class-ssc-rest.php:341
-#: includes/core/class-ssc-rest.php:367
-#: includes/core/class-ssc-rest.php:382
-#: includes/core/class-ssc-rest.php:428
+#: includes/core/class-ssc-rest.php:368
+#: includes/core/class-ssc-rest.php:383
+#: includes/core/class-ssc-rest.php:430
+#: includes/modules/class-ssc-module-live.php:1055
 msgid "The assistant is not available yet."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:108
 #: includes/core/class-ssc-frontend.php:260
 #: includes/core/class-ssc-rest.php:345
-#: includes/core/class-ssc-rest.php:386
+#: includes/core/class-ssc-rest.php:387
 msgid "You have reached the daily usage limit. Please try again tomorrow."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:115
-#: includes/core/class-ssc-rest.php:398
-#: includes/core/class-ssc-rest.php:601
+#: includes/core/class-ssc-rest.php:400
+#: includes/core/class-ssc-rest.php:604
 msgid "The message could not be processed."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:119
-#: includes/core/class-ssc-rest.php:404
+#: includes/core/class-ssc-rest.php:406
 msgid "Admin-only notice — AI engine error:"
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:147
-#: includes/core/class-ssc-rest.php:439
+#: includes/core/class-ssc-rest.php:441
 #: includes/modules/class-ssc-module-leads.php:216
 #: includes/modules/class-ssc-module-pharma.php:825
 msgid "ADR reporting is disabled on this site."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:152
-#: includes/core/class-ssc-rest.php:444
+#: includes/core/class-ssc-rest.php:446
 #: includes/modules/class-ssc-module-leads.php:223
 msgid "Form submission is disabled on this site."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:158
-#: includes/core/class-ssc-rest.php:451
+#: includes/core/class-ssc-rest.php:453
 msgid "Too many submissions today. Please try again tomorrow."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:173
-#: includes/core/class-ssc-rest.php:490
+#: includes/core/class-ssc-rest.php:492
 msgid "Feedback is disabled on this site."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:179
 #: includes/core/class-ssc-ajax.php:220
-#: includes/core/class-ssc-rest.php:497
-#: includes/core/class-ssc-rest.php:524
+#: includes/core/class-ssc-rest.php:499
+#: includes/core/class-ssc-rest.php:526
 msgid "Too many votes today."
 msgstr ""
 
@@ -2473,12 +2615,12 @@ msgid "Invalid feedback."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:213
-#: includes/core/class-ssc-rest.php:517
+#: includes/core/class-ssc-rest.php:519
 msgid "The survey is disabled on this site."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:217
-#: includes/core/class-ssc-rest.php:521
+#: includes/core/class-ssc-rest.php:523
 msgid "Invalid score."
 msgstr ""
 
@@ -2487,7 +2629,7 @@ msgid "Select and save an AI provider first."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:243
-#: includes/core/class-ssc-rest.php:579
+#: includes/core/class-ssc-rest.php:581
 msgid "Connection verified — the model replied successfully."
 msgstr ""
 
@@ -2495,7 +2637,7 @@ msgstr ""
 msgid "We are currently away. Leave a message and we will get back to you during business hours."
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:232
+#: includes/core/class-ssc-chat-engine.php:250
 msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
 msgstr ""
 
@@ -2522,6 +2664,7 @@ msgid "New conversation"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:254
+#: includes/modules/class-ssc-module-live.php:1395
 msgid "Close chat"
 msgstr ""
 
@@ -2570,8 +2713,8 @@ msgid "Which one?"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:268
-#: includes/core/class-ssc-schema.php:454
-#: includes/core/class-ssc-schema.php:478
+#: includes/core/class-ssc-schema.php:521
+#: includes/core/class-ssc-schema.php:545
 msgid "Consultation request"
 msgstr ""
 
@@ -2751,28 +2894,53 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
+#: includes/core/class-ssc-messenger.php:111
+msgid "No bot token is configured."
+msgstr ""
+
+#: includes/core/class-ssc-messenger.php:117
+msgid "The messenger did not answer."
+msgstr ""
+
+#: includes/core/class-ssc-messenger.php:122
+msgid "The messenger rejected the request."
+msgstr ""
+
+#: includes/core/class-ssc-messenger.php:449
+msgid "This link code is invalid or expired. Create a new one in the Live inbox."
+msgstr ""
+
+#. translators: %s: operator first name.
+#: includes/core/class-ssc-messenger.php:470
+msgid "Connected, %s. New chats waiting for a person will arrive here. Reply to a chat message to answer the visitor. Commands: /bot returns the chat to the assistant, /close ends it."
+msgstr ""
+
+#: includes/core/class-ssc-messenger.php:587
+msgid "NexaChatAI: every minute"
+msgstr ""
+
 #. translators: %s: comma-separated list of required module names.
-#: includes/core/class-ssc-modules.php:131
+#: includes/core/class-ssc-modules.php:132
 msgid "This module needs: %s"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:234
+#: includes/core/class-ssc-modules.php:235
 msgid "Customer Engagement"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:235
+#: includes/core/class-ssc-modules.php:236
 msgid "Communication"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:237
+#: includes/core/class-ssc-modules.php:238
 msgid "Knowledge & Intelligence"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:238
+#: includes/core/class-ssc-modules.php:239
 msgid "Business Tools"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:239
+#: includes/core/class-ssc-modules.php:240
 msgid "Industry Extensions"
 msgstr ""
 
@@ -2808,79 +2976,79 @@ msgstr ""
 msgid "Your session has expired. Please refresh the page."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:500
+#: includes/core/class-ssc-rest.php:502
 msgid "Invalid rating."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:503
+#: includes/core/class-ssc-rest.php:505
 msgid "Invalid feedback token."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:547
+#: includes/core/class-ssc-rest.php:549
 msgid "Unknown provider."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:626
+#: includes/core/class-ssc-rest.php:629
 msgid "Configure and verify an AI provider first."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:635
+#: includes/core/class-ssc-rest.php:638
 msgid "Complete the business profile (step 1) first."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:663
+#: includes/core/class-ssc-rest.php:666
 msgid "The identity test could not run."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:680
+#: includes/core/class-ssc-rest.php:683
 msgid "Identity verified — the assistant correctly identified your organization."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:680
+#: includes/core/class-ssc-rest.php:683
 msgid "The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again."
 msgstr ""
 
-#: includes/core/class-ssc-schema.php:477
+#: includes/core/class-ssc-schema.php:544
 #: includes/modules/class-ssc-module-pharma.php:152
 msgid "Adverse drug reaction report"
 msgstr ""
 
-#: includes/core/class-ssc-schema.php:662
+#: includes/core/class-ssc-schema.php:729
 msgid "Submission deleted"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1004
+#: includes/core/class-ssc-settings.php:1034
 #: includes/modules/class-ssc-module-pharma.php:483
 msgid "Short text"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1005
+#: includes/core/class-ssc-settings.php:1035
 #: includes/modules/class-ssc-module-pharma.php:484
 msgid "Long text"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1007
+#: includes/core/class-ssc-settings.php:1037
 msgid "Email"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1008
+#: includes/core/class-ssc-settings.php:1038
 #: includes/modules/class-ssc-module-pharma.php:485
 msgid "Number"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1009
+#: includes/core/class-ssc-settings.php:1039
 msgid "Dropdown"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1010
+#: includes/core/class-ssc-settings.php:1040
 msgid "Single choice"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1011
+#: includes/core/class-ssc-settings.php:1041
 msgid "Checkbox"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1105
+#: includes/core/class-ssc-settings.php:1135
 msgid "About the organization"
 msgstr ""
 
@@ -3057,6 +3225,235 @@ msgstr ""
 
 #: includes/modules/class-ssc-module-leads.php:379
 msgid "Invalid nonce."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:52
+msgid "Live chat & operator inbox"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:61
+msgid "See conversations as they happen, take over from the assistant with one click, and answer from the dashboard or straight from Bale/Telegram. Visitors can ask for a person at any time."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:70
+msgid "The assistant and your team in one chat: no lost customers when a question needs a person."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:261
+#: includes/modules/class-ssc-module-live.php:958
+msgid "Support team"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:444
+msgid "The visitor asked to talk to a person."
+msgstr ""
+
+#. translators: %s: operator name.
+#: includes/modules/class-ssc-module-live.php:446
+msgid "%s joined the chat."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:447
+#: includes/modules/class-ssc-module-live.php:662
+msgid "The assistant is answering again."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:448
+msgid "The chat was closed."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:579
+msgid "I have asked a colleague to join. Please stay in this chat; you can keep writing in the meantime."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:590
+msgid "Our team is not available right now. Leave your number and we will call you back."
+msgstr ""
+
+#. translators: %s: operator name.
+#: includes/modules/class-ssc-module-live.php:605
+msgid "Hi, this is %s from the support team. How can I help?"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1402
+#: includes/modules/class-ssc-module-live.php:772
+msgid "Visitor"
+msgstr ""
+
+#. translators: %s: chat label.
+#: includes/modules/class-ssc-module-live.php:789
+msgid "A visitor wants to talk to a person (%s)"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:797
+msgid "Reply to this message to answer the visitor."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1393
+#: includes/modules/class-ssc-module-live.php:802
+msgid "Take over"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:852
+msgid "Reply to a chat message (swipe or long-press it, then Reply) to answer that visitor."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:874
+msgid "Assistant answering"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:875
+msgid "Waiting for a person"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:876
+msgid "With an operator"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:897
+msgid "Configure an AI provider to get summaries."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:912
+msgid "There is nothing to summarize yet."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:928
+msgid "The summary could not be written right now."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:954
+msgid "Talk to a person"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:955
+msgid "Waiting for a colleague to join…"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:956
+msgid "joined the chat"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:957
+msgid "Back to the assistant"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:959
+msgid "Nobody has picked up yet. Would you like to leave your number instead?"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:960
+msgid "Leave my number"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:961
+msgid "Keep waiting"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1064
+msgid "Please slow down and try again in a minute."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1088
+msgid "The chat could not be identified. Please refresh the page."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1169
+msgid "Visitor #%d"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1230
+#: includes/modules/class-ssc-module-live.php:1298
+msgid "Chat not found."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1265
+msgid "Write a message first."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1268
+msgid "This chat is closed; the visitor will not see new messages."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1284
+msgid "That action is not possible."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1334
+msgid "Add the bot token in Settings → Modules first."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1391
+msgid "No conversations yet. They appear here as visitors chat."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1394
+msgid "Return to the assistant"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1396
+msgid "Send"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1397
+msgid "Write your reply… (Enter to send, Shift+Enter for a new line)"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1398
+msgid "AI summary"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1399
+msgid "Write a summary"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1400
+msgid "Writing…"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1401
+msgid "Saved replies"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1403
+msgid "Assistant"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1404
+msgid "Page"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1406
+msgid "Away"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1407
+msgid "Answer from my messenger"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1408
+msgid "Messenger connected"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1409
+msgid "Disconnect"
+msgstr ""
+
+#. translators: %s: link code.
+#: includes/modules/class-ssc-module-live.php:1411
+msgid "Open the bot and send this code: %s (valid for 15 minutes)."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1412
+msgid "Open the bot"
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1413
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: includes/modules/class-ssc-module-live.php:1414
+msgid "This chat is closed."
 msgstr ""
 
 #: includes/modules/class-ssc-module-notifications.php:36
@@ -3379,10 +3776,6 @@ msgstr ""
 
 #: includes/modules/class-ssc-module-pharma.php:1242
 msgid "Follow-up requested"
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php:1243
-msgid "Closed"
 msgstr ""
 
 #: includes/modules/class-ssc-module-pharma.php:1253

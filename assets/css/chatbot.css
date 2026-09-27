@@ -567,6 +567,16 @@
  * Forms inside the chat
  * ------------------------------------------------------------------ */
 
+/* Live chat: operator bubbles, system notes and the status bar. */
+.ssc-root .ssc-msg--operator { align-self: flex-start; background: var(--ssc-bot-bubble); color: var(--ssc-bot-ink); border: 1px solid var(--ssc-line); border-inline-start: 3px solid var(--ssc-primary); }
+.ssc-root .ssc-msg__who { display: block; font-size: 11px; font-weight: 700; color: var(--ssc-primary); margin-block-end: 2px; }
+.ssc-root[data-theme="dark"] .ssc-msg__who { color: var(--ssc-ink); }
+.ssc-root .ssc-msg--note { align-self: center; background: none; border: 0; box-shadow: none; color: var(--ssc-muted); font-size: 11.5px; padding: 2px 8px; max-width: 90%; text-align: center; }
+.ssc-root .ssc-livebar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 14px; font-size: 12px; background: color-mix(in srgb, var(--ssc-primary) 10%, var(--ssc-card)); color: var(--ssc-ink); border-block-start: 1px solid var(--ssc-line); }
+.ssc-root .ssc-livebar[hidden] { display: none; }
+.ssc-root .ssc-livebar__back { border: 0; background: none; color: var(--ssc-primary); font: inherit; font-weight: 600; cursor: pointer; padding: 2px 4px; text-decoration: underline; }
+.ssc-root[data-theme="dark"] .ssc-livebar__back { color: var(--ssc-ink); }
+
 .ssc-root .ssc-cardform__intro { margin: 0 0 10px; font-size: 12.5px; color: var(--ssc-muted); line-height: 1.6; }
 .ssc-root .ssc-cardform__more { border: 1px dashed var(--ssc-line); border-radius: 12px; padding: 4px 10px; margin-block: 4px 10px; }
 .ssc-root .ssc-cardform__more[open] { padding-block-end: 10px; }

@@ -27,7 +27,10 @@ class SSC_Schema {
 	const KB_TABLE          = 'ssc_chatbot_kb';
 	const STATS_TABLE       = 'ssc_chatbot_stats';
 	const AUDIT_TABLE       = 'ssc_chatbot_audit';
-	const DB_VERSION        = '14';
+	const LIVE_THREADS      = 'ssc_chatbot_live_threads';
+	const LIVE_MESSAGES     = 'ssc_chatbot_live_messages';
+	const LIVE_REFS         = 'ssc_chatbot_live_refs';
+	const DB_VERSION        = '15';
 	const DB_VERSION_OPTION = 'ssc_chatbot_db_version';
 
 	/*
@@ -94,6 +97,22 @@ class SSC_Schema {
 	public static function audit_table_name() {
 		global $wpdb;
 		return $wpdb->prefix . self::AUDIT_TABLE;
+	}
+
+	/**
+	 * Live inbox table names.
+	 *
+	 * @param string $which threads|messages|refs.
+	 * @return string
+	 */
+	public static function live_table( $which ) {
+		global $wpdb;
+		$map = array(
+			'threads'  => self::LIVE_THREADS,
+			'messages' => self::LIVE_MESSAGES,
+			'refs'     => self::LIVE_REFS,
+		);
+		return $wpdb->prefix . ( isset( $map[ $which ] ) ? $map[ $which ] : self::LIVE_THREADS );
 	}
 
 	/*
@@ -245,6 +264,54 @@ class SSC_Schema {
 			UNIQUE KEY delivery (submission_id, channel),
 			KEY due_jobs (status, next_at),
 			KEY expired_leases (status, locked_until)
+		) {$charset};"
+		);
+		$live_threads  = self::live_table( 'threads' );
+		$live_messages = self::live_table( 'messages' );
+		$live_refs     = self::live_table( 'refs' );
+		dbDelta(
+			"CREATE TABLE {$live_threads} (
+			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			conv_hash CHAR(64) NOT NULL,
+			channel VARCHAR(20) NOT NULL DEFAULT 'web',
+			channel_chat VARCHAR(64) NOT NULL DEFAULT '',
+			visitor_label VARCHAR(100) NOT NULL DEFAULT '',
+			page_url VARCHAR(255) NOT NULL DEFAULT '',
+			status VARCHAR(20) NOT NULL DEFAULT 'bot',
+			operator_id BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			summary TEXT NULL,
+			unread INT UNSIGNED NOT NULL DEFAULT 0,
+			created_at DATETIME NULL,
+			updated_at DATETIME NULL,
+			waiting_since DATETIME NULL,
+			PRIMARY KEY  (id),
+			UNIQUE KEY conv_hash (conv_hash),
+			KEY status_updated (status, updated_at),
+			KEY updated_at (updated_at)
+		) {$charset};"
+		);
+		dbDelta(
+			"CREATE TABLE {$live_messages} (
+			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			thread_id BIGINT(20) UNSIGNED NOT NULL,
+			sender VARCHAR(10) NOT NULL DEFAULT 'visitor',
+			operator_id BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			body TEXT NOT NULL,
+			via VARCHAR(10) NOT NULL DEFAULT 'web',
+			created_at DATETIME NULL,
+			PRIMARY KEY  (id),
+			KEY thread_msg (thread_id, id)
+		) {$charset};"
+		);
+		dbDelta(
+			"CREATE TABLE {$live_refs} (
+			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			ref VARCHAR(100) NOT NULL,
+			thread_id BIGINT(20) UNSIGNED NOT NULL,
+			created_at DATETIME NULL,
+			PRIMARY KEY  (id),
+			UNIQUE KEY ref (ref),
+			KEY thread_id (thread_id)
 		) {$charset};"
 		);
 		SSC_Notification_Queue::migrate_legacy();

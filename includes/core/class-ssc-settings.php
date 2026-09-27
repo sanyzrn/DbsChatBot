@@ -211,6 +211,20 @@ class SSC_Settings {
 			'notify_chat_id'             => '',
 			'notify_email_enabled'       => 'no',
 			'notify_email_to'            => '',
+			// Shared Bale/Telegram bot: how updates arrive (Live inbox, Messenger bot).
+			'messenger_mode'             => 'webhook', // webhook | polling.
+
+			// Live inbox module.
+			'live_operators'             => array(), // Extra WP user ids allowed to answer (admins always can).
+			'live_assign'                => 'auto',  // auto | manual.
+			'live_canned'                => '',      // Saved replies, one per line.
+			'live_join_text'             => '',      // Shown when an operator joins.
+			'live_offline_text'          => '',      // Shown when nobody can answer.
+			'live_wait_minutes'          => 3,       // Offer the request form after this wait.
+			'live_retention_days'        => 30,
+
+			// Messenger bot module.
+			'messenger_welcome'          => '',
 
 			// FAQ module.
 			'faq_menu_label'             => '',
@@ -668,7 +682,17 @@ class SSC_Settings {
 
 			case 'display_paths':
 			case 'offline_message':
-				return sanitize_textarea_field( (string) $value );
+			case 'live_canned':
+			case 'live_join_text':
+			case 'live_offline_text':
+			case 'messenger_welcome':
+				return mb_substr( sanitize_textarea_field( (string) $value ), 0, 4000 );
+
+			case 'messenger_mode':
+				return 'polling' === $value ? 'polling' : 'webhook';
+
+			case 'live_assign':
+				return 'manual' === $value ? 'manual' : 'auto';
 
 			case 'font_family':
 				return in_array( $value, array( 'vazirmatn', 'inter', 'roboto', 'system', 'custom' ), true ) ? $value : 'vazirmatn';
@@ -793,6 +817,8 @@ class SSC_Settings {
 			'window_radius'              => array( 0, 32 ),
 			'bubble_radius'              => array( 0, 24 ),
 			'chatlog_retention_days'     => array( 0, 3650 ),
+			'live_wait_minutes'          => array( 1, 30 ),
+			'live_retention_days'        => array( 1, 365 ),
 			'submissions_retention_days' => array( 0, 3650 ),
 			'chat_rate_limit'            => array( 0, 100000 ),
 			'submit_rate_limit'          => array( 0, 10000 ),
@@ -892,6 +918,10 @@ class SSC_Settings {
 
 			case 'adr_form':
 				$out = SSC_Module_Pharma::sanitize_form_config( $value );
+				break;
+
+			case 'live_operators':
+				$out = array_values( array_unique( array_filter( array_map( 'absint', $value ) ) ) );
 				break;
 
 			case 'form_fields':

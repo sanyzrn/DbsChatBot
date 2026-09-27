@@ -44,6 +44,7 @@ class SSC_Modules {
 				new SSC_Module_Handoff(),
 				new SSC_Module_Proactive(),
 				new SSC_Module_Notifications(),
+				new SSC_Module_Live(),
 				new SSC_Module_Pharma(),
 			);
 			/**

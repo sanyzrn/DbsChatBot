@@ -217,11 +217,13 @@
         }
 
         function sendChat(message) {
-                return transport(chatRoute(), {
+                var params = {
                         message: message,
                         product: state.product || 'general',
                         conv: getConv()
-                });
+                };
+                if (cfg.features && cfg.features.live) { params.page = window.location.href; }
+                return transport(chatRoute(), params);
         }
 
         /** SSE framing survives arbitrary network chunk boundaries and CRLF lines. */
@@ -249,6 +251,7 @@
                 body.append('product', state.product || 'general');
                 body.append('conv', getConv());
                 body.append('cid', getCid());
+                if (cfg.features && cfg.features.live) { body.append('page', window.location.href); }
                 var headers = { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' };
                 if (cfg.nonce) { headers['X-WP-Nonce'] = cfg.nonce; }
                 return request(cfg.restUrl + 'chat-stream', {
@@ -610,6 +613,13 @@
                         if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
                         state.items = []; state.product = null; state.hadConversation = false; state.csatDone = false;
                         if (csatTimer) { window.clearTimeout(csatTimer); csatTimer = null; }
+                        if (live.status === 'waiting' || live.status === 'human') {
+                                // Leaving a handled chat: tell the operator's side it is over.
+                                transport('live/leave', { conv: getConv() }).catch(function () {});
+                        }
+                        if (live.timer) { window.clearTimeout(live.timer); }
+                        live.status = 'bot'; live.lastId = 0; live.operator = ''; live.offered = false;
+                        if (live.bar) { live.bar.hidden = true; }
                         thread.textContent = '';
                         try { sessionStorage.removeItem(THREAD_KEY); } catch (e) {}
                         resetConv();
@@ -733,10 +743,12 @@
                         if (!COARSE_POINTER && !cfg.preview) { window.setTimeout(function () { input.focus(); }, 60); }
                         proactiveDismiss();
                         clearUnread();
+                        if (cfg.features && cfg.features.live && !cfg.preview && (state.hadConversation || live.status !== 'bot')) { pollLive(); }
                 } else {
                         if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
                         if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
                         if (state.hadConversation && !state.loading) { maybeOfferCsat(); }
+                        if (cfg.features && cfg.features.live) { scheduleLivePoll(); }
                 }
         }
 
@@ -865,6 +877,9 @@
                 if (cfg.features && cfg.features.pharma) {
                         chips.push({ label: i18n.reportAdr || 'Report side effect', onClick: showAdrForm });
                 }
+                if (cfg.features && cfg.features.live) {
+                        chips.push({ label: liveText('talkToPerson', 'Talk to a person'), onClick: requestHuman });
+                }
                 addChips(chips, caption);
                 var menus = thread.querySelectorAll('.ssc-chips');
                 if (menus.length) { menus[menus.length - 1].classList.add('ssc-chips--menu'); }
@@ -968,6 +983,13 @@
                                 return;
                         }
 
+                        if (data.source === 'live' || (data.flags && data.flags.live)) {
+                                // A person is (about to be) in charge: the message went to them.
+                                if (bubble && bubble.parentElement) { bubble.parentElement.removeChild(bubble); }
+                                liveSetStatus((data.flags && data.flags.live) || live.status);
+                                return;
+                        }
+
                         var node;
                         if (bubble) {
                                 bubble.classList.remove('is-streaming');
@@ -988,6 +1010,8 @@
                                 feedbackControls(tools, data.log_id, data.log_token);
                         }
                         scheduleCsat();
+                        state.hadConversation = true;
+                        scheduleLivePoll();
                         scrollDown(); // Sources and tools were added below the answer.
                         if (!state.open) { bumpUnread(); maybeBeep(); }
                 }).catch(function () {
@@ -1004,9 +1028,9 @@
                         addChips([{ label: i18n.reportAdr || 'Report side effect', onClick: showAdrForm }]);
                         return;
                 }
-                if (data.handoff && cfg.features && cfg.features.handoff) {
+                if (data.handoff && cfg.features && (cfg.features.handoff || cfg.features.live)) {
                         addItem('bot', cfg.handoffText || '', { history: false });
-                        addChips([{ label: i18n.handoffBtn || 'Talk to a human', onClick: showLeadForm }]);
+                        addChips([{ label: cfg.features.live ? liveText('talkToPerson', 'Talk to a person') : (i18n.handoffBtn || 'Talk to a human'), onClick: cfg.features.live ? requestHuman : showLeadForm }]);
                         return;
                 }
                 if (cfg.features && cfg.features.faq) {
@@ -1258,6 +1282,126 @@
                 card.appendChild(form);
                 thread.appendChild(card);
                 scrollDown();
+        }
+
+        /* ------------------------------------------------------------------ *
+         * Live chat (module): a person can join the conversation
+         * ------------------------------------------------------------------ */
+
+        var live = { status: 'bot', lastId: 0, timer: null, operator: '', offered: false, bar: null };
+
+        function liveText(key, fallback) {
+                return (cfg.live && cfg.live.i18n && cfg.live.i18n[key]) || fallback;
+        }
+
+        /** Ask for a person; falls back to the request form when nobody can answer. */
+        function requestHuman() {
+                if (!(cfg.features && cfg.features.live)) { return; }
+                transport('live/request', { conv: getConv(), page: window.location.href }).then(function (res) {
+                        var data = (res && res.success && res.data) || {};
+                        if (data.message) { addItem('bot', data.message, { history: false }); }
+                        if (data.available) {
+                                live.offered = false;
+                                liveSetStatus(data.status || 'waiting');
+                        } else if (cfg.features.leads) {
+                                showLeadForm();
+                        }
+                }).catch(function () {
+                        addItem('bot', (cfg.i18n && cfg.i18n.connectionError) || 'Connection error.', { history: false });
+                });
+        }
+
+        /** Status bar above the composer while a person is involved. */
+        function liveBar(text, withBack) {
+                if (!live.bar) {
+                        live.bar = el('div', 'ssc-livebar');
+                        live.bar.setAttribute('role', 'status');
+                        win.insertBefore(live.bar, composer);
+                }
+                live.bar.innerHTML = '';
+                var label = el('span', 'ssc-livebar__text', esc(text));
+                label.setAttribute('dir', 'auto');
+                live.bar.appendChild(label);
+                if (withBack) {
+                        var back = el('button', 'ssc-livebar__back', esc(liveText('backToBot', 'Back to the assistant')));
+                        back.type = 'button';
+                        back.addEventListener('click', function () {
+                                transport('live/leave', { conv: getConv() }).then(function () { liveSetStatus('bot'); pollLive(); });
+                        });
+                        live.bar.appendChild(back);
+                }
+                live.bar.hidden = false;
+        }
+
+        function liveSetStatus(status) {
+                if (!status) { return; }
+                live.status = status;
+                if (status === 'waiting') {
+                        liveBar(liveText('waiting', 'Waiting for a colleague to join…'), true);
+                } else if (status === 'human') {
+                        liveBar((live.operator || liveText('operator', 'Support team')) + ' ' + liveText('joined', 'joined the chat'), true);
+                } else if (live.bar) {
+                        live.bar.hidden = true;
+                }
+                scheduleLivePoll();
+        }
+
+        function scheduleLivePoll() {
+                if (!(cfg.features && cfg.features.live) || cfg.preview) { return; }
+                if (live.timer) { window.clearTimeout(live.timer); }
+                var active = live.status === 'waiting' || live.status === 'human';
+                var delay;
+                if (active) {
+                        delay = state.open ? 3000 : 10000;
+                } else if (state.open && (state.hadConversation || live.lastId)) {
+                        delay = 20000; // An operator may join a running conversation.
+                } else {
+                        return;
+                }
+                if (document.hidden) { delay = Math.max(delay, 15000); }
+                live.timer = window.setTimeout(pollLive, delay);
+        }
+
+        function pollLive() {
+                if (!(cfg.features && cfg.features.live) || cfg.preview) { return; }
+                transport('live/poll', { conv: getConv(), after: live.lastId }).then(function (res) {
+                        var data = (res && res.success && res.data) || {};
+                        if (data.operator) { live.operator = data.operator; }
+                        var fresh = false;
+                        (data.messages || []).forEach(function (m) {
+                                live.lastId = Math.max(live.lastId, m.id);
+                                if (m.sender === 'operator') {
+                                        addOperatorMessage(m.name, m.body);
+                                        fresh = true;
+                                } else if (m.sender === 'system') {
+                                        addItem('note', m.body, { history: false });
+                                }
+                        });
+                        if (fresh && !state.open) { bumpUnread(); maybeBeep(); }
+                        if (data.status && data.status !== live.status) {
+                                liveSetStatus(data.status);
+                        } else if (live.status === 'human' && live.bar && data.operator) {
+                                liveSetStatus('human');
+                        } else {
+                                scheduleLivePoll();
+                        }
+                        // Nobody picked up in time: offer the request form instead.
+                        var limit = ((cfg.live && cfg.live.waitMinutes) || 3) * 60;
+                        if (live.status === 'waiting' && data.waited >= limit && !live.offered) {
+                                live.offered = true;
+                                addItem('bot', liveText('noAnswer', 'Nobody has picked up yet. Would you like to leave your number instead?'), { history: false });
+                                var chips = [{ label: liveText('keepWaiting', 'Keep waiting'), onClick: function () {} }];
+                                if (cfg.features.leads) { chips.unshift({ label: liveText('leaveNumber', 'Leave my number'), onClick: showLeadForm }); }
+                                addChips(chips);
+                        }
+                }).catch(function () { scheduleLivePoll(); });
+        }
+
+        function addOperatorMessage(name, text) {
+                var node = addItem('operator', text, { history: false });
+                var who = el('span', 'ssc-msg__who', esc(name || liveText('operator', 'Support team')));
+                node.insertBefore(who, node.firstChild);
+                return node;
         }
 
         /* ------------------------------------------------------------------ *

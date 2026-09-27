@@ -347,6 +347,7 @@ class SSC_REST {
 
 		$history = json_decode( (string) $request->get_param( 'history' ), true );
 		$this->engine->set_context( $this->engine->client_ip(), (string) $request->get_param( 'conv' ) );
+		$this->engine->set_channel( array( 'page' => esc_url_raw( (string) $request->get_param( 'page' ) ) ) );
 
 		SSC_Stream::serve(
 			$this->engine,
@@ -388,6 +389,7 @@ class SSC_REST {
 
 		$history = json_decode( (string) $request->get_param( 'history' ), true );
 		$this->engine->set_context( $this->engine->client_ip(), (string) $request->get_param( 'conv' ) );
+		$this->engine->set_channel( array( 'page' => esc_url_raw( (string) $request->get_param( 'page' ) ) ) );
 		$result = $this->engine->chat(
 			(string) $request->get_param( 'message' ),
 			(string) $request->get_param( 'product' ),
@@ -592,6 +594,7 @@ class SSC_REST {
 	public function preview_chat( $request ) {
 		$history = json_decode( (string) $request->get_param( 'history' ), true );
 		$this->engine->set_context( $this->engine->client_ip(), (string) $request->get_param( 'conv' ) );
+		$this->engine->set_channel( array( 'channel' => 'preview' ) ); // Admin previews never reach the live inbox.
 		$result = $this->engine->chat(
 			(string) $request->get_param( 'message' ),
 			(string) $request->get_param( 'product' ),

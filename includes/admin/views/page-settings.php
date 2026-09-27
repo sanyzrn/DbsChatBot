@@ -400,9 +400,11 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			</section>
 		<?php endif; ?>
 
-		<?php if ( SSC_Modules::is_active( 'notifications' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card">
-				<h2><?php esc_html_e( 'Notifications module', 'nexachat-ai' ); ?></h2>
+		<?php if ( SSC_Modules::is_active( 'notifications' ) || SSC_Modules::is_active( 'live' ) || SSC_Modules::is_active( 'messenger' ) ) : ?>
+			<?php $ssc_bot_status = get_transient( 'ssc_messenger_status' ); ?>
+			<section data-ssc-tab="modules" class="ssc-card" id="ssc-bot">
+				<h2><?php esc_html_e( 'Bale / Telegram bot', 'nexachat-ai' ); ?></h2>
+				<p class="ssc-card__sub"><?php esc_html_e( 'One bot serves alerts, operator replies and customer chats. Create it with @BotFather (Telegram) or @botfather in Bale, then paste its token here. On servers inside Iran use Bale: Telegram is not reachable from there.', 'nexachat-ai' ); ?></p>
 				<div class="ssc-grid ssc-grid--2">
 					<div class="ssc-field">
 						<label for="notify_platform"><?php esc_html_e( 'Messenger platform', 'nexachat-ai' ); ?></label>
@@ -412,16 +414,93 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 						</select>
 					</div>
 					<div class="ssc-field">
-						<label for="notify_chat_id"><?php esc_html_e( 'Chat / channel ID', 'nexachat-ai' ); ?></label>
-						<input id="notify_chat_id" name="notify_chat_id" type="text" dir="ltr" value="<?php echo esc_attr( (string) $s['notify_chat_id'] ); ?>" />
+						<label for="notify_token"><?php esc_html_e( 'Bot token', 'nexachat-ai' ); ?></label>
+						<input id="notify_token" name="notify_token" type="password" autocomplete="off" dir="ltr" value="" placeholder="<?php echo SSC_Settings::has_secret( 'notify_token' ) ? esc_attr__( 'A token is stored — type to replace', 'nexachat-ai' ) : ''; ?>" />
+						<?php if ( SSC_Settings::has_secret( 'notify_token' ) ) : ?>
+							<label class="ssc-check ssc-check--tight"><input type="checkbox" name="notify_token_clear" value="1" /> <span><?php esc_html_e( 'Remove the stored token', 'nexachat-ai' ); ?></span></label>
+						<?php endif; ?>
+					</div>
+				</div>
+				<?php if ( SSC_Modules::is_active( 'live' ) || SSC_Modules::is_active( 'messenger' ) ) : ?>
+					<div class="ssc-field">
+						<label for="messenger_mode"><?php esc_html_e( 'How messages reach this site', 'nexachat-ai' ); ?></label>
+						<select id="messenger_mode" name="messenger_mode">
+							<option value="webhook" <?php selected( $s['messenger_mode'], 'webhook' ); ?>><?php esc_html_e( 'Instantly (webhook) — recommended for a public HTTPS site', 'nexachat-ai' ); ?></option>
+							<option value="polling" <?php selected( $s['messenger_mode'], 'polling' ); ?>><?php esc_html_e( 'Checked every minute (polling) — for sites the messenger cannot reach', 'nexachat-ai' ); ?></option>
+						</select>
+						<p class="ssc-field__hint"><?php esc_html_e( 'With polling, replies also arrive within seconds while the Live chat screen is open.', 'nexachat-ai' ); ?></p>
+					</div>
+					<?php if ( is_array( $ssc_bot_status ) ) : ?>
+						<p class="ssc-notice <?php echo empty( $ssc_bot_status['ok'] ) ? 'ssc-notice--error' : 'ssc-notice--success'; ?>" dir="auto"><?php echo esc_html( (string) $ssc_bot_status['text'] ); ?></p>
+					<?php endif; ?>
+					<button type="submit" name="ssc_messenger_connect" value="1" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Save and connect the bot', 'nexachat-ai' ); ?></button>
+				<?php endif; ?>
+			</section>
+		<?php endif; ?>
+
+		<?php if ( SSC_Modules::is_active( 'live' ) ) : ?>
+			<section data-ssc-tab="modules" class="ssc-card" id="ssc-live-settings">
+				<h2><?php esc_html_e( 'Live chat module', 'nexachat-ai' ); ?></h2>
+				<p class="ssc-card__sub"><?php esc_html_e( 'Administrators can always answer. Choose other team members who may answer chats, too; each operator can connect their own Bale/Telegram account on the Live chat screen.', 'nexachat-ai' ); ?></p>
+				<?php
+				$ssc_candidates = get_users(
+					array(
+						'role__not_in' => array( 'administrator', 'subscriber', 'customer' ),
+						'number'       => 200,
+						'orderby'      => 'display_name',
+					)
+				);
+				$ssc_ops        = array_map( 'intval', (array) $s['live_operators'] );
+				?>
+				<fieldset class="ssc-field">
+					<legend class="ssc-field__label"><?php esc_html_e( 'Operators', 'nexachat-ai' ); ?></legend>
+					<input type="hidden" name="live_operators[]" value="0" />
+					<?php if ( ! $ssc_candidates ) : ?>
+						<p class="ssc-field__hint"><?php esc_html_e( 'No other team members yet (editors, shop managers…). Administrators answer chats.', 'nexachat-ai' ); ?></p>
+					<?php endif; ?>
+					<?php foreach ( $ssc_candidates as $ssc_user ) : ?>
+						<label class="ssc-check ssc-check--tight"><input type="checkbox" name="live_operators[]" value="<?php echo esc_attr( (string) $ssc_user->ID ); ?>" <?php checked( in_array( (int) $ssc_user->ID, $ssc_ops, true ) ); ?> /> <span><?php echo esc_html( $ssc_user->display_name ); ?></span></label>
+					<?php endforeach; ?>
+				</fieldset>
+				<div class="ssc-grid ssc-grid--2">
+					<div class="ssc-field">
+						<label for="live_assign"><?php esc_html_e( 'Who gets a waiting chat', 'nexachat-ai' ); ?></label>
+						<select id="live_assign" name="live_assign">
+							<option value="auto" <?php selected( $s['live_assign'], 'auto' ); ?>><?php esc_html_e( 'The available operator with the fewest open chats', 'nexachat-ai' ); ?></option>
+							<option value="manual" <?php selected( $s['live_assign'], 'manual' ); ?>><?php esc_html_e( 'Everyone is notified; the first to take it answers', 'nexachat-ai' ); ?></option>
+						</select>
+					</div>
+					<div class="ssc-field">
+						<label for="live_wait_minutes"><?php esc_html_e( 'Offer the request form after (minutes without an answer)', 'nexachat-ai' ); ?></label>
+						<input id="live_wait_minutes" name="live_wait_minutes" type="number" min="1" max="30" value="<?php echo esc_attr( (string) $s['live_wait_minutes'] ); ?>" />
+					</div>
+					<div class="ssc-field">
+						<label for="live_retention_days"><?php esc_html_e( 'Keep chat transcripts for (days)', 'nexachat-ai' ); ?></label>
+						<input id="live_retention_days" name="live_retention_days" type="number" min="1" max="365" value="<?php echo esc_attr( (string) $s['live_retention_days'] ); ?>" />
 					</div>
 				</div>
 				<div class="ssc-field">
-					<label for="notify_token"><?php esc_html_e( 'Bot token', 'nexachat-ai' ); ?></label>
-					<input id="notify_token" name="notify_token" type="password" autocomplete="off" dir="ltr" value="" placeholder="<?php echo SSC_Settings::has_secret( 'notify_token' ) ? esc_attr__( 'A token is stored — type to replace', 'nexachat-ai' ) : ''; ?>" />
-					<?php if ( SSC_Settings::has_secret( 'notify_token' ) ) : ?>
-						<label class="ssc-check ssc-check--tight"><input type="checkbox" name="notify_token_clear" value="1" /> <span><?php esc_html_e( 'Remove the stored token', 'nexachat-ai' ); ?></span></label>
-					<?php endif; ?>
+					<label for="live_join_text"><?php esc_html_e( 'Greeting when an operator joins ({name} = operator name)', 'nexachat-ai' ); ?></label>
+					<input id="live_join_text" name="live_join_text" type="text" dir="auto" value="<?php echo esc_attr( (string) $s['live_join_text'] ); ?>" placeholder="<?php echo esc_attr( SSC_Module_Live::join_text( get_current_user_id() ) ); ?>" />
+				</div>
+				<div class="ssc-field">
+					<label for="live_offline_text"><?php esc_html_e( 'Message when nobody can answer', 'nexachat-ai' ); ?></label>
+					<input id="live_offline_text" name="live_offline_text" type="text" dir="auto" value="<?php echo esc_attr( (string) $s['live_offline_text'] ); ?>" placeholder="<?php echo esc_attr( SSC_Module_Live::offline_text() ); ?>" />
+				</div>
+				<div class="ssc-field">
+					<label for="live_canned"><?php esc_html_e( 'Saved replies (one per line)', 'nexachat-ai' ); ?></label>
+					<textarea id="live_canned" name="live_canned" rows="4" dir="auto"><?php echo esc_textarea( (string) $s['live_canned'] ); ?></textarea>
+				</div>
+			</section>
+		<?php endif; ?>
+
+		<?php if ( SSC_Modules::is_active( 'notifications' ) ) : ?>
+			<section data-ssc-tab="modules" class="ssc-card">
+				<h2><?php esc_html_e( 'Notifications module', 'nexachat-ai' ); ?></h2>
+				<div class="ssc-field">
+					<label for="notify_chat_id"><?php esc_html_e( 'Chat / channel ID for alerts', 'nexachat-ai' ); ?></label>
+					<input id="notify_chat_id" name="notify_chat_id" type="text" dir="ltr" value="<?php echo esc_attr( (string) $s['notify_chat_id'] ); ?>" />
+					<p class="ssc-field__hint"><?php esc_html_e( 'New requests are posted here through the bot configured in the "Bale / Telegram bot" card.', 'nexachat-ai' ); ?></p>
 				</div>
 				<label class="ssc-check"><input type="checkbox" name="notify_email_enabled" value="yes" <?php checked( 'yes', $s['notify_email_enabled'] ); ?> /> <span><?php esc_html_e( 'Also send email notifications', 'nexachat-ai' ); ?></span></label>
 				<div class="ssc-field">

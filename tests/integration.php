@@ -425,5 +425,6 @@ $widget_clean = false === has_filter( 'gettext_nexachat-ai', array( 'SSC_I18n', 
 SSC_Settings::update( array( 'widget_language' => $widget_language_before ) );
 check( $widget_active && 'منوی اصلی' === $widget_fa && $widget_clean, 'Widget language overrides the English site language, and only while active' );
 
+require __DIR__ . '/live.php';
 require __DIR__ . '/notification-queue.php';
 echo "\n$checks integration checks passed.\n";
