@@ -59,7 +59,7 @@ class SSC_Providers {
 	 * @return string[]
 	 */
 	public static function labels() {
-		$out = array( 'none' => __( 'No AI engine (offline answers only)', 'smart-support-chatbot' ) );
+		$out = array( 'none' => __( 'No AI engine (offline answers only)', 'nexachat-ai' ) );
 		foreach ( self::all() as $id => $provider ) {
 			$out[ $id ] = $provider->label();
 		}

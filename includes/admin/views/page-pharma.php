@@ -23,43 +23,43 @@ if ( isset( $counts['pharma_adr'] ) ) {
 <div class="ssc-page">
 	<header class="ssc-page__head">
 		<div>
-			<h1><?php esc_html_e( 'ADR Cases', 'smart-support-chatbot' ); ?></h1>
-			<p class="ssc-page__sub"><?php echo esc_html( sprintf( _n( '%d case', '%d cases', $result['total'], 'smart-support-chatbot' ), $result['total'] ) ); ?></p>
+			<h1><?php esc_html_e( 'ADR Cases', 'nexachat-ai' ); ?></h1>
+			<p class="ssc-page__sub"><?php echo esc_html( sprintf( _n( '%d case', '%d cases', $result['total'], 'nexachat-ai' ), $result['total'] ) ); ?></p>
 		</div>
 		<form method="post">
 			<?php wp_nonce_field( 'ssc_pharma_export' ); ?>
-			<button type="submit" name="ssc_pharma_export" value="1" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Export CSV', 'smart-support-chatbot' ); ?></button>
+			<button type="submit" name="ssc_pharma_export" value="1" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Export CSV', 'nexachat-ai' ); ?></button>
 		</form>
 	</header>
 
 	<?php if ( $updated ) : ?>
-		<div class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Case updated.', 'smart-support-chatbot' ); ?></div>
+		<div class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Case updated.', 'nexachat-ai' ); ?></div>
 	<?php endif; ?>
 
 	<form method="get" class="ssc-filterbar">
 		<input type="hidden" name="page" value="ssc-pharma" />
-		<select name="status" aria-label="<?php esc_attr_e( 'Status', 'smart-support-chatbot' ); ?>">
-			<option value=""><?php esc_html_e( 'All statuses', 'smart-support-chatbot' ); ?></option>
+		<select name="status" aria-label="<?php esc_attr_e( 'Status', 'nexachat-ai' ); ?>">
+			<option value=""><?php esc_html_e( 'All statuses', 'nexachat-ai' ); ?></option>
 			<?php foreach ( SSC_Module_Pharma::case_statuses() as $st => $st_label ) : ?>
 				<option value="<?php echo esc_attr( $st ); ?>" <?php selected( $filters['status'], $st ); ?>><?php echo esc_html( $st_label ); ?></option>
 			<?php endforeach; ?>
 		</select>
-		<input type="search" name="s" value="<?php echo esc_attr( $filters['search'] ); ?>" placeholder="<?php esc_attr_e( 'Search…', 'smart-support-chatbot' ); ?>" />
-		<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Filter', 'smart-support-chatbot' ); ?></button>
+		<input type="search" name="s" value="<?php echo esc_attr( $filters['search'] ); ?>" placeholder="<?php esc_attr_e( 'Search…', 'nexachat-ai' ); ?>" />
+		<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Filter', 'nexachat-ai' ); ?></button>
 	</form>
 
 	<?php if ( empty( $result['items'] ) ) : ?>
-		<div class="ssc-empty"><p><?php esc_html_e( 'No ADR cases yet. When someone files a report through the chat, it appears here for triage.', 'smart-support-chatbot' ); ?></p></div>
+		<div class="ssc-empty"><p><?php esc_html_e( 'No ADR cases yet. When someone files a report through the chat, it appears here for triage.', 'nexachat-ai' ); ?></p></div>
 	<?php else : ?>
-		<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'smart-support-chatbot' ); ?>"><table class="ssc-table">
+		<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Received', 'smart-support-chatbot' ); ?></th>
-					<th><?php esc_html_e( 'Product / batch', 'smart-support-chatbot' ); ?></th>
-					<th><?php esc_html_e( 'Reporter', 'smart-support-chatbot' ); ?></th>
-					<th><?php esc_html_e( 'Severity', 'smart-support-chatbot' ); ?></th>
-					<th><?php esc_html_e( 'Seriousness', 'smart-support-chatbot' ); ?></th>
-					<th><?php esc_html_e( 'Status', 'smart-support-chatbot' ); ?></th>
+					<th><?php esc_html_e( 'Received', 'nexachat-ai' ); ?></th>
+					<th><?php esc_html_e( 'Product / batch', 'nexachat-ai' ); ?></th>
+					<th><?php esc_html_e( 'Reporter', 'nexachat-ai' ); ?></th>
+					<th><?php esc_html_e( 'Severity', 'nexachat-ai' ); ?></th>
+					<th><?php esc_html_e( 'Seriousness', 'nexachat-ai' ); ?></th>
+					<th><?php esc_html_e( 'Status', 'nexachat-ai' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -70,7 +70,7 @@ if ( isset( $counts['pharma_adr'] ) ) {
 						<td><?php echo esc_html( $row['product'] . ( $row['batch_number'] ? ' / ' . $row['batch_number'] : '' ) ); ?></td>
 						<td><?php echo esc_html( $row['name'] ); ?></td>
 						<td><?php echo esc_html( SSC_Module_Pharma::option_label( 'severity', (string) $row['severity'] ) ); ?></td>
-						<td><?php echo $is_serious ? '<span class="ssc-badge ssc-badge--danger">' . esc_html__( 'SERIOUS', 'smart-support-chatbot' ) . '</span>' : '—'; ?></td>
+						<td><?php echo $is_serious ? '<span class="ssc-badge ssc-badge--danger">' . esc_html__( 'SERIOUS', 'nexachat-ai' ) . '</span>' : '—'; ?></td>
 						<td><?php echo esc_html( SSC_Module_Pharma::case_statuses()[ $row['status'] ] ?? $row['status'] ); ?></td>
 					</tr>
 				<?php endforeach; ?>

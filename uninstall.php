@@ -58,6 +58,7 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 		'ssc_chatbot_products',
 		'ssc_chatbot_knowledge',
 		'ssc_ai_cache_gen',
+		'nexachatai_replaced_legacy',
 		'ssc_chatbot_setup',
 		'ssc_chatbot_modules',
 		'ssc_chatbot_db_version',

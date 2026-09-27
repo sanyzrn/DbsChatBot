@@ -162,12 +162,12 @@ class SSC_Embeddings {
 		$provider    = SSC_Providers::current();
 		$model       = self::model();
 		if ( null === $provider || '' === $model ) {
-			return new WP_Error( 'ssc_embed_unsupported', __( 'The connected AI provider does not offer embeddings.', 'smart-support-chatbot' ) );
+			return new WP_Error( 'ssc_embed_unsupported', __( 'The connected AI provider does not offer embeddings.', 'nexachat-ai' ) );
 		}
 		$creds = $provider->saved_credentials();
 		$parts = self::request_parts( $provider_id, $creds['api_key'], $model, $texts, isset( $creds['endpoint'] ) ? $creds['endpoint'] : '' );
 		if ( null === $parts ) {
-			return new WP_Error( 'ssc_embed_unsupported', __( 'The connected AI provider does not offer embeddings.', 'smart-support-chatbot' ) );
+			return new WP_Error( 'ssc_embed_unsupported', __( 'The connected AI provider does not offer embeddings.', 'nexachat-ai' ) );
 		}
 		$response = SSC_HTTP::post_json(
 			$parts['url'],
@@ -184,7 +184,7 @@ class SSC_Embeddings {
 		}
 		$vectors = self::extract_vectors( $provider_id, $response['data'] );
 		if ( count( $vectors ) !== count( $texts ) ) {
-			return new WP_Error( 'ssc_embed_failed', __( 'The embeddings response did not match the request.', 'smart-support-chatbot' ) );
+			return new WP_Error( 'ssc_embed_failed', __( 'The embeddings response did not match the request.', 'nexachat-ai' ) );
 		}
 		return array_map( array( __CLASS__, 'normalize' ), $vectors );
 	}
@@ -285,7 +285,7 @@ class SSC_Embeddings {
 			return array(
 				'done'      => 0,
 				'remaining' => 0,
-				'error'     => __( 'The connected AI provider does not offer embeddings.', 'smart-support-chatbot' ),
+				'error'     => __( 'The connected AI provider does not offer embeddings.', 'nexachat-ai' ),
 			);
 		}
 		$rows = SSC_Schema::kb_pending_embeddings( $model, self::BATCH );

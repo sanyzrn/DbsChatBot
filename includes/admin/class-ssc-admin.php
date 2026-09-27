@@ -28,14 +28,13 @@ class SSC_Admin {
 		add_action( 'admin_menu', array( $this, 'register_menu' ), 1 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 		add_action( 'admin_head', array( $this, 'hide_wizard_menu_css' ) );
-		add_action( 'admin_head', array( $this, 'force_admin_ltr' ) );
 		add_action( 'admin_footer-plugins.php', array( $this, 'uninstall_confirm_script' ) );
 		add_action( 'wp_ajax_ssc_set_uninstall_policy', array( $this, 'ajax_set_uninstall_policy' ) );
 		add_action( 'admin_post_ssc_retry_notifications', array( $this, 'retry_notifications' ) );
 	}
 
 	public function retry_notifications() {
-		if ( ! current_user_can( 'manage_options' ) ) { wp_die( esc_html__( 'Insufficient permissions.', 'smart-support-chatbot' ) ); }
+		if ( ! current_user_can( 'manage_options' ) ) { wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) ); }
 		check_admin_referer( 'ssc_retry_notifications' );
 		if ( SSC_Modules::is_active( 'notifications' ) ) { SSC_Notification_Queue::retry_exhausted(); }
 		wp_safe_redirect( admin_url( 'admin.php?page=ssc-dashboard' ) );
@@ -76,20 +75,20 @@ class SSC_Admin {
 			58
 		);
 
-		add_submenu_page( 'ssc-dashboard', __( 'Dashboard', 'smart-support-chatbot' ), __( 'Dashboard', 'smart-support-chatbot' ), 'manage_options', 'ssc-dashboard', array( $this, 'render_dashboard' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'Business Knowledge', 'smart-support-chatbot' ), __( 'Business Knowledge', 'smart-support-chatbot' ), 'manage_options', 'ssc-knowledge', array( $this, 'render_knowledge' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'AI Connection', 'smart-support-chatbot' ), __( 'AI Connection', 'smart-support-chatbot' ), 'manage_options', 'ssc-connection', array( $this, 'render_connection' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'Appearance', 'smart-support-chatbot' ), __( 'Appearance', 'smart-support-chatbot' ), 'manage_options', 'ssc-appearance', array( $this, 'render_appearance' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'Modules', 'smart-support-chatbot' ), __( 'Modules', 'smart-support-chatbot' ), 'manage_options', 'ssc-modules', array( $this, 'render_modules' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'Settings', 'smart-support-chatbot' ), __( 'Settings', 'smart-support-chatbot' ), 'manage_options', 'ssc-settings', array( $this, 'render_settings' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Dashboard', 'nexachat-ai' ), __( 'Dashboard', 'nexachat-ai' ), 'manage_options', 'ssc-dashboard', array( $this, 'render_dashboard' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Business Knowledge', 'nexachat-ai' ), __( 'Business Knowledge', 'nexachat-ai' ), 'manage_options', 'ssc-knowledge', array( $this, 'render_knowledge' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'AI Connection', 'nexachat-ai' ), __( 'AI Connection', 'nexachat-ai' ), 'manage_options', 'ssc-connection', array( $this, 'render_connection' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Appearance', 'nexachat-ai' ), __( 'Appearance', 'nexachat-ai' ), 'manage_options', 'ssc-appearance', array( $this, 'render_appearance' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Modules', 'nexachat-ai' ), __( 'Modules', 'nexachat-ai' ), 'manage_options', 'ssc-modules', array( $this, 'render_modules' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Settings', 'nexachat-ai' ), __( 'Settings', 'nexachat-ai' ), 'manage_options', 'ssc-settings', array( $this, 'render_settings' ) );
 
 		// Wizard MUST stay registered so admin.php?page=ssc-wizard resolves the
 		// page hook. Hiding is done with CSS — never remove_submenu_page(), which
 		// makes WordPress fall through to "Cannot load ssc-wizard."
 		add_submenu_page(
 			'ssc-dashboard',
-			__( 'Setup Wizard', 'smart-support-chatbot' ),
-			__( 'Setup Wizard', 'smart-support-chatbot' ),
+			__( 'Setup Wizard', 'nexachat-ai' ),
+			__( 'Setup Wizard', 'nexachat-ai' ),
 			'manage_options',
 			'ssc-wizard',
 			array( $this, 'render_wizard' )
@@ -123,10 +122,10 @@ class SSC_Admin {
 			return;
 		}
 		$nonce = wp_create_nonce( 'ssc_uninstall_policy' );
-		$label = __( 'NexaChatAI', 'smart-support-chatbot' );
-		$ask   = __( 'Also permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?', 'smart-support-chatbot' );
-		$yes   = __( 'OK = delete plugin + data', 'smart-support-chatbot' );
-		$no    = __( 'Cancel = delete plugin, KEEP data', 'smart-support-chatbot' );
+		$label = __( 'NexaChatAI', 'nexachat-ai' );
+		$ask   = __( 'Also permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?', 'nexachat-ai' );
+		$yes   = __( 'OK = delete plugin + data', 'nexachat-ai' );
+		$no    = __( 'Cancel = delete plugin, KEEP data', 'nexachat-ai' );
 		?>
 <script id="ssc-uninstall-confirm">
 (function () {
@@ -155,7 +154,7 @@ class SSC_Admin {
 			if (!result.success) { throw new Error('Policy not saved'); }
 			done();
 		}).catch(function () {
-			window.alert(<?php echo wp_json_encode( __( 'The data deletion preference could not be saved. Deletion was stopped. Please check Settings before trying again.', 'smart-support-chatbot' ) ); ?>);
+			window.alert(<?php echo wp_json_encode( __( 'The data deletion preference could not be saved. Deletion was stopped. Please check Settings before trying again.', 'nexachat-ai' ) ); ?>);
 		});
 	}
 
@@ -219,46 +218,11 @@ class SSC_Admin {
 				'wizardUrl'  => SSC_Setup::wizard_url(),
 				'chatbotUrl'  => SSC_CHATBOT_URL,
 				'i18n'       => array(
-					'online'  => __( 'Online', 'smart-support-chatbot' ),
-					'offline' => __( 'Offline', 'smart-support-chatbot' ),
+					'online'  => __( 'Online', 'nexachat-ai' ),
+					'offline' => __( 'Offline', 'nexachat-ai' ),
 				),
 			)
 		);
-	}
-
-	/**
-	 * Force LTR on every plugin admin screen, even when the site is RTL.
-	 * The plugin UI is English-first; RTL inheritance breaks layout and reading.
-	 */
-	public function force_admin_ltr() {
-		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		$hook   = $screen ? (string) $screen->id : '';
-		$page   = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-
-		$is_ssc = ( '' !== $hook && false !== strpos( $hook, 'ssc' ) )
-			|| ( '' !== $page && 0 === strpos( $page, 'ssc-' ) );
-
-		if ( ! $is_ssc ) {
-			return;
-		}
-
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static CSS.
-		echo '<style id="ssc-force-ltr">
-html.rtl body.wp-admin .ssc-page,
-html.rtl body.wp-admin .ssc-wizard,
-body.wp-admin .ssc-page,
-body.wp-admin .ssc-wizard {
-	direction: ltr !important;
-	text-align: left !important;
-}
-body.wp-admin .ssc-page input[dir="rtl"],
-body.wp-admin .ssc-wizard input[dir="rtl"],
-body.wp-admin .ssc-page textarea[dir="rtl"],
-body.wp-admin .ssc-wizard textarea[dir="rtl"] {
-	direction: rtl !important;
-	text-align: right !important;
-}
-</style>';
 	}
 
 	/**
@@ -308,7 +272,7 @@ body.wp-admin .ssc-wizard textarea[dir="rtl"] {
 	 */
 	public function render_wizard() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'smart-support-chatbot' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
 		}
 		$this->controller( 'SSC_Wizard' )->render();
 	}

@@ -80,7 +80,7 @@ class SSC_Ajax {
 	 */
 	protected function public_permission() {
 		if ( isset( $_SERVER['CONTENT_LENGTH'] ) && (int) $_SERVER['CONTENT_LENGTH'] > 131072 ) {
-			wp_send_json_error( array( 'message' => __( 'The request is too large.', 'smart-support-chatbot' ) ), 413 );
+			wp_send_json_error( array( 'message' => __( 'The request is too large.', 'nexachat-ai' ) ), 413 );
 		}
 		$rest   = new SSC_REST( $this->engine );
 		$result = $rest->public_permission();
@@ -101,22 +101,22 @@ class SSC_Ajax {
 	public function handle_chat() {
 		$this->public_permission();
 		if ( ! SSC_Setup::is_live() ) {
-			wp_send_json_error( array( 'message' => __( 'The assistant is not available yet.', 'smart-support-chatbot' ) ), 403 );
+			wp_send_json_error( array( 'message' => __( 'The assistant is not available yet.', 'nexachat-ai' ) ), 403 );
 		}
 		$cid = $this->post( 'cid' );
 		if ( ! $this->engine->allow_request( 'chat', $cid ) ) {
-			wp_send_json_error( array( 'message' => __( 'You have reached the daily usage limit. Please try again tomorrow.', 'smart-support-chatbot' ) ), 429 );
+			wp_send_json_error( array( 'message' => __( 'You have reached the daily usage limit. Please try again tomorrow.', 'nexachat-ai' ) ), 429 );
 		}
 		$history = json_decode( $this->post( 'history' ), true );
 		$this->engine->set_context( $this->engine->client_ip(), $this->post( 'conv' ) );
 		$result = $this->engine->chat( SSC_Input::message( $this->post_raw( 'message' ) ), $this->post( 'product' ), is_array( $history ) ? $history : array() );
 
 		if ( ! $result['ok'] ) {
-			wp_send_json_error( array( 'message' => __( 'The message could not be processed.', 'smart-support-chatbot' ) ), 400 );
+			wp_send_json_error( array( 'message' => __( 'The message could not be processed.', 'nexachat-ai' ) ), 400 );
 		}
 		$reply = $result['reply'];
 		if ( 'unanswered' === $result['source'] && '' !== $this->engine->last_error && current_user_can( 'manage_options' ) ) {
-			$reply = '⚠️ ' . __( 'Admin-only notice — AI engine error:', 'smart-support-chatbot' ) . ' ' . $this->engine->last_error;
+			$reply = '⚠️ ' . __( 'Admin-only notice — AI engine error:', 'nexachat-ai' ) . ' ' . $this->engine->last_error;
 		}
 		wp_send_json_success(
 			array(
@@ -137,25 +137,25 @@ class SSC_Ajax {
 	public function handle_submit() {
 		$this->public_permission();
 		if ( ! SSC_Setup::is_live() ) {
-			wp_send_json_error( array( 'message' => __( 'The assistant is not available yet.', 'smart-support-chatbot' ) ), 403 );
+			wp_send_json_error( array( 'message' => __( 'The assistant is not available yet.', 'nexachat-ai' ) ), 403 );
 		}
 		$type = isset( $_POST['type'] ) ? sanitize_key( wp_unslash( $_POST['type'] ) ) : 'consult'; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- public endpoint, rate-limited.
 
 		// Strict module isolation (mirrors REST).
 		if ( 'pharma_adr' === $type ) {
 			if ( ! SSC_Modules::is_active( 'pharma' ) ) {
-				wp_send_json_error( array( 'message' => __( 'ADR reporting is disabled on this site.', 'smart-support-chatbot' ) ), 404 );
+				wp_send_json_error( array( 'message' => __( 'ADR reporting is disabled on this site.', 'nexachat-ai' ) ), 404 );
 			}
 			$module = SSC_Modules::get( 'pharma' );
 		} else {
 			if ( ! SSC_Modules::is_active( 'leads' ) ) {
-				wp_send_json_error( array( 'message' => __( 'Form submission is disabled on this site.', 'smart-support-chatbot' ) ), 404 );
+				wp_send_json_error( array( 'message' => __( 'Form submission is disabled on this site.', 'nexachat-ai' ) ), 404 );
 			}
 			$module = SSC_Modules::get( 'leads' );
 		}
 
 		if ( ! $this->engine->allow_request( 'submit', $this->post( 'cid' ) ) ) {
-			wp_send_json_error( array( 'message' => __( 'Too many submissions today. Please try again tomorrow.', 'smart-support-chatbot' ) ), 429 );
+			wp_send_json_error( array( 'message' => __( 'Too many submissions today. Please try again tomorrow.', 'nexachat-ai' ) ), 429 );
 		}
 		$result = $module->handle_submission( wp_unslash( $_POST ), $this->engine->client_ip() ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- module sanitizes every field.
 		if ( is_wp_error( $result ) ) {
@@ -170,16 +170,16 @@ class SSC_Ajax {
 	public function handle_feedback() {
 		$this->public_permission();
 		if ( ! SSC_Setup::is_live() || ! SSC_Modules::is_active( 'history' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Feedback is disabled on this site.', 'smart-support-chatbot' ) ), 404 );
+			wp_send_json_error( array( 'message' => __( 'Feedback is disabled on this site.', 'nexachat-ai' ) ), 404 );
 		}
 		$log_id = (int) $this->post( 'log_id' );
 		$rating = (int) $this->post( 'rating' );
 		$token  = $this->post( 'log_token' );
 		if ( ! $this->engine->allow_request( 'feedback', $this->post( 'cid' ) ) ) {
-			wp_send_json_error( array( 'message' => __( 'Too many votes today.', 'smart-support-chatbot' ) ), 429 );
+			wp_send_json_error( array( 'message' => __( 'Too many votes today.', 'nexachat-ai' ) ), 429 );
 		}
 		if ( ! in_array( $rating, array( 1, -1 ), true ) || ! $this->engine->verify_log_token( $log_id, $token ) ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid feedback.', 'smart-support-chatbot' ) ), 400 );
+			wp_send_json_error( array( 'message' => __( 'Invalid feedback.', 'nexachat-ai' ) ), 400 );
 		}
 		SSC_Schema::set_chatlog_rating( $log_id, $rating );
 		wp_send_json_success( array( 'ok' => true ) );
@@ -210,14 +210,14 @@ class SSC_Ajax {
 	public function handle_csat() {
 		$this->public_permission();
 		if ( ! SSC_Setup::is_live() || ! SSC_Modules::is_active( 'csat' ) ) {
-			wp_send_json_error( array( 'message' => __( 'The survey is disabled on this site.', 'smart-support-chatbot' ) ), 404 );
+			wp_send_json_error( array( 'message' => __( 'The survey is disabled on this site.', 'nexachat-ai' ) ), 404 );
 		}
 		$score = (int) $this->post( 'score' );
 		if ( $score < 1 || $score > 5 ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid score.', 'smart-support-chatbot' ) ), 400 );
+			wp_send_json_error( array( 'message' => __( 'Invalid score.', 'nexachat-ai' ) ), 400 );
 		}
 		if ( ! $this->engine->allow_request( 'csat', '' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Too many votes today.', 'smart-support-chatbot' ) ), 429 );
+			wp_send_json_error( array( 'message' => __( 'Too many votes today.', 'nexachat-ai' ) ), 429 );
 		}
 		SSC_Schema::record_csat( $score );
 		wp_send_json_success( array( 'ok' => true ) );
@@ -228,19 +228,19 @@ class SSC_Ajax {
 	 */
 	public function handle_test_ai() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Insufficient permissions.', 'smart-support-chatbot' ) ), 403 );
+			wp_send_json_error( array( 'message' => __( 'Insufficient permissions.', 'nexachat-ai' ) ), 403 );
 		}
 		check_ajax_referer( 'ssc_admin', 'nonce' );
 
 		$provider = SSC_Providers::current();
 		if ( null === $provider ) {
-			wp_send_json_error( array( 'message' => __( 'Select and save an AI provider first.', 'smart-support-chatbot' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Select and save an AI provider first.', 'nexachat-ai' ) ) );
 		}
 		$result = $provider->test_connection();
 		if ( $result['ok'] ) {
 			wp_send_json_success(
 				array(
-					'message' => __( 'Connection verified — the model replied successfully.', 'smart-support-chatbot' ),
+					'message' => __( 'Connection verified — the model replied successfully.', 'nexachat-ai' ),
 					'reply'   => $result['text'],
 				)
 			);

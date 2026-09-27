@@ -29,7 +29,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'NexaChatAI', 'smart-support-chatbot' );
+		return __( 'NexaChatAI', 'nexachat-ai' );
 	}
 
 	/**
@@ -65,7 +65,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 	 * @return string[]
 	 */
 	public function get_style_depends() {
-		return array( 'smart-support-chatbot' );
+		return array( 'nexachat-ai' );
 	}
 
 	/**
@@ -74,7 +74,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 	 * @return string[]
 	 */
 	public function get_script_depends() {
-		return array( 'smart-support-chatbot' );
+		return array( 'nexachat-ai' );
 	}
 
 	/**
@@ -85,13 +85,13 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 
 		$this->start_controls_section(
 			'content',
-			array( 'label' => __( 'Content', 'smart-support-chatbot' ) )
+			array( 'label' => __( 'Content', 'nexachat-ai' ) )
 		);
 
 		$this->add_control(
 			'assistant_display_name',
 			array(
-				'label'       => __( 'Assistant name (empty = global)', 'smart-support-chatbot' ),
+				'label'       => __( 'Assistant name (empty = global)', 'nexachat-ai' ),
 				'type'        => \Elementor\Controls_Manager::TEXT,
 				'default'     => '',
 				'placeholder' => (string) $s['assistant_display_name'],
@@ -101,7 +101,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'welcome_title',
 			array(
-				'label'   => __( 'Welcome title (empty = global)', 'smart-support-chatbot' ),
+				'label'   => __( 'Welcome title (empty = global)', 'nexachat-ai' ),
 				'type'    => \Elementor\Controls_Manager::TEXT,
 				'default' => '',
 			)
@@ -110,7 +110,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'welcome_text',
 			array(
-				'label'   => __( 'Welcome message (empty = global)', 'smart-support-chatbot' ),
+				'label'   => __( 'Welcome message (empty = global)', 'nexachat-ai' ),
 				'type'    => \Elementor\Controls_Manager::TEXTAREA,
 				'default' => '',
 			)
@@ -121,7 +121,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->start_controls_section(
 			'style',
 			array(
-				'label' => __( 'Style', 'smart-support-chatbot' ),
+				'label' => __( 'Style', 'nexachat-ai' ),
 				'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
 			)
 		);
@@ -129,13 +129,13 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'position',
 			array(
-				'label'   => __( 'Floating button position', 'smart-support-chatbot' ),
+				'label'   => __( 'Floating button position', 'nexachat-ai' ),
 				'type'    => \Elementor\Controls_Manager::SELECT,
 				'default' => '',
 				'options' => array(
-					''      => __( 'Global setting', 'smart-support-chatbot' ),
-					'right' => __( 'Bottom right', 'smart-support-chatbot' ),
-					'left'  => __( 'Bottom left', 'smart-support-chatbot' ),
+					''      => __( 'Global setting', 'nexachat-ai' ),
+					'right' => __( 'Bottom right', 'nexachat-ai' ),
+					'left'  => __( 'Bottom left', 'nexachat-ai' ),
 				),
 			)
 		);
@@ -143,7 +143,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'primary_color',
 			array(
-				'label'   => __( 'Primary color (empty = global)', 'smart-support-chatbot' ),
+				'label'   => __( 'Primary color (empty = global)', 'nexachat-ai' ),
 				'type'    => \Elementor\Controls_Manager::COLOR,
 				'default' => '',
 			)
@@ -152,14 +152,14 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'theme_mode',
 			array(
-				'label'   => __( 'Theme (empty = global)', 'smart-support-chatbot' ),
+				'label'   => __( 'Theme (empty = global)', 'nexachat-ai' ),
 				'type'    => \Elementor\Controls_Manager::SELECT,
 				'default' => '',
 				'options' => array(
-					''      => __( 'Global setting', 'smart-support-chatbot' ),
-					'light' => __( 'Light', 'smart-support-chatbot' ),
-					'dark'  => __( 'Dark', 'smart-support-chatbot' ),
-					'auto'  => __( 'Match device', 'smart-support-chatbot' ),
+					''      => __( 'Global setting', 'nexachat-ai' ),
+					'light' => __( 'Light', 'nexachat-ai' ),
+					'dark'  => __( 'Dark', 'nexachat-ai' ),
+					'auto'  => __( 'Match device', 'nexachat-ai' ),
 				),
 			)
 		);

@@ -30,7 +30,7 @@ class SSC_Module_Faq extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'FAQ Answer Bank', 'smart-support-chatbot' );
+		return __( 'FAQ Answer Bank', 'nexachat-ai' );
 	}
 
 	/**
@@ -39,7 +39,7 @@ class SSC_Module_Faq extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Curated question/answer pairs with smart Persian/English matching. Works even when the AI engine is unavailable or set to bank-only mode.', 'smart-support-chatbot' );
+		return __( 'Curated question/answer pairs with smart Persian/English matching. Works even when the AI engine is unavailable or set to bank-only mode.', 'nexachat-ai' );
 	}
 
 	/**
@@ -48,7 +48,7 @@ class SSC_Module_Faq extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Instant, zero-cost, perfectly controlled answers for your most common questions.', 'smart-support-chatbot' );
+		return __( 'Instant, zero-cost, perfectly controlled answers for your most common questions.', 'nexachat-ai' );
 	}
 
 	/**
@@ -86,8 +86,8 @@ class SSC_Module_Faq extends SSC_Module {
 		}
 		add_submenu_page(
 			'ssc-dashboard',
-			__( 'FAQ Bank', 'smart-support-chatbot' ),
-			__( 'FAQ Bank', 'smart-support-chatbot' ),
+			__( 'FAQ Bank', 'nexachat-ai' ),
+			__( 'FAQ Bank', 'nexachat-ai' ),
 			'manage_options',
 			'ssc-faq',
 			array( $this, 'render_page' )
@@ -262,7 +262,7 @@ class SSC_Module_Faq extends SSC_Module {
 	 */
 	public function render_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'smart-support-chatbot' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
 		}
 		// Batched listing (no giant single form - 4.x fragility removed).
 		$page  = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;

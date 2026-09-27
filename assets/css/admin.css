@@ -1,14 +1,13 @@
 /**
  * Smart Support Chatbot — unified admin design system.
- * Premium, minimalist, always LTR (English-first UI on RTL sites).
+ * Premium, minimalist. Direction follows the admin language (logical CSS
+ * properties throughout), so the Persian translation reads right-to-left.
  * No gradients, no heavy shadows, restrained motion.
  */
 
 .ssc-page,
 .ssc-wizard {
-        /* Isolation */
-        direction: ltr !important;
-        text-align: left !important;
+        text-align: start;
 
         --ssc-ink: #0f1419;
         --ssc-muted: #5b6472;
@@ -42,11 +41,8 @@
         width: auto;
         max-width: none;
         min-width: 0;
-        margin-right: 20px;
+        margin-inline-end: 20px;
 }
-
-body.rtl .ssc-page,
-body.rtl .ssc-wizard { margin-right: 0; margin-left: 20px; }
 
 .ssc-page, .ssc-page *, .ssc-wizard, .ssc-wizard * { box-sizing: border-box; }
 .ssc-grid > *, .ssc-wizard__main, .ssc-card { min-width: 0; }
@@ -330,8 +326,8 @@ textarea { resize: vertical; }
         margin-bottom: 14px;
 }
 
-.ssc-verifybar.is-ok { border-left: 3px solid var(--ssc-ok); }
-.ssc-verifybar.is-warn { border-left: 3px solid var(--ssc-warn); }
+.ssc-verifybar.is-ok { border-inline-start: 3px solid var(--ssc-ok); }
+.ssc-verifybar.is-warn { border-inline-start: 3px solid var(--ssc-warn); }
 .ssc-verifybar strong { display: block; font-size: 13px; }
 .ssc-verifybar span { color: var(--ssc-muted); font-size: 12px; }
 
@@ -369,7 +365,7 @@ textarea { resize: vertical; }
 .ssc-status.is-warn .dashicons { color: var(--ssc-warn); }
 .ssc-status strong { display: block; font-size: 12.5px; }
 .ssc-status span { color: var(--ssc-muted); font-size: 11.5px; }
-.ssc-status__link { margin-left: auto; color: var(--ssc-accent); text-decoration: none; font-size: 12px; }
+.ssc-status__link { margin-inline-start: auto; color: var(--ssc-accent); text-decoration: none; font-size: 12px; }
 .ssc-status__link:hover { text-decoration: underline; }
 
 .ssc-callout {
@@ -446,7 +442,7 @@ textarea { resize: vertical; }
 .ssc-checklist__mark { color: var(--ssc-faint); flex: none; }
 .ssc-checklist li.is-done .ssc-checklist__mark { color: var(--ssc-ok); }
 .ssc-checklist li.is-done span:not(.ssc-checklist__mark) { color: var(--ssc-muted); }
-.ssc-checklist a { margin-left: auto; color: var(--ssc-accent); text-decoration: none; font-size: 12px; }
+.ssc-checklist a { margin-inline-start: auto; color: var(--ssc-accent); text-decoration: none; font-size: 12px; }
 .ssc-checklist a:hover { text-decoration: underline; }
 
 /* ---------- Tables ---------- */
@@ -459,7 +455,7 @@ textarea { resize: vertical; }
 
 .ssc-table th,
 .ssc-table td {
-        text-align: left;
+        text-align: start;
         padding: 9px 10px;
         border-bottom: 1px solid var(--ssc-line-soft);
         font-size: 12.5px;
@@ -484,12 +480,12 @@ tr.is-serious { background: var(--ssc-danger-soft); }
         padding: 11px 13px;
         background: var(--ssc-bg);
         border-radius: var(--ssc-radius-s);
-        border-left: 3px solid var(--ssc-line);
+        border-inline-start: 3px solid var(--ssc-line);
         line-height: 1.6;
         font-size: 12.5px;
 }
 
-.ssc-ul { margin: 8px 0 0; padding-left: 18px; }
+.ssc-ul { margin: 8px 0 0; padding-inline-start: 18px; }
 .ssc-ul li { margin: 4px 0; line-height: 1.55; font-size: 12.5px; }
 
 /* ---------- Badges ---------- */
@@ -597,7 +593,7 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 
 .ssc-modcard__icon svg { width: 20px; height: 20px; }
 
-.ssc-modcard__body { grid-area: body; padding-left: 12px; min-width: 0; }
+.ssc-modcard__body { grid-area: body; padding-inline-start: 12px; min-width: 0; }
 
 .ssc-modcard__title { margin: 0 0 3px; font-size: 13.5px; font-weight: 650; letter-spacing: -0.01em; }
 .ssc-modcard__desc { margin: 0 0 5px; color: var(--ssc-muted); font-size: 12px; line-height: 1.5; }
@@ -616,7 +612,7 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 
 .ssc-modcard__configure { font-size: 12px; color: var(--ssc-accent); text-decoration: none; }
 .ssc-modcard__configure:hover { text-decoration: underline; }
-.ssc-modcard__side .ssc-btn { margin-left: auto; }
+.ssc-modcard__side .ssc-btn { margin-inline-start: auto; }
 
 /* ---------- Wizard ---------- */
 
@@ -656,7 +652,7 @@ tr.is-serious { background: var(--ssc-danger-soft); }
         padding: 22px;
 }
 
-.ssc-wizard__rail { border-right: 1px solid var(--ssc-line-soft); padding-right: 18px; }
+.ssc-wizard__rail { border-inline-end: 1px solid var(--ssc-line-soft); padding-inline-end: 18px; }
 
 .ssc-wizard__steps { margin: 0; padding: 0; list-style: none; }
 
@@ -706,7 +702,7 @@ tr.is-serious { background: var(--ssc-danger-soft); }
         font-size: 11px;
         line-height: 1.45;
         margin: 12px 0 0;
-        padding-left: 9px;
+        padding-inline-start: 9px;
 }
 
 .ssc-wizard__main h2 { font-size: 17px; font-weight: 650; letter-spacing: -0.02em; margin: 0 0 5px; }
@@ -892,7 +888,7 @@ tr.is-serious { background: var(--ssc-danger-soft); }
         padding: 9px 11px;
         background: var(--ssc-bg);
         border-radius: var(--ssc-radius-s);
-        border-left: 3px solid var(--ssc-line);
+        border-inline-start: 3px solid var(--ssc-line);
         font-size: 12px;
         line-height: 1.55;
 }
@@ -945,8 +941,7 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 .ssc-dashboard .ssc-checklist { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 0 20px; }
 
 @media (max-width: 782px) {
-        .ssc-page, .ssc-wizard { margin-right: 10px; }
-        body.rtl .ssc-page, body.rtl .ssc-wizard { margin-left: 10px; margin-right: 0; }
+        .ssc-page, .ssc-wizard { margin-inline-end: 10px; }
         .ssc-wizard__body { padding: 14px; }
         .ssc-btn { white-space: normal; }
 }
@@ -954,7 +949,7 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 
 @media (max-width: 960px) {
         .ssc-wizard__body { grid-template-columns: 1fr; }
-        .ssc-wizard__rail { border-right: 0; padding-right: 0; border-bottom: 1px solid var(--ssc-line-soft); padding-bottom: 14px; }
+        .ssc-wizard__rail { border-inline-end: 0; padding-inline-end: 0; border-bottom: 1px solid var(--ssc-line-soft); padding-bottom: 14px; }
         .ssc-appear { grid-template-columns: 1fr; }
         .ssc-preview-panel { position: static; }
 }
@@ -989,3 +984,14 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 .ssc-tabs__tab[aria-selected="true"] { color: #1d2327; border-bottom-color: currentColor; }
 .ssc-tabs__tab:focus-visible { outline: 2px solid #2271b1; outline-offset: -2px; }
 [data-ssc-tab][hidden] { display: none; }
+
+/* Visitor data and typed values keep their own direction (Latin text in a
+ * Persian admin and vice versa) instead of inheriting the page direction. */
+.ssc-table td,
+.ssc-page input[type="text"],
+.ssc-page textarea,
+.ssc-wizard input[type="text"],
+.ssc-wizard textarea { unicode-bidi: plaintext; }
+
+/* Back/forward arrows point the reading direction in RTL admins. */
+.rtl .ssc-dir-arrow { display: inline-block; transform: scaleX(-1); }

@@ -30,7 +30,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 	 * @return string
 	 */
 	public function label() {
-		return __( 'Custom webhook', 'smart-support-chatbot' );
+		return __( 'Custom webhook', 'nexachat-ai' );
 	}
 
 	/**
@@ -142,7 +142,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'endpoint',
-					'message' => __( 'No webhook URL configured.', 'smart-support-chatbot' ),
+					'message' => __( 'No webhook URL configured.', 'nexachat-ai' ),
 				),
 			);
 		}
@@ -155,7 +155,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'endpoint',
-					'message' => __( 'The webhook URL is not allowed (public address; HTTPS required when a secret is configured).', 'smart-support-chatbot' ),
+					'message' => __( 'The webhook URL is not allowed (public address; HTTPS required when a secret is configured).', 'nexachat-ai' ),
 				),
 			);
 		}
@@ -208,7 +208,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 					'text'  => '',
 					'error' => array(
 						'code'    => 'auth',
-						'message' => __( 'The webhook response signature is missing or invalid.', 'smart-support-chatbot' ),
+						'message' => __( 'The webhook response signature is missing or invalid.', 'nexachat-ai' ),
 					),
 				);
 			}
@@ -221,7 +221,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'malformed',
-					'message' => __( 'The webhook did not return JSON.', 'smart-support-chatbot' ),
+					'message' => __( 'The webhook did not return JSON.', 'nexachat-ai' ),
 				),
 			);
 		}
@@ -233,7 +233,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'malformed',
-					'message' => __( 'The webhook JSON has no "reply", "message" or "text" field.', 'smart-support-chatbot' ),
+					'message' => __( 'The webhook JSON has no "reply", "message" or "text" field.', 'nexachat-ai' ),
 				),
 			);
 		}

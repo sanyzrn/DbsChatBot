@@ -1,4 +1,4 @@
-"""Regenerate languages/smart-support-chatbot.pot from the source tree.
+"""Regenerate languages/nexachat-ai.pot from the source tree.
 
 A dependency-free substitute for `wp i18n make-pot`: it walks the PHP that
 ships with the plugin, collects every gettext call for this text domain, and
@@ -14,9 +14,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DOMAIN = 'smart-support-chatbot'
+DOMAIN = 'nexachat-ai'
 SCAN = ('includes', 'widgets', 'blocks')
-ROOT_FILES = ('smart-support-chatbot.php', 'uninstall.php')
+ROOT_FILES = ('nexachat-ai.php', 'uninstall.php')
 
 # Functions to collect, mapped to (singular index, plural index, context index).
 FUNCTIONS = {
@@ -178,7 +178,7 @@ def collect():
 
 
 def version() -> str:
-    header = (ROOT / 'smart-support-chatbot.php').read_text(encoding='utf-8')
+    header = (ROOT / 'nexachat-ai.php').read_text(encoding='utf-8')
     found = re.search(r"define\(\s*'SSC_CHATBOT_VERSION',\s*'([^']+)'", header)
     return found.group(1) if found else '0.0.0'
 
@@ -202,7 +202,7 @@ def main() -> None:
         '"Content-Transfer-Encoding: 8bit\\n"',
         f'"POT-Creation-Date: {stamp}\\n"',
         '"X-Generator: tools/make-pot.py\\n"',
-        '"X-Domain: smart-support-chatbot\\n"',
+        '"X-Domain: nexachat-ai\\n"',
         '"Plural-Forms: nplurals=2; plural=(n > 1);\\n"',
         '',
     ]

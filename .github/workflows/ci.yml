@@ -104,8 +104,8 @@ jobs:
           wp config set SSC_TEST_SITE true --raw --path=/tmp/ssc-wordpress
           wp config set DISABLE_WP_CRON true --raw --path=/tmp/ssc-wordpress
           wp core install --path=/tmp/ssc-wordpress --url=http://localhost --title=Test --admin_user=test-admin --admin_password=test-only-pass --admin_email=test@example.invalid --skip-email
-          ln -s "$GITHUB_WORKSPACE" /tmp/ssc-wordpress/wp-content/plugins/smart-support-chatbot
-          wp plugin activate smart-support-chatbot --path=/tmp/ssc-wordpress
+          ln -s "$GITHUB_WORKSPACE" /tmp/ssc-wordpress/wp-content/plugins/nexachat-ai
+          wp plugin activate nexachat-ai --path=/tmp/ssc-wordpress
       - name: Integration checks with mocked external services
         env:
           SSC_WP_TEST_ROOT: /tmp/ssc-wordpress

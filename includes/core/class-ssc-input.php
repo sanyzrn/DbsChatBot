@@ -114,8 +114,8 @@ class SSC_Input {
 			return $text;
 		}
 		return $pharma
-			? __( 'I consent to the processing of my contact and health information for safety review and follow-up.', 'smart-support-chatbot' )
-			: __( 'I consent to the processing of my contact information and message for follow-up.', 'smart-support-chatbot' );
+			? __( 'I consent to the processing of my contact and health information for safety review and follow-up.', 'nexachat-ai' )
+			: __( 'I consent to the processing of my contact information and message for follow-up.', 'nexachat-ai' );
 	}
 
 	/**

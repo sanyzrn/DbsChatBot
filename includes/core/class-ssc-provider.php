@@ -157,7 +157,7 @@ abstract class SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'model',
-					'message' => __( 'No model selected.', 'smart-support-chatbot' ),
+					'message' => __( 'No model selected.', 'nexachat-ai' ),
 				),
 			);
 		}
@@ -210,7 +210,7 @@ abstract class SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'malformed',
-					'message' => __( 'The provider replied 200 but no generated text was found in the response.', 'smart-support-chatbot' ),
+					'message' => __( 'The provider replied 200 but no generated text was found in the response.', 'nexachat-ai' ),
 				),
 			);
 		}
@@ -257,7 +257,7 @@ abstract class SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'     => 'auth',
-					'message'  => __( 'No API key provided.', 'smart-support-chatbot' ),
+					'message'  => __( 'No API key provided.', 'nexachat-ai' ),
 					'friendly' => SSC_HTTP::friendly_error( 'auth' ),
 				),
 			);

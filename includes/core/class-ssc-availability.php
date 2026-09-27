@@ -78,7 +78,7 @@ class SSC_Availability {
 		if ( '' !== $msg ) {
 			return $msg;
 		}
-		return __( 'We are currently away. Leave a message and we will get back to you during business hours.', 'smart-support-chatbot' );
+		return __( 'We are currently away. Leave a message and we will get back to you during business hours.', 'nexachat-ai' );
 	}
 
 	/**

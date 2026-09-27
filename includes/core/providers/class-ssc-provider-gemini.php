@@ -170,7 +170,7 @@ class SSC_Provider_Gemini extends SSC_Provider {
 	 */
 	public function embedded_error( $data ) {
 		if ( isset( $data['candidates'][0]['finishReason'] ) && 'SAFETY' === $data['candidates'][0]['finishReason'] ) {
-			return __( 'The model blocked the test prompt for safety reasons.', 'smart-support-chatbot' );
+			return __( 'The model blocked the test prompt for safety reasons.', 'nexachat-ai' );
 		}
 		return parent::embedded_error( $data );
 	}

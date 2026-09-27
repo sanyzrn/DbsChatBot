@@ -407,7 +407,7 @@ class SSC_Schema {
 	 */
 	public static function submission_types() {
 		$types = array(
-			'consult' => __( 'Consultation request', 'smart-support-chatbot' ),
+			'consult' => __( 'Consultation request', 'nexachat-ai' ),
 		);
 		/**
 		 * Modules may register additional submission types.
@@ -430,13 +430,13 @@ class SSC_Schema {
 		}
 		// Legacy display strings from 4.x.
 		$legacy = array(
-			'گزارش عوارض دارویی' => __( 'Adverse drug reaction report', 'smart-support-chatbot' ),
-			'درخواست مشاوره'     => __( 'Consultation request', 'smart-support-chatbot' ),
+			'گزارش عوارض دارویی' => __( 'Adverse drug reaction report', 'nexachat-ai' ),
+			'درخواست مشاوره'     => __( 'Consultation request', 'nexachat-ai' ),
 		);
 		if ( isset( $legacy[ $type ] ) ) {
 			return $legacy[ $type ];
 		}
-		return ( '' === $type ) ? __( 'General', 'smart-support-chatbot' ) : $type;
+		return ( '' === $type ) ? __( 'General', 'nexachat-ai' ) : $type;
 	}
 
 	/*
@@ -615,7 +615,7 @@ class SSC_Schema {
 		global $wpdb;
 		$table = self::table_name();
 		$user  = wp_get_current_user();
-		self::audit( (int) $id, 'delete', '', '', $user ? $user->user_login : '', __( 'Submission deleted', 'smart-support-chatbot' ) );
+		self::audit( (int) $id, 'delete', '', '', $user ? $user->user_login : '', __( 'Submission deleted', 'nexachat-ai' ) );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- custom table delete.
 		return false !== $wpdb->delete( $table, array( 'id' => (int) $id ), array( '%d' ) );
 	}

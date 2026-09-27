@@ -309,32 +309,32 @@ class SSC_Setup {
 		return array(
 			array(
 				'id'    => 'identity',
-				'label' => __( 'Business profile completed', 'smart-support-chatbot' ),
+				'label' => __( 'Business profile completed', 'nexachat-ai' ),
 				'done'  => $identity,
 			),
 			array(
 				'id'    => 'knowledge',
-				'label' => __( 'Essential business knowledge added', 'smart-support-chatbot' ),
+				'label' => __( 'Essential business knowledge added', 'nexachat-ai' ),
 				'done'  => $knowledge,
 			),
 			array(
 				'id'    => 'connection',
-				'label' => __( 'AI provider connection verified', 'smart-support-chatbot' ),
+				'label' => __( 'AI provider connection verified', 'nexachat-ai' ),
 				'done'  => $conn,
 			),
 			array(
 				'id'    => 'identity_test',
-				'label' => __( 'Business identity test passed', 'smart-support-chatbot' ),
+				'label' => __( 'Business identity test passed', 'nexachat-ai' ),
 				'done'  => $identity_verified,
 			),
 			array(
 				'id'    => 'appearance',
-				'label' => __( 'Appearance configured', 'smart-support-chatbot' ),
+				'label' => __( 'Appearance configured', 'nexachat-ai' ),
 				'done'  => $appearance,
 			),
 			array(
 				'id'    => 'privacy',
-				'label' => __( 'Privacy disclosures acknowledged', 'smart-support-chatbot' ),
+				'label' => __( 'Privacy disclosures acknowledged', 'nexachat-ai' ),
 				'done'  => $privacy,
 			),
 		);

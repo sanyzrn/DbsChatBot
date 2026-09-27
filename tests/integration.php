@@ -4,7 +4,7 @@ $root = getenv( 'SSC_WP_TEST_ROOT' );
 if ( ! $root || ! is_file( $root . '/wp-load.php' ) ) { fwrite( STDERR, "Set SSC_WP_TEST_ROOT to the disposable WordPress directory.\n" ); exit( 1 ); }
 require $root . '/wp-load.php';
 if ( ! defined( 'SSC_TEST_SITE' ) || ! SSC_TEST_SITE ) { throw new RuntimeException( 'Refusing to modify a non-test site.' ); }
-require_once dirname( __DIR__ ) . '/smart-support-chatbot.php';
+require_once dirname( __DIR__ ) . '/nexachat-ai.php';
 ssc_chatbot_activate();
 add_filter( 'pre_wp_mail', '__return_true' ); // No messages may leave the test environment.
 add_filter( 'pre_http_request', function () { return new WP_Error( 'test_network_blocked', 'External requests are mocked.' ); } );
@@ -139,16 +139,16 @@ wp_set_current_user( 1 );
 $frontend = new SSC_Frontend();
 $frontend->register_assets();
 $frontend->enqueue_with_config();
-$script_data = wp_scripts()->get_data( 'smart-support-chatbot', 'data' );
+$script_data = wp_scripts()->get_data( 'nexachat-ai', 'data' );
 check( false !== strpos( $script_data, '"nonce":""' ), 'Public widget sends no incompatible or expiring nonce by default' );
 add_filter( 'ssc_enforce_rest_nonce', '__return_true' );
 $frontend = new SSC_Frontend();
 $frontend->enqueue_with_config();
-$script_data = wp_scripts()->get_data( 'smart-support-chatbot', 'data' );
+$script_data = wp_scripts()->get_data( 'nexachat-ai', 'data' );
 check( false !== strpos( $script_data, '"nonce":"' . wp_create_nonce( 'wp_rest' ) . '"' ), 'Strict widget nonce uses the WordPress REST action' );
 remove_filter( 'ssc_enforce_rest_nonce', '__return_true' );
-load_textdomain( 'smart-support-chatbot', dirname( __DIR__ ) . '/languages/smart-support-chatbot-fa_IR.mo', 'fa_IR' );
-check( __( 'Report a side effect', 'smart-support-chatbot' ) === 'گزارش عارضهٔ دارویی', 'Bundled Persian gettext catalog loads' );
+load_textdomain( 'nexachat-ai', dirname( __DIR__ ) . '/languages/nexachat-ai-fa_IR.mo', 'fa_IR' );
+check( __( 'Report a side effect', 'nexachat-ai' ) === 'گزارش عارضهٔ دارویی', 'Bundled Persian gettext catalog loads' );
 check( SSC_Settings::clamp_int( 'font_size', 0 ) === 12 && SSC_Settings::clamp_int( 'window_width', 5000 ) === 520 && SSC_Settings::clamp_int( 'ai_max_tokens', 0 ) === 100, 'Integer settings are clamped to usable ranges' );
 $raw_fields = array(
     array( 'label' => 'Company', 'type' => 'text', 'key' => '' ),

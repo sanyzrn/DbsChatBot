@@ -32,7 +32,7 @@ class SSC_Module_Proactive extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Proactive Invitation', 'smart-support-chatbot' );
+		return __( 'Proactive Invitation', 'nexachat-ai' );
 	}
 
 	/**
@@ -41,7 +41,7 @@ class SSC_Module_Proactive extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'A single, dismissible invitation bubble after a delay - shown at most once per browser session.', 'smart-support-chatbot' );
+		return __( 'A single, dismissible invitation bubble after a delay - shown at most once per browser session.', 'nexachat-ai' );
 	}
 
 	/**
@@ -50,7 +50,7 @@ class SSC_Module_Proactive extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Gently start conversations with hesitant visitors without being intrusive.', 'smart-support-chatbot' );
+		return __( 'Gently start conversations with hesitant visitors without being intrusive.', 'nexachat-ai' );
 	}
 
 	/**

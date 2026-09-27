@@ -222,7 +222,7 @@ class SSC_Chat_Engine {
 		$this->last_source = 'unanswered';
 		$fallback          = (string) SSC_Settings::get( 'ai_fallback_msg', '' );
 		if ( '' === trim( $fallback ) ) {
-			$fallback = __( 'Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly.', 'smart-support-chatbot' );
+			$fallback = __( 'Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly.', 'nexachat-ai' );
 		}
 		$envelope = $this->envelope( true, $fallback, 'unanswered' );
 		// Handoff is suggested only when the module is active (server-enforced).

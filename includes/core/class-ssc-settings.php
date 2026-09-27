@@ -918,14 +918,14 @@ class SSC_Settings {
 	 */
 	public static function form_field_type_labels() {
 		return array(
-			'text'     => __( 'Short text', 'smart-support-chatbot' ),
-			'textarea' => __( 'Long text', 'smart-support-chatbot' ),
-			'tel'      => __( 'Phone', 'smart-support-chatbot' ),
-			'email'    => __( 'Email', 'smart-support-chatbot' ),
-			'number'   => __( 'Number', 'smart-support-chatbot' ),
-			'select'   => __( 'Dropdown', 'smart-support-chatbot' ),
-			'radio'    => __( 'Single choice', 'smart-support-chatbot' ),
-			'checkbox' => __( 'Checkbox', 'smart-support-chatbot' ),
+			'text'     => __( 'Short text', 'nexachat-ai' ),
+			'textarea' => __( 'Long text', 'nexachat-ai' ),
+			'tel'      => __( 'Phone', 'nexachat-ai' ),
+			'email'    => __( 'Email', 'nexachat-ai' ),
+			'number'   => __( 'Number', 'nexachat-ai' ),
+			'select'   => __( 'Dropdown', 'nexachat-ai' ),
+			'radio'    => __( 'Single choice', 'nexachat-ai' ),
+			'checkbox' => __( 'Checkbox', 'nexachat-ai' ),
 		);
 	}
 
@@ -999,7 +999,7 @@ class SSC_Settings {
 			$items[] = array(
 				'id'      => 'ki-org-profile',
 				'type'    => 'general',
-				'title'   => isset( $new['business']['org_name'] ) && '' !== $new['business']['org_name'] ? $new['business']['org_name'] : __( 'About the organization', 'smart-support-chatbot' ),
+				'title'   => isset( $new['business']['org_name'] ) && '' !== $new['business']['org_name'] ? $new['business']['org_name'] : __( 'About the organization', 'nexachat-ai' ),
 				'content' => wp_kses_post( (string) $old_knowledge[ $company_id ] ),
 			);
 		}

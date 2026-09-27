@@ -33,7 +33,7 @@ class SSC_Module_Notifications extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Notifications', 'smart-support-chatbot' );
+		return __( 'Notifications', 'nexachat-ai' );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class SSC_Module_Notifications extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Instant alerts for new requests via Bale/Telegram and/or email, with delivery tracking and automatic retries for failed deliveries.', 'smart-support-chatbot' );
+		return __( 'Instant alerts for new requests via Bale/Telegram and/or email, with delivery tracking and automatic retries for failed deliveries.', 'nexachat-ai' );
 	}
 
 	/**
@@ -51,7 +51,7 @@ class SSC_Module_Notifications extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Never miss a request - failed deliveries are retried and surfaced instead of vanishing.', 'smart-support-chatbot' );
+		return __( 'Never miss a request - failed deliveries are retried and surfaced instead of vanishing.', 'nexachat-ai' );
 	}
 
 	/**
@@ -198,7 +198,7 @@ class SSC_Module_Notifications extends SSC_Module {
 			$to = get_option( 'admin_email' );
 		}
 		/* translators: %s: submission type label. */
-		$subject = sprintf( __( 'New request: %s', 'smart-support-chatbot' ), SSC_Schema::type_label( $row['type'] ) );
+		$subject = sprintf( __( 'New request: %s', 'nexachat-ai' ), SSC_Schema::type_label( $row['type'] ) );
 		$sent    = wp_mail( $to, $subject, $text, array( 'Content-Type: text/plain; charset=UTF-8' ) );
 		return $sent ? array(
 			'ok'    => true,
@@ -222,15 +222,15 @@ class SSC_Module_Notifications extends SSC_Module {
 		$serious = $is_adr && SSC_Module_Pharma::is_serious_row( $row );
 
 		if ( $serious ) {
-			$lines[] = '🚨 ' . __( 'SERIOUS adverse reaction report - review immediately', 'smart-support-chatbot' );
+			$lines[] = '🚨 ' . __( 'SERIOUS adverse reaction report - review immediately', 'nexachat-ai' );
 		}
 		/* translators: %s: type label. */
-		$lines[] = sprintf( __( 'New request (%s)', 'smart-support-chatbot' ), $type );
+		$lines[] = sprintf( __( 'New request (%s)', 'nexachat-ai' ), $type );
 		// Medical narratives and direct identifiers stay in the access-controlled inbox.
 		if ( $is_adr ) {
 			$lines[] = sprintf(
 				/* translators: %d: internal case number. */
-				__( 'Case #%d — sign in to review the report.', 'smart-support-chatbot' ),
+				__( 'Case #%d — sign in to review the report.', 'nexachat-ai' ),
 				(int) $row['id']
 			);
 			$lines[] = admin_url( 'admin.php?page=ssc-pharma&view=' . (int) $row['id'] );
@@ -238,15 +238,15 @@ class SSC_Module_Notifications extends SSC_Module {
 		}
 		if ( ! empty( $row['name'] ) ) {
 			/* translators: %s: name. */
-			$lines[] = sprintf( __( 'Name: %s', 'smart-support-chatbot' ), $row['name'] );
+			$lines[] = sprintf( __( 'Name: %s', 'nexachat-ai' ), $row['name'] );
 		}
 		if ( ! empty( $row['phone'] ) ) {
 			/* translators: %s: phone. */
-			$lines[] = sprintf( __( 'Phone: %s', 'smart-support-chatbot' ), $row['phone'] );
+			$lines[] = sprintf( __( 'Phone: %s', 'nexachat-ai' ), $row['phone'] );
 		}
 		if ( ! empty( $row['product'] ) ) {
 			/* translators: %s: product. */
-			$lines[] = sprintf( __( 'Product: %s', 'smart-support-chatbot' ), $row['product'] );
+			$lines[] = sprintf( __( 'Product: %s', 'nexachat-ai' ), $row['product'] );
 		}
 		if ( $is_adr ) {
 			foreach ( array( 'severity', 'outcome', 'batch_number', 'concomitant_drugs', 'reporter_type' ) as $field ) {

@@ -30,10 +30,11 @@ stay switched off until you enable them.
 |---|---|
 | **Setup wizard** | Five resumable steps with auto-saved progress. The widget stays invisible to visitors until you explicitly publish it — enforced server-side, not just hidden in the UI. |
 | **Multi-provider AI** | OpenAI, Gemini, Claude, OpenRouter, any OpenAI-compatible endpoint, or a signed webhook. Real connection tests that perform an actual generation and map failures to clear causes. |
-| **Business knowledge** | Structured identity and knowledge entries, plus document import (URL, `.txt`, `.md`, `.csv`, `.json`) chunked for offline retrieval. |
-| **Streaming replies** | Server-Sent Events for OpenAI-compatible providers, with automatic fallback when the server or provider cannot stream. |
+| **Business knowledge** | Structured identity and knowledge entries, plus document import (URL, `.txt`, `.md`, `.csv`, `.json`). Keyword retrieval, optional semantic retrieval via the provider's embeddings API, and source citations under answers. |
+| **Streaming replies** | Server-Sent Events for OpenAI, Claude, Gemini and OpenAI-compatible providers, with automatic fallback when the server or provider cannot stream. |
+| **Conversation memory** | Kept server-side under a random conversation id; the browser never supplies the model's context. |
 | **Security** | API keys encrypted at rest (AES-256-CBC, encrypt-then-MAC), SSRF-guarded outbound requests, per-bucket rate limits, honeypot, payload caps. |
-| **Privacy** | Server-side transcript logging is opt-in. Configurable retention. Suggested privacy-policy text contributed to WordPress core's privacy tool. |
+| **Privacy** | Server-side transcript logging is opt-in. Configurable retention. Visitor IPs anonymized by default. Suggested privacy-policy text contributed to WordPress core's privacy tool. |
 | **Placement** | Floating widget, `[ssc_chatbot]` shortcode, native Gutenberg block, or Elementor widget. |
 | **Targeting** | Show or hide by page path, device, and login state. Business hours with an offline message. |
 
@@ -141,7 +142,9 @@ add_filter( 'ssc_enforce_rest_nonce', '__return_true' );
 
 Other hooks: `ssc_frontend_config`, `ssc_prompt_extra`, `ssc_ai_cache_ttl`,
 `ssc_ip_header`, `ssc_trusted_proxy_headers`, `ssc_submit_rate_limit`,
-`ssc_http_timeout`, `ssc_pharma_capability`, `ssc_adr_case_purged`.
+`ssc_http_timeout`, `ssc_pharma_capability`, `ssc_adr_case_purged`,
+`ssc_conversation_ttl`, `ssc_embedding_model`, `ssc_kb_semantic_threshold`,
+`ssc_use_jalali`.
 
 ## License
 

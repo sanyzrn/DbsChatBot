@@ -62,7 +62,7 @@ class SSC_Cron {
 	public static function schedules( $schedules ) {
 		$schedules['ssc_five_minutes'] = array(
 			'interval' => 300,
-			'display'  => __( 'NexaChatAI: every five minutes', 'smart-support-chatbot' ),
+			'display'  => __( 'NexaChatAI: every five minutes', 'nexachat-ai' ),
 		);
 		return $schedules;
 	}

@@ -125,7 +125,7 @@ class SSC_Stream {
 		if ( $status['got'] && '' !== trim( $full ) ) {
 			return array(
 				'ok'      => true,
-				'text'    => rtrim( $full ) . "\n\n" . __( '(The answer was interrupted. Ask again to continue.)', 'smart-support-chatbot' ),
+				'text'    => rtrim( $full ) . "\n\n" . __( '(The answer was interrupted. Ask again to continue.)', 'nexachat-ai' ),
 				'error'   => null,
 				'partial' => true,
 			);

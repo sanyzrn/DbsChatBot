@@ -17,6 +17,6 @@
 			"default": ""
 		}
 	},
-	"textdomain": "smart-support-chatbot",
+	"textdomain": "nexachat-ai",
 	"editorScript": "file:./index.js"
 }

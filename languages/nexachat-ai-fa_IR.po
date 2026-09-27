@@ -1,0 +1,2249 @@
+msgid ""
+msgstr "Project-Id-Version: NexaChatAI\nLanguage: fa_IR\nContent-Type: text/plain; charset=UTF-8\nPlural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "%d answer"
+msgid_plural "%d answers"
+msgstr[0] "%d پاسخ"
+msgstr[1] "%d پاسخ"
+
+msgid "%d case"
+msgid_plural "%d cases"
+msgstr[0] "%d پرونده"
+msgstr[1] "%d پرونده"
+
+msgid "%d chunks are waiting to be indexed (continues in the background)."
+msgstr "%d تکه در انتظار نمایه‌سازی است (در پس‌زمینه ادامه می‌یابد)."
+
+msgid "%d chunks from %d documents. Relevant pieces are retrieved automatically per question."
+msgstr "%d تکه از %d سند. بخش‌های مرتبط برای هر پرسش خودکار بازیابی می‌شوند."
+
+msgid "%d entries · %d documents"
+msgstr "%d مورد · %d سند"
+
+msgid "%d exchange"
+msgid_plural "%d exchanges"
+msgstr[0] "%d تبادل"
+msgstr[1] "%d تبادل"
+
+msgid "%d notification deliveries are pending retry (last error: %s)."
+msgstr "%d اعلان در انتظار ارسال دوباره است (آخرین خطا: %s)."
+
+msgid "%d notifications exhausted automatic retries. Check delivery settings, then retry them."
+msgstr "تلاش خودکار برای ارسال %d اعلان ناموفق بوده است. تنظیمات ارسال را بررسی و سپس دوباره تلاش کنید."
+
+msgid "%d question went unanswered in the last 14 days — consider adding it to your FAQ bank."
+msgid_plural "%d questions went unanswered in the last 14 days — consider adding them to your FAQ bank."
+msgstr[0] "%d پرسش در ۱۴ روز اخیر بی‌پاسخ ماند — آن را به بانک پرسش‌وپاسخ اضافه کنید."
+msgstr[1] "%d پرسش در ۱۴ روز اخیر بی‌پاسخ ماند — آن‌ها را به بانک پرسش‌وپاسخ اضافه کنید."
+
+msgid "%d rating"
+msgid_plural "%d ratings"
+msgstr[0] "%d امتیاز"
+msgstr[1] "%d امتیاز"
+
+msgid "%d request"
+msgid_plural "%d requests"
+msgstr[0] "%d درخواست"
+msgstr[1] "%d درخواست"
+
+msgid "(The answer was interrupted. Ask again to continue.)"
+msgstr "(پاسخ قطع شد. برای ادامه دوباره بپرسید.)"
+
+msgid "+ Add another entry"
+msgstr "+ افزودن مورد دیگر"
+
+msgid "+ Add entry"
+msgstr "+ افزودن مورد"
+
+msgid "+ Add field"
+msgstr "+ افزودن فیلد"
+
+msgid "+ Add product"
+msgstr "+ افزودن محصول"
+
+msgid "0.1 — very precise"
+msgstr "0.1 — بسیار دقیق"
+
+msgid "0.4 — balanced"
+msgstr "0.4 — متعادل"
+
+msgid "0.7 — creative"
+msgstr "0.7 — خلاق"
+
+msgid "1 — maximum creativity"
+msgstr "1 — بیشترین خلاقیت"
+
+msgid "A key is stored — type to replace"
+msgstr "یک کلید ذخیره شده است — برای جایگزینی تایپ کنید"
+
+msgid "A private preview — visitors cannot see it. Ask anything your customers would ask."
+msgstr "یک پیش‌نمایش خصوصی — بازدیدکنندگان آن را نمی‌بینند. هر چیزی که مشتریان می‌پرسند بپرسید."
+
+msgid "A secret is stored — type to replace"
+msgstr "یک رمز ذخیره شده است — برای جایگزینی تایپ کنید"
+
+msgid "A short 1-5 star survey at the end of a real conversation, with a skip option."
+msgstr "یک نظرسنجی کوتاه ۱ تا ۵ ستاره در پایان گفتگوی واقعی، با امکان رد کردن."
+
+msgid "A short, factual description the assistant can rely on…"
+msgstr "شرح کوتاه و دقیقی که دستیار بتواند به آن تکیه کند…"
+
+msgid "A single, dismissible invitation bubble after a delay - shown at most once per browser session."
+msgstr "یک حباب دعوت قابل بستن پس از تأخیر — حداکثر یک بار در هر نشست مرورگر."
+
+msgid "A token is stored — type to replace"
+msgstr "یک توکن ذخیره شده است — برای جایگزینی تایپ کنید"
+
+msgid "ADR Cases"
+msgstr "پرونده‌های عوارض دارویی"
+
+msgid "ADR case #%d"
+msgstr "پروندهٔ عارضه #%d"
+
+msgid "ADR cases are never auto-deleted by retention rules; deletion is a manual, audited action."
+msgstr "پرونده‌های عارضه هرگز با قواعد نگهداری خودکار حذف نمی‌شوند؛ حذف، اقدامی دستی و ممیزی‌شده است."
+
+msgid "ADR report received"
+msgstr "گزارش عارضه دریافت شد"
+
+msgid "ADR reporting is disabled on this site."
+msgstr "گزارش عارضه در این سایت غیرفعال است."
+
+msgid "ADR reports"
+msgstr "گزارش‌های عارضه"
+
+msgid "AI"
+msgstr "هوش مصنوعی"
+
+msgid "AI Connection"
+msgstr "اتصال هوش مصنوعی"
+
+msgid "AI can make mistakes."
+msgstr "هوش مصنوعی ممکن است اشتباه کند."
+
+msgid "AI engine"
+msgstr "موتور هوش مصنوعی"
+
+msgid "AI first, FAQ bank as fallback"
+msgstr "اول هوش مصنوعی، سپس بانک پرسش‌وپاسخ"
+
+msgid "AI provider connection verified"
+msgstr "اتصال به ارائه‌دهندهٔ هوش مصنوعی تأیید شد"
+
+msgid "API key"
+msgstr "کلید API"
+
+msgid "About the organization"
+msgstr "دربارهٔ سازمان"
+
+msgid "About us, services and contact info"
+msgstr "دربارهٔ ما، خدمات و راه‌های ارتباط"
+
+msgid "Action"
+msgstr "اقدام"
+
+msgid "Activate"
+msgstr "فعال‌سازی"
+
+msgid "Active"
+msgstr "فعال"
+
+msgid "Active modules"
+msgstr "ماژول‌های فعال"
+
+msgid "Add an answer"
+msgstr "افزودن پاسخ"
+
+msgid "Add answer"
+msgstr "افزودن پاسخ"
+
+msgid "Add the facts visitors usually ask about. No AI jargon needed — just type what you would tell a new employee."
+msgstr "اطلاعاتی را که بازدیدکنندگان معمولاً می‌پرسند اضافه کنید. اصطلاحات فنی لازم نیست — همان چیزی را بنویسید که به یک همکار تازه‌وارد می‌گفتید."
+
+msgid "Add to FAQ"
+msgstr "افزودن به پرسش‌های متداول"
+
+msgid "Add to existing answers"
+msgstr "افزودن به پاسخ‌های موجود"
+
+msgid "Added"
+msgstr "افزوده‌شده"
+
+msgid "Admin-only notice — AI engine error:"
+msgstr "اعلان فقط برای مدیر — خطای موتور هوش مصنوعی:"
+
+msgid "Advanced engine options"
+msgstr "گزینه‌های پیشرفتهٔ موتور"
+
+msgid "Advanced styling"
+msgstr "سبک‌دهی پیشرفته"
+
+msgid "Adverse drug reaction report"
+msgstr "گزارش عارضهٔ دارویی"
+
+msgid "After scrolling part of the page"
+msgstr "پس از پیمایش بخشی از صفحه"
+
+msgid "After the delay"
+msgstr "پس از تأخیر"
+
+msgid "All cases"
+msgstr "همهٔ پرونده‌ها"
+
+msgid "All devices"
+msgstr "همهٔ دستگاه‌ها"
+
+msgid "All pages"
+msgstr "همهٔ صفحه‌ها"
+
+msgid "All sources"
+msgstr "همهٔ منابع"
+
+msgid "All statuses"
+msgstr "همهٔ وضعیت‌ها"
+
+msgid "All types"
+msgstr "همهٔ انواع"
+
+msgid "Allowed information sources"
+msgstr "منابع مجاز پاسخ‌گویی"
+
+msgid "Also permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?"
+msgstr "همهٔ داده‌های ذخیره‌شده (تنظیمات، دانش، گفتگوها، درخواست‌ها، پرونده‌های عارضه) هم برای همیشه حذف شوند؟"
+
+msgid "Also send email notifications"
+msgstr "ارسال اعلان ایمیلی هم انجام شود"
+
+msgid "Always included in the assistant's instructions."
+msgstr "همیشه در دستورالعمل‌های دستیار گنجانده می‌شود."
+
+msgid "Analytics"
+msgstr "تحلیل‌ها"
+
+msgid "Analytics & Insights"
+msgstr "تحلیل و بینش"
+
+msgid "Anonymized (network part only — recommended)"
+msgstr "ناشناس‌شده (فقط بخش شبکه — توصیه‌شده)"
+
+msgid "Answer"
+msgstr "پاسخ"
+
+msgid "Answer added."
+msgstr "پاسخ اضافه شد."
+
+msgid "Answer deleted."
+msgstr "پاسخ حذف شد."
+
+msgid "Answer priority"
+msgstr "اولویت پاسخ"
+
+msgid "Answer source"
+msgstr "منبع پاسخ"
+
+msgid "Any rating"
+msgstr "هر امتیازی"
+
+msgid "Appearance"
+msgstr "ظاهر"
+
+msgid "Appearance configured"
+msgstr "ظاهر تنظیم شد"
+
+msgid "Appearance saved."
+msgstr "ظاهر ذخیره شد."
+
+msgid "Applies to every form. Server transcript logging is opt-in; browser transcripts and shared answer caching are disabled in pharmaceutical mode. Submitted forms are stored independently of chat history."
+msgstr "برای همهٔ فرم‌ها اعمال می‌شود. ثبت گفتگو در سرور اختیاری است؛ در حالت دارویی، ذخیرهٔ گفتگو در مرورگر و کش مشترک پاسخ غیرفعال است. فرم‌های ارسالی مستقل از تاریخچهٔ گفتگو ذخیره می‌شوند."
+
+msgid "Approved company sources only"
+msgstr "فقط منابع تأییدشدهٔ شرکت"
+
+msgid "Archived"
+msgstr "بایگانی‌شده"
+
+msgid "Ask us"
+msgstr "از ما بپرسید"
+
+msgid "Asks the assistant which organization it represents. It must answer correctly before publishing."
+msgstr "از دستیار می‌پرسد نمایندهٔ کدام سازمان است. پیش از انتشار باید پاسخ درست بدهد."
+
+msgid "Assistant bubble color"
+msgstr "رنگ حباب دستیار"
+
+msgid "Assistant display name"
+msgstr "نام نمایشی دستیار"
+
+msgid "Assistant name"
+msgstr "نام دستیار"
+
+msgid "Assistant name (empty = global)"
+msgstr "نام دستیار (خالی = تنظیم کلی)"
+
+msgid "Assistant personality"
+msgstr "شخصیت دستیار"
+
+msgid "Assistant role"
+msgstr "نقش دستیار"
+
+msgid "Attribute (e.g. warranty)"
+msgstr "ویژگی (مثلاً گارانتی)"
+
+msgid "Audit trail"
+msgstr "سابقهٔ ممیزی"
+
+msgid "Auto (follow site language)"
+msgstr "خودکار (مطابق زبان سایت)"
+
+msgid "Available with OpenAI, Gemini or an OpenAI-compatible custom endpoint. The connected provider has no embeddings API, so keyword search is used."
+msgstr "با OpenAI، Gemini یا endpoint سفارشی سازگار با OpenAI در دسترس است. ارائه‌دهندهٔ فعلی API امبدینگ ندارد، بنابراین جست‌وجوی کلیدواژه‌ای استفاده می‌شود."
+
+msgid "Avatar / custom icon URL"
+msgstr "نشانی آواتار / آیکون سفارشی"
+
+msgid "Back"
+msgstr "بازگشت"
+
+msgid "Bale"
+msgstr "بله"
+
+msgid "Base font size (px)"
+msgstr "اندازهٔ پایهٔ قلم (پیکسل)"
+
+msgid "Batch / lot"
+msgstr "سری ساخت / بچ"
+
+msgid "Batch / lot number"
+msgstr "شمارهٔ سری ساخت / بچ"
+
+msgid "Before you go live"
+msgstr "پیش از راه‌اندازی"
+
+msgid "Bot token"
+msgstr "توکن ربات"
+
+msgid "Both"
+msgstr "هر دو"
+
+msgid "Both modes refer personal treatment questions to a healthcare professional. Product-specific claims require approved company sources. Test answers with your medical team before publication."
+msgstr "در هر دو حالت، پرسش‌های درمانی شخصی به متخصص ارجاع داده می‌شوند. ادعاهای مرتبط با محصولات باید مستند به منابع تأییدشدهٔ شرکت باشند. پیش از انتشار، پاسخ‌ها را با تیم پزشکی خود بررسی کنید."
+
+msgid "Bottom left"
+msgstr "پایین چپ"
+
+msgid "Bottom right"
+msgstr "پایین راست"
+
+msgid "Brand / trading name"
+msgstr "نام تجاری / برند"
+
+msgid "Brand color, texts and placement — with a live preview. Everything can be fine-tuned later."
+msgstr "رنگ برند، متن‌ها و محل نمایش — با پیش‌نمایش زنده. همه‌چیز بعداً هم قابل تنظیم است."
+
+msgid "Brand the assistant and watch the preview update live. Dark and light themes are fully supported."
+msgstr "دستیار را هم‌رنگ برند خود کنید و تغییرات را زنده در پیش‌نمایش ببینید. تم روشن و تیره کامل پشتیبانی می‌شوند."
+
+msgid "Brochure link (optional)"
+msgstr "لینک بروشور (اختیاری)"
+
+msgid "Browser session"
+msgstr "نشست مرورگر"
+
+msgid "Bulk import / export"
+msgstr "ورود / خروجی گروهی"
+
+msgid "Business Identity"
+msgstr "هویت کسب‌وکار"
+
+msgid "Business Knowledge"
+msgstr "دانش شرکت"
+
+msgid "Business Tools"
+msgstr "ابزارهای کسب‌وکار"
+
+msgid "Business category"
+msgstr "دستهٔ کسب‌وکار"
+
+msgid "Business hours"
+msgstr "ساعات کاری"
+
+msgid "Business identity test"
+msgstr "آزمون هویت کسب‌وکار"
+
+msgid "Business identity test passed"
+msgstr "آزمون هویت کسب‌وکار قبول شد"
+
+msgid "Business knowledge"
+msgstr "دانش کسب‌وکار"
+
+msgid "Business profile"
+msgstr "مشخصات کسب‌وکار"
+
+msgid "Business profile completed"
+msgstr "مشخصات کسب‌وکار تکمیل شد"
+
+msgid "By"
+msgstr "توسط"
+
+msgid "Cache"
+msgstr "کش"
+
+msgid "Cache identical questions (6 hours, faster + cheaper)"
+msgstr "کش پرسش‌های یکسان (۶ ساعت؛ سریع‌تر و ارزان‌تر)"
+
+msgid "Cached AI answers cleared."
+msgstr "پاسخ‌های کش‌شدهٔ هوش مصنوعی پاک شد."
+
+msgid "Call us"
+msgstr "تماس با ما"
+
+msgid "Cancel = delete plugin, KEEP data"
+msgstr "انصراف = حذف افزونه، با حفظ داده‌ها"
+
+msgid "Capture complete, reviewable safety reports instead of loose chat messages."
+msgstr "به‌جای پیام‌های پراکندهٔ گفتگو، گزارش‌های ایمنی کامل و قابل بررسی دریافت کنید."
+
+msgid "Case #%d — sign in to review the report."
+msgstr "پرونده #%d — برای بررسی گزارش وارد شوید."
+
+msgid "Case not found."
+msgstr "پرونده پیدا نشد."
+
+msgid "Case updated."
+msgstr "پرونده به‌روزرسانی شد."
+
+msgid "Case workflow"
+msgstr "گردش کار پرونده"
+
+msgid "Casual"
+msgstr "خودمانی"
+
+msgid "Change status"
+msgstr "تغییر وضعیت"
+
+msgid "Changing the provider, key, model or endpoint invalidates previous verification. Run a test after every change."
+msgstr "تغییر ارائه‌دهنده، کلید، مدل یا نشانی، تأیید قبلی را باطل می‌کند. پس از هر تغییر آزمون را اجرا کنید."
+
+msgid "Chat / channel ID"
+msgstr "شناسهٔ گفتگو / کانال"
+
+msgid "Chat messages / day / session"
+msgstr "پیام گفتگو / روز / نشست"
+
+msgid "Chat messages / day / visitor"
+msgstr "پیام گفتگو / روز / بازدیدکننده"
+
+msgid "Chat text direction"
+msgstr "جهت متن گفتگو"
+
+msgid "Chat window width (px)"
+msgstr "عرض پنجرهٔ گفتگو (پیکسل)"
+
+msgid "Checkbox"
+msgstr "چک‌باکس"
+
+msgid "Choices"
+msgstr "گزینه‌ها"
+
+msgid "Choices, comma separated (dropdown / radio only)"
+msgstr "گزینه‌ها، جدا شده با ویرگول (فقط برای فهرست کشویی و تک‌گزینه‌ای)"
+
+msgid "Chunks"
+msgstr "تکه‌ها"
+
+msgid "Clear cached AI answers"
+msgstr "پاک کردن پاسخ‌های کش‌شدهٔ هوش مصنوعی"
+
+msgid "Clinical severity"
+msgstr "شدت بالینی"
+
+msgid "Clinical severity (how it felt)"
+msgstr "شدت علائم (تجربهٔ بیمار)"
+
+msgid "Close chat"
+msgstr "بستن گفتگو"
+
+msgid "Closed"
+msgstr "بسته‌شده"
+
+msgid "Closes at"
+msgstr "ساعت پایان"
+
+msgid "Communication"
+msgstr "ارتباطات"
+
+msgid "Communication tone"
+msgstr "لحن گفتگو"
+
+msgid "Company sources and general educational information"
+msgstr "منابع شرکت همراه با اطلاعات عمومی آموزشی"
+
+msgid "Complete setup"
+msgstr "تکمیل راه‌اندازی"
+
+msgid "Complete the business profile (step 1) first."
+msgstr "ابتدا مشخصات کسب‌وکار (گام ۱) را کامل کنید."
+
+msgid "Compliance disclaimer:"
+msgstr "سلب مسئولیت انطباق:"
+
+msgid "Concomitant drugs"
+msgstr "داروهای هم‌زمان"
+
+msgid "Configure"
+msgstr "پیکربندی"
+
+msgid "Configure and verify an AI provider first."
+msgstr "ابتدا یک ارائه‌دهندهٔ هوش مصنوعی را تنظیم و تأیید کنید."
+
+msgid "Congenital anomaly or birth defect"
+msgstr "ناهنجاری مادرزادی یا نقص هنگام تولد"
+
+msgid "Connect an AI provider"
+msgstr "اتصال به ارائه‌دهندهٔ هوش مصنوعی"
+
+msgid "Connection error. Please check your internet and try again."
+msgstr "خطا در ارتباط. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید."
+
+msgid "Connection not verified"
+msgstr "اتصال تأیید نشده"
+
+msgid "Connection settings saved."
+msgstr "تنظیمات اتصال ذخیره شد."
+
+msgid "Connection verified"
+msgstr "اتصال تأیید شد"
+
+msgid "Connection verified — the model replied successfully."
+msgstr "اتصال تأیید شد — مدل با موفقیت پاسخ داد."
+
+msgid "Consent text"
+msgstr "متن رضایت"
+
+msgid "Consultation"
+msgstr "مشاوره"
+
+msgid "Consultation & Lead Collection"
+msgstr "مشاوره و جذب مشتری"
+
+msgid "Consultation request"
+msgstr "درخواست مشاوره"
+
+msgid "Contact email"
+msgstr "ایمیل تماس"
+
+msgid "Contact phone"
+msgstr "شمارهٔ تماس"
+
+msgid "Content"
+msgstr "محتوا"
+
+msgid "Continue"
+msgstr "ادامه"
+
+msgid "Conversation History"
+msgstr "تاریخچهٔ گفتگو"
+
+msgid "Conversation history module"
+msgstr "ماژول تاریخچهٔ گفتگو"
+
+msgid "Conversation memory (messages)"
+msgstr "حافظهٔ گفتگو (تعداد پیام)"
+
+msgid "Conversation retention (days, 0 = keep forever)"
+msgstr "مدت نگهداری گفتگوها (روز؛ 0 = برای همیشه)"
+
+msgid "Conversation volume"
+msgstr "حجم گفتگوها"
+
+msgid "Conversation volume trends, most-discussed products, the unanswered-questions radar and satisfaction summary."
+msgstr "روند حجم گفتگوها، پرتکرارترین محصولات، رادار پرسش‌های بی‌پاسخ و خلاصهٔ رضایت."
+
+msgid "Conversations"
+msgstr "گفتگوها"
+
+msgid "Conversations (14 days)"
+msgstr "گفتگوها (۱۴ روز)"
+
+msgid "Conversations (all time)"
+msgstr "گفتگوها (کل دوره)"
+
+msgid "Copied ✓"
+msgstr "کپی شد ✓"
+
+msgid "Copy answer"
+msgstr "کپی پاسخ"
+
+msgid "Creativity (temperature)"
+msgstr "خلاقیت (temperature)"
+
+msgid "Curated question/answer pairs with smart Persian/English matching. Works even when the AI engine is unavailable or set to bank-only mode."
+msgstr "جفت‌های پرسش و پاسخ منتخب با تطبیق هوشمند فارسی/انگلیسی. حتی وقتی موتور هوش مصنوعی در دسترس نیست یا روی «فقط بانک» تنظیم شده کار می‌کند."
+
+msgid "Custom"
+msgstr "سفارشی"
+
+msgid "Custom fields for the consultation form. Server-side validation is generated from this definition."
+msgstr "فیلدهای سفارشی فرم مشاوره. اعتبارسنجی سمت سرور از همین تعریف ساخته می‌شود."
+
+msgid "Custom font name"
+msgstr "نام قلم سفارشی"
+
+msgid "Custom font stylesheet URL"
+msgstr "نشانی شیوه‌نامهٔ قلم سفارشی"
+
+msgid "Custom webhook"
+msgstr "وب‌هوک سفارشی"
+
+msgid "Customer Engagement"
+msgstr "تعامل با مشتری"
+
+msgid "Custom…"
+msgstr "سفارشی…"
+
+msgid "Daily conversations over the last 14 days"
+msgstr "گفتگوهای روزانه در ۱۴ روز اخیر"
+
+msgid "Dark"
+msgstr "تیره"
+
+msgid "Dashboard"
+msgstr "پیشخوان"
+
+msgid "Data tools"
+msgstr "ابزارهای داده"
+
+msgid "Days (Mon=1 … Sun=7)"
+msgstr "روزها (دوشنبه=1 … یکشنبه=7)"
+
+msgid "Deactivate"
+msgstr "غیرفعال‌سازی"
+
+msgid "Death"
+msgstr "مرگ"
+
+msgid "Delay before showing (seconds)"
+msgstr "تأخیر پیش از نمایش (ثانیه)"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Delete case"
+msgstr "حذف پرونده"
+
+msgid "Desktop only"
+msgstr "فقط دسکتاپ"
+
+msgid "Devices"
+msgstr "دستگاه‌ها"
+
+msgid "Differentiators"
+msgstr "وجه تمایزها"
+
+msgid "Direct identifiers removed"
+msgstr "شناسه‌های مستقیم حذف شد"
+
+msgid "Disclaimer (shown under the chat)"
+msgstr "متن هشدار (زیر گفتگو نمایش داده می‌شود)"
+
+msgid "Display & hours"
+msgstr "نمایش و ساعات کاری"
+
+msgid "Do not store"
+msgstr "ذخیره نشود"
+
+msgid "Do this later"
+msgstr "بعداً انجام می‌دهم"
+
+msgid "Document"
+msgstr "سند"
+
+msgid "Document file to import"
+msgstr "فایل سند برای ورود"
+
+msgid "Document imported (%d chunks)."
+msgstr "سند وارد شد (%d تکه)."
+
+msgid "Document removed."
+msgstr "سند حذف شد."
+
+msgid "Done"
+msgstr "انجام‌شده"
+
+msgid "Dose & frequency"
+msgstr "دوز و دفعات مصرف"
+
+msgid "Dose and frequency used"
+msgstr "مقدار و دفعات مصرف‌شده"
+
+msgid "Dropdown"
+msgstr "فهرست کشویی"
+
+msgid "Each report becomes a case with a review workflow (triage → assessment → follow-up → closed) and a permanent audit trail of every change."
+msgstr "هر گزارش به پرونده‌ای با گردش کار بررسی (غربالگری ← ارزیابی ← پیگیری ← بسته‌شده) و سابقهٔ ممیزی دائمی از همهٔ تغییرات تبدیل می‌شود."
+
+msgid "Email"
+msgstr "ایمیل"
+
+msgid "Email recipient (empty = site admin)"
+msgstr "گیرندهٔ ایمیل (خالی = مدیر سایت)"
+
+msgid "Enable exactly what your business needs. Everything is free, included, and safely reversible — data is preserved when you switch a module off."
+msgstr "دقیقاً آنچه کسب‌وکارتان لازم دارد فعال کنید. همه‌چیز رایگان، همراه افزونه و قابل بازگشت است — با غیرفعال کردن ماژول، داده‌هایش حفظ می‌شود."
+
+msgid "Endpoint URL (OpenAI-compatible)"
+msgstr "نشانی endpoint (سازگار با OpenAI)"
+
+msgid "Enter a valid pharmacovigilance contact email."
+msgstr "یک ایمیل معتبر برای مسئول ایمنی دارو وارد کنید."
+
+msgid "Enter model ID manually…"
+msgstr "وارد کردن دستی شناسهٔ مدل…"
+
+msgid "Essential business knowledge added"
+msgstr "دانش اصلی کسب‌وکار اضافه شد"
+
+msgid "Essentials"
+msgstr "موارد اصلی"
+
+msgid "Every question got an answer. 👏"
+msgstr "به همهٔ پرسش‌ها پاسخ داده شد. 👏"
+
+msgid "Everyone"
+msgstr "همه"
+
+msgid "Everywhere except these paths"
+msgstr "همه‌جا به‌جز این مسیرها"
+
+msgid "Export CSV"
+msgstr "خروجی CSV"
+
+msgid "Export JSON"
+msgstr "خروجی JSON"
+
+msgid "Export this case, remove direct identifiers, or permanently delete the record. Removing identifiers does not anonymize free-text narratives or audit notes; review those separately under your retention policy."
+msgstr "این پرونده را خروجی بگیرید، شناسه‌های مستقیم را حذف کنید یا رکورد را برای همیشه پاک کنید. حذف شناسه‌ها روایت‌های متنی آزاد و یادداشت‌های ممیزی را ناشناس نمی‌کند؛ آن‌ها را جداگانه طبق سیاست نگهداری بررسی کنید."
+
+msgid "External data transfer disclosures have not been acknowledged."
+msgstr "اطلاع‌رسانی ارسال داده به سرویس خارجی هنوز تأیید نشده است."
+
+msgid "Extra instructions for the assistant"
+msgstr "دستورالعمل‌های اضافه برای دستیار"
+
+msgid "FAQ"
+msgstr "پرسش متداول"
+
+msgid "FAQ Answer Bank"
+msgstr "بانک پرسش‌وپاسخ"
+
+msgid "FAQ Bank"
+msgstr "بانک پرسش‌وپاسخ"
+
+msgid "FAQ bank"
+msgstr "بانک پرسش‌وپاسخ"
+
+msgid "FAQ bank first, AI as fallback"
+msgstr "اول بانک پرسش‌وپاسخ، سپس هوش مصنوعی"
+
+msgid "FAQ bank only"
+msgstr "فقط بانک پرسش‌وپاسخ"
+
+msgid "FAQ file"
+msgstr "فایل پرسش‌وپاسخ"
+
+msgid "Facts…"
+msgstr "اطلاعات…"
+
+msgid "Feedback is disabled on this site."
+msgstr "بازخورد در این سایت غیرفعال است."
+
+msgid "Female"
+msgstr "زن"
+
+msgid "Field label"
+msgstr "برچسب فیلد"
+
+msgid "Field type"
+msgstr "نوع فیلد"
+
+msgid "Filter"
+msgstr "فیلتر"
+
+msgid "Final check & launch"
+msgstr "بررسی نهایی و راه‌اندازی"
+
+msgid "Find answers by meaning, not only matching words (uses the provider's embeddings API: one small request per question)"
+msgstr "یافتن پاسخ بر اساس معنا، نه فقط تطابق واژه‌ها (از API امبدینگ ارائه‌دهنده استفاده می‌کند: یک درخواست کوچک برای هر پرسش)"
+
+msgid "Five short steps. Your progress is saved automatically — you can leave and come back anytime."
+msgstr "پنج گام کوتاه. پیشرفت شما خودکار ذخیره می‌شود — هر زمان خواستید بروید و برگردید."
+
+msgid "Fix"
+msgstr "اصلاح"
+
+msgid "Floating button custom image (optional)"
+msgstr "تصویر سفارشی دکمهٔ شناور (اختیاری)"
+
+msgid "Floating button position"
+msgstr "محل دکمهٔ شناور"
+
+msgid "Floating button size (px)"
+msgstr "اندازهٔ دکمهٔ شناور (پیکسل)"
+
+msgid "Follow-up note (recorded in the audit trail)"
+msgstr "یادداشت پیگیری (در سابقهٔ ممیزی ثبت می‌شود)"
+
+msgid "Follow-up requested"
+msgstr "نیازمند پیگیری"
+
+msgid "Font"
+msgstr "قلم"
+
+msgid "Form submission is disabled on this site."
+msgstr "ارسال فرم در این سایت غیرفعال است."
+
+msgid "Form submissions / day / visitor"
+msgstr "ارسال فرم / روز / بازدیدکننده"
+
+msgid "Formal"
+msgstr "رسمی"
+
+msgid "Friendly"
+msgstr "دوستانه"
+
+msgid "From → To"
+msgstr "از ← به"
+
+msgid "Full address"
+msgstr "نشانی کامل"
+
+msgid "Full name"
+msgstr "نام و نام خانوادگی"
+
+msgid "General"
+msgstr "عمومی"
+
+msgid "Gently start conversations with hesitant visitors without being intrusive."
+msgstr "گفتگو با بازدیدکنندگان مردد را بدون مزاحمت آغاز کنید."
+
+msgid "Global setting"
+msgstr "تنظیم کلی"
+
+msgid "Go to dashboard"
+msgstr "رفتن به پیشخوان"
+
+msgid "Good answer"
+msgstr "پاسخ مفید"
+
+msgid "Handoff message"
+msgstr "پیام ارجاع"
+
+msgid "Hands-free conversations and accessible answers for visitors on the go."
+msgstr "گفتگوی بدون دست و پاسخ‌های دسترس‌پذیر برای بازدیدکنندگان در حرکت."
+
+msgid "Hello! 👋"
+msgstr "سلام! 👋"
+
+msgid "Hi! Do you ship internationally?"
+msgstr "سلام! به خارج از کشور هم ارسال دارید؟"
+
+msgid "Hospitalized"
+msgstr "بستری"
+
+msgid "How can I help you today?"
+msgstr "چطور می‌توانم کمکتان کنم؟"
+
+msgid "How this extension works:"
+msgstr "این افزونه چگونه کار می‌کند:"
+
+msgid "How was this conversation?"
+msgstr "از این گفتگو چقدر رضایت داشتید؟"
+
+msgid "Human Handoff"
+msgstr "ارجاع به کارشناس"
+
+msgid "Human handoff module"
+msgstr "ماژول ارجاع به انسان"
+
+msgid "I consent to the processing of my contact and health information for safety review and follow-up."
+msgstr "با پردازش اطلاعات تماس و سلامت خود برای بررسی ایمنی و پیگیری این گزارش موافقم."
+
+msgid "I consent to the processing of my contact information and message for follow-up."
+msgstr "با پردازش اطلاعات تماس و پیام خود برای پیگیری درخواست موافقم."
+
+msgid "I understand chat messages are sent to the AI provider I configured (an external service) and form data is stored on my site. I will inform my visitors."
+msgstr "می‌دانم پیام‌های گفتگو به ارائه‌دهندهٔ هوش مصنوعی‌ای که تنظیم کرده‌ام (یک سرویس خارجی) ارسال می‌شوند و داده‌های فرم در سایتم ذخیره می‌شوند. این موضوع را به بازدیدکنندگانم اطلاع می‌دهم."
+
+msgid "IP address"
+msgstr "نشانی IP"
+
+msgid "Identity verified — the assistant correctly identified your organization."
+msgstr "هویت تأیید شد — دستیار سازمان شما را درست شناخت."
+
+msgid "If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?"
+msgstr "اگر می‌خواهید عارضهٔ احتمالی یک دارو را گزارش کنید، می‌توانم فرم گزارش ایمنی را برای بررسی تیم مسئول در اختیارتان بگذارم. می‌خواهید گزارش را شروع کنید؟"
+
+msgid "Image URL (optional)"
+msgstr "نشانی تصویر (اختیاری)"
+
+msgid "Import"
+msgstr "ورود"
+
+msgid "Import from a website page (optional)"
+msgstr "وارد کردن از یک صفحهٔ وب (اختیاری)"
+
+msgid "Import mode"
+msgstr "حالت ورود"
+
+msgid "Import page"
+msgstr "ورود صفحه"
+
+msgid "Important notices"
+msgstr "اعلان‌های مهم"
+
+msgid "Imported %1$d answers (%2$d skipped)."
+msgstr "%1$d پاسخ وارد شد (%2$d مورد نادیده گرفته شد)."
+
+msgid "Improve answer quality with real conversation evidence, with configurable retention."
+msgstr "بهبود کیفیت پاسخ با شواهد واقعی گفتگو، همراه با مدت نگهداری قابل تنظیم."
+
+msgid "In progress"
+msgstr "در حال انجام"
+
+msgid "Inactive"
+msgstr "غیرفعال"
+
+msgid "Index is up to date."
+msgstr "نمایه به‌روز است."
+
+msgid "Indexing failed:"
+msgstr "نمایه‌سازی ناموفق بود:"
+
+msgid "Industry"
+msgstr "صنعت"
+
+msgid "Industry Extensions"
+msgstr "افزونه‌های صنعتی"
+
+msgid "Inhalation"
+msgstr "استنشاقی"
+
+msgid "Instant alerts for new requests via Bale/Telegram and/or email, with delivery tracking and automatic retries for failed deliveries."
+msgstr "هشدار فوری درخواست‌های جدید از طریق بله/تلگرام و/یا ایمیل، همراه با پیگیری تحویل و تلاش خودکار دوباره برای ارسال‌های ناموفق."
+
+msgid "Instant, zero-cost, perfectly controlled answers for your most common questions."
+msgstr "پاسخ فوری، بی‌هزینه و کاملاً کنترل‌شده برای پرتکرارترین پرسش‌ها."
+
+msgid "Insufficient permissions."
+msgstr "دسترسی کافی ندارید."
+
+msgid "Intramuscular"
+msgstr "داخل عضلانی"
+
+msgid "Intravenous"
+msgstr "داخل وریدی"
+
+msgid "Invalid feedback token."
+msgstr "توکن بازخورد نامعتبر است."
+
+msgid "Invalid feedback."
+msgstr "بازخورد نامعتبر است."
+
+msgid "Invalid nonce."
+msgstr "nonce نامعتبر است."
+
+msgid "Invalid rating."
+msgstr "امتیاز نامعتبر است."
+
+msgid "Invalid score."
+msgstr "امتیاز نامعتبر است."
+
+msgid "Invalid submission type."
+msgstr "نوع ارسال نامعتبر است."
+
+msgid "Invisible to visitors."
+msgstr "برای بازدیدکنندگان نامرئی است."
+
+msgid "Invitation text"
+msgstr "متن دعوت"
+
+msgid "It looks like this question is better handled by a human expert. Would you like to leave a consultation request?"
+msgstr "به نظر می‌رسد این پرسش بهتر است توسط یک کارشناس پاسخ داده شود. مایلید درخواست مشاوره ثبت کنید؟"
+
+msgid "Keys are encrypted at rest and never leave the server. Connection tests perform a real generation, not just a ping."
+msgstr "کلیدها رمزنگاری‌شده ذخیره می‌شوند و هرگز از سرور خارج نمی‌شوند. آزمون اتصال یک تولید پاسخ واقعی انجام می‌دهد، نه فقط یک پینگ."
+
+msgid "Keywords"
+msgstr "کلیدواژه‌ها"
+
+msgid "Keywords (comma separated, optional)"
+msgstr "کلیدواژه‌ها (جدا شده با ویرگول، اختیاری)"
+
+msgid "Knowledge & Intelligence"
+msgstr "دانش و هوشمندی"
+
+msgid "Knowledge entries"
+msgstr "موارد دانش"
+
+msgid "Knowledge gaps — answer these in the FAQ bank or knowledge page."
+msgstr "کمبودهای دانش — پاسخ این‌ها را در بانک پرسش‌وپاسخ یا صفحهٔ دانش اضافه کنید."
+
+msgid "Knowledge saved."
+msgstr "دانش ذخیره شد."
+
+msgid "Knowledge type"
+msgstr "نوع دانش"
+
+msgid "LTR (Latin)"
+msgstr "چپ‌به‌راست (لاتین)"
+
+msgid "Last 14 days. Only what helps you improve the assistant."
+msgstr "۱۴ روز اخیر؛ فقط آنچه به بهبود دستیار کمک می‌کند."
+
+msgid "Life-threatening"
+msgstr "تهدیدکنندهٔ حیات"
+
+msgid "Light"
+msgstr "روشن"
+
+msgid "Limit availability to business hours"
+msgstr "محدود کردن دسترسی به ساعات کاری"
+
+msgid "Limit by"
+msgstr "محدودیت بر اساس"
+
+msgid "Listen to this answer"
+msgstr "شنیدن پاسخ"
+
+msgid "Listening…"
+msgstr "در حال شنیدن…"
+
+msgid "Live on your site"
+msgstr "روی سایت شما فعال است"
+
+msgid "Live preview"
+msgstr "پیش‌نمایش زنده"
+
+msgid "Location"
+msgstr "موقعیت"
+
+msgid "Logged-in users only"
+msgstr "فقط کاربران واردشده"
+
+msgid "Logged-out visitors only"
+msgstr "فقط بازدیدکنندگان واردنشده"
+
+msgid "Long documents (knowledge base)"
+msgstr "اسناد بلند (پایگاه دانش)"
+
+msgid "Long text"
+msgstr "متن بلند"
+
+msgid "Main menu"
+msgstr "منوی اصلی"
+
+msgid "Make it yours"
+msgstr "شخصی‌سازی ظاهر"
+
+msgid "Male"
+msgstr "مرد"
+
+msgid "Manage"
+msgstr "مدیریت"
+
+msgid "Match device"
+msgstr "مطابق دستگاه"
+
+msgid "Match visitor device"
+msgstr "مطابق دستگاه بازدیدکننده"
+
+msgid "Max answer length"
+msgstr "حداکثر طول پاسخ"
+
+msgid "Message bubble radius (px)"
+msgstr "گردی حباب پیام (پیکسل)"
+
+msgid "Message text"
+msgstr "متن پیام"
+
+msgid "Messenger platform"
+msgstr "پیام‌رسان"
+
+msgid "Microphone input"
+msgstr "ورودی میکروفون"
+
+msgid "Mild"
+msgstr "خفیف"
+
+msgid "Mobile only"
+msgstr "فقط موبایل"
+
+msgid "Model"
+msgstr "مدل"
+
+msgid "Model ID"
+msgstr "شناسهٔ مدل"
+
+msgid "Model ID (e.g. my-model-v2)"
+msgstr "شناسهٔ مدل (مثلاً my-model-v2)"
+
+msgid "Model IDs evolve — manual entry is always available and lists stay current via your own updates."
+msgstr "شناسهٔ مدل‌ها تغییر می‌کند — ورود دستی همیشه در دسترس است و فهرست‌ها با به‌روزرسانی افزونه تازه می‌مانند."
+
+msgid "Moderate"
+msgstr "متوسط"
+
+msgid "Module activated."
+msgstr "ماژول فعال شد."
+
+msgid "Module deactivated. Its data is kept and will be there when you re-enable it."
+msgstr "ماژول غیرفعال شد. داده‌هایش حفظ شده و با فعال‌سازی دوباره در دسترس خواهد بود."
+
+msgid "Modules"
+msgstr "ماژول‌ها"
+
+msgid "Most-discussed products"
+msgstr "پرتکرارترین محصولات در گفتگو"
+
+msgid "Name"
+msgstr "نام"
+
+msgid "Name: %s"
+msgstr "نام: %s"
+
+msgid "Never miss a request - failed deliveries are retried and surfaced instead of vanishing."
+msgstr "هیچ درخواستی از دست نمی‌رود — ارسال‌های ناموفق دوباره تلاش و نمایش داده می‌شوند، نه این‌که گم شوند."
+
+msgid "New"
+msgstr "جدید"
+
+msgid "New (awaiting triage)"
+msgstr "جدید (در انتظار بررسی اولیه)"
+
+msgid "New conversation"
+msgstr "گفتگوی جدید"
+
+msgid "New request (%s)"
+msgstr "درخواست جدید (%s)"
+
+msgid "New request: %s"
+msgstr "درخواست جدید: %s"
+
+msgid "Nexa"
+msgstr "نکسا"
+
+msgid "NexaChatAI"
+msgstr "نکسا‌چت‌ای‌آی"
+
+msgid "NexaChatAI moved to a new plugin folder (nexachat-ai). The old copy (smart-support-chatbot) was deactivated automatically; all settings and data were kept. The \"remove data on uninstall\" policy was switched off so deleting the old copy cannot erase shared data; you can now delete it from the Plugins screen."
+msgstr "نکسا‌چت‌ای‌آی به پوشهٔ جدیدی (nexachat-ai) منتقل شد. نسخهٔ قدیمی (smart-support-chatbot) خودکار غیرفعال شد و همهٔ تنظیمات و داده‌ها حفظ شدند. سیاست «حذف داده هنگام حذف افزونه» خاموش شد تا حذف نسخهٔ قدیمی داده‌های مشترک را پاک نکند؛ اکنون می‌توانید آن را از صفحهٔ افزونه‌ها حذف کنید."
+
+msgid "NexaChatAI: every five minutes"
+msgstr "نکسا‌چت‌ای‌آی: هر پنج دقیقه"
+
+msgid "No ADR cases yet. When someone files a report through the chat, it appears here for triage."
+msgstr "هنوز پرونده‌ای ثبت نشده است. وقتی کسی از طریق گفتگو گزارشی ثبت کند، برای بررسی این‌جا نمایش داده می‌شود."
+
+msgid "No AI engine"
+msgstr "بدون موتور هوش مصنوعی"
+
+msgid "No AI engine (offline answers only)"
+msgstr "بدون موتور هوش مصنوعی (فقط پاسخ‌های آفلاین)"
+
+msgid "No API key provided."
+msgstr "کلید API وارد نشده است."
+
+msgid "No audit entries yet."
+msgstr "هنوز ردیف ممیزی ثبت نشده است."
+
+msgid "No conversations stored yet."
+msgstr "هنوز گفتگویی ذخیره نشده است."
+
+msgid "No file was uploaded."
+msgstr "فایلی بارگذاری نشد."
+
+msgid "No model selected."
+msgstr "مدلی انتخاب نشده است."
+
+msgid "No modules match your search."
+msgstr "ماژولی با جست‌وجوی شما مطابقت ندارد."
+
+msgid "No product conversations recorded yet."
+msgstr "هنوز گفتگویی دربارهٔ محصولات ثبت نشده است."
+
+msgid "No requests yet. When visitors submit the consultation form, they appear here."
+msgstr "هنوز درخواستی ثبت نشده است. وقتی بازدیدکنندگان فرم مشاوره را ارسال کنند، این‌جا نمایش داده می‌شود."
+
+msgid "No visitor is ever left stuck without a path to a real person."
+msgstr "هیچ بازدیدکننده‌ای بدون راهی برای رسیدن به یک انسان رها نمی‌شود."
+
+msgid "No webhook URL configured."
+msgstr "نشانی وب‌هوک تنظیم نشده است."
+
+msgid "None — use REMOTE_ADDR (direct connection)"
+msgstr "هیچ — استفاده از REMOTE_ADDR (اتصال مستقیم)"
+
+msgid "Not published"
+msgstr "منتشر نشده"
+
+msgid "Not recovered"
+msgstr "بهبود نیافته"
+
+msgid "Not verified"
+msgstr "تأیید نشده"
+
+msgid "Note"
+msgstr "یادداشت"
+
+msgid "Notifications"
+msgstr "اعلان‌ها"
+
+msgid "Notifications module"
+msgstr "ماژول اعلان‌ها"
+
+msgid "Number"
+msgstr "عدد"
+
+msgid "Nurse"
+msgstr "پرستار"
+
+msgid "OK = delete plugin + data"
+msgstr "تأیید = حذف افزونه و داده‌ها"
+
+msgid "Off (not recommended)"
+msgstr "خاموش (توصیه نمی‌شود)"
+
+msgid "Official organization name"
+msgstr "نام رسمی سازمان"
+
+msgid "Offline"
+msgstr "خارج از ساعات پاسخ‌گویی"
+
+msgid "Offline message"
+msgstr "پیام آفلاین"
+
+msgid "Offline message (when nothing can answer)"
+msgstr "پیام جایگزین (وقتی پاسخی پیدا نشود)"
+
+msgid "Online"
+msgstr "آمادهٔ پاسخ‌گویی"
+
+msgid "Only .csv, .json and .txt files can be imported."
+msgstr "فقط فایل‌های ‎.csv، ‎.json و ‎.txt قابل ورود هستند."
+
+msgid "Only .txt, .md, .csv and .json files can be imported."
+msgstr "فقط فایل‌های ‎.txt، ‎.md، ‎.csv و ‎.json قابل ورود هستند."
+
+msgid "Only these paths"
+msgstr "فقط این مسیرها"
+
+msgid "Open chat"
+msgstr "باز کردن گفتگو"
+
+msgid "OpenAI-compatible endpoint"
+msgstr "endpoint سازگار با OpenAI"
+
+msgid "Opens at"
+msgstr "ساعت شروع"
+
+msgid "Ophthalmic"
+msgstr "چشمی"
+
+msgid "Optional business-specific rules…"
+msgstr "قواعد اختیاری مخصوص کسب‌وکار شما…"
+
+msgid "Optional details (contacts, hours, differentiators)"
+msgstr "جزئیات اختیاری (راه‌های تماس، ساعات کاری، وجه تمایز)"
+
+msgid "Oral"
+msgstr "خوراکی"
+
+msgid "Other"
+msgstr "سایر"
+
+msgid "Other health professional"
+msgstr "سایر کارکنان حوزهٔ سلامت"
+
+msgid "Other medically important event"
+msgstr "سایر رویدادهای مهم پزشکی"
+
+msgid "Other medicines taken at the same time"
+msgstr "سایر داروهای مصرف‌شده در همان زمان"
+
+msgid "Outcome"
+msgstr "پیامد"
+
+msgid "Outcome so far"
+msgstr "وضعیت بیمار تا این لحظه"
+
+msgid "Outside these hours the widget shows an offline notice. Forms still work so visitors can leave a message."
+msgstr "خارج از این ساعات، ویجت پیام آفلاین نشان می‌دهد. فرم‌ها همچنان کار می‌کنند تا بازدیدکنندگان پیام بگذارند."
+
+msgid "Page URL"
+msgstr "نشانی صفحه"
+
+msgid "Page URL to import"
+msgstr "نشانی صفحه برای ورود"
+
+msgid "Page targeting"
+msgstr "هدف‌گیری صفحه"
+
+msgid "Page-specific messages (one per line: path | message)"
+msgstr "پیام مخصوص هر صفحه (هر خط: مسیر | پیام)"
+
+msgid "Pages that fail these rules never load the chatbot CSS or JS — better performance and cleaner analytics."
+msgstr "صفحه‌هایی که با این قواعد مطابقت ندارند اصلاً CSS یا JS چت‌بات را بارگذاری نمی‌کنند — سرعت بهتر و آمار دقیق‌تر."
+
+msgid "Pagination"
+msgstr "صفحه‌بندی"
+
+msgid "Paste your API key"
+msgstr "کلید API را وارد کنید"
+
+msgid "Path patterns (one per line; * = wildcard)"
+msgstr "الگوهای مسیر (هر خط یکی؛ * = هر چیزی)"
+
+msgid "Patient / consumer"
+msgstr "بیمار / مصرف‌کننده"
+
+msgid "Patient age"
+msgstr "سن بیمار"
+
+msgid "Patient age (years)"
+msgstr "سن بیمار (سال)"
+
+msgid "Patient age must be between 0 and 130 years."
+msgstr "سن بیمار باید بین صفر تا ۱۳۰ سال باشد."
+
+msgid "Patient sex"
+msgstr "جنسیت بیمار"
+
+msgid "Permanently delete this case? Clinical data is removed; a purge entry stays in the audit trail."
+msgstr "این پرونده برای همیشه حذف شود؟ داده‌های بالینی حذف می‌شوند و یک ردیف حذف در سابقهٔ ممیزی باقی می‌ماند."
+
+msgid "Persistent or significant disability"
+msgstr "ناتوانی پایدار یا قابل‌توجه"
+
+msgid "Pharmaceutical Extension"
+msgstr "افزونهٔ دارویی"
+
+msgid "Pharmaceutical answer policy"
+msgstr "سیاست پاسخ‌گویی دارویی"
+
+msgid "Pharmacist"
+msgstr "داروساز"
+
+msgid "Pharmacovigilance contact email (for internal alerts and case routing)"
+msgstr "ایمیل مسئول ایمنی دارو (برای هشدارهای داخلی و ارجاع پرونده‌ها)"
+
+msgid "Phone"
+msgstr "تلفن"
+
+msgid "Phone number"
+msgstr "شمارهٔ تماس"
+
+msgid "Phone: %s"
+msgstr "تلفن: %s"
+
+msgid "Physician"
+msgstr "پزشک"
+
+msgid "Placeholder"
+msgstr "متن راهنما"
+
+msgid "Play a soft ping when a reply arrives while the chat is closed"
+msgstr "پخش صدای کوتاه هنگام رسیدن پاسخ وقتی گفتگو بسته است"
+
+msgid "Please describe the reaction (10-10000 characters)."
+msgstr "عارضه را شرح دهید (۱۰ تا ۱۰۰۰۰ نویسه)."
+
+msgid "Please describe your request (10-1000 characters)."
+msgstr "درخواست خود را شرح دهید (۱۰ تا ۱۰۰۰ نویسه)."
+
+msgid "Please enter a valid contact phone."
+msgstr "شمارهٔ تماس معتبر وارد کنید."
+
+msgid "Please enter a valid phone number."
+msgstr "شمارهٔ تماس معتبر وارد کنید."
+
+msgid "Please enter the official organization name."
+msgstr "لطفاً نام رسمی سازمان را وارد کنید."
+
+msgid "Please enter the reporter name (2-80 characters)."
+msgstr "نام گزارش‌دهنده را وارد کنید (۲ تا ۸۰ نویسه)."
+
+msgid "Please enter your name (2-80 characters)."
+msgstr "نام خود را وارد کنید (۲ تا ۸۰ نویسه)."
+
+msgid "Policies"
+msgstr "سیاست‌ها"
+
+msgid "Poor answer"
+msgstr "پاسخ نامناسب"
+
+msgid "Press Alt+C to open chat"
+msgstr "برای باز کردن گفتگو Alt+C را بزنید"
+
+msgid "Preview theme"
+msgstr "تم پیش‌نمایش"
+
+msgid "Primary answer language"
+msgstr "زبان اصلی پاسخ"
+
+msgid "Primary brand color"
+msgstr "رنگ اصلی برند"
+
+msgid "Primary color (empty = global)"
+msgstr "رنگ اصلی (خالی = تنظیم کلی)"
+
+msgid "Privacy"
+msgstr "حریم خصوصی"
+
+msgid "Privacy & consent"
+msgstr "حریم خصوصی و رضایت"
+
+msgid "Privacy actions (per record)"
+msgstr "اقدامات حریم خصوصی (برای هر رکورد)"
+
+msgid "Privacy disclosures acknowledged"
+msgstr "اطلاع‌رسانی حریم خصوصی تأیید شد"
+
+msgid "Privacy policy"
+msgstr "سیاست حفظ حریم خصوصی"
+
+msgid "Privacy policy link"
+msgstr "لینک سیاست حریم خصوصی"
+
+msgid "Privacy, protection and module options. Security and privacy controls are always active — they are not modules."
+msgstr "گزینه‌های حریم خصوصی، حفاظت و ماژول‌ها. کنترل‌های امنیتی و حریم خصوصی همیشه فعال‌اند — ماژول نیستند."
+
+msgid "Proactive Invitation"
+msgstr "دعوت فعال"
+
+msgid "Proactive invitation module"
+msgstr "ماژول دعوت فعال"
+
+msgid "Product"
+msgstr "محصول"
+
+msgid "Product / batch"
+msgstr "محصول / سری ساخت"
+
+msgid "Product / service name"
+msgstr "نام محصول / خدمت"
+
+msgid "Product information"
+msgstr "اطلاعات محصول"
+
+msgid "Product name"
+msgstr "نام محصول"
+
+msgid "Product: %s"
+msgstr "محصول: %s"
+
+msgid "Products"
+msgstr "محصولات"
+
+msgid "Products & services"
+msgstr "محصولات و خدمات"
+
+msgid "Products & services overview"
+msgstr "مروری بر محصولات و خدمات"
+
+msgid "Professional"
+msgstr "حرفه‌ای"
+
+msgid "Protection"
+msgstr "حفاظت"
+
+msgid "Protection & limits"
+msgstr "حفاظت و محدودیت‌ها"
+
+msgid "Provider"
+msgstr "ارائه‌دهنده"
+
+msgid "Publish chatbot"
+msgstr "انتشار چت‌بات"
+
+msgid "Published! Your assistant is now live on your site."
+msgstr "منتشر شد! دستیار شما اکنون روی سایت فعال است."
+
+msgid "Question"
+msgstr "پرسش"
+
+msgid "RTL (Persian/Arabic)"
+msgstr "راست‌به‌چپ (فارسی/عربی)"
+
+msgid "Rate limiting still works in every mode: it uses a one-way hash that is never stored with the conversation."
+msgstr "محدودیت نرخ در همهٔ حالت‌ها کار می‌کند: از یک هش یک‌طرفه استفاده می‌کند که هرگز همراه گفتگو ذخیره نمی‌شود."
+
+msgid "Rating"
+msgstr "امتیاز"
+
+msgid "Reaction"
+msgstr "واکنش"
+
+msgid "Read answers aloud"
+msgstr "خواندن پاسخ‌ها با صدای بلند"
+
+msgid "Readiness"
+msgstr "آمادگی"
+
+msgid "Received"
+msgstr "دریافت‌شده"
+
+msgid "Received ✓ We will contact you soon."
+msgstr "دریافت شد ✓ درخواست شما برای پیگیری ثبت شد."
+
+msgid "Recognition language (or \"auto\")"
+msgstr "زبان تشخیص گفتار (یا \"auto\")"
+
+msgid "Recovered"
+msgstr "بهبودیافته"
+
+msgid "Recovering"
+msgstr "در حال بهبودی"
+
+msgid "Reference"
+msgstr "مرجع"
+
+msgid "Regulatory seriousness criteria (any that apply)"
+msgstr "معیارهای جدی‌بودن عارضه (موارد مرتبط را انتخاب کنید)"
+
+msgid "Related questions:"
+msgstr "پرسش‌های مرتبط:"
+
+msgid "Remove"
+msgstr "حذف"
+
+msgid "Remove ALL plugin data (settings, knowledge, requests, ADR cases, logs) when the plugin is deleted. Set this policy before deactivation; an inactive plugin cannot display a deletion prompt. Keep this off to preserve your data."
+msgstr "حذف همهٔ داده‌های افزونه (تنظیمات، دانش، درخواست‌ها، پرونده‌های عارضه، گزارش‌ها) هنگام حذف افزونه. این سیاست را پیش از غیرفعال‌سازی تنظیم کنید؛ افزونهٔ غیرفعال نمی‌تواند پرسش حذف را نشان دهد. برای حفظ داده‌ها این گزینه را خاموش نگه دارید."
+
+msgid "Remove direct identifiers"
+msgstr "حذف شناسه‌های مستقیم"
+
+msgid "Remove entry"
+msgstr "حذف مورد"
+
+msgid "Remove field"
+msgstr "حذف فیلد"
+
+msgid "Remove product"
+msgstr "حذف محصول"
+
+msgid "Remove reporter name, phone, IP and demographics? Clinical fields stay for PV review."
+msgstr "نام، تلفن، IP و اطلاعات جمعیتی گزارش‌دهنده حذف شود؟ فیلدهای بالینی برای بررسی ایمنی دارو باقی می‌مانند."
+
+msgid "Remove the stored key"
+msgstr "حذف کلید ذخیره‌شده"
+
+msgid "Remove the stored token"
+msgstr "حذف توکن ذخیره‌شده"
+
+msgid "Replace all answers"
+msgstr "جایگزینی همهٔ پاسخ‌ها"
+
+msgid "Report a side effect"
+msgstr "گزارش عارضهٔ دارویی"
+
+msgid "Reporter"
+msgstr "گزارش‌دهنده"
+
+msgid "Reporter PII removed (privacy request)"
+msgstr "اطلاعات شخصی گزارش‌دهنده حذف شد (درخواست حریم خصوصی)"
+
+msgid "Reporter name"
+msgstr "نام گزارش‌دهنده"
+
+msgid "Reporter role"
+msgstr "نقش گزارش‌دهنده"
+
+msgid "Request"
+msgstr "درخواست"
+
+msgid "Request form module"
+msgstr "ماژول فرم درخواست"
+
+msgid "Request retention (days, 0 = keep forever; ADR cases are never auto-deleted)"
+msgstr "مدت نگهداری درخواست‌ها (روز؛ 0 = برای همیشه؛ پرونده‌های عارضه هرگز خودکار حذف نمی‌شوند)"
+
+msgid "Requests"
+msgstr "درخواست‌ها"
+
+msgid "Require explicit consent before storing contact data"
+msgstr "پیش از ذخیرهٔ اطلاعات تماس، رضایت صریح لازم باشد"
+
+msgid "Required"
+msgstr "الزامی"
+
+msgid "Required or prolonged hospitalization"
+msgstr "نیازمند بستری یا افزایش مدت بستری"
+
+msgid "Required when the site sits behind Cloudflare or any reverse proxy — otherwise every visitor shares one IP and one rate-limit quota. Only enable the header your proxy actually sets and strips from client requests."
+msgstr "وقتی سایت پشت Cloudflare یا هر پراکسی معکوس است لازم است — وگرنه همهٔ بازدیدکنندگان یک IP و یک سهمیه خواهند داشت. فقط سرآیندی را فعال کنید که پراکسی شما واقعاً تنظیم می‌کند و از درخواست کاربر حذف می‌کند."
+
+msgid "Requires: %s"
+msgstr "نیازمند: %s"
+
+msgid "Resulted in death"
+msgstr "منجر به مرگ شده است"
+
+msgid "Resume setup"
+msgstr "ادامهٔ راه‌اندازی"
+
+msgid "Retrieved knowledge chunks per answer"
+msgstr "تعداد تکه‌های دانش بازیابی‌شده برای هر پاسخ"
+
+msgid "Retry failed notifications"
+msgstr "تلاش مجدد برای اعلان‌های ناموفق"
+
+msgid "Review the checklist, try the assistant yourself, then publish it when you are satisfied."
+msgstr "فهرست بررسی را مرور کنید، دستیار را خودتان امتحان کنید و وقتی راضی بودید منتشرش کنید."
+
+msgid "Route"
+msgstr "راه مصرف"
+
+msgid "Route of administration"
+msgstr "روش مصرف"
+
+msgid "Run identity test"
+msgstr "اجرای آزمون هویت"
+
+msgid "SERIOUS"
+msgstr "جدی"
+
+msgid "SERIOUS adverse reaction report - review immediately"
+msgstr "گزارش عارضهٔ جدی — فوراً بررسی شود"
+
+msgid "SERIOUS case"
+msgstr "پروندهٔ جدی"
+
+msgid "Satisfaction Survey (CSAT)"
+msgstr "نظرسنجی رضایت (CSAT)"
+
+msgid "Satisfaction survey module"
+msgstr "ماژول نظرسنجی رضایت"
+
+msgid "Save and index now"
+msgstr "ذخیره و نمایه‌سازی اکنون"
+
+msgid "Save appearance"
+msgstr "ذخیرهٔ ظاهر"
+
+msgid "Save connection"
+msgstr "ذخیرهٔ اتصال"
+
+msgid "Save data policy"
+msgstr "ذخیرهٔ سیاست داده"
+
+msgid "Save knowledge"
+msgstr "ذخیرهٔ دانش"
+
+msgid "Save settings"
+msgstr "ذخیرهٔ تنظیمات"
+
+msgid "Saved"
+msgstr "ذخیره شد"
+
+msgid "Saved in offline mode: the assistant will answer from your FAQ bank only. You can connect an AI provider anytime later."
+msgstr "در حالت آفلاین ذخیره شد: دستیار فقط از بانک پرسش‌وپاسخ شما پاسخ می‌دهد. هر زمان بعداً می‌توانید ارائه‌دهندهٔ هوش مصنوعی را وصل کنید."
+
+msgid "Scroll depth (%)"
+msgstr "عمق پیمایش (%)"
+
+msgid "Scrollable table"
+msgstr "جدول قابل پیمایش"
+
+msgid "Search modules"
+msgstr "جست‌وجوی ماژول‌ها"
+
+msgid "Search modules…"
+msgstr "جست‌وجوی ماژول‌ها…"
+
+msgid "Search name or text…"
+msgstr "جست‌وجوی نام یا متن…"
+
+msgid "Search settings saved."
+msgstr "تنظیمات جست‌وجو ذخیره شد."
+
+msgid "Search…"
+msgstr "جست‌وجو…"
+
+msgid "See exactly what visitors ask and where your knowledge has gaps - not decorative charts."
+msgstr "دقیقاً ببینید بازدیدکنندگان چه می‌پرسند و دانش شما کجا کمبود دارد — نه نمودارهای تزئینی."
+
+msgid "Select a provider, paste your API key, choose a model — then run the test. You cannot continue until the connection actually works."
+msgstr "ارائه‌دهنده را انتخاب کنید، کلید API را وارد کنید، مدل را برگزینید — سپس آزمون را اجرا کنید. تا اتصال واقعاً کار نکند نمی‌توانید ادامه دهید."
+
+msgid "Select and save an AI provider first."
+msgstr "ابتدا یک ارائه‌دهندهٔ هوش مصنوعی را انتخاب و ذخیره کنید."
+
+msgid "Semantic search"
+msgstr "جست‌وجوی معنایی"
+
+msgid "Send message"
+msgstr "ارسال پیام"
+
+msgid "Sequelae / permanent impairment"
+msgstr "عوارض باقی‌مانده / آسیب پایدار"
+
+msgid "Serious cases (any seriousness criterion, or serious outcome) are flagged and notified immediately — independent of the reported clinical severity."
+msgstr "پرونده‌های جدی (هر معیار جدی بودن یا پیامد جدی) فوراً علامت‌گذاری و اعلان می‌شوند — مستقل از شدت بالینی گزارش‌شده."
+
+msgid "Seriousness"
+msgstr "جدی بودن"
+
+msgid "Seriousness criteria"
+msgstr "معیارهای جدی بودن"
+
+msgid "Server conversation history is optional and follows the configured retention policy. Outside pharmaceutical mode, the browser may keep a short-lived conversation and the server may cache answers. In pharmaceutical mode these two caches are disabled; submitted safety reports are still stored for review. Deleting a browser conversation does not delete server records. Contact the site owner about access or deletion requests."
+msgstr "ذخیرهٔ تاریخچهٔ گفتگو روی سرور اختیاری است و از سیاست نگهداری تنظیم‌شده پیروی می‌کند. خارج از حالت دارویی، ممکن است گفتگو برای مدت کوتاهی در مرورگر و پاسخ‌ها در کش سرور نگهداری شوند. در حالت دارویی این دو نوع ذخیره‌سازی غیرفعال‌اند، اما گزارش‌های ایمنی ارسالی برای بررسی ثبت می‌شوند. حذف گفتگوی مرورگر، سوابق سرور را حذف نمی‌کند. برای درخواست دسترسی یا حذف اطلاعات با مدیر سایت تماس بگیرید."
+
+msgid "Services"
+msgstr "خدمات"
+
+msgid "Set up your AI assistant"
+msgstr "دستیار هوش مصنوعی خود را راه‌اندازی کنید"
+
+msgid "Settings"
+msgstr "تنظیمات"
+
+msgid "Settings saved."
+msgstr "تنظیمات ذخیره شد."
+
+msgid "Settings sections"
+msgstr "بخش‌های تنظیمات"
+
+msgid "Setup"
+msgstr "راه‌اندازی"
+
+msgid "Setup Required"
+msgstr "نیاز به راه‌اندازی"
+
+msgid "Setup Wizard"
+msgstr "راه‌اندازی گام‌به‌گام"
+
+msgid "Setup complete. You can now receive and manage ADR reports."
+msgstr "راه‌اندازی کامل شد. اکنون می‌توانید گزارش‌های عارضه را دریافت و مدیریت کنید."
+
+msgid "Setup is not finished"
+msgstr "راه‌اندازی تمام نشده است"
+
+msgid "Setup progress"
+msgstr "پیشرفت راه‌اندازی"
+
+msgid "Setup wizard"
+msgstr "جادوگر راه‌اندازی"
+
+msgid "Severe"
+msgstr "شدید"
+
+msgid "Severity"
+msgstr "شدت"
+
+msgid "Shared secret (HMAC)"
+msgstr "رمز مشترک (HMAC)"
+
+msgid "Shared secret (HMAC, recommended)"
+msgstr "رمز مشترک (HMAC، توصیه‌شده)"
+
+msgid "Short text"
+msgstr "متن کوتاه"
+
+msgid "Short, factual reference blocks the assistant quotes verbatim. (Policies, prices, hours, FAQs…)"
+msgstr "بلوک‌های کوتاه و دقیقی که دستیار عیناً نقل می‌کند (سیاست‌ها، قیمت‌ها، ساعات، پرسش‌های متداول…)."
+
+msgid "Show the end-of-conversation survey"
+msgstr "نمایش نظرسنجی پایان گفتگو"
+
+msgid "Show the invitation"
+msgstr "زمان نمایش دعوت"
+
+msgid "Show the source documents under AI answers"
+msgstr "نمایش اسناد منبع زیر پاسخ‌های هوش مصنوعی"
+
+msgid "Single choice"
+msgstr "تک‌گزینه‌ای"
+
+msgid "Skip"
+msgstr "رد کردن"
+
+msgid "Some readiness items are incomplete — finish them first (each links to its settings)."
+msgstr "برخی موارد آمادگی کامل نیستند — ابتدا آن‌ها را تکمیل کنید (هر مورد به تنظیمات خودش پیوند دارد)."
+
+msgid "Source"
+msgstr "منبع"
+
+msgid "Sources:"
+msgstr "منابع:"
+
+msgid "Speak"
+msgstr "صحبت کنید"
+
+msgid "Status"
+msgstr "وضعیت"
+
+msgid "Stop audio"
+msgstr "توقف صدا"
+
+msgid "Store conversations (needed for feedback, unanswered radar and quality review)"
+msgstr "ذخیرهٔ گفتگوها (برای بازخورد، رادار پرسش‌های بی‌پاسخ و بررسی کیفیت لازم است)"
+
+msgid "Stores conversations so you can review quality, capture answers into the FAQ bank and spot unanswered questions."
+msgstr "گفتگوها را ذخیره می‌کند تا کیفیت را بررسی کنید، پاسخ‌ها را به بانک پرسش‌وپاسخ ببرید و پرسش‌های بی‌پاسخ را ببینید."
+
+msgid "Stream AI answers as they are generated (faster first word; OpenAI, Claude, Gemini and compatible providers)"
+msgstr "نمایش پاسخ هوش مصنوعی هم‌زمان با تولید (اولین کلمه سریع‌تر؛ OpenAI، Claude، Gemini و ارائه‌دهنده‌های سازگار)"
+
+msgid "Strict mode — answer only from your knowledge"
+msgstr "حالت سخت‌گیرانه — فقط از دانش شما پاسخ بده"
+
+msgid "Structured adverse drug reaction (ADR) intake with ICH E2A-style seriousness criteria, case management, audit trail and follow-up workflow for pharmacovigilance teams."
+msgstr "دریافت ساختاریافتهٔ گزارش عارضهٔ جانبی دارو با معیارهای جدی بودن به سبک ICH E2A، مدیریت پرونده، سابقهٔ ممیزی و گردش کار پیگیری برای تیم‌های ایمنی دارو."
+
+msgid "Structured adverse drug reaction reporting for your pharmacovigilance workflow."
+msgstr "گزارش ساختاریافتهٔ عوارض جانبی دارو برای فرایند ایمنی دارویی (فارماکوویژیلانس) شما."
+
+msgid "Structured request forms inside the chat with custom fields, consent capture and a request inbox."
+msgstr "فرم‌های درخواست ساختاریافته درون گفتگو با فیلدهای سفارشی، ثبت رضایت و صندوق درخواست‌ها."
+
+msgid "Style"
+msgstr "سبک"
+
+msgid "Subcutaneous"
+msgstr "زیرجلدی"
+
+msgid "Submission deleted"
+msgstr "درخواست حذف شد"
+
+msgid "Submit"
+msgstr "ثبت و ارسال"
+
+msgid "Suggested from your site title — edit if needed."
+msgstr "از عنوان سایت پیشنهاد شده — در صورت نیاز ویرایش کنید."
+
+msgid "Support"
+msgstr "پشتیبانی"
+
+msgid "Support email"
+msgstr "ایمیل پشتیبانی"
+
+msgid "Support phone"
+msgstr "تلفن پشتیبانی"
+
+msgid "Suspected product"
+msgstr "محصول مشکوک"
+
+msgid "Suspected reaction"
+msgstr "عارضهٔ احتمالی"
+
+msgid "System default"
+msgstr "پیش‌فرض سیستم"
+
+msgid "Take offline"
+msgstr "غیرفعال کردن نمایش"
+
+msgid "Talk to a human expert"
+msgstr "ارتباط با کارشناس"
+
+msgid "Telegram"
+msgstr "تلگرام"
+
+msgid "Test connection"
+msgstr "آزمون اتصال"
+
+msgid "Text direction"
+msgstr "جهت متن"
+
+msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
+msgstr "از پیام شما سپاسگزارم. برای پاسخ به این پرسش اطلاعات تأییدشدهٔ کافی ندارم. لطفاً درخواست خود را ثبت کنید یا مستقیم با کارشناسان ما تماس بگیرید."
+
+msgid "Thanks for your rating 🙏"
+msgstr "از امتیاز شما سپاسگزاریم 🙏"
+
+msgid "The AI assistant is locked to strict pharmacovigilance answer rules: no invented medical claims, no personalized treatment advice."
+msgstr "دستیار هوش مصنوعی به قواعد سخت‌گیرانهٔ پاسخ‌دهی ایمنی دارو محدود است: بدون ادعای پزشکی ساختگی و بدون توصیهٔ درمانی شخصی."
+
+msgid "The API key could not be encrypted (OpenSSL unavailable or AUTH_KEY missing). It was NOT saved in plaintext. Fix the server crypto setup and try again."
+msgstr "کلید API رمزنگاری نشد (OpenSSL در دسترس نیست یا AUTH_KEY تعریف نشده). کلید به‌صورت متن ساده ذخیره نشد. تنظیمات رمزنگاری سرور را اصلاح کنید و دوباره تلاش کنید."
+
+msgid "The API key was rejected. Double-check the key and that it belongs to the selected provider."
+msgstr "کلید API رد شد. کلید و تعلق آن به ارائه‌دهندهٔ انتخاب‌شده را دوباره بررسی کنید."
+
+msgid "The account has insufficient credits or billing is not active. Check your provider account balance."
+msgstr "اعتبار حساب کافی نیست یا صورت‌حساب فعال نیست. موجودی حساب ارائه‌دهنده را بررسی کنید."
+
+msgid "The assistant is invisible to visitors until the wizard is complete and you publish it. Pick up where you left off:"
+msgstr "تا وقتی جادوگر کامل نشده و آن را منتشر نکرده‌اید، دستیار برای بازدیدکنندگان نامرئی است. از همان‌جا که مانده بودید ادامه دهید:"
+
+msgid "The assistant is not available yet."
+msgstr "دستیار هنوز در دسترس نیست."
+
+msgid "The assistant is published without an AI engine — it can only answer from your FAQ bank."
+msgstr "دستیار بدون موتور هوش مصنوعی منتشر شده است — فقط می‌تواند از بانک پرسش‌وپاسخ شما پاسخ دهد."
+
+msgid "The chatbot stays invisible to visitors until you publish it in the last step."
+msgstr "تا وقتی در گام آخر منتشرش نکنید، چت‌بات برای بازدیدکنندگان نامرئی می‌ماند."
+
+msgid "The connected AI provider does not offer embeddings."
+msgstr "ارائه‌دهندهٔ هوش مصنوعی متصل، API امبدینگ ندارد."
+
+msgid "The data deletion preference could not be saved. Deletion was stopped. Please check Settings before trying again."
+msgstr "تنظیم حذف داده‌ها ذخیره نشد و حذف متوقف شد. پیش از تلاش دوباره، تنظیمات را بررسی کنید."
+
+msgid "The embeddings response did not match the request."
+msgstr "پاسخ امبدینگ با درخواست مطابقت نداشت."
+
+msgid "The endpoint address is invalid or not allowed."
+msgstr "نشانی endpoint نامعتبر یا غیرمجاز است."
+
+msgid "The endpoint address is not allowed (it must be a valid public address; HTTPS is required when credentials are sent)."
+msgstr "نشانی endpoint مجاز نیست (باید نشانی عمومی معتبر باشد؛ هنگام ارسال اطلاعات محرمانه HTTPS الزامی است)."
+
+msgid "The facts your assistant relies on. Everything you write here reaches the AI on every answer."
+msgstr "اطلاعاتی که دستیار به آن تکیه می‌کند. هرچه این‌جا بنویسید در هر پاسخ به هوش مصنوعی می‌رسد."
+
+msgid "The facts… (prices, policies, answers, anything)"
+msgstr "اطلاعات… (قیمت‌ها، سیاست‌ها، پاسخ‌ها، هر چیزی)"
+
+msgid "The field \"%s\" is required."
+msgstr "تکمیل فیلد «%s» الزامی است."
+
+msgid "The field \"%s\" must be a valid email."
+msgstr "فیلد «%s» باید نشانی ایمیل معتبر باشد."
+
+msgid "The file is larger than 2 MB and was NOT imported."
+msgstr "حجم فایل بیش از ۲ مگابایت است و وارد نشد."
+
+msgid "The first matching path wins; * matches anything. Pages without a match use the invitation text above. Use \"-\" as the message to show no invitation on those pages."
+msgstr "اولین مسیر منطبق اعمال می‌شود؛ * با هر چیزی منطبق است. صفحه‌های بدون تطابق از متن دعوت بالا استفاده می‌کنند. برای عدم نمایش دعوت در آن صفحه‌ها، پیام را \"-\" بگذارید."
+
+msgid "The form could not be submitted. Please try again."
+msgstr "فرم ثبت نشد. لطفاً دوباره تلاش کنید."
+
+msgid "The identity test could not run."
+msgstr "آزمون هویت اجرا نشد."
+
+msgid "The message could not be processed."
+msgstr "پردازش پیام ممکن نشد."
+
+msgid "The model blocked the test prompt for safety reasons."
+msgstr "مدل پیام آزمون را به دلایل ایمنی مسدود کرد."
+
+msgid "The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again."
+msgstr "مدل پاسخ داد اما سازمان شما را درست معرفی نکرد. مشخصات کسب‌وکار و دانش را بازبینی و آزمون را دوباره اجرا کنید."
+
+msgid "The page could not be imported (check the URL or try later)."
+msgstr "صفحه وارد نشد (نشانی را بررسی کنید یا بعداً تلاش کنید)."
+
+msgid "The page is fetched once, now, because you asked for it — its readable text becomes reference knowledge."
+msgstr "صفحه فقط یک بار و همین حالا، به درخواست شما دریافت می‌شود — متن قابل‌خواندن آن به دانش مرجع تبدیل می‌شود."
+
+msgid "The provider is not available from your server region or the account is region-restricted."
+msgstr "ارائه‌دهنده از منطقهٔ سرور شما در دسترس نیست یا حساب محدودیت منطقه‌ای دارد."
+
+msgid "The provider is rate-limiting requests right now. Wait a moment and test again."
+msgstr "ارائه‌دهنده در حال حاضر تعداد درخواست‌ها را محدود کرده است. کمی صبر کنید و دوباره آزمایش کنید."
+
+msgid "The provider replied 200 but no generated text was found in the response."
+msgstr "ارائه‌دهنده پاسخ 200 داد اما متن تولیدشده‌ای در پاسخ پیدا نشد."
+
+msgid "The provider response was not valid JSON."
+msgstr "پاسخ ارائه‌دهنده JSON معتبر نبود."
+
+msgid "The provider returned an unexpected response format."
+msgstr "ارائه‌دهنده پاسخی با قالب غیرمنتظره برگرداند."
+
+msgid "The provider took too long to respond. Try a faster model or test again."
+msgstr "پاسخ ارائه‌دهنده بیش از حد طول کشید. مدل سریع‌تری انتخاب کنید یا دوباره آزمایش کنید."
+
+msgid "The report could not be stored. Please try again."
+msgstr "گزارش ذخیره نشد. لطفاً دوباره تلاش کنید."
+
+msgid "The request body could not be encoded."
+msgstr "بدنهٔ درخواست قابل رمزگذاری نبود."
+
+msgid "The request could not be stored. Please try again."
+msgstr "درخواست ذخیره نشد. لطفاً دوباره تلاش کنید."
+
+msgid "The request is too large."
+msgstr "درخواست بیش از حد بزرگ است."
+
+msgid "The secret could not be encrypted (OpenSSL unavailable or AUTH_KEY missing). It was NOT saved in plaintext. Fix the server crypto setup and try again."
+msgstr "رمز رمزنگاری نشد (OpenSSL در دسترس نیست یا AUTH_KEY تعریف نشده). رمز به‌صورت متن ساده ذخیره نشد. تنظیمات رمزنگاری سرور را اصلاح کنید و دوباره تلاش کنید."
+
+msgid "The selected model is not available for this account or does not exist. Pick another model or enter the model ID manually."
+msgstr "مدل انتخاب‌شده برای این حساب در دسترس نیست یا وجود ندارد. مدل دیگری انتخاب کنید یا شناسهٔ مدل را دستی وارد کنید."
+
+msgid "The server could not reach the provider (network or provider outage). Try again later."
+msgstr "سرور نتوانست به ارائه‌دهنده دسترسی پیدا کند (قطعی شبکه یا سرویس). بعداً دوباره تلاش کنید."
+
+msgid "The survey is disabled on this site."
+msgstr "نظرسنجی در این سایت غیرفعال است."
+
+msgid "The webhook JSON has no \"reply\", \"message\" or \"text\" field."
+msgstr "JSON وب‌هوک فیلد \"reply\"، \"message\" یا \"text\" ندارد."
+
+msgid "The webhook URL is not allowed (public address; HTTPS required when a secret is configured)."
+msgstr "نشانی وب‌هوک مجاز نیست (نشانی عمومی؛ با تنظیم رمز، HTTPS الزامی است)."
+
+msgid "The webhook did not return JSON."
+msgstr "وب‌هوک JSON برنگرداند."
+
+msgid "The webhook response signature is missing or invalid."
+msgstr "امضای پاسخ وب‌هوک وجود ندارد یا نامعتبر است."
+
+msgid "Theme"
+msgstr "تم"
+
+msgid "Theme (empty = global)"
+msgstr "تم (خالی = تنظیم کلی)"
+
+msgid "This is the real assistant: changes apply instantly and you can chat with it (answers use the saved AI connection). Save when you are happy."
+msgstr "این همان دستیار واقعی است: تغییرات فوراً اعمال می‌شوند و می‌توانید با آن گفتگو کنید (پاسخ‌ها از اتصال هوش مصنوعی ذخیره‌شده می‌آیند). هر وقت راضی بودید ذخیره کنید."
+
+msgid "This is what the AI reads to understand your organization. Only the official name is required."
+msgstr "هوش مصنوعی از همین اطلاعات سازمان شما را می‌شناسد. فقط نام رسمی الزامی است."
+
+msgid "This may be a medical emergency. Stop and seek immediate medical help now — call your local emergency number or go to the nearest emergency department. Do not wait for a reply here."
+msgstr "این ممکن است یک وضعیت اورژانسی باشد. همین حالا کمک پزشکی فوری بگیرید — با اورژانس (۱۱۵) تماس بگیرید یا به نزدیک‌ترین اورژانس بروید. منتظر پاسخ در این‌جا نمانید."
+
+msgid "This module needs: %s"
+msgstr "این ماژول نیاز دارد به: %s"
+
+msgid "This provider is not verified yet. Run the connection test below and wait for the green result before continuing."
+msgstr "این ارائه‌دهنده هنوز تأیید نشده است. آزمون اتصال زیر را اجرا کنید و پیش از ادامه منتظر نتیجهٔ سبز بمانید."
+
+msgid "This site uses an AI chat assistant. Messages you type are processed by this website and sent to the AI provider selected by the site owner (an external service) to generate replies. If you submit a contact form, your name, phone number and message are stored so we can follow up."
+msgstr "این سایت از یک دستیار گفتگوی هوش مصنوعی استفاده می‌کند. پیام‌هایی که می‌نویسید توسط این سایت پردازش و برای تولید پاسخ به ارائه‌دهندهٔ هوش مصنوعی انتخاب‌شده توسط مالک سایت (یک سرویس خارجی) ارسال می‌شوند. اگر فرم تماس را ارسال کنید، نام، شماره تلفن و پیام شما برای پیگیری ذخیره می‌شود."
+
+msgid "This tool supports your workflow but does not certify regulatory compliance. Verify your national reporting obligations (e.g., your pharmacovigilance center's timelines and formats) before relying on it for submissions."
+msgstr "این ابزار از فرایند شما پشتیبانی می‌کند اما انطباق قانونی را گواهی نمی‌کند. پیش از اتکا برای ارسال گزارش، الزامات گزارش‌دهی ملی (مانند زمان‌بندی و قالب مرکز ایمنی دارو) را بررسی کنید."
+
+msgid "Time"
+msgstr "زمان"
+
+msgid "Timezone (empty = site timezone)"
+msgstr "منطقهٔ زمانی (خالی = منطقهٔ زمانی سایت)"
+
+msgid "Title"
+msgstr "عنوان"
+
+msgid "Title (e.g. Return policy)"
+msgstr "عنوان (مثلاً سیاست بازگشت کالا)"
+
+msgid "Too many submissions today. Please try again tomorrow."
+msgstr "تعداد درخواست‌های امروز به سقف مجاز رسیده است. لطفاً فردا تلاش کنید."
+
+msgid "Too many votes today."
+msgstr "تعداد رأی‌های امروز بیش از حد مجاز است."
+
+msgid "Topical"
+msgstr "موضعی"
+
+msgid "Track assistant quality over time with one simple number."
+msgstr "کیفیت دستیار را در طول زمان با یک عدد ساده دنبال کنید."
+
+msgid "Trusted proxy header (behind CDN / reverse proxy)"
+msgstr "سرآیند پراکسی مورد اعتماد (پشت CDN / پراکسی معکوس)"
+
+msgid "Try the assistant (preview)"
+msgstr "امتحان دستیار (پیش‌نمایش)"
+
+msgid "Turn conversations into actionable requests with clean, validated contact data."
+msgstr "گفتگوها را به درخواست‌های قابل پیگیری با اطلاعات تماس معتبر تبدیل کنید."
+
+msgid "Type"
+msgstr "نوع"
+
+msgid "Typing…"
+msgstr "در حال نوشتن…"
+
+msgid "Unanswered"
+msgstr "بی‌پاسخ"
+
+msgid "Unanswered questions"
+msgstr "پرسش‌های بی‌پاسخ"
+
+msgid "Unanswered questions (14 days)"
+msgstr "پرسش‌های بی‌پاسخ (۱۴ روز)"
+
+msgid "Under assessment"
+msgstr "در حال ارزیابی"
+
+msgid "Unknown"
+msgstr "نامشخص"
+
+msgid "Unknown connection error."
+msgstr "خطای ناشناختهٔ اتصال."
+
+msgid "Unknown product. Please choose from the list."
+msgstr "لطفاً محصول را از فهرست انتخاب کنید."
+
+msgid "Unknown provider."
+msgstr "ارائه‌دهندهٔ ناشناخته."
+
+msgid "Update case"
+msgstr "به‌روزرسانی پرونده"
+
+msgid "Updated."
+msgstr "به‌روزرسانی شد."
+
+msgid "Upload file"
+msgstr "بارگذاری فایل"
+
+msgid "Value"
+msgstr "مقدار"
+
+msgid "Vazirmatn (Persian)"
+msgstr "وزیرمتن (فارسی)"
+
+msgid "Verified %s ago for the current provider, key, model and endpoint."
+msgstr "%s پیش برای ارائه‌دهنده، کلید، مدل و نشانی فعلی تأیید شد."
+
+msgid "Verify & Launch"
+msgstr "بررسی و راه‌اندازی"
+
+msgid "View brochure"
+msgstr "مشاهدهٔ بروشور"
+
+msgid "Visitor IP addresses in logs and requests"
+msgstr "نشانی IP بازدیدکنندگان در گزارش‌ها و درخواست‌ها"
+
+msgid "Visitor bubble color"
+msgstr "رنگ حباب بازدیدکننده"
+
+msgid "Visitors"
+msgstr "بازدیدکنندگان"
+
+msgid "Visitors can chat with the assistant."
+msgstr "بازدیدکنندگان می‌توانند با دستیار گفتگو کنند."
+
+msgid "Visitors can file a structured ADR report: suspected product, batch/lot, reporter details, reaction description, clinical severity, ICH E2A-style seriousness criteria and outcome."
+msgstr "بازدیدکنندگان می‌توانند گزارش ساختاریافتهٔ عارضه ثبت کنند: محصول مشکوک، سری ساخت، مشخصات گزارش‌دهنده، شرح واکنش، شدت بالینی، معیارهای جدی بودن به سبک ICH E2A و پیامد."
+
+msgid "Visitors speak to the assistant and listen to answers (microphone input and text-to-speech playback)."
+msgstr "بازدیدکنندگان با دستیار صحبت می‌کنند و پاسخ‌ها را می‌شنوند (ورودی میکروفون و پخش متن به گفتار)."
+
+msgid "Voice Interaction"
+msgstr "تعامل صوتی"
+
+msgid "Voice module"
+msgstr "ماژول صوت"
+
+msgid "We are currently away. Leave a message and we will get back to you during business hours."
+msgstr "اکنون خارج از ساعات پاسخ‌گویی هستیم. پیام بگذارید تا در ساعات کاری پیگیری کنیم."
+
+msgid "Webhook URL"
+msgstr "نشانی وب‌هوک"
+
+msgid "Website"
+msgstr "وب‌سایت"
+
+msgid "Welcome message"
+msgstr "پیام خوش‌آمد"
+
+msgid "Welcome message (empty = global)"
+msgstr "پیام خوش‌آمد (خالی = تنظیم کلی)"
+
+msgid "Welcome title"
+msgstr "عنوان خوش‌آمد"
+
+msgid "Welcome title (empty = global)"
+msgstr "عنوان خوش‌آمد (خالی = تنظیم کلی)"
+
+msgid "What does your organization do?"
+msgstr "سازمان شما چه کاری انجام می‌دهد؟"
+
+msgid "What happened? Describe the reaction and dates."
+msgstr "چه اتفاقی افتاد؟ عارضه و تاریخ‌ها را شرح دهید."
+
+msgid "What is it, key facts, terms…"
+msgstr "چیست، اطلاعات کلیدی، شرایط…"
+
+msgid "What makes you different?"
+msgstr "چه چیزی شما را متمایز می‌کند؟"
+
+msgid "What should the assistant know?"
+msgstr "دستیار چه چیزهایی باید بداند؟"
+
+msgid "When a visitor asks about a product, its summary and attributes are injected into the answer context."
+msgstr "وقتی بازدیدکننده دربارهٔ محصولی می‌پرسد، خلاصه و ویژگی‌های آن به زمینهٔ پاسخ اضافه می‌شود."
+
+msgid "When the assistant cannot answer, it transparently offers an escalation to a human expert via a consultation request."
+msgstr "وقتی دستیار نمی‌تواند پاسخ دهد، به‌صورت شفاف ارجاع به کارشناس انسانی را از طریق درخواست مشاوره پیشنهاد می‌کند."
+
+msgid "When the visitor is about to leave (desktop; delay on phones)"
+msgstr "وقتی بازدیدکننده قصد خروج دارد (دسکتاپ؛ در موبایل پس از تأخیر)"
+
+msgid "Where the widget appears"
+msgstr "محل نمایش ویجت"
+
+msgid "Which one?"
+msgstr "کدام محصول را انتخاب می‌کنید؟"
+
+msgid "Who does the assistant represent?"
+msgstr "دستیار نمایندهٔ چه کسی است؟"
+
+msgid "Widget behaviour"
+msgstr "رفتار ویجت"
+
+msgid "Window corner radius (px)"
+msgstr "گردی گوشه‌های پنجره (پیکسل)"
+
+msgid "Working hours"
+msgstr "ساعات کاری"
+
+msgid "Works with OpenRouter, Groq, DeepSeek, Ollama relays, Azure-style proxies and more."
+msgstr "با OpenRouter، Groq، DeepSeek، رله‌های Ollama، پراکسی‌های سبک Azure و موارد دیگر کار می‌کند."
+
+msgid "Write your message…"
+msgstr "پیام خود را بنویسید…"
+
+msgid "You do not have permission to access case records."
+msgstr "اجازهٔ دسترسی به پرونده‌ها را ندارید."
+
+msgid "You have reached the daily usage limit. Please try again tomorrow."
+msgstr "به سقف استفادهٔ روزانه رسیده‌اید. لطفاً فردا دوباره تلاش کنید."
+
+msgid "Your consent is required to continue."
+msgstr "برای ادامه، رضایت شما لازم است."
+
+msgid "Your consent is required to submit a safety report."
+msgstr "برای ثبت گزارش ایمنی، رضایت شما لازم است."
+
+msgid "Your consent is required to submit this form."
+msgstr "برای ارسال این فرم، رضایت شما لازم است."
+
+msgid "Your message"
+msgstr "پیام شما"
+
+msgid "Your session expired. Please refresh the page and try again."
+msgstr "نشست شما منقضی شده است. صفحه را تازه کنید و دوباره تلاش کنید."
+
+msgid "Your session has expired. Please refresh the page."
+msgstr "نشست شما منقضی شده است. صفحه را تازه کنید."
+
+msgid "e.g. Customer support specialist"
+msgstr "مثلاً کارشناس پشتیبانی مشتریان"
+
+msgid "e.g. Pharmaceutical, E-commerce"
+msgstr "مثلاً داروسازی، فروشگاه اینترنتی"
+
+msgid "e.g. Retail, Clinic, Manufacturer"
+msgstr "مثلاً خرده‌فروشی، کلینیک، تولیدکننده"
+
+msgid "e.g. Sara"
+msgstr "مثلاً سارا"
+
+msgid "e.g. Sat–Wed, 9:00–17:00"
+msgstr "مثلاً شنبه تا چهارشنبه، ۹ تا ۱۷"
+
+msgid "price, cost, shipping"
+msgstr "قیمت، هزینه، ارسال"
+
+msgid "retention is configured in Settings"
+msgstr "مدت نگهداری در تنظیمات تعیین می‌شود"
+
+msgid "“No AI engine” answers from your FAQ bank and knowledge only — nothing leaves your server."
+msgstr "«بدون موتور هوش مصنوعی» فقط از بانک پرسش‌وپاسخ و دانش شما پاسخ می‌دهد — هیچ داده‌ای از سرور شما خارج نمی‌شود."

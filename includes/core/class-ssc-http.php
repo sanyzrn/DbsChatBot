@@ -93,12 +93,12 @@ class SSC_HTTP {
 		);
 
 		if ( ! self::is_safe_url( $url, $opts['needs_https'] ) ) {
-			return self::fail( 'endpoint', __( 'The endpoint address is not allowed (it must be a valid public address; HTTPS is required when credentials are sent).', 'smart-support-chatbot' ) );
+			return self::fail( 'endpoint', __( 'The endpoint address is not allowed (it must be a valid public address; HTTPS is required when credentials are sent).', 'nexachat-ai' ) );
 		}
 
 		$payload = wp_json_encode( $body );
 		if ( false === $payload ) {
-			return self::fail( 'malformed', __( 'The request body could not be encoded.', 'smart-support-chatbot' ) );
+			return self::fail( 'malformed', __( 'The request body could not be encoded.', 'nexachat-ai' ) );
 		}
 
 		$headers['Content-Type'] = 'application/json';
@@ -156,7 +156,7 @@ class SSC_HTTP {
 		}
 
 		if ( ! is_array( $data ) ) {
-			return self::fail( 'malformed', __( 'The provider response was not valid JSON.', 'smart-support-chatbot' ) );
+			return self::fail( 'malformed', __( 'The provider response was not valid JSON.', 'nexachat-ai' ) );
 		}
 
 		return array(
@@ -218,17 +218,17 @@ class SSC_HTTP {
 	 */
 	public static function friendly_error( $code ) {
 		$map = array(
-			'auth'       => __( 'The API key was rejected. Double-check the key and that it belongs to the selected provider.', 'smart-support-chatbot' ),
-			'model'      => __( 'The selected model is not available for this account or does not exist. Pick another model or enter the model ID manually.', 'smart-support-chatbot' ),
-			'credits'    => __( 'The account has insufficient credits or billing is not active. Check your provider account balance.', 'smart-support-chatbot' ),
-			'rate_limit' => __( 'The provider is rate-limiting requests right now. Wait a moment and test again.', 'smart-support-chatbot' ),
-			'region'     => __( 'The provider is not available from your server region or the account is region-restricted.', 'smart-support-chatbot' ),
-			'network'    => __( 'The server could not reach the provider (network or provider outage). Try again later.', 'smart-support-chatbot' ),
-			'timeout'    => __( 'The provider took too long to respond. Try a faster model or test again.', 'smart-support-chatbot' ),
-			'endpoint'   => __( 'The endpoint address is invalid or not allowed.', 'smart-support-chatbot' ),
-			'malformed'  => __( 'The provider returned an unexpected response format.', 'smart-support-chatbot' ),
+			'auth'       => __( 'The API key was rejected. Double-check the key and that it belongs to the selected provider.', 'nexachat-ai' ),
+			'model'      => __( 'The selected model is not available for this account or does not exist. Pick another model or enter the model ID manually.', 'nexachat-ai' ),
+			'credits'    => __( 'The account has insufficient credits or billing is not active. Check your provider account balance.', 'nexachat-ai' ),
+			'rate_limit' => __( 'The provider is rate-limiting requests right now. Wait a moment and test again.', 'nexachat-ai' ),
+			'region'     => __( 'The provider is not available from your server region or the account is region-restricted.', 'nexachat-ai' ),
+			'network'    => __( 'The server could not reach the provider (network or provider outage). Try again later.', 'nexachat-ai' ),
+			'timeout'    => __( 'The provider took too long to respond. Try a faster model or test again.', 'nexachat-ai' ),
+			'endpoint'   => __( 'The endpoint address is invalid or not allowed.', 'nexachat-ai' ),
+			'malformed'  => __( 'The provider returned an unexpected response format.', 'nexachat-ai' ),
 		);
-		return isset( $map[ $code ] ) ? $map[ $code ] : __( 'Unknown connection error.', 'smart-support-chatbot' );
+		return isset( $map[ $code ] ) ? $map[ $code ] : __( 'Unknown connection error.', 'nexachat-ai' );
 	}
 
 	/**

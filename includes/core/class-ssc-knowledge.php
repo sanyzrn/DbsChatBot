@@ -453,7 +453,7 @@ class SSC_Knowledge {
 				$body = mb_substr( $body, 0, max( 0, $budget - $used ) ) . '…';
 			}
 			$used   += mb_strlen( $body );
-			$title   = ! empty( $item['title'] ) ? $item['title'] : __( 'Reference', 'smart-support-chatbot' );
+			$title   = ! empty( $item['title'] ) ? $item['title'] : __( 'Reference', 'nexachat-ai' );
 			$parts[] = SSC_Prompt_Builder::fence( 'KNOWLEDGE', $title, $body );
 			if ( $used >= $budget ) {
 				break;

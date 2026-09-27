@@ -26,7 +26,7 @@ jobs:
         run: |
           set -e
           tag="${GITHUB_REF_NAME#v}"
-          version=$(grep -oP "define\( 'SSC_CHATBOT_VERSION', '\K[^']+" smart-support-chatbot.php)
+          version=$(grep -oP "define\( 'SSC_CHATBOT_VERSION', '\K[^']+" nexachat-ai.php)
           echo "tag=$tag plugin=$version"
           if [ "$tag" != "$version" ]; then
             echo "::error::Tag $GITHUB_REF_NAME does not match SSC_CHATBOT_VERSION $version"

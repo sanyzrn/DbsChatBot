@@ -29,7 +29,7 @@ class SSC_Module_Csat extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Satisfaction Survey (CSAT)', 'smart-support-chatbot' );
+		return __( 'Satisfaction Survey (CSAT)', 'nexachat-ai' );
 	}
 
 	/**
@@ -38,7 +38,7 @@ class SSC_Module_Csat extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'A short 1-5 star survey at the end of a real conversation, with a skip option.', 'smart-support-chatbot' );
+		return __( 'A short 1-5 star survey at the end of a real conversation, with a skip option.', 'nexachat-ai' );
 	}
 
 	/**
@@ -47,7 +47,7 @@ class SSC_Module_Csat extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Track assistant quality over time with one simple number.', 'smart-support-chatbot' );
+		return __( 'Track assistant quality over time with one simple number.', 'nexachat-ai' );
 	}
 
 	/**
