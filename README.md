@@ -72,7 +72,20 @@ Back up first and clear page/CDN caches after upgrading.
 Voice input/output · Proactive invitation (delay / scroll / exit intent, per-page
 messages) · Notifications (Bale / Telegram / email) · Human handoff · Analytics ·
 CSAT survey · FAQ answer bank · Consultation forms (custom fields, CSV export) ·
-Pharmaceutical ADR reporting
+Pharmaceutical ADR reporting (configurable form: short/standard presets, own questions)
+
+Added in the 2.0 development line, also off by default:
+
+| Module | What it does |
+|---|---|
+| Live chat | Operator inbox: take over from the bot, queue and assignment, online/offline, canned replies, AI summary; operators can answer from Bale/Telegram |
+| Messenger bot | Customers chat with the assistant inside Bale or Telegram |
+| WooCommerce sales assistant | Product cards (price, stock, add to cart), order tracking, comparison, smart coupon, SMS cart reminder |
+| SMS gateway | Kavenegar, Melipayamak, IPPanel, SMS.ir |
+| Learn from my website | Pages, posts and products become knowledge automatically and stay in sync |
+
+The knowledge base also imports PDF and Word files, and can draft FAQs and a
+persona with AI for review. The wizard offers six industry templates.
 
 ### Pharmaceutical extension
 
@@ -265,7 +278,16 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 
 گفتار · دعوت فعال (تأخیر، پیمایش، قصد خروج، پیام ویژهٔ هر صفحه) · اعلان‌ها (بله،
 تلگرام، ایمیل) · ارجاع به کارشناس · تحلیل‌ها · نظرسنجی رضایت · بانک پرسش‌وپاسخ ·
-فرم‌های مشاوره (فیلد سفارشی، خروجی CSV) · گزارش عوارض دارویی
+فرم‌های مشاوره (فیلد سفارشی، خروجی CSV) · گزارش عوارض دارویی (فرم قابل تنظیم: کوتاه/استاندارد، سؤال دلخواه)
+
+ماژول‌های جدید نسخهٔ ۲ (همه پیش‌فرض خاموش):
+- **گفتگوی زنده:** صندوق پیام اپراتور، تحویل گفتگو از ربات، صف و تخصیص، وضعیت آنلاین/آفلاین، پاسخ‌های آماده، خلاصهٔ هوشمند؛ پاسخ از بله/تلگرام
+- **ربات پیام‌رسان:** گفتگوی مشتری با دستیار داخل بله یا تلگرام
+- **دستیار فروش ووکامرس:** کارت محصول با قیمت و موجودی واقعی و افزودن به سبد، پیگیری سفارش، مقایسه، کد تخفیف هوشمند، یادآوری پیامکی سبد
+- **درگاه پیامک:** کاوه‌نگار، ملی‌پیامک، آی‌پی‌پنل، sms.ir
+- **یادگیری از سایت:** صفحه‌ها، نوشته‌ها و محصولات خودکار به دانش دستیار تبدیل و به‌روز می‌شوند
+
+همچنین: ورود PDF و Word به پایگاه دانش، پیشنهاد پرسش‌های متداول و پرسونا با هوش مصنوعی، و شش قالب صنفی در جادوگر راه‌اندازی.
 
 ### افزونهٔ دارویی
 
