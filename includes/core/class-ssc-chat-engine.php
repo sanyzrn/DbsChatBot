@@ -275,6 +275,8 @@ class SSC_Chat_Engine {
 			'log_token' => '',
 			'flags'     => $this->flags,
 			'sources'   => array(),
+			'cards'     => array(),
+			'actions'   => array(),
 		);
 		// Citations: the documents the answer was grounded on (AI answers only).
 		if ( $ok && in_array( $source, array( 'ai', 'cache' ), true ) && 'yes' === SSC_Settings::get( 'show_sources', 'yes' ) ) {
@@ -283,6 +285,18 @@ class SSC_Chat_Engine {
 
 		if ( $ok && '' !== $reply ) {
 			SSC_Conversation::append( $this->conversation, $this->current_question, $reply );
+		}
+
+		if ( $ok ) {
+			/**
+			 * Extend a reply for the widget: product cards, suggested actions.
+			 *
+			 * @param array           $out    Envelope (reply, source, cards, actions…).
+			 * @param string          $source Source.
+			 * @param string          $question Visitor message.
+			 * @param SSC_Chat_Engine $engine Engine.
+			 */
+			$out = apply_filters( 'ssc_chat_envelope', $out, $source, $this->current_question, $this );
 		}
 
 		if ( $ok && '' !== $reply && 'live' !== $source && '' !== $this->conversation ) {

@@ -877,6 +877,12 @@
                 if (cfg.features && cfg.features.pharma) {
                         chips.push({ label: i18n.reportAdr || 'Report side effect', onClick: showAdrForm });
                 }
+                if (cfg.woo && cfg.woo.tracking) {
+                        chips.push({ label: wooText('trackOrder', 'Track my order'), onClick: showOrderForm });
+                }
+                if (cfg.woo && cfg.woo.remind && /(?:^|;\s*)woocommerce_items_in_cart=1/.test(document.cookie)) {
+                        chips.push({ label: wooText('remind', 'Remind me about my cart by SMS'), onClick: showRemindForm });
+                }
                 if (cfg.features && cfg.features.live) {
                         chips.push({ label: liveText('talkToPerson', 'Talk to a person'), onClick: requestHuman });
                 }
@@ -1005,6 +1011,8 @@
                         }
                         handleFlags(data);
                         renderSources(node, data.sources);
+                        renderCards(node, data.cards);
+                        handleActions(data.actions);
                         var tools = messageTools(node, reply);
                         if (cfg.features && cfg.features.feedback && data.log_id) {
                                 feedbackControls(tools, data.log_id, data.log_token);
@@ -1282,6 +1290,327 @@
                 card.appendChild(form);
                 thread.appendChild(card);
                 scrollDown();
+        }
+
+        /* ------------------------------------------------------------------ *
+         * WooCommerce (module): product cards, order tracking, offers
+         * ------------------------------------------------------------------ */
+
+        function wooText(key, fallback) {
+                return (cfg.woo && cfg.woo.i18n && cfg.woo.i18n[key]) || fallback;
+        }
+
+        /** WooCommerce's own AJAX endpoints (add_to_cart, apply_coupon): session-aware, theme-compatible. */
+        function wooAjax(endpoint, params) {
+                var body = new URLSearchParams();
+                Object.keys(params).forEach(function (k) { body.append(k, params[k]); });
+                return fetch(cfg.woo.ajaxUrl.replace('%%endpoint%%', endpoint), {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+                        body: body.toString()
+                });
+        }
+
+        /** Tell the theme (mini-cart, counters) that the cart changed, the way WooCommerce does. */
+        function wooCartChanged(fragments, hash) {
+                if (window.jQuery) {
+                        try {
+                                window.jQuery(document.body).trigger('added_to_cart', [fragments || {}, hash || '']);
+                                window.jQuery(document.body).trigger('wc_fragment_refresh');
+                        } catch (e) { /* theme without handlers */ }
+                }
+        }
+
+        function renderCards(node, cards) {
+                if (!cards || !cards.length || !cfg.woo) { return; }
+                var list = el('div', 'ssc-pcards');
+                list.setAttribute('role', 'list');
+                cards.forEach(function (c) {
+                        var card = el('div', 'ssc-pcard' + (c.inStock ? '' : ' is-out'));
+                        card.setAttribute('role', 'listitem');
+                        var link = el('a', 'ssc-pcard__media');
+                        link.href = c.url;
+                        link.setAttribute('aria-label', c.name);
+                        if (c.image) {
+                                var img = el('img', '');
+                                img.src = c.image;
+                                img.alt = '';
+                                img.loading = 'lazy';
+                                link.appendChild(img);
+                        }
+                        card.appendChild(link);
+                        var name = el('a', 'ssc-pcard__name', esc(c.name));
+                        name.href = c.url;
+                        name.setAttribute('dir', 'auto');
+                        card.appendChild(name);
+                        var price = el('div', 'ssc-pcard__price');
+                        if (c.regular) { price.appendChild(el('del', '', esc(c.regular))); }
+                        price.appendChild(el('span', '', esc(c.price)));
+                        price.setAttribute('dir', 'auto');
+                        card.appendChild(price);
+                        card.appendChild(el('span', 'ssc-pcard__stock', esc(c.stock)));
+                        if (c.addable) {
+                                var btn = el('button', 'ssc-pcard__btn', esc(wooText('addToCart', 'Add to cart')));
+                                btn.type = 'button';
+                                btn.addEventListener('click', function () { addToCart(c, btn, card); });
+                                card.appendChild(btn);
+                        } else {
+                                var view = el('a', 'ssc-pcard__btn ssc-pcard__btn--ghost', esc(c.inStock ? wooText('options', 'Choose options') : wooText('view', 'View')));
+                                view.href = c.url;
+                                card.appendChild(view);
+                        }
+                        list.appendChild(card);
+                });
+                node.appendChild(list);
+                scrollDown();
+        }
+
+        function addToCart(c, btn, card) {
+                if (btn.disabled) { return; }
+                btn.disabled = true;
+                wooAjax('add_to_cart', { product_id: c.id, quantity: 1 }).then(function (res) {
+                        return res.json();
+                }).then(function (data) {
+                        if (!data || data.error) {
+                                // WooCommerce asks for the product page (options, stock rules…).
+                                if (data && data.product_url) { window.location.href = data.product_url; return; }
+                                throw new Error('add_to_cart');
+                        }
+                        btn.textContent = wooText('added', 'Added ✓');
+                        btn.classList.add('is-done');
+                        var cart = el('a', 'ssc-pcard__cart', esc(wooText('viewCart', 'View cart')));
+                        cart.href = cfg.woo.cartUrl;
+                        card.appendChild(cart);
+                        wooCartChanged(data.fragments, data.cart_hash);
+                }).catch(function () {
+                        btn.disabled = false;
+                        btn.textContent = wooText('error', 'That did not work. Please try again.');
+                });
+        }
+
+        function handleActions(actions) {
+                if (!actions || !actions.length) { return; }
+                if (actions.indexOf('track_order') !== -1 && cfg.woo && cfg.woo.tracking) {
+                        addChips([{ label: wooText('trackOrder', 'Track my order'), onClick: showOrderForm }]);
+                }
+        }
+
+        /** Small form card (order tracking, cart reminder). */
+        function wooForm(title, fields, submitLabel, onSubmit) {
+                var card = el('div', 'ssc-cardform ssc-cardform--woo');
+                card.appendChild(el('h3', 'ssc-cardform__title', esc(title)));
+                var form = el('form', 'ssc-cardform__form');
+                form.setAttribute('novalidate', 'novalidate');
+                fields.forEach(function (f) {
+                        if (f.type === 'checkbox') {
+                                var cw = el('label', 'ssc-f ssc-f--check');
+                                var cb = el('input', 'ssc-f__check');
+                                cb.type = 'checkbox';
+                                cb.name = f.name;
+                                cb.value = '1';
+                                cw.appendChild(cb);
+                                cw.appendChild(el('span', 'ssc-f__label', esc(f.label)));
+                                form.appendChild(cw);
+                                return;
+                        }
+                        var wrap = el('label', 'ssc-f');
+                        wrap.appendChild(el('span', 'ssc-f__label', esc(f.label)));
+                        var input = el('input', 'ssc-f__input');
+                        input.type = f.type || 'text';
+                        input.name = f.name;
+                        input.required = true;
+                        if (f.ltr) { input.dir = 'ltr'; }
+                        if (f.inputmode) { input.setAttribute('inputmode', f.inputmode); }
+                        wrap.appendChild(input);
+                        form.appendChild(wrap);
+                });
+                var err = el('p', 'ssc-cardform__error', '');
+                err.setAttribute('role', 'alert');
+                form.appendChild(err);
+                var submit = el('button', 'ssc-btn2', esc(submitLabel));
+                submit.type = 'submit';
+                form.appendChild(submit);
+                form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        err.textContent = '';
+                        submit.disabled = true;
+                        var params = {};
+                        new FormData(form).forEach(function (v, k) { params[k] = v; });
+                        onSubmit(params, card, err).then(function () { submit.disabled = false; });
+                });
+                card.appendChild(form);
+                thread.appendChild(card);
+                scrollDown();
+                var first = form.querySelector('input');
+                if (first && !COARSE_POINTER) { first.focus(); }
+                return card;
+        }
+
+        function showOrderForm() {
+                wooForm(wooText('trackOrder', 'Track my order'), [
+                        { name: 'order', label: wooText('orderNumber', 'Order number'), ltr: true, inputmode: 'numeric' },
+                        { name: 'contact', label: wooText('contact', 'Phone or email used for the order'), ltr: true }
+                ], wooText('check', 'Check'), function (params, card, err) {
+                        return transport('woo/order', params).then(function (res) {
+                                if (!res || !res.success) {
+                                        err.textContent = (res && res.data && res.data.message) || wooText('error', 'That did not work. Please try again.');
+                                        return;
+                                }
+                                card.parentElement.replaceChild(orderCard(res.data), card);
+                                scrollDown();
+                        }).catch(function () { err.textContent = wooText('error', 'That did not work. Please try again.'); });
+                });
+        }
+
+        function orderCard(o) {
+                var card = el('div', 'ssc-msg ssc-msg--bot ssc-order');
+                card.setAttribute('dir', 'auto');
+                card.appendChild(el('strong', 'ssc-order__title', esc('#' + o.number + ' · ' + o.status)));
+                var dl = el('dl', 'ssc-order__list');
+                var row = function (label, value) {
+                        if (!value) { return; }
+                        dl.appendChild(el('dt', '', esc(label)));
+                        dl.appendChild(el('dd', '', esc(value)));
+                };
+                row(wooText('date', 'Date'), o.date);
+                row(wooText('items', 'Items'), (o.items || []).map(function (i) { return i.name + ' × ' + i.qty; }).join('، '));
+                row(wooText('total', 'Total'), o.total);
+                row(wooText('note', 'Latest update'), o.note);
+                card.appendChild(dl);
+                if (o.tracking) {
+                        var track = el('div', 'ssc-order__track');
+                        track.appendChild(el('span', '', esc(wooText('tracking', 'Tracking code') + ': ')));
+                        var code = el('code', '', esc(o.tracking));
+                        code.dir = 'ltr';
+                        track.appendChild(code);
+                        if (navigator.clipboard) {
+                                var copy = el('button', 'ssc-order__copy', esc(wooText('copy', 'Copy')));
+                                copy.type = 'button';
+                                copy.addEventListener('click', function () {
+                                        navigator.clipboard.writeText(o.tracking).then(function () { copy.textContent = wooText('copied', 'Copied ✓'); }).catch(function () {});
+                                });
+                                track.appendChild(copy);
+                        }
+                        card.appendChild(track);
+                }
+                if (o.url) {
+                        var more = el('a', 'ssc-order__link', esc(wooText('view', 'View')));
+                        more.href = o.url;
+                        card.appendChild(more);
+                }
+                return card;
+        }
+
+        function showRemindForm() {
+                wooForm(wooText('remind', 'Remind me about my cart by SMS'), [
+                        { name: 'phone', label: wooText('mobile', 'Mobile number'), type: 'tel', ltr: true, inputmode: 'tel' },
+                        { name: 'consent', label: wooText('remindOk', 'I agree to receive one SMS reminder about my cart.'), type: 'checkbox' }
+                ], wooText('send', 'Send'), function (params, card, err) {
+                        return transport('woo/remind', params).then(function (res) {
+                                if (!res || !res.success) {
+                                        err.textContent = (res && res.data && res.data.message) || wooText('error', 'That did not work. Please try again.');
+                                        return;
+                                }
+                                var done = el('div', 'ssc-msg ssc-msg--success', esc(res.data.message || ''));
+                                card.parentElement.replaceChild(done, card);
+                        }).catch(function () { err.textContent = wooText('error', 'That did not work. Please try again.'); });
+                });
+        }
+
+        /* Smart offer: a teaser first; the coupon is created only when the visitor asks for it. */
+        var wooOffer = null;
+
+        function setupWooOffer() {
+                var coupon = cfg.woo && cfg.woo.coupon;
+                if (!coupon || cfg.preview) { return; }
+                try { if (sessionStorage.getItem('ssc_woo_offer')) { return; } } catch (e) { /* storage off */ }
+                var show = function () {
+                        if (wooOffer || state.open) { return; }
+                        try { sessionStorage.setItem('ssc_woo_offer', '1'); } catch (e) { /* storage off */ }
+                        proactiveDismiss();
+                        wooOffer = el('div', 'ssc-proactive ssc-proactive--offer');
+                        wooOffer.setAttribute('role', 'status');
+                        var invite = el('button', 'ssc-proactive__text', esc(coupon.teaser));
+                        invite.type = 'button';
+                        invite.setAttribute('dir', 'auto');
+                        invite.addEventListener('click', function () {
+                                closeOffer();
+                                toggleWindow(true);
+                                claimCoupon();
+                        });
+                        var dismiss = el('button', 'ssc-proactive__close', ICON_CLOSE);
+                        dismiss.type = 'button';
+                        dismiss.setAttribute('aria-label', (cfg.i18n && cfg.i18n.close) || 'Close');
+                        dismiss.addEventListener('click', closeOffer);
+                        wooOffer.appendChild(invite);
+                        wooOffer.appendChild(dismiss);
+                        root.appendChild(wooOffer);
+                };
+                if ((coupon.trigger === 'exit' || coupon.trigger === 'both') && !COARSE_POINTER) {
+                        var onLeave = function (e) {
+                                if (!e.relatedTarget && e.clientY <= 0) {
+                                        document.removeEventListener('mouseout', onLeave);
+                                        show();
+                                }
+                        };
+                        window.setTimeout(function () { document.addEventListener('mouseout', onLeave); }, 5000);
+                }
+                // Hesitation: a while on a product or cart page without buying.
+                var productPage = document.body && (document.body.classList.contains('single-product') || document.body.classList.contains('woocommerce-cart'));
+                if ((coupon.trigger === 'idle' || coupon.trigger === 'both' || COARSE_POINTER) && productPage) {
+                        window.setTimeout(show, Math.max(10, coupon.idle || 40) * 1000);
+                }
+        }
+
+        function closeOffer() {
+                if (wooOffer && wooOffer.parentElement) { wooOffer.parentElement.removeChild(wooOffer); }
+                wooOffer = null;
+        }
+
+        function claimCoupon() {
+                transport('woo/coupon', {}).then(function (res) {
+                        if (!res || !res.success) {
+                                addItem('bot', (res && res.data && res.data.message) || wooText('error', 'That did not work. Please try again.'), { history: false });
+                                return;
+                        }
+                        var c = res.data;
+                        var card = el('div', 'ssc-msg ssc-msg--bot ssc-coupon');
+                        card.setAttribute('dir', 'auto');
+                        card.appendChild(el('p', 'ssc-coupon__text', esc(c.text)));
+                        var code = el('div', 'ssc-coupon__code', esc(c.code));
+                        code.dir = 'ltr';
+                        card.appendChild(code);
+                        if (c.expires) { card.appendChild(el('p', 'ssc-coupon__exp', esc(wooText('expires', 'Valid until') + ': ' + c.expires))); }
+                        var row = el('div', 'ssc-coupon__row');
+                        if (navigator.clipboard) {
+                                var copy = el('button', 'ssc-pcard__btn ssc-pcard__btn--ghost', esc(wooText('copy', 'Copy')));
+                                copy.type = 'button';
+                                copy.addEventListener('click', function () {
+                                        navigator.clipboard.writeText(c.code).then(function () { copy.textContent = wooText('copied', 'Copied ✓'); }).catch(function () {});
+                                });
+                                row.appendChild(copy);
+                        }
+                        if (cfg.woo.applyNonce) {
+                                var apply = el('button', 'ssc-pcard__btn', esc(wooText('apply', 'Apply to my cart')));
+                                apply.type = 'button';
+                                apply.addEventListener('click', function () {
+                                        apply.disabled = true;
+                                        wooAjax('apply_coupon', { coupon_code: c.code, security: cfg.woo.applyNonce }).then(function (r) { return r.text(); }).then(function (html) {
+                                                var notice = new DOMParser().parseFromString(html, 'text/html').body.textContent.trim();
+                                                var failed = /woocommerce-error|is-error/.test(html);
+                                                apply.textContent = failed ? (notice || wooText('error', 'That did not work. Please try again.')) : wooText('applied', 'Applied to your cart ✓');
+                                                if (failed) { apply.disabled = false; } else { wooCartChanged(); }
+                                        }).catch(function () { apply.disabled = false; });
+                                });
+                                row.appendChild(apply);
+                        }
+                        card.appendChild(row);
+                        thread.appendChild(card);
+                        scrollDown();
+                }).catch(function () {
+                        addItem('bot', wooText('error', 'That did not work. Please try again.'), { history: false });
+                });
         }
 
         /* ------------------------------------------------------------------ *
@@ -1905,6 +2234,7 @@
                 }
 
                 setupProactive();
+                setupWooOffer();
                 refreshStatus();
 
                 window.addEventListener('beforeunload', function () {

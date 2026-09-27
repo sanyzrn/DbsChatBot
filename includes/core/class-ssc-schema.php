@@ -30,7 +30,8 @@ class SSC_Schema {
 	const LIVE_THREADS      = 'ssc_chatbot_live_threads';
 	const LIVE_MESSAGES     = 'ssc_chatbot_live_messages';
 	const LIVE_REFS         = 'ssc_chatbot_live_refs';
-	const DB_VERSION        = '15';
+	const CARTS_TABLE       = 'ssc_chatbot_carts';
+	const DB_VERSION        = '16';
 	const DB_VERSION_OPTION = 'ssc_chatbot_db_version';
 
 	/*
@@ -111,6 +112,7 @@ class SSC_Schema {
 			'threads'  => self::LIVE_THREADS,
 			'messages' => self::LIVE_MESSAGES,
 			'refs'     => self::LIVE_REFS,
+			'carts'    => self::CARTS_TABLE,
 		);
 		return $wpdb->prefix . ( isset( $map[ $which ] ) ? $map[ $which ] : self::LIVE_THREADS );
 	}
@@ -312,6 +314,22 @@ class SSC_Schema {
 			PRIMARY KEY  (id),
 			UNIQUE KEY ref (ref),
 			KEY thread_id (thread_id)
+		) {$charset};"
+		);
+		$carts = self::live_table( 'carts' );
+		dbDelta(
+			"CREATE TABLE {$carts} (
+			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			phone VARCHAR(20) NOT NULL DEFAULT '',
+			session_key VARCHAR(64) NOT NULL DEFAULT '',
+			cart TEXT NULL,
+			total VARCHAR(40) NOT NULL DEFAULT '',
+			status VARCHAR(12) NOT NULL DEFAULT 'pending',
+			created_at DATETIME NULL,
+			sent_at DATETIME NULL,
+			PRIMARY KEY  (id),
+			KEY phone (phone),
+			KEY status_created (status, created_at)
 		) {$charset};"
 		);
 		SSC_Notification_Queue::migrate_legacy();
@@ -590,7 +608,18 @@ class SSC_Schema {
 			),
 			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
 		);
-		return (int) $wpdb->insert_id;
+		$id = (int) $wpdb->insert_id;
+		if ( $id ) {
+			/**
+			 * A form submission (request, lead, side-effect report) was stored.
+			 *
+			 * @param int    $id   Submission id.
+			 * @param string $type Submission type.
+			 * @param array  $data Submitted data (already sanitized).
+			 */
+			do_action( 'ssc_submission_created', $id, isset( $data['type'] ) ? (string) $data['type'] : '', $data );
+		}
+		return $id;
 	}
 
 	/**

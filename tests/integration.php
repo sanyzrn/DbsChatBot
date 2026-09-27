@@ -207,6 +207,7 @@ check( false !== strpos( $script_data, '"nonce":"' . wp_create_nonce( 'wp_rest' 
 remove_filter( 'ssc_enforce_rest_nonce', '__return_true' );
 load_textdomain( 'nexachat-ai', dirname( __DIR__ ) . '/languages/nexachat-ai-fa_IR.mo', 'fa_IR' );
 check( __( 'Report a side effect', 'nexachat-ai' ) === 'گزارش عارضهٔ دارویی', 'Bundled Persian gettext catalog loads' );
+unload_textdomain( 'nexachat-ai', true ); // Later checks expect the site's own language.
 check( SSC_Settings::clamp_int( 'font_size', 0 ) === 12 && SSC_Settings::clamp_int( 'window_width', 5000 ) === 520 && SSC_Settings::clamp_int( 'ai_max_tokens', 0 ) === 100, 'Integer settings are clamped to usable ranges' );
 $raw_fields = array(
     array( 'label' => 'Company', 'type' => 'text', 'key' => '' ),
@@ -426,5 +427,6 @@ SSC_Settings::update( array( 'widget_language' => $widget_language_before ) );
 check( $widget_active && 'منوی اصلی' === $widget_fa && $widget_clean, 'Widget language overrides the English site language, and only while active' );
 
 require __DIR__ . '/live.php';
+require __DIR__ . '/woo.php';
 require __DIR__ . '/notification-queue.php';
 echo "\n$checks integration checks passed.\n";

@@ -106,6 +106,24 @@ class SSC_Admin_Settings {
 				}
 			}
 
+			// WooCommerce sales assistant and SMS.
+			foreach ( array( 'woo_product_search', 'woo_order_tracking', 'woo_coupon_enabled', 'woo_abandoned_enabled', 'sms_notify_admin' ) as $key ) {
+				$patch[ $key ] = isset( $_POST[ $key ] ) ? 'yes' : 'no';
+			}
+			foreach ( array( 'woo_coupon_trigger', 'woo_coupon_type', 'woo_coupon_text', 'woo_abandoned_text', 'sms_provider', 'sms_sender', 'sms_username', 'sms_admin_phone' ) as $key ) {
+				if ( isset( $_POST[ $key ] ) ) {
+					$patch[ $key ] = SSC_Settings::sanitize_value( $key, wp_unslash( $_POST[ $key ] ) );
+				}
+			}
+			foreach ( array( 'woo_cards', 'woo_coupon_idle', 'woo_coupon_amount', 'woo_coupon_min', 'woo_coupon_hours', 'woo_coupon_daily', 'woo_abandoned_hours' ) as $key ) {
+				if ( isset( $_POST[ $key ] ) ) {
+					$patch[ $key ] = SSC_Settings::clamp_int( $key, wp_unslash( $_POST[ $key ] ) );
+				}
+			}
+			if ( SSC_Modules::is_active( 'sms' ) && isset( $_POST['sms_api_key'] ) && '' !== trim( (string) wp_unslash( $_POST['sms_api_key'] ) ) ) {
+				SSC_Settings::set_secret( 'sms_api_key', sanitize_text_field( wp_unslash( $_POST['sms_api_key'] ) ) );
+			}
+
 			// The shared bot (alerts, live chat, messenger bot).
 			$bot_in_use    = self::bot_in_use();
 			$secret_failed = false;
@@ -118,6 +136,19 @@ class SSC_Admin_Settings {
 			SSC_Settings::update( self::active_module_patch( $patch ) );
 			if ( $secret_failed ) {
 				self::prg( array( 'saved' => 1, 'secret_error' => 1 ) );
+			}
+			if ( isset( $_POST['ssc_sms_test'] ) && SSC_Modules::is_active( 'sms' ) ) {
+				$to     = isset( $_POST['sms_test_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['sms_test_phone'] ) ) : '';
+				$result = SSC_Module_Sms::send( $to, __( 'Test message from your website assistant. SMS is working.', 'nexachat-ai' ) );
+				set_transient(
+					'ssc_sms_status',
+					array(
+						'ok'   => true === $result,
+						'text' => true === $result ? __( 'The test SMS was accepted by the panel.', 'nexachat-ai' ) : $result->get_error_message(),
+					),
+					HOUR_IN_SECONDS
+				);
+				self::prg( array( 'saved' => 1, 'tab' => 'modules' ) );
 			}
 			if ( isset( $_POST['ssc_messenger_connect'] ) && SSC_Messenger::needed() ) {
 				self::connect_bot();
@@ -195,6 +226,8 @@ class SSC_Admin_Settings {
 			'notifications' => array( 'notify_chat_id', 'notify_email_enabled', 'notify_email_to' ),
 			'live' => array( 'live_operators', 'live_assign', 'live_canned', 'live_join_text', 'live_offline_text', 'live_wait_minutes', 'live_retention_days' ),
 			'messenger' => array( 'messenger_welcome' ),
+			'woocommerce' => array( 'woo_product_search', 'woo_cards', 'woo_order_tracking', 'woo_coupon_enabled', 'woo_coupon_trigger', 'woo_coupon_idle', 'woo_coupon_type', 'woo_coupon_amount', 'woo_coupon_min', 'woo_coupon_hours', 'woo_coupon_daily', 'woo_coupon_text', 'woo_abandoned_enabled', 'woo_abandoned_hours', 'woo_abandoned_text' ),
+			'sms' => array( 'sms_provider', 'sms_sender', 'sms_username', 'sms_admin_phone', 'sms_notify_admin' ),
 		);
 		if ( ! self::bot_in_use() ) {
 			unset( $patch['notify_platform'] );

@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-27 17:34:13+00:00\n"
+"POT-Creation-Date: 2026-09-27 17:47:14+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: includes/admin/class-ssc-admin.php:275
 #: includes/admin/class-ssc-admin.php:37
 #: includes/admin/class-ssc-wizard.php:38
-#: includes/core/class-ssc-ajax.php:231
+#: includes/core/class-ssc-ajax.php:233
 #: includes/core/class-ssc-rest.php:71
 #: includes/modules/class-ssc-module-analytics.php:155
 #: includes/modules/class-ssc-module-faq.php:265
@@ -34,22 +34,30 @@ msgstr ""
 msgid "Insufficient permissions."
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:159
+#: includes/admin/class-ssc-admin-settings.php:142
+msgid "Test message from your website assistant. SMS is working."
+msgstr ""
+
+#: includes/admin/class-ssc-admin-settings.php:147
+msgid "The test SMS was accepted by the panel."
+msgstr ""
+
+#: includes/admin/class-ssc-admin-settings.php:190
 msgid "Add the bot token first."
 msgstr ""
 
 #. translators: %s: error from the messenger.
-#: includes/admin/class-ssc-admin-settings.php:168
+#: includes/admin/class-ssc-admin-settings.php:199
 msgid "The bot could not be connected: %s"
 msgstr ""
 
 #. translators: %s: bot username.
-#: includes/admin/class-ssc-admin-settings.php:176
+#: includes/admin/class-ssc-admin-settings.php:207
 msgid "Connected to %s. New messages are checked every minute, and every few seconds while the Live chat screen is open."
 msgstr ""
 
 #. translators: %s: bot username.
-#: includes/admin/class-ssc-admin-settings.php:178
+#: includes/admin/class-ssc-admin-settings.php:209
 msgid "Connected to %s. Messages arrive instantly."
 msgstr ""
 
@@ -134,7 +142,7 @@ msgid "Verify & Launch"
 msgstr ""
 
 #: includes/admin/views/page-analytics.php:16
-#: includes/core/class-ssc-modules.php:238
+#: includes/core/class-ssc-modules.php:240
 #: includes/modules/class-ssc-module-analytics.php:142
 #: includes/modules/class-ssc-module-analytics.php:143
 msgid "Analytics"
@@ -465,6 +473,7 @@ msgid "API key"
 msgstr ""
 
 #: includes/admin/views/page-connection.php:75
+#: includes/admin/views/page-settings.php:596
 #: includes/admin/views/wizard.php:289
 msgid "A key is stored — type to replace"
 msgstr ""
@@ -1131,7 +1140,7 @@ msgstr ""
 
 #: includes/admin/views/page-knowledge.php:107
 #: includes/admin/views/wizard.php:216
-#: includes/core/class-ssc-schema.php:550
+#: includes/core/class-ssc-schema.php:568
 msgid "General"
 msgstr ""
 
@@ -1400,6 +1409,7 @@ msgstr ""
 #: includes/admin/views/page-requests.php:39
 #: includes/admin/views/page-requests.php:59
 #: includes/admin/views/pharma-case.php:103
+#: includes/modules/class-ssc-module-woo.php:499
 msgid "Status"
 msgstr ""
 
@@ -1501,7 +1511,7 @@ msgstr ""
 
 #: includes/admin/views/page-requests.php:57
 #: includes/admin/views/pharma-case.php:39
-#: includes/core/class-ssc-settings.php:1036
+#: includes/core/class-ssc-settings.php:1092
 msgid "Phone"
 msgstr ""
 
@@ -1546,7 +1556,7 @@ msgid "Protection"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:42
-#: includes/admin/views/page-settings.php:540
+#: includes/admin/views/page-settings.php:660
 msgid "Data tools"
 msgstr ""
 
@@ -2077,62 +2087,203 @@ msgid "Saved replies (one per line)"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:499
-msgid "Messenger bot module"
+#: includes/modules/class-ssc-module-woo.php:51
+msgid "WooCommerce sales assistant"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:500
-msgid "Customers open your bot and chat with the assistant: same knowledge, same rules and limits as the website chat. Share the bot link on your site, Instagram bio and invoices."
+#: includes/admin/views/page-settings.php:501
+msgid "WooCommerce is not active on this site, so this module has nothing to do yet."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:504
-msgid "Your bot:"
+#: includes/admin/views/page-settings.php:503
+msgid "Answer with real prices and stock, and show product cards with \"Add to cart\""
 msgstr ""
 
-#: includes/admin/views/page-settings.php:506
-msgid "Add the bot token in the \"Bale / Telegram bot\" card, then press \"Save and connect the bot\"."
+#: includes/admin/views/page-settings.php:505
+msgid "Products per answer"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:509
-msgid "Welcome message for /start (empty = the website welcome text)"
+#: includes/admin/views/page-settings.php:508
+msgid "Order tracking: customers check an order with its number and their phone or email"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:513
-msgid "With Live chat on, these chats appear in the Live chat inbox and customers can ask for a person with the button or /human."
+#: includes/admin/views/page-settings.php:510
+msgid "Smart discount for hesitating visitors"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:520
-msgid "Notifications module"
+#: includes/admin/views/page-settings.php:511
+msgid "Offer a single-use discount code"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:514
+msgid "When to offer it"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:516
+msgid "About to leave, or lingering on a product or cart page"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:517
+msgid "Only when about to leave (desktop)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:518
+msgid "Only when lingering on a product or cart page"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:522
-msgid "Chat / channel ID for alerts"
-msgstr ""
-
-#: includes/admin/views/page-settings.php:524
-msgid "New requests are posted here through the bot configured in the \"Bale / Telegram bot\" card."
+msgid "Lingering means (seconds)"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:526
-msgid "Also send email notifications"
+msgid "Discount"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:528
-msgid "Email recipient (empty = site admin)"
+msgid "Percent of the cart"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:535
-msgid "Save settings"
+#: includes/admin/views/page-settings.php:529
+msgid "Fixed amount off the cart"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:543
-msgid "Clear cached AI answers"
+#: includes/admin/views/page-settings.php:533
+msgid "Amount (percent, or in the shop currency)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:537
+msgid "Minimum cart total (0 = none)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:541
+msgid "Code valid for (hours)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:545
+msgid "Most codes per day"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:550
-msgid "Remove ALL plugin data (settings, knowledge, requests, ADR cases, logs) when the plugin is deleted. Set this policy before deactivation; an inactive plugin cannot display a deletion prompt. Keep this off to preserve your data."
+msgid "Offer text (empty = automatic)"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:552
+msgid "The code is created only when the visitor clicks the offer; each visitor gets one code, each code works once."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:555
+msgid "Cart reminder by SMS"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:556
+msgid "Let visitors with items in their cart ask for one SMS reminder"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:558
+msgid "Needs the SMS module."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:562
+msgid "Send the reminder after (hours without an order)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:567
+msgid "Reminder text ({site}, {items}, {total}, {cart_url})"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:576
+msgid "SMS module"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:579
+msgid "SMS panel"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:587
+msgid "Sender line number"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:591
+msgid "Username (Melipayamak only)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:595
+msgid "API key (Melipayamak: password)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:599
+msgid "Text me when a new request or report arrives"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:602
+msgid "My mobile number"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:606
+msgid "Send a test SMS to"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:613
+msgid "Save and send a test SMS"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:619
+msgid "Messenger bot module"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:620
+msgid "Customers open your bot and chat with the assistant: same knowledge, same rules and limits as the website chat. Share the bot link on your site, Instagram bio and invoices."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:624
+msgid "Your bot:"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:626
+msgid "Add the bot token in the \"Bale / Telegram bot\" card, then press \"Save and connect the bot\"."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:629
+msgid "Welcome message for /start (empty = the website welcome text)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:633
+msgid "With Live chat on, these chats appear in the Live chat inbox and customers can ask for a person with the button or /human."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:640
+msgid "Notifications module"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:642
+msgid "Chat / channel ID for alerts"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:644
+msgid "New requests are posted here through the bot configured in the \"Bale / Telegram bot\" card."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:646
+msgid "Also send email notifications"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:648
+msgid "Email recipient (empty = site admin)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:655
+msgid "Save settings"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:663
+msgid "Clear cached AI answers"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:670
+msgid "Remove ALL plugin data (settings, knowledge, requests, ADR cases, logs) when the plugin is deleted. Set this policy before deactivation; an inactive plugin cannot display a deletion prompt. Keep this off to preserve your data."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:672
 msgid "Save data policy"
 msgstr ""
 
@@ -2573,15 +2724,16 @@ msgstr ""
 #: includes/core/class-ssc-ajax.php:83
 #: includes/core/class-ssc-rest.php:53
 #: includes/modules/class-ssc-module-live.php:1059
+#: includes/modules/class-ssc-module-woo.php:573
 msgid "The request is too large."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:104
-#: includes/core/class-ssc-ajax.php:140
+#: includes/core/class-ssc-ajax.php:142
 #: includes/core/class-ssc-rest.php:341
 #: includes/core/class-ssc-rest.php:368
 #: includes/core/class-ssc-rest.php:383
-#: includes/core/class-ssc-rest.php:430
+#: includes/core/class-ssc-rest.php:432
 #: includes/modules/class-ssc-module-live.php:1056
 msgid "The assistant is not available yet."
 msgstr ""
@@ -2596,7 +2748,7 @@ msgstr ""
 
 #: includes/core/class-ssc-ajax.php:115
 #: includes/core/class-ssc-rest.php:400
-#: includes/core/class-ssc-rest.php:604
+#: includes/core/class-ssc-rest.php:606
 msgid "The message could not be processed."
 msgstr ""
 
@@ -2605,56 +2757,56 @@ msgstr ""
 msgid "Admin-only notice — AI engine error:"
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:147
-#: includes/core/class-ssc-rest.php:441
+#: includes/core/class-ssc-ajax.php:149
+#: includes/core/class-ssc-rest.php:443
 #: includes/modules/class-ssc-module-leads.php:216
 #: includes/modules/class-ssc-module-pharma.php:825
 msgid "ADR reporting is disabled on this site."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:152
-#: includes/core/class-ssc-rest.php:446
+#: includes/core/class-ssc-ajax.php:154
+#: includes/core/class-ssc-rest.php:448
 #: includes/modules/class-ssc-module-leads.php:223
 msgid "Form submission is disabled on this site."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:158
-#: includes/core/class-ssc-rest.php:453
+#: includes/core/class-ssc-ajax.php:160
+#: includes/core/class-ssc-rest.php:455
 msgid "Too many submissions today. Please try again tomorrow."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:173
-#: includes/core/class-ssc-rest.php:492
+#: includes/core/class-ssc-ajax.php:175
+#: includes/core/class-ssc-rest.php:494
 msgid "Feedback is disabled on this site."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:179
-#: includes/core/class-ssc-ajax.php:220
-#: includes/core/class-ssc-rest.php:499
-#: includes/core/class-ssc-rest.php:526
+#: includes/core/class-ssc-ajax.php:181
+#: includes/core/class-ssc-ajax.php:222
+#: includes/core/class-ssc-rest.php:501
+#: includes/core/class-ssc-rest.php:528
 msgid "Too many votes today."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:182
+#: includes/core/class-ssc-ajax.php:184
 msgid "Invalid feedback."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:213
-#: includes/core/class-ssc-rest.php:519
+#: includes/core/class-ssc-ajax.php:215
+#: includes/core/class-ssc-rest.php:521
 msgid "The survey is disabled on this site."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:217
-#: includes/core/class-ssc-rest.php:523
+#: includes/core/class-ssc-ajax.php:219
+#: includes/core/class-ssc-rest.php:525
 msgid "Invalid score."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:237
+#: includes/core/class-ssc-ajax.php:239
 msgid "Select and save an AI provider first."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:243
-#: includes/core/class-ssc-rest.php:581
+#: includes/core/class-ssc-ajax.php:245
+#: includes/core/class-ssc-rest.php:583
 msgid "Connection verified — the model replied successfully."
 msgstr ""
 
@@ -2738,8 +2890,8 @@ msgid "Which one?"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:268
-#: includes/core/class-ssc-schema.php:521
-#: includes/core/class-ssc-schema.php:545
+#: includes/core/class-ssc-schema.php:539
+#: includes/core/class-ssc-schema.php:563
 msgid "Consultation request"
 msgstr ""
 
@@ -2796,6 +2948,7 @@ msgid "Copy answer"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:282
+#: includes/modules/class-ssc-module-woo.php:506
 msgid "Copied ✓"
 msgstr ""
 
@@ -2945,27 +3098,27 @@ msgid "NexaChatAI: every minute"
 msgstr ""
 
 #. translators: %s: comma-separated list of required module names.
-#: includes/core/class-ssc-modules.php:133
+#: includes/core/class-ssc-modules.php:135
 msgid "This module needs: %s"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:236
+#: includes/core/class-ssc-modules.php:238
 msgid "Customer Engagement"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:237
+#: includes/core/class-ssc-modules.php:239
 msgid "Communication"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:239
+#: includes/core/class-ssc-modules.php:241
 msgid "Knowledge & Intelligence"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:240
+#: includes/core/class-ssc-modules.php:242
 msgid "Business Tools"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:241
+#: includes/core/class-ssc-modules.php:243
 msgid "Industry Extensions"
 msgstr ""
 
@@ -3001,79 +3154,79 @@ msgstr ""
 msgid "Your session has expired. Please refresh the page."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:502
+#: includes/core/class-ssc-rest.php:504
 msgid "Invalid rating."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:505
+#: includes/core/class-ssc-rest.php:507
 msgid "Invalid feedback token."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:549
+#: includes/core/class-ssc-rest.php:551
 msgid "Unknown provider."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:629
+#: includes/core/class-ssc-rest.php:631
 msgid "Configure and verify an AI provider first."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:638
+#: includes/core/class-ssc-rest.php:640
 msgid "Complete the business profile (step 1) first."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:666
+#: includes/core/class-ssc-rest.php:668
 msgid "The identity test could not run."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:683
+#: includes/core/class-ssc-rest.php:685
 msgid "Identity verified — the assistant correctly identified your organization."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:683
+#: includes/core/class-ssc-rest.php:685
 msgid "The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again."
 msgstr ""
 
-#: includes/core/class-ssc-schema.php:544
+#: includes/core/class-ssc-schema.php:562
 #: includes/modules/class-ssc-module-pharma.php:152
 msgid "Adverse drug reaction report"
 msgstr ""
 
-#: includes/core/class-ssc-schema.php:729
+#: includes/core/class-ssc-schema.php:758
 msgid "Submission deleted"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1034
+#: includes/core/class-ssc-settings.php:1090
 #: includes/modules/class-ssc-module-pharma.php:483
 msgid "Short text"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1035
+#: includes/core/class-ssc-settings.php:1091
 #: includes/modules/class-ssc-module-pharma.php:484
 msgid "Long text"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1037
+#: includes/core/class-ssc-settings.php:1093
 msgid "Email"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1038
+#: includes/core/class-ssc-settings.php:1094
 #: includes/modules/class-ssc-module-pharma.php:485
 msgid "Number"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1039
+#: includes/core/class-ssc-settings.php:1095
 msgid "Dropdown"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1040
+#: includes/core/class-ssc-settings.php:1096
 msgid "Single choice"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1041
+#: includes/core/class-ssc-settings.php:1097
 msgid "Checkbox"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1135
+#: includes/core/class-ssc-settings.php:1191
 msgid "About the organization"
 msgstr ""
 
@@ -3418,6 +3571,7 @@ msgid "Return to the assistant"
 msgstr ""
 
 #: includes/modules/class-ssc-module-live.php:1397
+#: includes/modules/class-ssc-module-woo.php:514
 msgid "Send"
 msgstr ""
 
@@ -3852,6 +4006,61 @@ msgstr ""
 msgid "Gently start conversations with hesitant visitors without being intrusive."
 msgstr ""
 
+#: includes/modules/class-ssc-module-sms.php:35
+msgid "SMS"
+msgstr ""
+
+#: includes/modules/class-ssc-module-sms.php:44
+msgid "Connect your SMS panel (Kavenegar, Melipayamak, IPPanel/Faraz SMS or SMS.ir) to text yourself about new requests and to send cart reminders."
+msgstr ""
+
+#: includes/modules/class-ssc-module-sms.php:53
+msgid "Never miss a lead, and bring back customers who left their cart."
+msgstr ""
+
+#: includes/modules/class-ssc-module-sms.php:106
+msgid "Kavenegar"
+msgstr ""
+
+#: includes/modules/class-ssc-module-sms.php:107
+msgid "Melipayamak"
+msgstr ""
+
+#: includes/modules/class-ssc-module-sms.php:108
+msgid "IPPanel / Faraz SMS"
+msgstr ""
+
+#: includes/modules/class-ssc-module-sms.php:109
+msgid "SMS.ir"
+msgstr ""
+
+#: includes/modules/class-ssc-module-sms.php:153
+msgid "SMS is not configured."
+msgstr ""
+
+#: includes/modules/class-ssc-module-sms.php:158
+msgid "A valid mobile number and a message are required."
+msgstr ""
+
+#: includes/modules/class-ssc-module-sms.php:278
+msgid "The SMS panel could not be reached."
+msgstr ""
+
+#. translators: %s: message from the SMS provider.
+#: includes/modules/class-ssc-module-sms.php:292
+msgid "The SMS panel refused the message: %s"
+msgstr ""
+
+#. translators: %d: case number.
+#: includes/modules/class-ssc-module-sms.php:309
+msgid "New side-effect report #%d. Sign in to review it."
+msgstr ""
+
+#. translators: 1: request type, 2: request number.
+#: includes/modules/class-ssc-module-sms.php:311
+msgid "New %1$s #%2$d on your website."
+msgstr ""
+
 #: includes/modules/class-ssc-module-voice.php:35
 msgid "Voice Interaction"
 msgstr ""
@@ -3862,6 +4071,187 @@ msgstr ""
 
 #: includes/modules/class-ssc-module-voice.php:53
 msgid "Hands-free conversations and accessible answers for visitors on the go."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:60
+msgid "Real prices and stock in answers, product cards with \"Add to cart\", order tracking, comparisons, a smart discount for hesitating visitors and SMS cart reminders."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:69
+msgid "Turns questions into orders and answers \"where is my order?\" without your team."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:338
+msgid "Out of stock"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:341
+msgid "Available on backorder"
+msgstr ""
+
+#. translators: %d: units left.
+#: includes/modules/class-ssc-module-woo.php:346
+msgid "Only %d left"
+msgid_plural "Only %d left"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/modules/class-ssc-module-woo.php:348
+msgid "In stock"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:490
+msgid "Add to cart"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:491
+msgid "Added ✓"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:492
+msgid "View cart"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:493
+msgid "Choose options"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:494
+msgid "View"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:495
+msgid "Track my order"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:496
+msgid "Order number"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:497
+msgid "Phone or email used for the order"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:498
+msgid "Check"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:500
+msgid "Date"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:501
+msgid "Total"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:502
+msgid "Items"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:503
+msgid "Latest update"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:504
+msgid "Tracking code"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:505
+msgid "Copy"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:507
+msgid "Show my discount code"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:508
+msgid "Apply to my cart"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:509
+msgid "Applied to your cart ✓"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:510
+msgid "Valid until"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:511
+msgid "Remind me about my cart by SMS"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:512
+msgid "Mobile number"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:513
+msgid "I agree to receive one SMS reminder about my cart."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:515
+msgid "That did not work. Please try again."
+msgstr ""
+
+#. translators: %d: percent.
+#: includes/modules/class-ssc-module-woo.php:534
+msgid "Still deciding? Here is %d%% off your order today 🎁"
+msgstr ""
+
+#. translators: %s: amount.
+#: includes/modules/class-ssc-module-woo.php:536
+msgid "Still deciding? Here is %s off your order today 🎁"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:570
+#: includes/modules/class-ssc-module-woo.php:605
+#: includes/modules/class-ssc-module-woo.php:777
+msgid "This is not available right now."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:608
+#: includes/modules/class-ssc-module-woo.php:783
+msgid "Too many attempts. Please try again in 15 minutes."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:619
+msgid "No order matches these details. Check the order number and the phone or email you used."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:720
+msgid "This offer has ended."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:731
+msgid "Today's offers have all been claimed. Please check back tomorrow."
+msgstr ""
+
+#. translators: %s: minimum cart total.
+#: includes/modules/class-ssc-module-woo.php:741
+msgid "This offer is for carts of %s or more."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:757
+msgid "Smart offer from the NexaChatAI assistant"
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:780
+msgid "Please confirm that you want the reminder."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:788
+msgid "Please enter a valid mobile number (09…)."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:795
+msgid "Your cart is empty, so there is nothing to remind you about."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:807
+msgid "Done. If you do not finish your order, we will send you one reminder by SMS."
+msgstr ""
+
+#: includes/modules/class-ssc-module-woo.php:924
+msgid "Your cart at {site} is waiting: {items}. Finish your order here: {cart_url}"
 msgstr ""
 
 #: widgets/class-ssc-elementor-widget.php:88

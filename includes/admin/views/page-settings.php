@@ -494,6 +494,126 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			</section>
 		<?php endif; ?>
 
+		<?php if ( SSC_Modules::is_active( 'woocommerce' ) ) : ?>
+			<section data-ssc-tab="modules" class="ssc-card" id="ssc-woo-settings">
+				<h2><?php esc_html_e( 'WooCommerce sales assistant', 'nexachat-ai' ); ?></h2>
+				<?php if ( ! SSC_Module_Woo::wc() ) : ?>
+					<p class="ssc-notice ssc-notice--warn"><?php esc_html_e( 'WooCommerce is not active on this site, so this module has nothing to do yet.', 'nexachat-ai' ); ?></p>
+				<?php endif; ?>
+				<label class="ssc-check"><input type="checkbox" name="woo_product_search" value="yes" <?php checked( 'yes', $s['woo_product_search'] ); ?> /> <span><?php esc_html_e( 'Answer with real prices and stock, and show product cards with "Add to cart"', 'nexachat-ai' ); ?></span></label>
+				<div class="ssc-field">
+					<label for="woo_cards"><?php esc_html_e( 'Products per answer', 'nexachat-ai' ); ?></label>
+					<input id="woo_cards" name="woo_cards" type="number" min="1" max="6" value="<?php echo esc_attr( (string) $s['woo_cards'] ); ?>" />
+				</div>
+				<label class="ssc-check"><input type="checkbox" name="woo_order_tracking" value="yes" <?php checked( 'yes', $s['woo_order_tracking'] ); ?> /> <span><?php esc_html_e( 'Order tracking: customers check an order with its number and their phone or email', 'nexachat-ai' ); ?></span></label>
+
+				<h3><?php esc_html_e( 'Smart discount for hesitating visitors', 'nexachat-ai' ); ?></h3>
+				<label class="ssc-check"><input type="checkbox" name="woo_coupon_enabled" value="yes" <?php checked( 'yes', $s['woo_coupon_enabled'] ); ?> /> <span><?php esc_html_e( 'Offer a single-use discount code', 'nexachat-ai' ); ?></span></label>
+				<div class="ssc-grid ssc-grid--2">
+					<div class="ssc-field">
+						<label for="woo_coupon_trigger"><?php esc_html_e( 'When to offer it', 'nexachat-ai' ); ?></label>
+						<select id="woo_coupon_trigger" name="woo_coupon_trigger">
+							<option value="both" <?php selected( $s['woo_coupon_trigger'], 'both' ); ?>><?php esc_html_e( 'About to leave, or lingering on a product or cart page', 'nexachat-ai' ); ?></option>
+							<option value="exit" <?php selected( $s['woo_coupon_trigger'], 'exit' ); ?>><?php esc_html_e( 'Only when about to leave (desktop)', 'nexachat-ai' ); ?></option>
+							<option value="idle" <?php selected( $s['woo_coupon_trigger'], 'idle' ); ?>><?php esc_html_e( 'Only when lingering on a product or cart page', 'nexachat-ai' ); ?></option>
+						</select>
+					</div>
+					<div class="ssc-field">
+						<label for="woo_coupon_idle"><?php esc_html_e( 'Lingering means (seconds)', 'nexachat-ai' ); ?></label>
+						<input id="woo_coupon_idle" name="woo_coupon_idle" type="number" min="10" max="600" value="<?php echo esc_attr( (string) $s['woo_coupon_idle'] ); ?>" />
+					</div>
+					<div class="ssc-field">
+						<label for="woo_coupon_type"><?php esc_html_e( 'Discount', 'nexachat-ai' ); ?></label>
+						<select id="woo_coupon_type" name="woo_coupon_type">
+							<option value="percent" <?php selected( $s['woo_coupon_type'], 'percent' ); ?>><?php esc_html_e( 'Percent of the cart', 'nexachat-ai' ); ?></option>
+							<option value="fixed_cart" <?php selected( $s['woo_coupon_type'], 'fixed_cart' ); ?>><?php esc_html_e( 'Fixed amount off the cart', 'nexachat-ai' ); ?></option>
+						</select>
+					</div>
+					<div class="ssc-field">
+						<label for="woo_coupon_amount"><?php esc_html_e( 'Amount (percent, or in the shop currency)', 'nexachat-ai' ); ?></label>
+						<input id="woo_coupon_amount" name="woo_coupon_amount" type="number" min="1" value="<?php echo esc_attr( (string) $s['woo_coupon_amount'] ); ?>" />
+					</div>
+					<div class="ssc-field">
+						<label for="woo_coupon_min"><?php esc_html_e( 'Minimum cart total (0 = none)', 'nexachat-ai' ); ?></label>
+						<input id="woo_coupon_min" name="woo_coupon_min" type="number" min="0" value="<?php echo esc_attr( (string) $s['woo_coupon_min'] ); ?>" />
+					</div>
+					<div class="ssc-field">
+						<label for="woo_coupon_hours"><?php esc_html_e( 'Code valid for (hours)', 'nexachat-ai' ); ?></label>
+						<input id="woo_coupon_hours" name="woo_coupon_hours" type="number" min="1" max="720" value="<?php echo esc_attr( (string) $s['woo_coupon_hours'] ); ?>" />
+					</div>
+					<div class="ssc-field">
+						<label for="woo_coupon_daily"><?php esc_html_e( 'Most codes per day', 'nexachat-ai' ); ?></label>
+						<input id="woo_coupon_daily" name="woo_coupon_daily" type="number" min="1" max="10000" value="<?php echo esc_attr( (string) $s['woo_coupon_daily'] ); ?>" />
+					</div>
+				</div>
+				<div class="ssc-field">
+					<label for="woo_coupon_text"><?php esc_html_e( 'Offer text (empty = automatic)', 'nexachat-ai' ); ?></label>
+					<input id="woo_coupon_text" name="woo_coupon_text" type="text" dir="auto" value="<?php echo esc_attr( (string) $s['woo_coupon_text'] ); ?>" placeholder="<?php echo esc_attr( SSC_Module_Woo::wc() ? SSC_Module_Woo::coupon_teaser() : '' ); ?>" />
+					<p class="ssc-field__hint"><?php esc_html_e( 'The code is created only when the visitor clicks the offer; each visitor gets one code, each code works once.', 'nexachat-ai' ); ?></p>
+				</div>
+
+				<h3><?php esc_html_e( 'Cart reminder by SMS', 'nexachat-ai' ); ?></h3>
+				<label class="ssc-check"><input type="checkbox" name="woo_abandoned_enabled" value="yes" <?php checked( 'yes', $s['woo_abandoned_enabled'] ); ?> /> <span><?php esc_html_e( 'Let visitors with items in their cart ask for one SMS reminder', 'nexachat-ai' ); ?></span></label>
+				<?php if ( ! SSC_Modules::is_active( 'sms' ) ) : ?>
+					<p class="ssc-field__hint"><?php esc_html_e( 'Needs the SMS module.', 'nexachat-ai' ); ?></p>
+				<?php endif; ?>
+				<div class="ssc-grid ssc-grid--2">
+					<div class="ssc-field">
+						<label for="woo_abandoned_hours"><?php esc_html_e( 'Send the reminder after (hours without an order)', 'nexachat-ai' ); ?></label>
+						<input id="woo_abandoned_hours" name="woo_abandoned_hours" type="number" min="1" max="72" value="<?php echo esc_attr( (string) $s['woo_abandoned_hours'] ); ?>" />
+					</div>
+				</div>
+				<div class="ssc-field">
+					<label for="woo_abandoned_text"><?php esc_html_e( 'Reminder text ({site}, {items}, {total}, {cart_url})', 'nexachat-ai' ); ?></label>
+					<textarea id="woo_abandoned_text" name="woo_abandoned_text" rows="2" dir="auto" placeholder="<?php echo esc_attr( SSC_Module_Woo::reminder_text( array( 'cart' => '[]', 'total' => '' ) ) ); ?>"><?php echo esc_textarea( (string) $s['woo_abandoned_text'] ); ?></textarea>
+				</div>
+			</section>
+		<?php endif; ?>
+
+		<?php if ( SSC_Modules::is_active( 'sms' ) ) : ?>
+			<?php $ssc_sms_status = get_transient( 'ssc_sms_status' ); ?>
+			<section data-ssc-tab="modules" class="ssc-card" id="ssc-sms-settings">
+				<h2><?php esc_html_e( 'SMS module', 'nexachat-ai' ); ?></h2>
+				<div class="ssc-grid ssc-grid--2">
+					<div class="ssc-field">
+						<label for="sms_provider"><?php esc_html_e( 'SMS panel', 'nexachat-ai' ); ?></label>
+						<select id="sms_provider" name="sms_provider">
+							<?php foreach ( SSC_Module_Sms::providers() as $ssc_pid => $ssc_plabel ) : ?>
+								<option value="<?php echo esc_attr( $ssc_pid ); ?>" <?php selected( $s['sms_provider'], $ssc_pid ); ?>><?php echo esc_html( $ssc_plabel ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					<div class="ssc-field">
+						<label for="sms_sender"><?php esc_html_e( 'Sender line number', 'nexachat-ai' ); ?></label>
+						<input id="sms_sender" name="sms_sender" type="text" dir="ltr" value="<?php echo esc_attr( (string) $s['sms_sender'] ); ?>" />
+					</div>
+					<div class="ssc-field">
+						<label for="sms_username"><?php esc_html_e( 'Username (Melipayamak only)', 'nexachat-ai' ); ?></label>
+						<input id="sms_username" name="sms_username" type="text" dir="ltr" autocomplete="off" value="<?php echo esc_attr( (string) $s['sms_username'] ); ?>" />
+					</div>
+					<div class="ssc-field">
+						<label for="sms_api_key"><?php esc_html_e( 'API key (Melipayamak: password)', 'nexachat-ai' ); ?></label>
+						<input id="sms_api_key" name="sms_api_key" type="password" dir="ltr" autocomplete="off" value="" placeholder="<?php echo SSC_Settings::has_secret( 'sms_api_key' ) ? esc_attr__( 'A key is stored — type to replace', 'nexachat-ai' ) : ''; ?>" />
+					</div>
+				</div>
+				<label class="ssc-check"><input type="checkbox" name="sms_notify_admin" value="yes" <?php checked( 'yes', $s['sms_notify_admin'] ); ?> /> <span><?php esc_html_e( 'Text me when a new request or report arrives', 'nexachat-ai' ); ?></span></label>
+				<div class="ssc-grid ssc-grid--2">
+					<div class="ssc-field">
+						<label for="sms_admin_phone"><?php esc_html_e( 'My mobile number', 'nexachat-ai' ); ?></label>
+						<input id="sms_admin_phone" name="sms_admin_phone" type="tel" dir="ltr" value="<?php echo esc_attr( (string) $s['sms_admin_phone'] ); ?>" />
+					</div>
+					<div class="ssc-field">
+						<label for="sms_test_phone"><?php esc_html_e( 'Send a test SMS to', 'nexachat-ai' ); ?></label>
+						<input id="sms_test_phone" name="sms_test_phone" type="tel" dir="ltr" value="" placeholder="09…" />
+					</div>
+				</div>
+				<?php if ( is_array( $ssc_sms_status ) ) : ?>
+					<p class="ssc-notice <?php echo empty( $ssc_sms_status['ok'] ) ? 'ssc-notice--error' : 'ssc-notice--success'; ?>" dir="auto"><?php echo esc_html( (string) $ssc_sms_status['text'] ); ?></p>
+				<?php endif; ?>
+				<button type="submit" name="ssc_sms_test" value="1" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Save and send a test SMS', 'nexachat-ai' ); ?></button>
+			</section>
+		<?php endif; ?>
+
 		<?php if ( SSC_Modules::is_active( 'messenger' ) ) : ?>
 			<section data-ssc-tab="modules" class="ssc-card" id="ssc-messenger-settings">
 				<h2><?php esc_html_e( 'Messenger bot module', 'nexachat-ai' ); ?></h2>

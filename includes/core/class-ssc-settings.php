@@ -226,6 +226,31 @@ class SSC_Settings {
 			// Messenger bot module.
 			'messenger_welcome'          => '',
 
+			// SMS module (secret: sms_api_key = API key, or the panel password).
+			'sms_provider'               => 'kavenegar', // kavenegar | melipayamak | ippanel | smsir.
+			'sms_sender'                 => '',
+			'sms_username'               => '',
+			'sms_api_key'                => '',
+			'sms_admin_phone'            => '',
+			'sms_notify_admin'           => 'no',
+
+			// WooCommerce sales module.
+			'woo_product_search'         => 'yes',
+			'woo_cards'                  => 4,
+			'woo_order_tracking'         => 'yes',
+			'woo_coupon_enabled'         => 'no',
+			'woo_coupon_trigger'         => 'both', // exit | idle | both.
+			'woo_coupon_idle'            => 40,
+			'woo_coupon_type'            => 'percent', // percent | fixed_cart.
+			'woo_coupon_amount'          => 10,
+			'woo_coupon_min'             => 0,
+			'woo_coupon_hours'           => 24,
+			'woo_coupon_daily'           => 20,
+			'woo_coupon_text'            => '',
+			'woo_abandoned_enabled'      => 'no',
+			'woo_abandoned_hours'        => 2,
+			'woo_abandoned_text'         => '',
+
 			// FAQ module.
 			'faq_menu_label'             => '',
 
@@ -410,7 +435,7 @@ class SSC_Settings {
 	 * @return string[]
 	 */
 	public static function secret_fields() {
-		return array( 'openai_api_key', 'gemini_api_key', 'claude_api_key', 'openrouter_api_key', 'custom_api_key', 'ai_webhook_secret', 'notify_token' );
+		return array( 'openai_api_key', 'gemini_api_key', 'claude_api_key', 'openrouter_api_key', 'custom_api_key', 'ai_webhook_secret', 'notify_token', 'sms_api_key' );
 	}
 
 	/**
@@ -691,6 +716,30 @@ class SSC_Settings {
 			case 'messenger_mode':
 				return 'polling' === $value ? 'polling' : 'webhook';
 
+			case 'sms_provider':
+				return in_array( $value, array( 'kavenegar', 'melipayamak', 'ippanel', 'smsir' ), true ) ? $value : 'kavenegar';
+
+			case 'sms_sender':
+			case 'sms_admin_phone':
+				return preg_replace( '/[^0-9+]/', '', SSC_Input::phone( (string) $value ) );
+
+			case 'sms_notify_admin':
+			case 'woo_product_search':
+			case 'woo_order_tracking':
+			case 'woo_coupon_enabled':
+			case 'woo_abandoned_enabled':
+				return 'yes' === $value ? 'yes' : 'no';
+
+			case 'woo_coupon_trigger':
+				return in_array( $value, array( 'exit', 'idle', 'both' ), true ) ? $value : 'both';
+
+			case 'woo_coupon_type':
+				return 'fixed_cart' === $value ? 'fixed_cart' : 'percent';
+
+			case 'woo_coupon_text':
+			case 'woo_abandoned_text':
+				return mb_substr( sanitize_textarea_field( (string) $value ), 0, 500 );
+
 			case 'live_assign':
 				return 'manual' === $value ? 'manual' : 'auto';
 
@@ -818,6 +867,13 @@ class SSC_Settings {
 			'bubble_radius'              => array( 0, 24 ),
 			'chatlog_retention_days'     => array( 0, 3650 ),
 			'live_wait_minutes'          => array( 1, 30 ),
+			'woo_cards'                  => array( 1, 6 ),
+			'woo_coupon_idle'            => array( 10, 600 ),
+			'woo_coupon_amount'          => array( 1, 100000000 ),
+			'woo_coupon_min'             => array( 0, 1000000000 ),
+			'woo_coupon_hours'           => array( 1, 720 ),
+			'woo_coupon_daily'           => array( 1, 10000 ),
+			'woo_abandoned_hours'        => array( 1, 72 ),
 			'live_retention_days'        => array( 1, 365 ),
 			'submissions_retention_days' => array( 0, 3650 ),
 			'chat_rate_limit'            => array( 0, 100000 ),

@@ -127,6 +127,8 @@ class SSC_Ajax {
 				'log_token' => (string) $result['log_token'],
 				'flags'     => isset( $result['flags'] ) ? (object) $result['flags'] : new stdClass(),
 				'sources'   => isset( $result['sources'] ) ? $result['sources'] : array(),
+				'cards'     => isset( $result['cards'] ) ? $result['cards'] : array(),
+				'actions'   => isset( $result['actions'] ) ? $result['actions'] : array(),
 			)
 		);
 	}

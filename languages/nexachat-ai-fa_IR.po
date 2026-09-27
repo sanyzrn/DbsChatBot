@@ -106,6 +106,9 @@ msgstr "یک حباب دعوت قابل بستن پس از تأخیر — حدا
 msgid "A token is stored — type to replace"
 msgstr "یک توکن ذخیره شده است — برای جایگزینی تایپ کنید"
 
+msgid "A valid mobile number and a message are required."
+msgstr "شمارهٔ موبایل معتبر و متن پیام لازم است."
+
 msgid "A visitor wants to talk to a person (%s)"
 msgstr "یک بازدیدکننده می‌خواهد با یک نفر صحبت کند (%s)"
 
@@ -151,8 +154,14 @@ msgstr "خلاصهٔ هوشمند"
 msgid "API key"
 msgstr "کلید API"
 
+msgid "API key (Melipayamak: password)"
+msgstr "کلید API (در ملی‌پیامک: رمز عبور)"
+
 msgid "About the organization"
 msgstr "دربارهٔ سازمان"
+
+msgid "About to leave, or lingering on a product or cart page"
+msgstr "هنگام ترک سایت یا ماندن طولانی در صفحهٔ محصول یا سبد خرید"
 
 msgid "About us, services and contact info"
 msgstr "دربارهٔ ما، خدمات و راه‌های ارتباط"
@@ -190,6 +199,9 @@ msgstr "اطلاعاتی را که بازدیدکنندگان معمولاً م�
 msgid "Add to FAQ"
 msgstr "افزودن به پرسش‌های متداول"
 
+msgid "Add to cart"
+msgstr "افزودن به سبد"
+
 msgid "Add to existing answers"
 msgstr "افزودن به پاسخ‌های موجود"
 
@@ -198,6 +210,9 @@ msgstr "افزوده‌شده"
 
 msgid "Added at the end of the form, whatever the length. Answers are saved with the question text, so editing a question later never changes old reports."
 msgstr "در هر طولی به انتهای فرم اضافه می‌شوند. پاسخ‌ها همراه متن سؤال ذخیره می‌شوند، پس ویرایش بعدی سؤال، گزارش‌های قبلی را تغییر نمی‌دهد."
+
+msgid "Added ✓"
+msgstr "اضافه شد ✓"
 
 msgid "Additional questions"
 msgstr "سؤال‌های تکمیلی"
@@ -256,6 +271,9 @@ msgstr "ارسال اعلان ایمیلی هم انجام شود"
 msgid "Always included in the assistant's instructions."
 msgstr "همیشه در دستورالعمل‌های دستیار گنجانده می‌شود."
 
+msgid "Amount (percent, or in the shop currency)"
+msgstr "مقدار (درصد، یا به واحد پول فروشگاه)"
+
 msgid "Analytics"
 msgstr "تحلیل‌ها"
 
@@ -289,6 +307,9 @@ msgstr "منبع پاسخ"
 msgid "Answer type"
 msgstr "نوع پاسخ"
 
+msgid "Answer with real prices and stock, and show product cards with \"Add to cart\""
+msgstr "پاسخ با قیمت و موجودی واقعی و نمایش کارت محصول با دکمهٔ «افزودن به سبد»"
+
 msgid "Answers strictly from the business profile, knowledge entries and documents. Anything else gets \"I don't have that information\" and your contact details. Safest; best for regulated content."
 msgstr "فقط از مشخصات کسب‌وکار، موارد دانش و اسناد پاسخ می‌دهد. برای هر چیز دیگر می‌گوید «این اطلاعات را ندارم» و راه‌های تماس شما را معرفی می‌کند. امن‌ترین حالت؛ مناسب محتوای حساس و قانون‌مند."
 
@@ -307,8 +328,14 @@ msgstr "ظاهر تنظیم شد"
 msgid "Appearance saved."
 msgstr "ظاهر ذخیره شد."
 
+msgid "Applied to your cart ✓"
+msgstr "روی سبد خرید شما اعمال شد ✓"
+
 msgid "Applies to every form. Server transcript logging is opt-in; browser transcripts and shared answer caching are disabled in pharmaceutical mode. Submitted forms are stored independently of chat history."
 msgstr "برای همهٔ فرم‌ها اعمال می‌شود. ثبت گفتگو در سرور اختیاری است؛ در حالت دارویی، ذخیرهٔ گفتگو در مرورگر و کش مشترک پاسخ غیرفعال است. فرم‌های ارسالی مستقل از تاریخچهٔ گفتگو ذخیره می‌شوند."
+
+msgid "Apply to my cart"
+msgstr "اعمال روی سبد خرید من"
 
 msgid "Approved company sources only"
 msgstr "فقط منابع تأییدشدهٔ شرکت"
@@ -366,6 +393,9 @@ msgstr "خودکار (زبان پاسخ دستیار، وگرنه زبان سا�
 
 msgid "Available"
 msgstr "در دسترس"
+
+msgid "Available on backorder"
+msgstr "قابل سفارش (پیش‌خرید)"
 
 msgid "Available with OpenAI, Gemini or an OpenAI-compatible custom endpoint. The connected provider has no embeddings API, so keyword search is used."
 msgstr "با OpenAI، Gemini یا endpoint سفارشی سازگار با OpenAI در دسترس است. ارائه‌دهندهٔ فعلی API امبدینگ ندارد، بنابراین جست‌وجوی کلیدواژه‌ای استفاده می‌شود."
@@ -490,6 +520,9 @@ msgstr "انصراف = حذف افزونه، با حفظ داده‌ها"
 msgid "Capture complete, reviewable safety reports instead of loose chat messages."
 msgstr "به‌جای پیام‌های پراکندهٔ گفتگو، گزارش‌های ایمنی کامل و قابل بررسی دریافت کنید."
 
+msgid "Cart reminder by SMS"
+msgstr "یادآوری سبد خرید با پیامک"
+
 msgid "Case #%d — sign in to review the report."
 msgstr "پرونده #%d — برای بررسی گزارش وارد شوید."
 
@@ -535,6 +568,9 @@ msgstr "زبان پنجرهٔ چت"
 msgid "Chat window width (px)"
 msgstr "عرض پنجرهٔ گفتگو (پیکسل)"
 
+msgid "Check"
+msgstr "بررسی"
+
 msgid "Checkbox"
 msgstr "چک‌باکس"
 
@@ -559,6 +595,9 @@ msgstr "یک گفتگو را از فهرست انتخاب کنید."
 msgid "Choose how long the form visitors fill in is. Reporter name, contact phone, product and the reaction description are always asked: without them a report is not a valid safety case."
 msgstr "طول فرمی را که بازدیدکننده پر می‌کند انتخاب کنید. نام گزارش‌دهنده، شمارهٔ تماس، محصول و شرح عارضه همیشه پرسیده می‌شوند؛ بدون آن‌ها گزارش، یک گزارش ایمنی معتبر نیست."
 
+msgid "Choose options"
+msgstr "انتخاب گزینه‌ها"
+
 msgid "Chunks"
 msgstr "تکه‌ها"
 
@@ -579,6 +618,9 @@ msgstr "بسته‌شده"
 
 msgid "Closes at"
 msgstr "ساعت پایان"
+
+msgid "Code valid for (hours)"
+msgstr "مدت اعتبار کد (ساعت)"
 
 msgid "Communication"
 msgstr "ارتباطات"
@@ -621,6 +663,9 @@ msgstr "ناهنجاری مادرزادی یا نقص هنگام تولد"
 
 msgid "Connect an AI provider"
 msgstr "اتصال به ارائه‌دهندهٔ هوش مصنوعی"
+
+msgid "Connect your SMS panel (Kavenegar, Melipayamak, IPPanel/Faraz SMS or SMS.ir) to text yourself about new requests and to send cart reminders."
+msgstr "پنل پیامک خود (کاوه‌نگار، ملی‌پیامک، آی‌پی‌پنل/فراز اس‌ام‌اس یا SMS.ir) را وصل کنید تا از درخواست‌های جدید باخبر شوید و یادآوری سبد خرید ارسال شود."
 
 msgid "Connected to %s. Messages arrive instantly."
 msgstr "به %s متصل شد. پیام‌ها بلافاصله می‌رسند."
@@ -703,6 +748,9 @@ msgstr "گفتگوها همان لحظه این‌جا نمایش داده می�
 msgid "Copied ✓"
 msgstr "کپی شد ✓"
 
+msgid "Copy"
+msgstr "کپی"
+
 msgid "Copy answer"
 msgstr "کپی پاسخ"
 
@@ -757,6 +805,9 @@ msgstr "پیشخوان"
 msgid "Data tools"
 msgstr "ابزارهای داده"
 
+msgid "Date"
+msgstr "تاریخ"
+
 msgid "Days (Mon=1 … Sun=7)"
 msgstr "روزها (دوشنبه=1 … یکشنبه=7)"
 
@@ -793,6 +844,9 @@ msgstr "متن هشدار (زیر گفتگو نمایش داده می‌شود)"
 msgid "Disconnect"
 msgstr "قطع اتصال"
 
+msgid "Discount"
+msgstr "تخفیف"
+
 msgid "Display & hours"
 msgstr "نمایش و ساعات کاری"
 
@@ -816,6 +870,9 @@ msgstr "سند حذف شد."
 
 msgid "Done"
 msgstr "انجام‌شده"
+
+msgid "Done. If you do not finish your order, we will send you one reminder by SMS."
+msgstr "انجام شد. اگر سفارشتان را تکمیل نکنید، یک پیامک یادآوری برایتان ارسال می‌کنیم."
 
 msgid "Dose & frequency"
 msgstr "دوز و دفعات مصرف"
@@ -934,6 +991,9 @@ msgstr "پنج گام کوتاه. پیشرفت شما خودکار ذخیره م
 msgid "Fix"
 msgstr "اصلاح"
 
+msgid "Fixed amount off the cart"
+msgstr "مبلغ ثابت از سبد خرید"
+
 msgid "Floating button custom image (optional)"
 msgstr "تصویر سفارشی دکمهٔ شناور (اختیاری)"
 
@@ -1048,6 +1108,9 @@ msgstr "ارجاع به کارشناس"
 msgid "Human handoff module"
 msgstr "ماژول ارجاع به انسان"
 
+msgid "I agree to receive one SMS reminder about my cart."
+msgstr "با دریافت یک پیامک یادآوری دربارهٔ سبد خریدم موافقم."
+
 msgid "I can read text messages only. Please type your question."
 msgstr "فعلاً فقط پیام متنی را می‌خوانم. لطفاً سؤالتان را بنویسید."
 
@@ -1065,6 +1128,9 @@ msgstr "می‌دانم پیام‌های گفتگو به ارائه‌دهند�
 
 msgid "IP address"
 msgstr "نشانی IP"
+
+msgid "IPPanel / Faraz SMS"
+msgstr "آی‌پی‌پنل / فراز اس‌ام‌اس"
 
 msgid "Identity verified — the assistant correctly identified your organization."
 msgstr "هویت تأیید شد — دستیار سازمان شما را درست شناخت."
@@ -1101,6 +1167,9 @@ msgstr "در همهٔ حالت‌ها، اطلاعات مربوط به سازم�
 
 msgid "In progress"
 msgstr "در حال انجام"
+
+msgid "In stock"
+msgstr "موجود"
 
 msgid "Inactive"
 msgstr "غیرفعال"
@@ -1165,6 +1234,12 @@ msgstr "متن دعوت"
 msgid "It looks like this question is better handled by a human expert. Would you like to leave a consultation request?"
 msgstr "به نظر می‌رسد این پرسش بهتر است توسط یک کارشناس پاسخ داده شود. مایلید درخواست مشاوره ثبت کنید؟"
 
+msgid "Items"
+msgstr "اقلام"
+
+msgid "Kavenegar"
+msgstr "کاوه‌نگار"
+
 msgid "Keep chat transcripts for (days)"
 msgstr "نگهداری متن گفتگوها به مدت (روز)"
 
@@ -1201,11 +1276,17 @@ msgstr "چپ‌به‌راست (لاتین)"
 msgid "Last 14 days. Only what helps you improve the assistant."
 msgstr "۱۴ روز اخیر؛ فقط آنچه به بهبود دستیار کمک می‌کند."
 
+msgid "Latest update"
+msgstr "آخرین وضعیت"
+
 msgid "Leave my number"
 msgstr "شماره‌ام را می‌گذارم"
 
 msgid "Let the assistant search the internet for current, public information"
 msgstr "دستیار بتواند برای اطلاعات به‌روز و عمومی در اینترنت جست‌وجو کند"
+
+msgid "Let visitors with items in their cart ask for one SMS reminder"
+msgstr "بازدیدکنندگانی که کالا در سبد دارند بتوانند یک پیامک یادآوری درخواست کنند"
 
 msgid "Life-threatening"
 msgstr "تهدیدکنندهٔ حیات"
@@ -1218,6 +1299,9 @@ msgstr "محدود کردن دسترسی به ساعات کاری"
 
 msgid "Limit by"
 msgstr "محدودیت بر اساس"
+
+msgid "Lingering means (seconds)"
+msgstr "ماندن طولانی یعنی (ثانیه)"
 
 msgid "Listen to this answer"
 msgstr "شنیدن پاسخ"
@@ -1276,6 +1360,9 @@ msgstr "مطابق دستگاه بازدیدکننده"
 msgid "Max answer length"
 msgstr "حداکثر طول پاسخ"
 
+msgid "Melipayamak"
+msgstr "ملی‌پیامک"
+
 msgid "Message bubble radius (px)"
 msgstr "گردی حباب پیام (پیکسل)"
 
@@ -1302,6 +1389,12 @@ msgstr "ورودی میکروفون"
 
 msgid "Mild"
 msgstr "خفیف"
+
+msgid "Minimum cart total (0 = none)"
+msgstr "حداقل مبلغ سبد (۰ = بدون حداقل)"
+
+msgid "Mobile number"
+msgstr "شمارهٔ موبایل"
 
 msgid "Mobile only"
 msgstr "فقط موبایل"
@@ -1333,11 +1426,17 @@ msgstr "ماژول‌ها"
 msgid "More details (optional)"
 msgstr "جزئیات بیشتر (اختیاری)"
 
+msgid "Most codes per day"
+msgstr "حداکثر تعداد کد در روز"
+
 msgid "Most-discussed products"
 msgstr "پرتکرارترین محصولات در گفتگو"
 
 msgid "My business and its field (recommended)"
 msgstr "کسب‌وکار من و حوزهٔ آن (توصیه‌شده)"
+
+msgid "My mobile number"
+msgstr "شمارهٔ موبایل من"
 
 msgid "Name"
 msgstr "نام"
@@ -1345,11 +1444,20 @@ msgstr "نام"
 msgid "Name: %s"
 msgstr "نام: %s"
 
+msgid "Needs the SMS module."
+msgstr "به ماژول پیامک نیاز دارد."
+
+msgid "Never miss a lead, and bring back customers who left their cart."
+msgstr "هیچ مشتری بالقوه‌ای را از دست ندهید و مشتریانی را که سبد را رها کرده‌اند برگردانید."
+
 msgid "Never miss a request - failed deliveries are retried and surfaced instead of vanishing."
 msgstr "هیچ درخواستی از دست نمی‌رود — ارسال‌های ناموفق دوباره تلاش و نمایش داده می‌شوند، نه این‌که گم شوند."
 
 msgid "New"
 msgstr "جدید"
+
+msgid "New %1$s #%2$d on your website."
+msgstr "%1$s جدید #%2$d در وب‌سایت شما."
 
 msgid "New (awaiting triage)"
 msgstr "جدید (در انتظار بررسی اولیه)"
@@ -1365,6 +1473,9 @@ msgstr "درخواست جدید: %s"
 
 msgid "New requests are posted here through the bot configured in the \"Bale / Telegram bot\" card."
 msgstr "درخواست‌های جدید از طریق رباتی که در کارت «ربات بله / تلگرام» تنظیم شده، این‌جا ارسال می‌شوند."
+
+msgid "New side-effect report #%d. Sign in to review it."
+msgstr "گزارش عارضهٔ جدید #%d. برای بررسی وارد پیشخوان شوید."
 
 msgid "Nexa"
 msgstr "نکسا"
@@ -1413,6 +1524,9 @@ msgstr "مدلی انتخاب نشده است."
 
 msgid "No modules match your search."
 msgstr "ماژولی با جست‌وجوی شما مطابقت ندارد."
+
+msgid "No order matches these details. Check the order number and the phone or email you used."
+msgstr "سفارشی با این مشخصات پیدا نشد. شمارهٔ سفارش و موبایل یا ایمیلی را که با آن سفارش دادید بررسی کنید."
 
 msgid "No other team members yet (editors, shop managers…). Administrators answer chats."
 msgstr "هنوز عضو دیگری در تیم نیست (ویرایشگر، مدیر فروشگاه و…). مدیران به گفتگوها پاسخ می‌دهند."
@@ -1465,6 +1579,12 @@ msgstr "تأیید = حذف افزونه و داده‌ها"
 msgid "Off (not recommended)"
 msgstr "خاموش (توصیه نمی‌شود)"
 
+msgid "Offer a single-use discount code"
+msgstr "پیشنهاد کد تخفیف یک‌بارمصرف"
+
+msgid "Offer text (empty = automatic)"
+msgstr "متن پیشنهاد (خالی = خودکار)"
+
 msgid "Offer the request form after (minutes without an answer)"
 msgstr "پیشنهاد فرم درخواست پس از (دقیقه بدون پاسخ)"
 
@@ -1486,6 +1606,11 @@ msgstr "یک ربات برای اعلان‌ها، پاسخ اپراتورها �
 msgid "Online"
 msgstr "آمادهٔ پاسخ‌گویی"
 
+msgid "Only %d left"
+msgid_plural "Only %d left"
+msgstr[0] "فقط %d عدد باقی مانده"
+msgstr[1] "فقط %d عدد باقی مانده"
+
 msgid "Only .csv, .json and .txt files can be imported."
 msgstr "فقط فایل‌های ‎.csv، ‎.json و ‎.txt قابل ورود هستند."
 
@@ -1497,6 +1622,12 @@ msgstr "فقط از دانش من"
 
 msgid "Only these paths"
 msgstr "فقط این مسیرها"
+
+msgid "Only when about to leave (desktop)"
+msgstr "فقط هنگام ترک سایت (دسکتاپ)"
+
+msgid "Only when lingering on a product or cart page"
+msgstr "فقط هنگام ماندن طولانی در صفحهٔ محصول یا سبد خرید"
 
 msgid "Open"
 msgstr "باز"
@@ -1534,6 +1665,12 @@ msgstr "سؤال‌های اختیاری"
 msgid "Oral"
 msgstr "خوراکی"
 
+msgid "Order number"
+msgstr "شمارهٔ سفارش"
+
+msgid "Order tracking: customers check an order with its number and their phone or email"
+msgstr "پیگیری سفارش: مشتری با شمارهٔ سفارش و موبایل یا ایمیل خود، وضعیت سفارش را می‌بیند"
+
 msgid "Other"
 msgstr "سایر"
 
@@ -1548,6 +1685,9 @@ msgstr "سایر داروهای مصرف‌شده در همان زمان"
 
 msgid "Our team is not available right now. Leave your number and we will call you back."
 msgstr "همکاران ما الان در دسترس نیستند. شماره‌تان را بگذارید تا با شما تماس بگیریم."
+
+msgid "Out of stock"
+msgstr "ناموجود"
 
 msgid "Outcome"
 msgstr "پیامد"
@@ -1600,6 +1740,9 @@ msgstr "سن بیمار باید بین صفر تا ۱۳۰ سال باشد."
 msgid "Patient sex"
 msgstr "جنسیت بیمار"
 
+msgid "Percent of the cart"
+msgstr "درصدی از سبد خرید"
+
 msgid "Permanently delete this case? Clinical data is removed; a purge entry stays in the audit trail."
 msgstr "این پرونده برای همیشه حذف شود؟ داده‌های بالینی حذف می‌شوند و یک ردیف حذف در سابقهٔ ممیزی باقی می‌ماند."
 
@@ -1624,6 +1767,9 @@ msgstr "تلفن"
 msgid "Phone number"
 msgstr "شمارهٔ تماس"
 
+msgid "Phone or email used for the order"
+msgstr "موبایل یا ایمیلی که با آن سفارش دادید"
+
 msgid "Phone: %s"
 msgstr "تلفن: %s"
 
@@ -1636,6 +1782,9 @@ msgstr "متن راهنما"
 msgid "Play a soft ping when a reply arrives while the chat is closed"
 msgstr "پخش صدای کوتاه هنگام رسیدن پاسخ وقتی گفتگو بسته است"
 
+msgid "Please confirm that you want the reminder."
+msgstr "لطفاً تأیید کنید که یادآوری را می‌خواهید."
+
 msgid "Please describe the reaction (10-10000 characters)."
 msgstr "عارضه را شرح دهید (۱۰ تا ۱۰۰۰۰ نویسه)."
 
@@ -1644,6 +1793,9 @@ msgstr "درخواست خود را شرح دهید (۱۰ تا ۱۰۰۰ نویس�
 
 msgid "Please enter a valid contact phone."
 msgstr "شمارهٔ تماس معتبر وارد کنید."
+
+msgid "Please enter a valid mobile number (09…)."
+msgstr "لطفاً شمارهٔ موبایل معتبر وارد کنید (۰۹…)."
 
 msgid "Please enter a valid phone number."
 msgstr "شمارهٔ تماس معتبر وارد کنید."
@@ -1735,6 +1887,9 @@ msgstr "محصولات و خدمات"
 msgid "Products & services overview"
 msgstr "مروری بر محصولات و خدمات"
 
+msgid "Products per answer"
+msgstr "تعداد محصول در هر پاسخ"
+
 msgid "Professional"
 msgstr "حرفه‌ای"
 
@@ -1777,6 +1932,9 @@ msgstr "خواندن پاسخ‌ها با صدای بلند"
 msgid "Readiness"
 msgstr "آمادگی"
 
+msgid "Real prices and stock in answers, product cards with \"Add to cart\", order tracking, comparisons, a smart discount for hesitating visitors and SMS cart reminders."
+msgstr "قیمت و موجودی واقعی در پاسخ‌ها، کارت محصول با «افزودن به سبد»، پیگیری سفارش، مقایسهٔ محصولات، تخفیف هوشمند برای بازدیدکنندگان مردد و یادآوری سبد خرید با پیامک."
+
 msgid "Received"
 msgstr "دریافت‌شده"
 
@@ -1800,6 +1958,12 @@ msgstr "معیارهای جدی‌بودن عارضه (موارد مرتبط ر�
 
 msgid "Related questions:"
 msgstr "پرسش‌های مرتبط:"
+
+msgid "Remind me about my cart by SMS"
+msgstr "یادآوری سبد خریدم با پیامک"
+
+msgid "Reminder text ({site}, {items}, {total}, {cart_url})"
+msgstr "متن یادآوری ({site}، {items}، {total}، {cart_url})"
 
 msgid "Remove"
 msgstr "حذف"
@@ -1927,6 +2091,21 @@ msgstr "گزارش عارضهٔ جدی — فوراً بررسی شود"
 msgid "SERIOUS case"
 msgstr "پروندهٔ جدی"
 
+msgid "SMS"
+msgstr "پیامک"
+
+msgid "SMS is not configured."
+msgstr "پیامک تنظیم نشده است."
+
+msgid "SMS module"
+msgstr "ماژول پیامک"
+
+msgid "SMS panel"
+msgstr "پنل پیامک"
+
+msgid "SMS.ir"
+msgstr "SMS.ir"
+
 msgid "Satisfaction Survey (CSAT)"
 msgstr "نظرسنجی رضایت (CSAT)"
 
@@ -1938,6 +2117,9 @@ msgstr "ذخیره و اتصال ربات"
 
 msgid "Save and index now"
 msgstr "ذخیره و نمایه‌سازی اکنون"
+
+msgid "Save and send a test SMS"
+msgstr "ذخیره و ارسال پیامک آزمایشی"
 
 msgid "Save appearance"
 msgstr "ذخیرهٔ ظاهر"
@@ -2008,8 +2190,17 @@ msgstr "جست‌وجوی معنایی"
 msgid "Send"
 msgstr "ارسال"
 
+msgid "Send a test SMS to"
+msgstr "ارسال پیامک آزمایشی به"
+
 msgid "Send message"
 msgstr "ارسال پیام"
+
+msgid "Send the reminder after (hours without an order)"
+msgstr "ارسال یادآوری پس از (ساعت بدون ثبت سفارش)"
+
+msgid "Sender line number"
+msgstr "شمارهٔ خط ارسال"
 
 msgid "Sequelae / permanent impairment"
 msgstr "عوارض باقی‌مانده / آسیب پایدار"
@@ -2086,6 +2277,9 @@ msgstr "کوتاه — فقط موارد ضروری (۵ سؤال)"
 msgid "Short, factual reference blocks the assistant quotes verbatim. (Policies, prices, hours, FAQs…)"
 msgstr "بلوک‌های کوتاه و دقیقی که دستیار عیناً نقل می‌کند (سیاست‌ها، قیمت‌ها، ساعات، پرسش‌های متداول…)."
 
+msgid "Show my discount code"
+msgstr "نمایش کد تخفیف من"
+
 msgid "Show the end-of-conversation survey"
 msgstr "نمایش نظرسنجی پایان گفتگو"
 
@@ -2103,6 +2297,12 @@ msgstr "تک‌گزینه‌ای"
 
 msgid "Skip"
 msgstr "رد کردن"
+
+msgid "Smart discount for hesitating visitors"
+msgstr "تخفیف هوشمند برای بازدیدکنندگان مردد"
+
+msgid "Smart offer from the NexaChatAI assistant"
+msgstr "پیشنهاد هوشمند دستیار NexaChatAI"
 
 msgid "Some readiness items are incomplete — finish them first (each links to its settings)."
 msgstr "برخی موارد آمادگی کامل نیستند — ابتدا آن‌ها را تکمیل کنید (هر مورد به تنظیمات خودش پیوند دارد)."
@@ -2127,6 +2327,12 @@ msgstr "استاندارد — موارد ضروری به‌همراه اطلا�
 
 msgid "Status"
 msgstr "وضعیت"
+
+msgid "Still deciding? Here is %d%% off your order today 🎁"
+msgstr "هنوز مطمئن نیستید؟ امروز %d٪ تخفیف روی سفارشتان 🎁"
+
+msgid "Still deciding? Here is %s off your order today 🎁"
+msgstr "هنوز مطمئن نیستید؟ امروز %s تخفیف روی سفارشتان 🎁"
 
 msgid "Stop audio"
 msgstr "توقف صدا"
@@ -2209,8 +2415,14 @@ msgstr "تلگرام"
 msgid "Test connection"
 msgstr "آزمون اتصال"
 
+msgid "Test message from your website assistant. SMS is working."
+msgstr "پیام آزمایشی از دستیار وب‌سایت شما. پیامک به‌درستی کار می‌کند."
+
 msgid "Text direction"
 msgstr "جهت متن"
+
+msgid "Text me when a new request or report arrives"
+msgstr "با رسیدن درخواست یا گزارش جدید به من پیامک بده"
 
 msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
 msgstr "از پیام شما سپاسگزارم. برای پاسخ به این پرسش اطلاعات تأییدشدهٔ کافی ندارم. لطفاً درخواست خود را ثبت کنید یا مستقیم با کارشناسان ما تماس بگیرید."
@@ -2221,6 +2433,9 @@ msgstr "از امتیاز شما سپاسگزاریم 🙏"
 msgid "That action is not possible."
 msgstr "این کار امکان‌پذیر نیست."
 
+msgid "That did not work. Please try again."
+msgstr "انجام نشد. لطفاً دوباره تلاش کنید."
+
 msgid "The AI assistant is locked to strict pharmacovigilance answer rules: no invented medical claims, no personalized treatment advice."
 msgstr "دستیار هوش مصنوعی به قواعد سخت‌گیرانهٔ پاسخ‌دهی ایمنی دارو محدود است: بدون ادعای پزشکی ساختگی و بدون توصیهٔ درمانی شخصی."
 
@@ -2229,6 +2444,12 @@ msgstr "کلید API رمزنگاری نشد (OpenSSL در دسترس نیست �
 
 msgid "The API key was rejected. Double-check the key and that it belongs to the selected provider."
 msgstr "کلید API رد شد. کلید و تعلق آن به ارائه‌دهندهٔ انتخاب‌شده را دوباره بررسی کنید."
+
+msgid "The SMS panel could not be reached."
+msgstr "اتصال به پنل پیامک برقرار نشد."
+
+msgid "The SMS panel refused the message: %s"
+msgstr "پنل پیامک پیام را نپذیرفت: %s"
 
 msgid "The account has insufficient credits or billing is not active. Check your provider account balance."
 msgstr "اعتبار حساب کافی نیست یا صورت‌حساب فعال نیست. موجودی حساب ارائه‌دهنده را بررسی کنید."
@@ -2265,6 +2486,9 @@ msgstr "گفتگو بسته شد."
 
 msgid "The chatbot stays invisible to visitors until you publish it in the last step."
 msgstr "تا وقتی در گام آخر منتشرش نکنید، چت‌بات برای بازدیدکنندگان نامرئی می‌ماند."
+
+msgid "The code is created only when the visitor clicks the offer; each visitor gets one code, each code works once."
+msgstr "کد فقط وقتی ساخته می‌شود که بازدیدکننده روی پیشنهاد بزند؛ هر بازدیدکننده یک کد می‌گیرد و هر کد فقط یک بار قابل استفاده است."
 
 msgid "The connected AI provider does not offer embeddings."
 msgstr "ارائه‌دهندهٔ هوش مصنوعی متصل، API امبدینگ ندارد."
@@ -2383,6 +2607,9 @@ msgstr "در حال حاضر نوشتن خلاصه ممکن نشد."
 msgid "The survey is disabled on this site."
 msgstr "نظرسنجی در این سایت غیرفعال است."
 
+msgid "The test SMS was accepted by the panel."
+msgstr "پنل پیامک، پیامک آزمایشی را پذیرفت."
+
 msgid "The visitor asked to talk to a person."
 msgstr "بازدیدکننده درخواست صحبت با یک نفر را داد."
 
@@ -2413,6 +2640,9 @@ msgstr "این گفتگو بسته شده است."
 msgid "This chat is closed; the visitor will not see new messages."
 msgstr "این گفتگو بسته شده است؛ بازدیدکننده پیام‌های جدید را نمی‌بیند."
 
+msgid "This is not available right now."
+msgstr "این امکان در حال حاضر در دسترس نیست."
+
 msgid "This is the real assistant: changes apply instantly and you can chat with it (answers use the saved AI connection). Save when you are happy."
 msgstr "این همان دستیار واقعی است: تغییرات فوراً اعمال می‌شوند و می‌توانید با آن گفتگو کنید (پاسخ‌ها از اتصال هوش مصنوعی ذخیره‌شده می‌آیند). هر وقت راضی بودید ذخیره کنید."
 
@@ -2427,6 +2657,12 @@ msgstr "این ممکن است یک وضعیت اورژانسی باشد. همی
 
 msgid "This module needs: %s"
 msgstr "این ماژول نیاز دارد به: %s"
+
+msgid "This offer has ended."
+msgstr "این پیشنهاد به پایان رسیده است."
+
+msgid "This offer is for carts of %s or more."
+msgstr "این پیشنهاد برای سبدهای خرید %s و بیشتر است."
 
 msgid "This provider is not verified yet. Run the connection test below and wait for the green result before continuing."
 msgstr "این ارائه‌دهنده هنوز تأیید نشده است. آزمون اتصال زیر را اجرا کنید و پیش از ادامه منتظر نتیجهٔ سبز بمانید."
@@ -2452,6 +2688,12 @@ msgstr "عنوان (مثلاً سیاست بازگشت کالا)"
 msgid "To publish, complete:"
 msgstr "برای انتشار، این موارد را کامل کنید:"
 
+msgid "Today's offers have all been claimed. Please check back tomorrow."
+msgstr "پیشنهادهای امروز تمام شده است. لطفاً فردا دوباره سر بزنید."
+
+msgid "Too many attempts. Please try again in 15 minutes."
+msgstr "تلاش‌ها بیش از حد مجاز بود. لطفاً ۱۵ دقیقهٔ دیگر دوباره تلاش کنید."
+
 msgid "Too many submissions today. Please try again tomorrow."
 msgstr "تعداد درخواست‌های امروز به سقف مجاز رسیده است. لطفاً فردا تلاش کنید."
 
@@ -2461,8 +2703,17 @@ msgstr "تعداد رأی‌های امروز بیش از حد مجاز است."
 msgid "Topical"
 msgstr "موضعی"
 
+msgid "Total"
+msgstr "مبلغ کل"
+
 msgid "Track assistant quality over time with one simple number."
 msgstr "کیفیت دستیار را در طول زمان با یک عدد ساده دنبال کنید."
+
+msgid "Track my order"
+msgstr "پیگیری سفارش"
+
+msgid "Tracking code"
+msgstr "کد رهگیری"
 
 msgid "Trusted proxy header (behind CDN / reverse proxy)"
 msgstr "سرآیند پراکسی مورد اعتماد (پشت CDN / پراکسی معکوس)"
@@ -2472,6 +2723,9 @@ msgstr "امتحان دستیار (پیش‌نمایش)"
 
 msgid "Turn conversations into actionable requests with clean, validated contact data."
 msgstr "گفتگوها را به درخواست‌های قابل پیگیری با اطلاعات تماس معتبر تبدیل کنید."
+
+msgid "Turns questions into orders and answers \"where is my order?\" without your team."
+msgstr "سؤال‌ها را به سفارش تبدیل می‌کند و بدون نیاز به تیم شما به «سفارشم کجاست؟» پاسخ می‌دهد."
 
 msgid "Type"
 msgstr "نوع"
@@ -2515,8 +2769,14 @@ msgstr "بارگذاری فایل"
 msgid "Used when a question is outside the chosen scope. Empty = a short, friendly reply written by the assistant in the visitor's language."
 msgstr "وقتی پرسش خارج از دامنهٔ انتخاب‌شده باشد استفاده می‌شود. خالی = پاسخی کوتاه و دوستانه که دستیار به زبان بازدیدکننده می‌نویسد."
 
+msgid "Username (Melipayamak only)"
+msgstr "نام کاربری (فقط ملی‌پیامک)"
+
 msgid "Uses your provider's built-in search (OpenAI, Claude, Gemini, OpenRouter; not available for custom endpoints or webhooks). The provider bills searches separately. Searched answers are not streamed or cached, and the pages used are listed under the answer. Your own knowledge always wins over web results. Not used in \"Only from my knowledge\" mode."
 msgstr "از جست‌وجوی داخلی ارائه‌دهنده استفاده می‌کند (OpenAI، Claude، Gemini، OpenRouter؛ برای endpoint سفارشی و وب‌هوک در دسترس نیست). ارائه‌دهنده هزینهٔ جست‌وجو را جداگانه حساب می‌کند. پاسخ‌هایی که با جست‌وجو تولید می‌شوند استریم و کش نمی‌شوند و صفحه‌های استفاده‌شده زیر پاسخ فهرست می‌شوند. دانش خود شما همیشه بر نتایج وب مقدم است. در حالت «فقط از دانش من» استفاده نمی‌شود."
+
+msgid "Valid until"
+msgstr "معتبر تا"
 
 msgid "Value"
 msgstr "مقدار"
@@ -2530,8 +2790,14 @@ msgstr "%s پیش برای ارائه‌دهنده، کلید، مدل و نشا
 msgid "Verify & Launch"
 msgstr "بررسی و راه‌اندازی"
 
+msgid "View"
+msgstr "مشاهده"
+
 msgid "View brochure"
 msgstr "مشاهدهٔ بروشور"
+
+msgid "View cart"
+msgstr "مشاهدهٔ سبد"
 
 msgid "Visitor"
 msgstr "بازدیدکننده"
@@ -2623,6 +2889,9 @@ msgstr "وقتی دستیار نمی‌تواند پاسخ دهد، به‌صو�
 msgid "When the visitor is about to leave (desktop; delay on phones)"
 msgstr "وقتی بازدیدکننده قصد خروج دارد (دسکتاپ؛ در موبایل پس از تأخیر)"
 
+msgid "When to offer it"
+msgstr "زمان پیشنهاد"
+
 msgid "Where the widget appears"
 msgstr "محل نمایش ویجت"
 
@@ -2649,6 +2918,12 @@ msgstr "در حال گفتگو با اپراتور"
 
 msgid "With polling, replies also arrive within seconds while the Live chat screen is open."
 msgstr "در حالت پولینگ هم وقتی صفحهٔ گفتگوی زنده باز است، پاسخ‌ها ظرف چند ثانیه می‌رسند."
+
+msgid "WooCommerce is not active on this site, so this module has nothing to do yet."
+msgstr "ووکامرس در این سایت فعال نیست، پس این ماژول فعلاً کاری انجام نمی‌دهد."
+
+msgid "WooCommerce sales assistant"
+msgstr "دستیار فروش ووکامرس"
 
 msgid "Working hours"
 msgstr "ساعات کاری"
@@ -2679,6 +2954,12 @@ msgstr "به سقف استفادهٔ روزانه رسیده‌اید. لطفا�
 
 msgid "Your bot:"
 msgstr "ربات شما:"
+
+msgid "Your cart at {site} is waiting: {items}. Finish your order here: {cart_url}"
+msgstr "سبد خرید شما در {site} منتظر شماست: {items}. سفارشتان را از این‌جا تکمیل کنید: {cart_url}"
+
+msgid "Your cart is empty, so there is nothing to remind you about."
+msgstr "سبد خرید شما خالی است، پس چیزی برای یادآوری وجود ندارد."
 
 msgid "Your consent is required to continue."
 msgstr "برای ادامه، رضایت شما لازم است."
