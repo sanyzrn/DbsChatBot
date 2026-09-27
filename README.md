@@ -74,7 +74,7 @@ messages) · Notifications (Bale / Telegram / email) · Human handoff · Analyti
 CSAT survey · FAQ answer bank · Consultation forms (custom fields, CSV export) ·
 Pharmaceutical ADR reporting (configurable form: short/standard presets, own questions)
 
-Added in the 2.0 development line, also off by default:
+Added in 1.2, also off by default:
 
 | Module | What it does |
 |---|---|
@@ -280,7 +280,7 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 تلگرام، ایمیل) · ارجاع به کارشناس · تحلیل‌ها · نظرسنجی رضایت · بانک پرسش‌وپاسخ ·
 فرم‌های مشاوره (فیلد سفارشی، خروجی CSV) · گزارش عوارض دارویی (فرم قابل تنظیم: کوتاه/استاندارد، سؤال دلخواه)
 
-ماژول‌های جدید نسخهٔ ۲ (همه پیش‌فرض خاموش):
+ماژول‌های جدید نسخهٔ ۱.۲ (همه پیش‌فرض خاموش):
 - **گفتگوی زنده:** صندوق پیام اپراتور، تحویل گفتگو از ربات، صف و تخصیص، وضعیت آنلاین/آفلاین، پاسخ‌های آماده، خلاصهٔ هوشمند؛ پاسخ از بله/تلگرام
 - **ربات پیام‌رسان:** گفتگوی مشتری با دستیار داخل بله یا تلگرام
 - **دستیار فروش ووکامرس:** کارت محصول با قیمت و موجودی واقعی و افزودن به سبد، پیگیری سفارش، مقایسه، کد تخفیف هوشمند، یادآوری پیامکی سبد

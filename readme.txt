@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.3
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,7 +88,7 @@ PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifi
 
 == Changelog ==
 
-= Unreleased (2.0 development) =
+= 1.2.0 =
 
 * New module, Live chat: operators take over a conversation from the assistant in a two-pane inbox. Includes a waiting queue, automatic or manual assignment, online/offline status with an offline message, canned replies, an AI summary for the operator and transcript retention. Operators can reply from Bale or Telegram.
 * New: one shared Bale / Telegram bot connection (webhook with a secret, or polling when the site cannot receive webhooks). Used by notifications, live chat and the messenger bot.
