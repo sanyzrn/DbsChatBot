@@ -85,6 +85,10 @@ class SSC_Provider_Gemini extends SSC_Provider {
 		if ( '' !== (string) $system ) {
 			$body['systemInstruction'] = array( 'parts' => array( array( 'text' => (string) $system ) ) );
 		}
+		if ( ! empty( $opts['web_search'] ) ) {
+			// Grounding with Google Search (an empty object, not an empty list).
+			$body['tools'] = array( array( 'google_search' => new stdClass() ) );
+		}
 
 		return array(
 			'url'         => 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode( (string) $model ) . ':generateContent',
@@ -111,6 +115,35 @@ class SSC_Provider_Gemini extends SSC_Provider {
 			return trim( $text );
 		}
 		return '';
+	}
+
+	/**
+	 * Grounding with Google Search.
+	 *
+	 * @return bool
+	 */
+	public function supports_web_search() {
+		return true;
+	}
+
+	/**
+	 * Grounding chunks of the answer (PURE).
+	 *
+	 * @param array $data Decoded response.
+	 * @return array[]
+	 */
+	public function extract_sources( $data ) {
+		$sources = array();
+		$chunks  = isset( $data['candidates'][0]['groundingMetadata']['groundingChunks'] ) ? $data['candidates'][0]['groundingMetadata']['groundingChunks'] : array();
+		foreach ( (array) $chunks as $chunk ) {
+			if ( isset( $chunk['web']['uri'] ) ) {
+				$sources[] = array(
+					'title' => isset( $chunk['web']['title'] ) ? $chunk['web']['title'] : '',
+					'url'   => $chunk['web']['uri'],
+				);
+			}
+		}
+		return self::clean_sources( $sources );
 	}
 
 	/**

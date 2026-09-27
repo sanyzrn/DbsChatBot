@@ -486,3 +486,25 @@
 	nav.hidden = false;
 	select(initial, false);
 })();
+
+/* ---------- Answer scope & web search (AI Connection) ---------- */
+(function () {
+	'use strict';
+	var card = document.getElementById('ssc-scope-card');
+	if (!card) { return; }
+	var web = document.getElementById('web_search');
+	var hint = card.querySelector('.ssc-web-unsupported');
+	var provider = document.getElementById('ai_provider');
+	var SUPPORTED = { openai: 1, claude: 1, gemini: 1, openrouter: 1 };
+
+	function sync() {
+		var scope = card.querySelector('input[name="answer_scope"]:checked');
+		var knowledgeOnly = scope && scope.value === 'knowledge';
+		var fixed = card.querySelector('.ssc-choices[disabled]'); // Pharma policy owns the scope.
+		if (web && !fixed) { web.disabled = !!knowledgeOnly; }
+		if (hint) { hint.hidden = !provider || !!SUPPORTED[provider.value]; }
+	}
+	card.addEventListener('change', sync);
+	if (provider) { provider.addEventListener('change', sync); }
+	sync();
+})();

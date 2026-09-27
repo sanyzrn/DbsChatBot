@@ -33,6 +33,7 @@ stay switched off until you enable them.
 | **Business knowledge** | Structured identity and knowledge entries, plus document import (URL, `.txt`, `.md`, `.csv`, `.json`). Keyword retrieval, optional semantic retrieval via the provider's embeddings API, and source citations under answers. |
 | **Streaming replies** | Server-Sent Events for OpenAI, Claude, Gemini and OpenAI-compatible providers, with automatic fallback when the server or provider cannot stream. |
 | **Conversation memory** | Kept server-side under a random conversation id; the browser never supplies the model's context. |
+| **Answer scope & web search** | Knowledge only, your business and its field, or any question. Optional web search via the provider's native tool (OpenAI, Claude, Gemini, OpenRouter) with a domain allow-list and cited sources. |
 | **Security** | API keys encrypted at rest (AES-256-CBC, encrypt-then-MAC), SSRF-guarded outbound requests, per-bucket rate limits, honeypot, payload caps. |
 | **Privacy** | Server-side transcript logging is opt-in. Configurable retention. Visitor IPs anonymized by default. Suggested privacy-policy text contributed to WordPress core's privacy tool. |
 | **Placement** | Floating widget, `[ssc_chatbot]` shortcode, native Gutenberg block, or Elementor widget. |
@@ -144,7 +145,7 @@ Other hooks: `ssc_frontend_config`, `ssc_prompt_extra`, `ssc_ai_cache_ttl`,
 `ssc_ip_header`, `ssc_trusted_proxy_headers`, `ssc_submit_rate_limit`,
 `ssc_http_timeout`, `ssc_pharma_capability`, `ssc_adr_case_purged`,
 `ssc_conversation_ttl`, `ssc_embedding_model`, `ssc_kb_semantic_threshold`,
-`ssc_use_jalali`.
+`ssc_use_jalali`, `ssc_claude_web_search_tool`, `ssc_openai_web_search_tool`.
 
 ## License
 

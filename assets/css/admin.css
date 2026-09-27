@@ -995,3 +995,13 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 
 /* Back/forward arrows point the reading direction in RTL admins. */
 .rtl .ssc-dir-arrow { display: inline-block; transform: scaleX(-1); }
+
+/* Answer scope choices (AI Connection). */
+.ssc-choices { border: 0; margin: 12px 0; padding: 0; display: grid; gap: 8px; }
+.ssc-choices[disabled] { opacity: 0.6; }
+.ssc-choice { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--ssc-line); border-radius: var(--ssc-radius-s, 8px); cursor: pointer; background: var(--ssc-card); }
+.ssc-choice:has(input:checked) { border-color: var(--ssc-brand); box-shadow: 0 0 0 1px var(--ssc-brand); }
+.ssc-choice input { margin-top: 3px; }
+.ssc-choice strong { display: block; font-size: 13px; }
+.ssc-choice__desc { display: block; margin-top: 2px; color: var(--ssc-muted); font-size: 12px; line-height: 1.5; }
+.ssc-subhead { margin: 18px 0 6px; font-size: 13.5px; }

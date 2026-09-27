@@ -80,6 +80,44 @@ class SSC_Provider_Openrouter extends SSC_Provider_OpenAI_Compat {
 		$parts                            = parent::request_parts( $api_key, $model, $system, $messages, $opts );
 		$parts['headers']['HTTP-Referer'] = home_url( '/' );
 		$parts['headers']['X-Title']      = get_bloginfo( 'name' );
+		if ( ! empty( $opts['web_search'] ) ) {
+			// OpenRouter's web plugin works with any model it routes to.
+			$parts['body']['plugins'] = array(
+				array(
+					'id'          => 'web',
+					'max_results' => 3,
+				),
+			);
+		}
 		return $parts;
+	}
+
+	/**
+	 * OpenRouter's web plugin.
+	 *
+	 * @return bool
+	 */
+	public function supports_web_search() {
+		return true;
+	}
+
+	/**
+	 * URL citations attached to the message (PURE).
+	 *
+	 * @param array $data Decoded response.
+	 * @return array[]
+	 */
+	public function extract_sources( $data ) {
+		$sources = array();
+		$notes   = isset( $data['choices'][0]['message']['annotations'] ) ? $data['choices'][0]['message']['annotations'] : array();
+		foreach ( (array) $notes as $note ) {
+			if ( isset( $note['type'], $note['url_citation']['url'] ) && 'url_citation' === $note['type'] ) {
+				$sources[] = array(
+					'title' => isset( $note['url_citation']['title'] ) ? $note['url_citation']['title'] : '',
+					'url'   => $note['url_citation']['url'],
+				);
+			}
+		}
+		return self::clean_sources( $sources );
 	}
 }

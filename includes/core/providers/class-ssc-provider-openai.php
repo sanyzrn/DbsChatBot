@@ -70,4 +70,100 @@ class SSC_Provider_Openai extends SSC_Provider_OpenAI_Compat {
 		 */
 		return apply_filters( 'ssc_models_openai', $models );
 	}
+
+	/**
+	 * Web search runs through the Responses API's built-in tool.
+	 *
+	 * @return bool
+	 */
+	public function supports_web_search() {
+		return true;
+	}
+
+	/**
+	 * Chat Completions normally; the Responses API when web search is on
+	 * (PURE).
+	 *
+	 * @param string $api_key  Key.
+	 * @param string $model    Model.
+	 * @param string $system   System prompt.
+	 * @param array  $messages Messages.
+	 * @param array  $opts     Options.
+	 * @return array
+	 */
+	public function request_parts( $api_key, $model, $system, $messages, $opts = array() ) {
+		if ( empty( $opts['web_search'] ) ) {
+			return parent::request_parts( $api_key, $model, $system, $messages, $opts );
+		}
+		$input = array();
+		foreach ( (array) $messages as $m ) {
+			$input[] = array(
+				'role'    => ( isset( $m['role'] ) && 'assistant' === $m['role'] ) ? 'assistant' : 'user',
+				'content' => isset( $m['content'] ) ? (string) $m['content'] : '',
+			);
+		}
+		$tool = array( 'type' => 'web_search' );
+		if ( ! empty( $opts['search_domains'] ) ) {
+			$tool['filters'] = array( 'allowed_domains' => array_values( (array) $opts['search_domains'] ) );
+		}
+		$body = array(
+			'model'             => (string) $model,
+			'input'             => $input,
+			'tools'             => array( apply_filters( 'ssc_openai_web_search_tool', $tool ) ),
+			'max_output_tokens' => isset( $opts['max_tokens'] ) ? (int) $opts['max_tokens'] : 800,
+		);
+		if ( '' !== (string) $system ) {
+			$body['instructions'] = (string) $system;
+		}
+		return array(
+			'url'         => $this->api_base() . '/responses',
+			'headers'     => array( 'Authorization' => 'Bearer ' . $api_key ),
+			'body'        => $body,
+			'needs_https' => true,
+		);
+	}
+
+	/**
+	 * Text from either API shape (PURE).
+	 *
+	 * @param array $data Decoded response.
+	 * @return string
+	 */
+	public function extract_text( $data ) {
+		if ( isset( $data['output'] ) && is_array( $data['output'] ) ) {
+			$text = '';
+			foreach ( $data['output'] as $item ) {
+				foreach ( isset( $item['content'] ) && is_array( $item['content'] ) ? $item['content'] : array() as $part ) {
+					if ( isset( $part['type'], $part['text'] ) && 'output_text' === $part['type'] ) {
+						$text .= $part['text'];
+					}
+				}
+			}
+			return trim( $text );
+		}
+		return parent::extract_text( $data );
+	}
+
+	/**
+	 * URL citations from a Responses API answer (PURE).
+	 *
+	 * @param array $data Decoded response.
+	 * @return array[]
+	 */
+	public function extract_sources( $data ) {
+		$sources = array();
+		foreach ( isset( $data['output'] ) && is_array( $data['output'] ) ? $data['output'] : array() as $item ) {
+			foreach ( isset( $item['content'] ) && is_array( $item['content'] ) ? $item['content'] : array() as $part ) {
+				foreach ( isset( $part['annotations'] ) && is_array( $part['annotations'] ) ? $part['annotations'] : array() as $note ) {
+					if ( isset( $note['type'], $note['url'] ) && 'url_citation' === $note['type'] ) {
+						$sources[] = array(
+							'title' => isset( $note['title'] ) ? $note['title'] : '',
+							'url'   => $note['url'],
+						);
+					}
+				}
+			}
+		}
+		return self::clean_sources( $sources );
+	}
 }

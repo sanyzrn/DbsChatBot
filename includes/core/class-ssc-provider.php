@@ -68,6 +68,48 @@ abstract class SSC_Provider {
 	abstract public function extract_text( $data );
 
 	/**
+	 * Does the provider offer a native web search tool?
+	 *
+	 * @return bool
+	 */
+	public function supports_web_search() {
+		return false;
+	}
+
+	/**
+	 * Web pages cited by a response (PURE - unit tested).
+	 *
+	 * @param array $data Decoded response.
+	 * @return array[] title, url.
+	 */
+	public function extract_sources( $data ) {
+		unset( $data );
+		return array();
+	}
+
+	/**
+	 * Keep http(s) citations only, deduplicated, at most five.
+	 *
+	 * @param array[] $sources Raw title/url pairs.
+	 * @return array[]
+	 */
+	protected static function clean_sources( $sources ) {
+		$out = array();
+		foreach ( $sources as $src ) {
+			$url = isset( $src['url'] ) ? (string) $src['url'] : '';
+			if ( ! preg_match( '#^https?://#i', $url ) || isset( $out[ $url ] ) ) {
+				continue;
+			}
+			$title       = isset( $src['title'] ) ? trim( wp_strip_all_tags( (string) $src['title'] ) ) : '';
+			$out[ $url ] = array(
+				'title' => '' !== $title ? mb_substr( $title, 0, 80 ) : (string) wp_parse_url( $url, PHP_URL_HOST ),
+				'url'   => $url,
+			);
+		}
+		return array_slice( array_values( $out ), 0, 5 );
+	}
+
+	/**
 	 * Can this adapter stream tokens over Server-Sent Events?
 	 *
 	 * @return bool
@@ -215,9 +257,10 @@ abstract class SSC_Provider {
 			);
 		}
 		return array(
-			'ok'    => true,
-			'text'  => $text,
-			'error' => null,
+			'ok'      => true,
+			'text'    => $text,
+			'error'   => null,
+			'sources' => $this->extract_sources( $response['data'] ),
 		);
 	}
 

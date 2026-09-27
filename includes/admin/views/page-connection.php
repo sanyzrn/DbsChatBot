@@ -127,6 +127,46 @@ $sel  = (string) $s['ai_provider'];
 			</div>
 		</section>
 
+		<?php $ssc_pharma = SSC_Modules::is_active( 'pharma' ); ?>
+		<section class="ssc-card" id="ssc-scope-card">
+			<h2><?php esc_html_e( 'What the assistant may answer', 'nexachat-ai' ); ?></h2>
+			<p class="ssc-card__sub"><?php esc_html_e( 'In every mode, facts about your organization (prices, policies, specifications) come only from your knowledge — the assistant never invents them.', 'nexachat-ai' ); ?></p>
+			<?php if ( $ssc_pharma ) : ?>
+				<div class="ssc-notice ssc-notice--info" role="status"><?php esc_html_e( 'The pharmaceutical module is active: its answer policy (Settings → Privacy) decides the scope, unrelated topics are always declined, and web search is off.', 'nexachat-ai' ); ?></div>
+			<?php endif; ?>
+			<fieldset class="ssc-choices" <?php disabled( $ssc_pharma ); ?>>
+				<legend class="screen-reader-text"><?php esc_html_e( 'Answer scope', 'nexachat-ai' ); ?></legend>
+				<?php
+				$ssc_scopes = array(
+					'knowledge' => array( __( 'Only from my knowledge', 'nexachat-ai' ), __( 'Answers strictly from the business profile, knowledge entries and documents. Anything else gets "I don\'t have that information" and your contact details. Safest; best for regulated content.', 'nexachat-ai' ) ),
+					'business'  => array( __( 'My business and its field (recommended)', 'nexachat-ai' ), __( 'Helps with your products, services, orders and support, and can explain general concepts of your industry. Politely declines unrelated requests such as trivia, homework, coding or news.', 'nexachat-ai' ) ),
+					'open'      => array( __( 'Any question', 'nexachat-ai' ), __( 'Also answers general questions unrelated to your business, like a general-purpose assistant. Every such answer is billed by your AI provider.', 'nexachat-ai' ) ),
+				);
+				foreach ( $ssc_scopes as $ssc_value => $ssc_scope ) :
+					?>
+					<label class="ssc-choice">
+						<input type="radio" name="answer_scope" value="<?php echo esc_attr( $ssc_value ); ?>" <?php checked( $s['answer_scope'], $ssc_value ); ?> />
+						<span><strong><?php echo esc_html( $ssc_scope[0] ); ?></strong><span class="ssc-choice__desc"><?php echo esc_html( $ssc_scope[1] ); ?></span></span>
+					</label>
+				<?php endforeach; ?>
+			</fieldset>
+			<div class="ssc-field">
+				<label for="off_topic_message"><?php esc_html_e( 'Reply to unrelated questions (optional)', 'nexachat-ai' ); ?></label>
+				<textarea id="off_topic_message" name="off_topic_message" rows="2" dir="auto" placeholder="<?php esc_attr_e( 'e.g. I can only help with questions about our products and services. For anything else, please contact us.', 'nexachat-ai' ); ?>"><?php echo esc_textarea( (string) $s['off_topic_message'] ); ?></textarea>
+				<p class="ssc-field__hint"><?php esc_html_e( 'Used when a question is outside the chosen scope. Empty = a short, friendly reply written by the assistant in the visitor\'s language.', 'nexachat-ai' ); ?></p>
+			</div>
+
+			<h3 class="ssc-subhead"><?php esc_html_e( 'Web search', 'nexachat-ai' ); ?></h3>
+			<label class="ssc-check"><input type="checkbox" id="web_search" name="web_search" value="yes" <?php checked( 'yes', $s['web_search'] ); ?> <?php disabled( $ssc_pharma ); ?> /> <span><?php esc_html_e( 'Let the assistant search the internet for current, public information', 'nexachat-ai' ); ?></span></label>
+			<p class="ssc-field__hint"><?php esc_html_e( 'Uses your provider\'s built-in search (OpenAI, Claude, Gemini, OpenRouter; not available for custom endpoints or webhooks). The provider bills searches separately. Searched answers are not streamed or cached, and the pages used are listed under the answer. Your own knowledge always wins over web results. Not used in "Only from my knowledge" mode.', 'nexachat-ai' ); ?></p>
+			<p class="ssc-field__hint ssc-web-unsupported" hidden><?php esc_html_e( 'The selected provider has no web search tool, so this option has no effect.', 'nexachat-ai' ); ?></p>
+			<div class="ssc-field">
+				<label for="web_search_domains"><?php esc_html_e( 'Search only these sites (optional, one domain per line)', 'nexachat-ai' ); ?></label>
+				<textarea id="web_search_domains" name="web_search_domains" rows="2" dir="ltr" placeholder="example.com&#10;docs.example.com"><?php echo esc_textarea( (string) $s['web_search_domains'] ); ?></textarea>
+				<p class="ssc-field__hint"><?php esc_html_e( 'For example your own website, to answer from pages you have not imported. Honoured by OpenAI and Claude; Gemini and OpenRouter search the whole web.', 'nexachat-ai' ); ?></p>
+			</div>
+		</section>
+
 		<details class="ssc-card ssc-details">
 			<summary><?php esc_html_e( 'Advanced engine options', 'nexachat-ai' ); ?></summary>
 			<div class="ssc-grid ssc-grid--2">
@@ -159,7 +199,6 @@ $sel  = (string) $s['ai_provider'];
 					<input id="kb_max_chunks" name="kb_max_chunks" type="number" min="1" max="8" value="<?php echo esc_attr( (string) $s['kb_max_chunks'] ); ?>" />
 				</div>
 			</div>
-			<label class="ssc-check"><input type="checkbox" name="ai_strict_knowledge" value="yes" <?php checked( 'yes', $s['ai_strict_knowledge'] ); ?> /> <span><?php esc_html_e( 'Strict mode — answer only from your knowledge', 'nexachat-ai' ); ?></span></label>
 			<label class="ssc-check"><input type="checkbox" name="ai_cache_enabled" value="yes" <?php checked( 'yes', $s['ai_cache_enabled'] ); ?> /> <span><?php esc_html_e( 'Cache identical questions (6 hours, faster + cheaper)', 'nexachat-ai' ); ?></span></label>
 			<div class="ssc-field">
 				<label for="ai_system_prompt_extra"><?php esc_html_e( 'Extra instructions for the assistant', 'nexachat-ai' ); ?></label>

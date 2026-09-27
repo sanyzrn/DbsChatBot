@@ -30,6 +30,7 @@ NexaChatAI is a professional AI assistant for WordPress: install it, run the set
 * **RTL + LTR** widget with logical CSS
 * **Live streaming** answers (SSE) for OpenAI, Claude, Gemini and OpenAI-compatible providers
 * **Server-side conversation memory** (the browser never supplies the model's context)
+* **Answer scope** (knowledge only / your business / any question) and optional **web search** with citations
 * **Persian admin** (complete translation, RTL layout, Solar Hijri dates)
 * **Display rules** by page path, device, and login state
 * **Business hours / offline mode**
@@ -78,6 +79,8 @@ PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifi
 * New: live business-hours status that works with page caches; object-cache rate-limit counters; AI cache generation keys.
 * New: settings tabs; the Appearance preview is now the real widget; complete Persian translation with RTL admin and Solar Hijri dates.
 * New: visitor IP anonymization (default) for logs and requests.
+* New: answer scope — only from your knowledge, your business and its field (default for new sites), or any question — with an optional reply for unrelated questions. Replaces the old "strict mode" checkbox; existing sites keep their behaviour.
+* New: optional web search through the provider's own tool (OpenAI Responses, Claude, Gemini Google Search, OpenRouter), with an optional domain allow-list and web citations under answers. Always off in knowledge-only and pharmaceutical modes.
 * Changed: plugin folder, main file and text domain are now `nexachat-ai`. An active pre-rename copy is detected and deactivated automatically; settings and data are shared and kept.
 * Fixed: "bottom right" appeared bottom-left on RTL sites; chat questions containing "<" were truncated; checkbox/radio label spacing.
 

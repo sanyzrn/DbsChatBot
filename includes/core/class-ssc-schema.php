@@ -27,7 +27,7 @@ class SSC_Schema {
 	const KB_TABLE          = 'ssc_chatbot_kb';
 	const STATS_TABLE       = 'ssc_chatbot_stats';
 	const AUDIT_TABLE       = 'ssc_chatbot_audit';
-	const DB_VERSION        = '12';
+	const DB_VERSION        = '13';
 	const DB_VERSION_OPTION = 'ssc_chatbot_db_version';
 
 	/*
@@ -282,6 +282,7 @@ class SSC_Schema {
 			self::migrate_qa_from_options();
 			self::migrate_stats_from_options();
 			SSC_Settings::split_storage();
+			SSC_Settings::migrate_answer_scope();
 			// Setup state safety net for IN-PLACE updates (activation hooks do
 			// not re-run): a legacy live chatbot must stay live.
 			SSC_Setup::initialize_state();

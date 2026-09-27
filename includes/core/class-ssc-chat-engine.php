@@ -151,11 +151,15 @@ class SSC_Chat_Engine {
 	 * @return string Empty on failure.
 	 */
 	protected function ai_reply( $provider, $message, $product, $history, $on_delta = null ) {
-		$system = SSC_Prompt_Builder::build_for_chat( $message, $product );
-		$opts   = array(
-			'endpoint'     => $provider->saved_credentials()['endpoint'],
-			'product'      => $product,
-			'product_name' => $this->product_name( $product ),
+		$system            = SSC_Prompt_Builder::build_for_chat( $message, $product );
+		$web               = SSC_Providers::web_search_active();
+		$this->web_sources = array();
+		$opts              = array(
+			'endpoint'       => $provider->saved_credentials()['endpoint'],
+			'product'        => $product,
+			'product_name'   => $this->product_name( $product ),
+			'web_search'     => $web,
+			'search_domains' => $web ? SSC_Settings::parse_domains( SSC_Settings::get( 'web_search_domains', '' ) ) : array(),
 		);
 
 		// Messages: strip leading assistant turns (some APIs require user-first).
@@ -170,7 +174,8 @@ class SSC_Chat_Engine {
 
 		// Response cache only for history-less questions (deterministic + cheap).
 		// Health conversations must never enter a shared response cache.
-		$cache_enabled = ! SSC_Modules::is_active( 'pharma' ) && ( 'yes' === SSC_Settings::get( 'ai_cache_enabled', 'yes' ) ) && empty( $history );
+		// Web-searched answers are time-sensitive and carry their own citations.
+		$cache_enabled = ! $web && ! SSC_Modules::is_active( 'pharma' ) && ( 'yes' === SSC_Settings::get( 'ai_cache_enabled', 'yes' ) ) && empty( $history );
 		$cache_key     = '';
 		if ( $cache_enabled ) {
 			$cache_key = 'ssc_ai_' . md5( SSC_Settings::ai_cache_generation() . '|' . $provider->id() . '|' . $product . '|' . mb_strtolower( trim( $message ) ) . '|' . md5( $system ) . '|' . SSC_Setup::connection_fingerprint() );
@@ -182,7 +187,8 @@ class SSC_Chat_Engine {
 		}
 
 		$result = null;
-		if ( is_callable( $on_delta ) && SSC_Stream::provider_supports( $provider ) ) {
+		// Searching answers arrive complete (with citations) over plain HTTP.
+		if ( ! $web && is_callable( $on_delta ) && SSC_Stream::provider_supports( $provider ) ) {
 			$result = SSC_Stream::generate( $provider, $system, $messages, $opts, $on_delta );
 		}
 		if ( null === $result ) {
@@ -204,7 +210,8 @@ class SSC_Chat_Engine {
 			return '';
 		}
 
-		$reply = $result['text'];
+		$reply             = $result['text'];
+		$this->web_sources = isset( $result['sources'] ) && is_array( $result['sources'] ) ? $result['sources'] : array();
 		if ( $cache_enabled && $cache_key && empty( $result['partial'] ) ) {
 			$ttl = (int) apply_filters( 'ssc_ai_cache_ttl', 6 * HOUR_IN_SECONDS );
 			set_transient( $cache_key, $reply, $ttl );
@@ -253,7 +260,7 @@ class SSC_Chat_Engine {
 		);
 		// Citations: the documents the answer was grounded on (AI answers only).
 		if ( $ok && in_array( $source, array( 'ai', 'cache' ), true ) && 'yes' === SSC_Settings::get( 'show_sources', 'yes' ) ) {
-			$out['sources'] = array_slice( SSC_Prompt_Builder::last_sources(), 0, 3 );
+			$out['sources'] = array_slice( array_merge( array_slice( SSC_Prompt_Builder::last_sources(), 0, 3 ), 'ai' === $source ? $this->web_sources : array() ), 0, 6 );
 		}
 
 		if ( $ok && '' !== $reply ) {
@@ -297,6 +304,13 @@ class SSC_Chat_Engine {
 	 * @var string
 	 */
 	protected $current_ip = '';
+
+	/**
+	 * Web pages cited by the last AI answer (web search).
+	 *
+	 * @var array[]
+	 */
+	protected $web_sources = array();
 
 	/**
 	 * Server-side conversation id ('' = none).

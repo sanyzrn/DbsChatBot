@@ -15,6 +15,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SSC_Providers {
 
 	/**
+	 * Will the next answer use the provider's web search tool?
+	 *
+	 * @return bool
+	 */
+	public static function web_search_active() {
+		$provider = self::current();
+		return null !== $provider && SSC_Settings::web_search_enabled() && $provider->supports_web_search();
+	}
+
+	/**
 	 * All registered provider instances (id => object).
 	 *
 	 * @var array

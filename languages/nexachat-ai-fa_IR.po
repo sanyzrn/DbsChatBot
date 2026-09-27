@@ -208,6 +208,9 @@ msgstr "همهٔ انواع"
 msgid "Allowed information sources"
 msgstr "منابع مجاز پاسخ‌گویی"
 
+msgid "Also answers general questions unrelated to your business, like a general-purpose assistant. Every such answer is billed by your AI provider."
+msgstr "مثل یک دستیار همه‌منظوره، به پرسش‌های عمومیِ نامرتبط با کسب‌وکار شما هم پاسخ می‌دهد. هزینهٔ هر کدام از این پاسخ‌ها را ارائه‌دهندهٔ هوش مصنوعی از شما می‌گیرد."
+
 msgid "Also permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?"
 msgstr "همهٔ داده‌های ذخیره‌شده (تنظیمات، دانش، گفتگوها، درخواست‌ها، پرونده‌های عارضه) هم برای همیشه حذف شوند؟"
 
@@ -238,8 +241,17 @@ msgstr "پاسخ حذف شد."
 msgid "Answer priority"
 msgstr "اولویت پاسخ"
 
+msgid "Answer scope"
+msgstr "دامنهٔ پاسخ"
+
 msgid "Answer source"
 msgstr "منبع پاسخ"
+
+msgid "Answers strictly from the business profile, knowledge entries and documents. Anything else gets \"I don't have that information\" and your contact details. Safest; best for regulated content."
+msgstr "فقط از مشخصات کسب‌وکار، موارد دانش و اسناد پاسخ می‌دهد. برای هر چیز دیگر می‌گوید «این اطلاعات را ندارم» و راه‌های تماس شما را معرفی می‌کند. امن‌ترین حالت؛ مناسب محتوای حساس و قانون‌مند."
+
+msgid "Any question"
+msgstr "هر پرسشی"
 
 msgid "Any rating"
 msgstr "هر امتیازی"
@@ -799,6 +811,9 @@ msgstr "نیازمند پیگیری"
 msgid "Font"
 msgstr "قلم"
 
+msgid "For example your own website, to answer from pages you have not imported. Honoured by OpenAI and Claude; Gemini and OpenRouter search the whole web."
+msgstr "مثلاً وب‌سایت خودتان، تا از صفحه‌هایی که وارد نکرده‌اید هم پاسخ دهد. OpenAI و Claude این محدودیت را رعایت می‌کنند؛ Gemini و OpenRouter در کل وب جست‌وجو می‌کنند."
+
 msgid "Form submission is disabled on this site."
 msgstr "ارسال فرم در این سایت غیرفعال است."
 
@@ -843,6 +858,9 @@ msgstr "گفتگوی بدون دست و پاسخ‌های دسترس‌پذیر 
 
 msgid "Hello! 👋"
 msgstr "سلام! 👋"
+
+msgid "Helps with your products, services, orders and support, and can explain general concepts of your industry. Politely declines unrelated requests such as trivia, homework, coding or news."
+msgstr "دربارهٔ محصولات، خدمات، سفارش‌ها و پشتیبانی شما کمک می‌کند و می‌تواند مفاهیم عمومی صنعت شما را توضیح دهد. درخواست‌های نامرتبط مثل اطلاعات عمومی، تکلیف درسی، برنامه‌نویسی یا اخبار را مؤدبانه رد می‌کند."
 
 msgid "Hi! Do you ship internationally?"
 msgstr "سلام! به خارج از کشور هم ارسال دارید؟"
@@ -906,6 +924,9 @@ msgstr "%1$d پاسخ وارد شد (%2$d مورد نادیده گرفته شد)
 
 msgid "Improve answer quality with real conversation evidence, with configurable retention."
 msgstr "بهبود کیفیت پاسخ با شواهد واقعی گفتگو، همراه با مدت نگهداری قابل تنظیم."
+
+msgid "In every mode, facts about your organization (prices, policies, specifications) come only from your knowledge — the assistant never invents them."
+msgstr "در همهٔ حالت‌ها، اطلاعات مربوط به سازمان شما (قیمت‌ها، سیاست‌ها، مشخصات) فقط از دانشی که وارد کرده‌اید گرفته می‌شود — دستیار هرگز آن‌ها را از خودش نمی‌سازد."
 
 msgid "In progress"
 msgstr "در حال انجام"
@@ -999,6 +1020,9 @@ msgstr "چپ‌به‌راست (لاتین)"
 
 msgid "Last 14 days. Only what helps you improve the assistant."
 msgstr "۱۴ روز اخیر؛ فقط آنچه به بهبود دستیار کمک می‌کند."
+
+msgid "Let the assistant search the internet for current, public information"
+msgstr "دستیار بتواند برای اطلاعات به‌روز و عمومی در اینترنت جست‌وجو کند"
 
 msgid "Life-threatening"
 msgstr "تهدیدکنندهٔ حیات"
@@ -1104,6 +1128,9 @@ msgstr "ماژول‌ها"
 
 msgid "Most-discussed products"
 msgstr "پرتکرارترین محصولات در گفتگو"
+
+msgid "My business and its field (recommended)"
+msgstr "کسب‌وکار من و حوزهٔ آن (توصیه‌شده)"
 
 msgid "Name"
 msgstr "نام"
@@ -1233,6 +1260,9 @@ msgstr "فقط فایل‌های ‎.csv، ‎.json و ‎.txt قابل ورود
 
 msgid "Only .txt, .md, .csv and .json files can be imported."
 msgstr "فقط فایل‌های ‎.txt، ‎.md، ‎.csv و ‎.json قابل ورود هستند."
+
+msgid "Only from my knowledge"
+msgstr "فقط از دانش من"
 
 msgid "Only these paths"
 msgstr "فقط این مسیرها"
@@ -1543,6 +1573,9 @@ msgstr "حذف توکن ذخیره‌شده"
 msgid "Replace all answers"
 msgstr "جایگزینی همهٔ پاسخ‌ها"
 
+msgid "Reply to unrelated questions (optional)"
+msgstr "پاسخ به پرسش‌های نامرتبط (اختیاری)"
+
 msgid "Report a side effect"
 msgstr "گزارش عارضهٔ دارویی"
 
@@ -1662,6 +1695,9 @@ msgstr "جست‌وجوی ماژول‌ها…"
 
 msgid "Search name or text…"
 msgstr "جست‌وجوی نام یا متن…"
+
+msgid "Search only these sites (optional, one domain per line)"
+msgstr "جست‌وجو فقط در این سایت‌ها (اختیاری، هر دامنه در یک خط)"
 
 msgid "Search settings saved."
 msgstr "تنظیمات جست‌وجو ذخیره شد."
@@ -1939,6 +1975,9 @@ msgstr "صفحه وارد نشد (نشانی را بررسی کنید یا بع�
 msgid "The page is fetched once, now, because you asked for it — its readable text becomes reference knowledge."
 msgstr "صفحه فقط یک بار و همین حالا، به درخواست شما دریافت می‌شود — متن قابل‌خواندن آن به دانش مرجع تبدیل می‌شود."
 
+msgid "The pharmaceutical module is active: its answer policy (Settings → Privacy) decides the scope, unrelated topics are always declined, and web search is off."
+msgstr "ماژول دارویی فعال است: دامنهٔ پاسخ را سیاست پاسخ دارویی (تنظیمات ← حریم خصوصی) تعیین می‌کند، پرسش‌های نامرتبط همیشه رد می‌شوند و جست‌وجوی اینترنتی خاموش است."
+
 msgid "The provider is not available from your server region or the account is region-restricted."
 msgstr "ارائه‌دهنده از منطقهٔ سرور شما در دسترس نیست یا حساب محدودیت منطقه‌ای دارد."
 
@@ -1974,6 +2013,9 @@ msgstr "رمز رمزنگاری نشد (OpenSSL در دسترس نیست یا AU
 
 msgid "The selected model is not available for this account or does not exist. Pick another model or enter the model ID manually."
 msgstr "مدل انتخاب‌شده برای این حساب در دسترس نیست یا وجود ندارد. مدل دیگری انتخاب کنید یا شناسهٔ مدل را دستی وارد کنید."
+
+msgid "The selected provider has no web search tool, so this option has no effect."
+msgstr "ارائه‌دهندهٔ انتخاب‌شده ابزار جست‌وجوی اینترنتی ندارد، بنابراین این گزینه اثری ندارد."
 
 msgid "The server could not reach the provider (network or provider outage). Try again later."
 msgstr "سرور نتوانست به ارائه‌دهنده دسترسی پیدا کند (قطعی شبکه یا سرویس). بعداً دوباره تلاش کنید."
@@ -2092,6 +2134,12 @@ msgstr "به‌روزرسانی شد."
 msgid "Upload file"
 msgstr "بارگذاری فایل"
 
+msgid "Used when a question is outside the chosen scope. Empty = a short, friendly reply written by the assistant in the visitor's language."
+msgstr "وقتی پرسش خارج از دامنهٔ انتخاب‌شده باشد استفاده می‌شود. خالی = پاسخی کوتاه و دوستانه که دستیار به زبان بازدیدکننده می‌نویسد."
+
+msgid "Uses your provider's built-in search (OpenAI, Claude, Gemini, OpenRouter; not available for custom endpoints or webhooks). The provider bills searches separately. Searched answers are not streamed or cached, and the pages used are listed under the answer. Your own knowledge always wins over web results. Not used in \"Only from my knowledge\" mode."
+msgstr "از جست‌وجوی داخلی ارائه‌دهنده استفاده می‌کند (OpenAI، Claude، Gemini، OpenRouter؛ برای endpoint سفارشی و وب‌هوک در دسترس نیست). ارائه‌دهنده هزینهٔ جست‌وجو را جداگانه حساب می‌کند. پاسخ‌هایی که با جست‌وجو تولید می‌شوند استریم و کش نمی‌شوند و صفحه‌های استفاده‌شده زیر پاسخ فهرست می‌شوند. دانش خود شما همیشه بر نتایج وب مقدم است. در حالت «فقط از دانش من» استفاده نمی‌شود."
+
 msgid "Value"
 msgstr "مقدار"
 
@@ -2134,6 +2182,9 @@ msgstr "ماژول صوت"
 msgid "We are currently away. Leave a message and we will get back to you during business hours."
 msgstr "اکنون خارج از ساعات پاسخ‌گویی هستیم. پیام بگذارید تا در ساعات کاری پیگیری کنیم."
 
+msgid "Web search"
+msgstr "جست‌وجوی اینترنتی"
+
 msgid "Webhook URL"
 msgstr "نشانی وب‌هوک"
 
@@ -2166,6 +2217,9 @@ msgstr "چه چیزی شما را متمایز می‌کند؟"
 
 msgid "What should the assistant know?"
 msgstr "دستیار چه چیزهایی باید بداند؟"
+
+msgid "What the assistant may answer"
+msgstr "دستیار به چه پرسش‌هایی پاسخ دهد"
 
 msgid "When a visitor asks about a product, its summary and attributes are injected into the answer context."
 msgstr "وقتی بازدیدکننده دربارهٔ محصولی می‌پرسد، خلاصه و ویژگی‌های آن به زمینهٔ پاسخ اضافه می‌شود."
@@ -2226,6 +2280,9 @@ msgstr "نشست شما منقضی شده است. صفحه را تازه کنی�
 
 msgid "e.g. Customer support specialist"
 msgstr "مثلاً کارشناس پشتیبانی مشتریان"
+
+msgid "e.g. I can only help with questions about our products and services. For anything else, please contact us."
+msgstr "مثلاً: من فقط دربارهٔ محصولات و خدمات ما می‌توانم کمک کنم. برای موارد دیگر لطفاً با ما تماس بگیرید."
 
 msgid "e.g. Pharmaceutical, E-commerce"
 msgstr "مثلاً داروسازی، فروشگاه اینترنتی"

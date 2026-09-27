@@ -954,7 +954,7 @@
                 var i18n = cfg.i18n || {};
                 var wrap = el('div', 'ssc-sources');
                 wrap.appendChild(el('span', 'ssc-sources__label', esc(i18n.sources || 'Sources:')));
-                sources.slice(0, 3).forEach(function (src) {
+                sources.slice(0, 6).forEach(function (src) {
                         if (!src || !src.title) { return; }
                         var item;
                         if (src.url && /^https?:\/\//.test(src.url)) {

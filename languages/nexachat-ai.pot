@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-27 06:03:49+00:00\n"
+"POT-Creation-Date: 2026-09-27 10:15:39+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -485,79 +485,151 @@ msgstr ""
 msgid "Test connection"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:131
-msgid "Advanced engine options"
+#: includes/admin/views/page-connection.php:132
+msgid "What the assistant may answer"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:134
-msgid "Answer priority"
+#: includes/admin/views/page-connection.php:133
+msgid "In every mode, facts about your organization (prices, policies, specifications) come only from your knowledge — the assistant never invents them."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:136
-msgid "AI first, FAQ bank as fallback"
-msgstr ""
-
-#: includes/admin/views/page-connection.php:137
-msgid "FAQ bank first, AI as fallback"
+#: includes/admin/views/page-connection.php:135
+msgid "The pharmaceutical module is active: its answer policy (Settings → Privacy) decides the scope, unrelated topics are always declined, and web search is off."
 msgstr ""
 
 #: includes/admin/views/page-connection.php:138
-msgid "FAQ bank only"
+msgid "Answer scope"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:141
+msgid "Only from my knowledge"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:141
+msgid "Answers strictly from the business profile, knowledge entries and documents. Anything else gets \"I don't have that information\" and your contact details. Safest; best for regulated content."
 msgstr ""
 
 #: includes/admin/views/page-connection.php:142
-msgid "Creativity (temperature)"
+msgid "My business and its field (recommended)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:144
-msgid "0.1 — very precise"
+#: includes/admin/views/page-connection.php:142
+msgid "Helps with your products, services, orders and support, and can explain general concepts of your industry. Politely declines unrelated requests such as trivia, homework, coding or news."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:144
-msgid "0.4 — balanced"
+#: includes/admin/views/page-connection.php:143
+msgid "Any question"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:144
-msgid "0.7 — creative"
-msgstr ""
-
-#: includes/admin/views/page-connection.php:144
-msgid "1 — maximum creativity"
-msgstr ""
-
-#: includes/admin/views/page-connection.php:150
-msgid "Max answer length"
+#: includes/admin/views/page-connection.php:143
+msgid "Also answers general questions unrelated to your business, like a general-purpose assistant. Every such answer is billed by your AI provider."
 msgstr ""
 
 #: includes/admin/views/page-connection.php:154
-msgid "Conversation memory (messages)"
+msgid "Reply to unrelated questions (optional)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:158
-msgid "Retrieved knowledge chunks per answer"
+#: includes/admin/views/page-connection.php:155
+msgid "e.g. I can only help with questions about our products and services. For anything else, please contact us."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:156
+msgid "Used when a question is outside the chosen scope. Empty = a short, friendly reply written by the assistant in the visitor's language."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:159
+msgid "Web search"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:160
+msgid "Let the assistant search the internet for current, public information"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:161
+msgid "Uses your provider's built-in search (OpenAI, Claude, Gemini, OpenRouter; not available for custom endpoints or webhooks). The provider bills searches separately. Searched answers are not streamed or cached, and the pages used are listed under the answer. Your own knowledge always wins over web results. Not used in \"Only from my knowledge\" mode."
 msgstr ""
 
 #: includes/admin/views/page-connection.php:162
-msgid "Strict mode — answer only from your knowledge"
+msgid "The selected provider has no web search tool, so this option has no effect."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:163
-msgid "Cache identical questions (6 hours, faster + cheaper)"
-msgstr ""
-
-#: includes/admin/views/page-connection.php:165
-msgid "Extra instructions for the assistant"
+#: includes/admin/views/page-connection.php:164
+msgid "Search only these sites (optional, one domain per line)"
 msgstr ""
 
 #: includes/admin/views/page-connection.php:166
+msgid "For example your own website, to answer from pages you have not imported. Honoured by OpenAI and Claude; Gemini and OpenRouter search the whole web."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:171
+msgid "Advanced engine options"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:174
+msgid "Answer priority"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:176
+msgid "AI first, FAQ bank as fallback"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:177
+msgid "FAQ bank first, AI as fallback"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:178
+msgid "FAQ bank only"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:182
+msgid "Creativity (temperature)"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:184
+msgid "0.1 — very precise"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:184
+msgid "0.4 — balanced"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:184
+msgid "0.7 — creative"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:184
+msgid "1 — maximum creativity"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:190
+msgid "Max answer length"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:194
+msgid "Conversation memory (messages)"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:198
+msgid "Retrieved knowledge chunks per answer"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:202
+msgid "Cache identical questions (6 hours, faster + cheaper)"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:204
+msgid "Extra instructions for the assistant"
+msgstr ""
+
+#: includes/admin/views/page-connection.php:205
 msgid "Optional business-specific rules…"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:169
+#: includes/admin/views/page-connection.php:208
 msgid "Offline message (when nothing can answer)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:175
+#: includes/admin/views/page-connection.php:214
 msgid "Save connection"
 msgstr ""
 
@@ -1020,7 +1092,7 @@ msgstr ""
 
 #: includes/admin/views/page-knowledge.php:107
 #: includes/admin/views/wizard.php:216
-#: includes/core/class-ssc-schema.php:439
+#: includes/core/class-ssc-schema.php:440
 msgid "General"
 msgstr ""
 
@@ -1350,7 +1422,7 @@ msgstr ""
 
 #: includes/admin/views/page-requests.php:57
 #: includes/admin/views/pharma-case.php:39
-#: includes/core/class-ssc-settings.php:923
+#: includes/core/class-ssc-settings.php:995
 msgid "Phone"
 msgstr ""
 
@@ -2306,7 +2378,7 @@ msgstr ""
 msgid "We are currently away. Leave a message and we will get back to you during business hours."
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:225
+#: includes/core/class-ssc-chat-engine.php:232
 msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
 msgstr ""
 
@@ -2377,8 +2449,8 @@ msgid "Which one?"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:266
-#: includes/core/class-ssc-schema.php:410
-#: includes/core/class-ssc-schema.php:434
+#: includes/core/class-ssc-schema.php:411
+#: includes/core/class-ssc-schema.php:435
 msgid "Consultation request"
 msgstr ""
 
@@ -2591,19 +2663,19 @@ msgstr ""
 msgid "Server conversation history is optional and follows the configured retention policy. Outside pharmaceutical mode, the browser may keep a short-lived conversation and the server may cache answers. In pharmaceutical mode these two caches are disabled; submitted safety reports are still stored for review. Deleting a browser conversation does not delete server records. Contact the site owner about access or deletion requests."
 msgstr ""
 
-#: includes/core/class-ssc-provider.php:160
+#: includes/core/class-ssc-provider.php:202
 msgid "No model selected."
 msgstr ""
 
-#: includes/core/class-ssc-provider.php:213
+#: includes/core/class-ssc-provider.php:255
 msgid "The provider replied 200 but no generated text was found in the response."
 msgstr ""
 
-#: includes/core/class-ssc-provider.php:260
+#: includes/core/class-ssc-provider.php:303
 msgid "No API key provided."
 msgstr ""
 
-#: includes/core/class-ssc-providers.php:62
+#: includes/core/class-ssc-providers.php:72
 msgid "No AI engine (offline answers only)"
 msgstr ""
 
@@ -2643,44 +2715,44 @@ msgstr ""
 msgid "The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again."
 msgstr ""
 
-#: includes/core/class-ssc-schema.php:433
+#: includes/core/class-ssc-schema.php:434
 #: includes/modules/class-ssc-module-pharma.php:152
 msgid "Adverse drug reaction report"
 msgstr ""
 
-#: includes/core/class-ssc-schema.php:618
+#: includes/core/class-ssc-schema.php:619
 msgid "Submission deleted"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:921
+#: includes/core/class-ssc-settings.php:993
 msgid "Short text"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:922
+#: includes/core/class-ssc-settings.php:994
 msgid "Long text"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:924
+#: includes/core/class-ssc-settings.php:996
 msgid "Email"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:925
+#: includes/core/class-ssc-settings.php:997
 msgid "Number"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:926
+#: includes/core/class-ssc-settings.php:998
 msgid "Dropdown"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:927
+#: includes/core/class-ssc-settings.php:999
 msgid "Single choice"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:928
+#: includes/core/class-ssc-settings.php:1000
 msgid "Checkbox"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1002
+#: includes/core/class-ssc-settings.php:1074
 msgid "About the organization"
 msgstr ""
 
@@ -2716,7 +2788,7 @@ msgstr ""
 msgid "OpenAI-compatible endpoint"
 msgstr ""
 
-#: includes/core/providers/class-ssc-provider-gemini.php:173
+#: includes/core/providers/class-ssc-provider-gemini.php:206
 msgid "The model blocked the test prompt for safety reasons."
 msgstr ""
 

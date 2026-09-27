@@ -102,7 +102,13 @@ class SSC_Settings {
 			'ai_max_tokens'              => 800,
 			'ai_history_limit'           => 8,
 			'ai_system_prompt_extra'     => '',
-			'ai_strict_knowledge'        => 'no',
+			'ai_strict_knowledge'        => 'no', // Legacy (pre-1.2): migrated into answer_scope.
+			// What the assistant may talk about: knowledge | business | open.
+			'answer_scope'               => 'business',
+			'off_topic_message'          => '',
+			// Provider-native web search (Claude, OpenAI, Gemini, OpenRouter).
+			'web_search'                 => 'no',
+			'web_search_domains'         => '', // Optional allow-list, one domain per line.
 			'ai_fallback_msg'            => '',
 			'ai_cache_enabled'           => 'yes',
 			'pharma_answer_mode'         => 'approved_only',
@@ -568,6 +574,7 @@ class SSC_Settings {
 			case 'streaming_enabled':
 			case 'kb_semantic':
 			case 'show_sources':
+			case 'web_search':
 				return ( 'yes' === $value || '1' === (string) $value || true === $value ) ? 'yes' : 'no';
 
 			case 'ai_provider':
@@ -588,6 +595,15 @@ class SSC_Settings {
 
 			case 'ip_storage':
 				return in_array( $value, array( 'anonymize', 'full', 'none' ), true ) ? $value : 'anonymize';
+
+			case 'answer_scope':
+				return in_array( $value, array( 'knowledge', 'business', 'open' ), true ) ? $value : 'business';
+
+			case 'off_topic_message':
+				return sanitize_textarea_field( (string) $value );
+
+			case 'web_search_domains':
+				return implode( "\n", self::parse_domains( $value ) );
 
 			case 'proactive_trigger':
 				return in_array( $value, array( 'delay', 'scroll', 'exit' ), true ) ? $value : 'delay';
@@ -696,6 +712,62 @@ class SSC_Settings {
 				// Text keys inside the business bucket are handled by sanitize_business().
 				return sanitize_text_field( (string) $value );
 		}
+	}
+
+	/**
+	 * Normalize a domain allow-list ("https://www.Example.com/x" -> "example.com").
+	 *
+	 * @param mixed $value Newline/comma separated list.
+	 * @return string[]
+	 */
+	public static function parse_domains( $value ) {
+		$out = array();
+		foreach ( preg_split( '/[\s,]+/', strtolower( (string) $value ) ) as $item ) {
+			$item = preg_replace( '#^[a-z]+://#', '', trim( $item ) );
+			$item = preg_replace( '#[/?\#].*$#', '', $item );
+			$item = preg_replace( '/^www\./', '', $item );
+			if ( '' !== $item && preg_match( '/^[a-z0-9-]+(\.[a-z0-9-]+)+$/', $item ) ) {
+				$out[ $item ] = true;
+			}
+		}
+		return array_slice( array_keys( $out ), 0, 20 );
+	}
+
+	/**
+	 * Effective answer scope. The pharmaceutical policy wins while its module
+	 * is active and never allows unrestricted topics.
+	 *
+	 * @return string knowledge | business | open
+	 */
+	public static function answer_scope() {
+		if ( SSC_Modules::is_active( 'pharma' ) ) {
+			return 'approved_only' === self::get( 'pharma_answer_mode', 'approved_only' ) ? 'knowledge' : 'business';
+		}
+		return self::sanitize_value( 'answer_scope', self::get( 'answer_scope', 'business' ) );
+	}
+
+	/**
+	 * Is web search allowed right now? Never in knowledge-only scope or
+	 * pharmaceutical mode (answers there must come from approved content).
+	 *
+	 * @return bool
+	 */
+	public static function web_search_enabled() {
+		return 'yes' === self::get( 'web_search', 'no' ) && 'knowledge' !== self::answer_scope() && ! SSC_Modules::is_active( 'pharma' );
+	}
+
+	/**
+	 * Pre-1.2 installs: keep their behaviour. Strict mode becomes the
+	 * knowledge-only scope; everyone else stays unrestricted ("open"), which
+	 * is what they had. New installs get the "business" default.
+	 */
+	public static function migrate_answer_scope() {
+		$saved = get_option( self::OPTION_KEY, array() );
+		if ( ! is_array( $saved ) || isset( $saved['answer_scope'] ) || empty( $saved ) ) {
+			return;
+		}
+		$scope = ( isset( $saved['ai_strict_knowledge'] ) && 'yes' === $saved['ai_strict_knowledge'] ) ? 'knowledge' : 'open';
+		self::update( array( 'answer_scope' => $scope ) );
 	}
 
 	/**

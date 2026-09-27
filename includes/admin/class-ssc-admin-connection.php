@@ -47,12 +47,21 @@ class SSC_Admin_Connection {
 			'ai_temperature' => isset( $_POST['ai_temperature'] ) ? SSC_Settings::sanitize_value( 'ai_temperature', wp_unslash( $_POST['ai_temperature'] ) ) : '0.4',
 			'ai_max_tokens'  => isset( $_POST['ai_max_tokens'] ) ? SSC_Settings::clamp_int( 'ai_max_tokens', wp_unslash( $_POST['ai_max_tokens'] ) ) : 800,
 			'ai_history_limit' => isset( $_POST['ai_history_limit'] ) ? max( 0, min( 20, (int) $_POST['ai_history_limit'] ) ) : 8,
-			'ai_strict_knowledge' => isset( $_POST['ai_strict_knowledge'] ) ? 'yes' : 'no',
+			'web_search' => isset( $_POST['web_search'] ) ? 'yes' : 'no',
+			'web_search_domains' => isset( $_POST['web_search_domains'] ) ? SSC_Settings::sanitize_value( 'web_search_domains', wp_unslash( $_POST['web_search_domains'] ) ) : '', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize_value().
+			'off_topic_message' => isset( $_POST['off_topic_message'] ) ? SSC_Settings::sanitize_value( 'off_topic_message', wp_unslash( $_POST['off_topic_message'] ) ) : '', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize_value().
 			'ai_cache_enabled' => isset( $_POST['ai_cache_enabled'] ) ? 'yes' : 'no',
 			'ai_system_prompt_extra' => isset( $_POST['ai_system_prompt_extra'] ) ? wp_kses_post( wp_unslash( $_POST['ai_system_prompt_extra'] ) ) : '',
 			'ai_fallback_msg' => isset( $_POST['ai_fallback_msg'] ) ? wp_kses_post( wp_unslash( $_POST['ai_fallback_msg'] ) ) : '',
 			'kb_max_chunks' => isset( $_POST['kb_max_chunks'] ) ? max( 1, min( 8, (int) $_POST['kb_max_chunks'] ) ) : 3,
 		);
+		// Radio group is disabled (not posted) while the pharma policy owns the scope.
+		if ( isset( $_POST['answer_scope'] ) ) {
+			$patch['answer_scope'] = SSC_Settings::sanitize_value( 'answer_scope', sanitize_key( wp_unslash( $_POST['answer_scope'] ) ) );
+		}
+		if ( SSC_Modules::is_active( 'pharma' ) ) {
+			unset( $patch['web_search'] );
+		}
 		$posted = wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each model id sanitized in model_from_request().
 		foreach ( array( 'openai', 'gemini', 'claude', 'openrouter', 'custom' ) as $pid ) {
 			$model = SSC_Providers::model_from_request( $posted, $pid );

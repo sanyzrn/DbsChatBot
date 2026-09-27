@@ -87,6 +87,19 @@ class SSC_Provider_Claude extends SSC_Provider {
 		if ( 0 === strpos( (string) $model, 'claude-3' ) && isset( $opts['temperature'] ) ) {
 			$body['temperature'] = (float) $opts['temperature'];
 		}
+		if ( ! empty( $opts['web_search'] ) ) {
+			// Server-side web search tool: Anthropic runs the searches and
+			// returns cited text blocks in the same response.
+			$tool = array(
+				'type'     => 'web_search_20250305',
+				'name'     => 'web_search',
+				'max_uses' => 3,
+			);
+			if ( ! empty( $opts['search_domains'] ) ) {
+				$tool['allowed_domains'] = array_values( (array) $opts['search_domains'] );
+			}
+			$body['tools'] = array( apply_filters( 'ssc_claude_web_search_tool', $tool ) );
+		}
 
 		return array(
 			'url'         => 'https://api.anthropic.com/v1/messages',
@@ -116,6 +129,38 @@ class SSC_Provider_Claude extends SSC_Provider {
 			return trim( $text );
 		}
 		return '';
+	}
+
+	/**
+	 * Anthropic's server-side web search tool.
+	 *
+	 * @return bool
+	 */
+	public function supports_web_search() {
+		return true;
+	}
+
+	/**
+	 * Pages cited in text blocks (PURE).
+	 *
+	 * @param array $data Decoded response.
+	 * @return array[]
+	 */
+	public function extract_sources( $data ) {
+		$sources = array();
+		foreach ( isset( $data['content'] ) && is_array( $data['content'] ) ? $data['content'] : array() as $block ) {
+			if ( isset( $block['citations'] ) && is_array( $block['citations'] ) ) {
+				foreach ( $block['citations'] as $cite ) {
+					if ( isset( $cite['url'] ) ) {
+						$sources[] = array(
+							'title' => isset( $cite['title'] ) ? $cite['title'] : '',
+							'url'   => $cite['url'],
+						);
+					}
+				}
+			}
+		}
+		return self::clean_sources( $sources );
 	}
 
 	/**
