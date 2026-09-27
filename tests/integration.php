@@ -351,5 +351,21 @@ check( array( 'گارانتی' => 'دو سال', 'Dose' => '10 mg' ) === $saved_
 update_option( SSC_Settings::OPTION_KEY, $settings_before );
 update_option( SSC_Modules::OPTION, $modules_before );
 SSC_Settings::update( array() );
+
+// Translations: the bundled catalog must load with the classic MO reader
+// (WordPress < 6.5 uses nothing else), and the widget language must be
+// independent of the site language.
+$classic_mo = new MO();
+check( $classic_mo->import_from_file( SSC_CHATBOT_DIR . 'languages/nexachat-ai-fa_IR.mo' ) && 'منوی اصلی' === $classic_mo->translate( 'Main menu' ), 'Persian catalog loads with the classic MO reader' );
+check( 'fa_IR' === SSC_I18n::locale_from_language( 'فارسی' ) && 'fa_IR' === SSC_I18n::locale_from_language( 'fa-IR' ) && 'en_US' === SSC_I18n::locale_from_language( 'English' ) && '' === SSC_I18n::locale_from_language( 'Deutsch' ), 'Answer-language names map to widget locales' );
+$widget_language_before = SSC_Settings::get( 'widget_language', 'auto' );
+SSC_Settings::update( array( 'widget_language' => 'fa_IR' ) );
+$widget_active = SSC_I18n::use_widget_locale();
+$widget_fa     = __( 'Main menu', 'nexachat-ai' );
+SSC_I18n::restore();
+$widget_clean = false === has_filter( 'gettext_nexachat-ai', array( 'SSC_I18n', 'gettext' ) );
+SSC_Settings::update( array( 'widget_language' => $widget_language_before ) );
+check( $widget_active && 'منوی اصلی' === $widget_fa && $widget_clean, 'Widget language overrides the English site language, and only while active' );
+
 require __DIR__ . '/notification-queue.php';
 echo "\n$checks integration checks passed.\n";

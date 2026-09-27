@@ -81,7 +81,12 @@ class SSC_Frontend {
 		$this->register_assets();
 		wp_enqueue_style( 'nexachat-ai' );
 		wp_enqueue_script( 'nexachat-ai' );
-		$config = $this->build_config();
+		// The preview speaks the widget language, like the live widget.
+		$switched = SSC_I18n::use_widget_locale();
+		$config   = $this->build_config();
+		if ( $switched ) {
+			SSC_I18n::restore();
+		}
 		$config = array_merge(
 			$config,
 			array(
@@ -218,13 +223,8 @@ class SSC_Frontend {
 		if ( 'rtl' === $setting || 'ltr' === $setting ) {
 			return $setting;
 		}
-		// auto: follow the site locale, preferring WordPress's own RTL flag.
-		if ( function_exists( 'is_rtl' ) && is_rtl() ) {
-			return 'rtl';
-		}
-		$locale = strtolower( (string) get_locale() );
-		$prefix = substr( $locale, 0, 2 );
-		return in_array( $prefix, array( 'fa', 'ar', 'he', 'ur', 'ps', 'ug', 'yi', 'ku', 'sd', 'dv' ), true ) ? 'rtl' : 'ltr';
+		// auto: follow the widget language (which itself follows the site by default).
+		return SSC_I18n::is_rtl_locale( SSC_I18n::widget_locale() ) ? 'rtl' : 'ltr';
 	}
 
 	/**
