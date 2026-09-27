@@ -326,6 +326,28 @@ check( 'Opening hours changed today.' === $reply['reply'] && 'https://acme.examp
 $engine->chat( 'Any news today?', 'general', array() );
 check( 2 === $web_calls, 'Web-searched answers are never served from the answer cache' );
 remove_filter( 'pre_http_request', $mock_web, 30 );
+
+// Product attributes: the form posts a flat name/value list, and Persian names must survive.
+$_POST    = array(
+    '_wpnonce'           => wp_create_nonce( 'ssc_knowledge' ),
+    'ssc_knowledge_save' => '1',
+    'products'           => array( array( 'id' => '', 'name' => 'قرص الف', 'summary' => 'x' ) ),
+    'product_attributes' => array( array( 'گارانتی', 'دو سال', 'Dose', '10 mg', '', 'orphan value' ) ),
+);
+$_REQUEST = $_POST;
+$stop     = function () { throw new RuntimeException( 'redirect' ); };
+add_filter( 'wp_redirect', $stop );
+try {
+    ( new ReflectionClass( 'SSC_Admin_Knowledge' ) )->newInstanceWithoutConstructor()->handle_actions();
+} catch ( RuntimeException $e ) {
+    unset( $e );
+}
+remove_filter( 'wp_redirect', $stop );
+$_POST    = array();
+$_REQUEST = array();
+$saved_products = SSC_Settings::get( 'products', array() );
+check( array( 'گارانتی' => 'دو سال', 'Dose' => '10 mg' ) === $saved_products[0]['attributes'], 'Product attributes are saved from the flat form list, Persian names included' );
+
 update_option( SSC_Settings::OPTION_KEY, $settings_before );
 update_option( SSC_Modules::OPTION, $modules_before );
 SSC_Settings::update( array() );

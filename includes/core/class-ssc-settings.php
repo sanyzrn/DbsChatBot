@@ -848,7 +848,8 @@ class SSC_Settings {
 					$attrs = array();
 					if ( isset( $p['attributes'] ) && is_array( $p['attributes'] ) ) {
 						foreach ( $p['attributes'] as $ak => $av ) {
-							$ak = sanitize_key( $ak );
+							// sanitize_text_field, not sanitize_key: Persian names must survive.
+							$ak = sanitize_text_field( (string) $ak );
 							$av = sanitize_text_field( (string) $av );
 							if ( '' !== $ak && '' !== $av ) {
 								$attrs[ $ak ] = $av;

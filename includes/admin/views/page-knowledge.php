@@ -121,32 +121,45 @@ $kb_state = isset( $_GET['kb'] ) ? sanitize_key( wp_unslash( $_GET['kb'] ) ) : '
 		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Products & services', 'nexachat-ai' ); ?></h2>
 			<p class="ssc-card__sub"><?php esc_html_e( 'When a visitor asks about a product, its summary and attributes are injected into the answer context.', 'nexachat-ai' ); ?></p>
-			<div id="ssc-product-list" class="ssc-products">
-				<?php if ( $products ) : ?>
-					<?php foreach ( $products as $i => $p ) : ?>
-						<div class="ssc-product">
-							<div class="ssc-ki__row">
-								<input type="hidden" name="products[<?php echo esc_attr( (string) $i ); ?>][id]" value="<?php echo esc_attr( isset( $p['id'] ) ? $p['id'] : '' ); ?>" />
-								<input type="text" name="products[<?php echo esc_attr( (string) $i ); ?>][name]" value="<?php echo esc_attr( isset( $p['name'] ) ? $p['name'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Product / service name', 'nexachat-ai' ); ?>" />
-								<input type="url" name="products[<?php echo esc_attr( (string) $i ); ?>][brochure]" dir="ltr" value="<?php echo esc_attr( isset( $p['brochure'] ) ? $p['brochure'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Brochure link (optional)', 'nexachat-ai' ); ?>" />
-								<input type="url" name="products[<?php echo esc_attr( (string) $i ); ?>][image]" dir="ltr" value="<?php echo esc_attr( isset( $p['image'] ) ? $p['image'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Image URL (optional)', 'nexachat-ai' ); ?>" />
-								<button type="button" class="ssc-ki__remove" aria-label="<?php esc_attr_e( 'Remove product', 'nexachat-ai' ); ?>">×</button>
-							</div>
-							<textarea name="products[<?php echo esc_attr( (string) $i ); ?>][summary]" rows="2" placeholder="<?php esc_attr_e( 'What is it, key facts, terms…', 'nexachat-ai' ); ?>"><?php echo esc_textarea( isset( $p['summary'] ) ? $p['summary'] : '' ); ?></textarea>
-							<div class="ssc-product__attrs">
-								<?php $attrs = ! empty( $p['attributes'] ) && is_array( $p['attributes'] ) ? $p['attributes'] : array( '' => '' ); ?>
-								<?php foreach ( $attrs as $ak => $av ) : ?>
-									<div class="ssc-product__attrrow">
-										<input type="text" name="product_attributes[<?php echo esc_attr( (string) $i ); ?>][]" value="<?php echo esc_attr( $ak ); ?>" placeholder="<?php esc_attr_e( 'Attribute (e.g. warranty)', 'nexachat-ai' ); ?>" />
-										<input type="text" name="product_attributes[<?php echo esc_attr( (string) $i ); ?>][]" value="<?php echo esc_attr( $av ); ?>" placeholder="<?php esc_attr_e( 'Value', 'nexachat-ai' ); ?>" />
-									</div>
-								<?php endforeach; ?>
-							</div>
+			<?php
+			/*
+			 * One product row. Also rendered blank into a <template>, so "Add product"
+			 * works when the list is still empty (there is no row to copy yet).
+			 */
+			$ssc_product_row = function ( $i, $p ) {
+				?>
+			<div class="ssc-product">
+				<div class="ssc-ki__row">
+					<input type="hidden" name="products[<?php echo esc_attr( (string) $i ); ?>][id]" value="<?php echo esc_attr( isset( $p['id'] ) ? $p['id'] : '' ); ?>" />
+					<input type="text" name="products[<?php echo esc_attr( (string) $i ); ?>][name]" value="<?php echo esc_attr( isset( $p['name'] ) ? $p['name'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Product / service name', 'nexachat-ai' ); ?>" />
+					<input type="url" name="products[<?php echo esc_attr( (string) $i ); ?>][brochure]" dir="ltr" value="<?php echo esc_attr( isset( $p['brochure'] ) ? $p['brochure'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Brochure link (optional)', 'nexachat-ai' ); ?>" />
+					<input type="url" name="products[<?php echo esc_attr( (string) $i ); ?>][image]" dir="ltr" value="<?php echo esc_attr( isset( $p['image'] ) ? $p['image'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Image URL (optional)', 'nexachat-ai' ); ?>" />
+					<button type="button" class="ssc-ki__remove" aria-label="<?php esc_attr_e( 'Remove product', 'nexachat-ai' ); ?>">×</button>
+				</div>
+				<textarea name="products[<?php echo esc_attr( (string) $i ); ?>][summary]" rows="2" placeholder="<?php esc_attr_e( 'What is it, key facts, terms…', 'nexachat-ai' ); ?>"><?php echo esc_textarea( isset( $p['summary'] ) ? $p['summary'] : '' ); ?></textarea>
+				<div class="ssc-product__attrs">
+					<?php $attrs = ! empty( $p['attributes'] ) && is_array( $p['attributes'] ) ? $p['attributes'] : array( '' => '' ); ?>
+					<?php foreach ( $attrs as $ak => $av ) : ?>
+						<div class="ssc-product__attrrow">
+							<input type="text" name="product_attributes[<?php echo esc_attr( (string) $i ); ?>][]" value="<?php echo esc_attr( $ak ); ?>" placeholder="<?php esc_attr_e( 'Attribute (e.g. warranty)', 'nexachat-ai' ); ?>" />
+							<input type="text" name="product_attributes[<?php echo esc_attr( (string) $i ); ?>][]" value="<?php echo esc_attr( $av ); ?>" placeholder="<?php esc_attr_e( 'Value', 'nexachat-ai' ); ?>" />
 						</div>
 					<?php endforeach; ?>
-				<?php endif; ?>
+				</div>
+				<button type="button" class="ssc-btn ssc-btn--ghost ssc-btn--sm ssc-product__attradd"><?php esc_html_e( '+ Add attribute', 'nexachat-ai' ); ?></button>
 			</div>
-			<button type="button" class="ssc-btn ssc-btn--ghost ssc-product__add" data-target="#ssc-product-list"><?php esc_html_e( '+ Add product', 'nexachat-ai' ); ?></button>
+				<?php
+			};
+			?>
+			<div id="ssc-product-list" class="ssc-products">
+				<?php
+				foreach ( $products as $i => $p ) {
+					$ssc_product_row( $i, $p );
+				}
+				?>
+			</div>
+			<template id="ssc-product-template"><?php $ssc_product_row( 0, array() ); ?></template>
+			<button type="button" class="ssc-btn ssc-btn--ghost ssc-product__add" data-target="#ssc-product-list" data-template="#ssc-product-template"><?php esc_html_e( '+ Add product', 'nexachat-ai' ); ?></button>
 		</section>
 
 		<div class="ssc-form__actions">

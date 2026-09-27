@@ -81,10 +81,25 @@ class SSC_Admin_Knowledge {
 						'attributes' => array(),
 					);
 					// Flexible attributes (key:value rows per product).
+					// The form posts a flat list (name, value, name, value…); array
+					// pairs with key/value are accepted too.
 					if ( isset( $attributes[ $i ] ) && is_array( $attributes[ $i ] ) ) {
-						foreach ( $attributes[ $i ] as $pair ) {
-							if ( is_array( $pair ) && ! empty( $pair['key'] ) && ! empty( $pair['value'] ) ) {
-								$entry['attributes'][ sanitize_key( $pair['key'] ) ] = sanitize_text_field( $pair['value'] );
+						$flat  = array_values( $attributes[ $i ] );
+						$pairs = array();
+						for ( $n = 0, $count = count( $flat ); $n < $count; $n++ ) {
+							if ( is_array( $flat[ $n ] ) ) {
+								$pairs[] = array( isset( $flat[ $n ]['key'] ) ? $flat[ $n ]['key'] : '', isset( $flat[ $n ]['value'] ) ? $flat[ $n ]['value'] : '' );
+							} else {
+								$pairs[] = array( $flat[ $n ], isset( $flat[ $n + 1 ] ) && ! is_array( $flat[ $n + 1 ] ) ? $flat[ $n + 1 ] : '' );
+								++$n;
+							}
+						}
+						foreach ( $pairs as $pair ) {
+							// Not sanitize_key(): it strips non-Latin names (e.g. Persian) to nothing.
+							$name  = sanitize_text_field( (string) $pair[0] );
+							$value = sanitize_text_field( (string) $pair[1] );
+							if ( '' !== $name && '' !== $value ) {
+								$entry['attributes'][ $name ] = $value;
 							}
 						}
 					}
@@ -105,8 +120,8 @@ class SSC_Admin_Knowledge {
 		// Document import (URL).
 		if ( isset( $_POST['ssc_kb_import_url'] ) && check_admin_referer( 'ssc_kb' ) ) {
 			$url    = esc_url_raw( wp_unslash( $_POST['kb_url'] ) );
-			$result = $this->import_url( $url );
-			self::prg( array( 'kb' => $result ? 'added' : 'failed' ) );
+			$chunks = $this->import_url( $url );
+			self::prg( $chunks > 0 ? array( 'kb' => 'added', 'chunks' => $chunks ) : array( 'kb' => 'failed' ) );
 		}
 
 		// Document import (file upload).
@@ -156,29 +171,29 @@ class SSC_Admin_Knowledge {
 	 * Import a URL into the KB (admin-initiated, SSRF-guarded).
 	 *
 	 * @param string $url URL.
-	 * @return bool
+	 * @return int Number of chunks stored (0 on failure).
 	 */
 	protected function import_url( $url ) {
 		if ( '' === $url || ! SSC_HTTP::is_safe_url( $url, true ) ) {
-			return false;
+			return 0;
 		}
 		$response = wp_safe_remote_get( $url, array( 'timeout' => 20, 'limit_response_size' => 2 * MB_IN_BYTES ) );
 		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
-			return false;
+			return 0;
 		}
 		$html = (string) wp_remote_retrieve_body( $response );
 		$title = '';
 		if ( preg_match( '/<title[^>]*>(.*?)<\/title>/is', $html, $m ) ) {
-			$title = sanitize_text_field( trim( $m[1] ) );
+			$title = sanitize_text_field( html_entity_decode( trim( $m[1] ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
 		}
 		$text = preg_replace( '/<(script|style|noscript|nav|header|footer)[^>]*>.*?<\/\1>/is', ' ', $html );
 		$text = trim( (string) preg_replace( '/\s+/u', ' ', (string) wp_strip_all_tags( (string) $text ) ) );
 		if ( mb_strlen( $text ) < 200 ) {
-			return false;
+			return 0;
 		}
 		$doc_id = 'url-' . substr( md5( $url ), 0, 12 );
 		SSC_Schema::kb_delete_document( $doc_id );
-		return SSC_Schema::kb_insert_document( $doc_id, '' !== $title ? $title : $url, $text, 'general', $url ) > 0;
+		return (int) SSC_Schema::kb_insert_document( $doc_id, '' !== $title ? $title : $url, $text, 'general', $url );
 	}
 
 	/**

@@ -52,6 +52,9 @@ msgstr "(پاسخ قطع شد. برای ادامه دوباره بپرسید.)"
 msgid "+ Add another entry"
 msgstr "+ افزودن مورد دیگر"
 
+msgid "+ Add attribute"
+msgstr "+ افزودن ویژگی"
+
 msgid "+ Add entry"
 msgstr "+ افزودن مورد"
 

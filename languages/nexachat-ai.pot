@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-27 12:00:06+00:00\n"
+"POT-Creation-Date: 2026-09-27 12:14:55+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -153,7 +153,7 @@ msgstr ""
 #: includes/admin/views/page-analytics.php:75
 #: includes/admin/views/page-conversations.php:41
 #: includes/admin/views/page-faq.php:81
-#: includes/admin/views/page-knowledge.php:162
+#: includes/admin/views/page-knowledge.php:175
 #: includes/admin/views/page-pharma.php:54
 #: includes/admin/views/page-requests.php:52
 #: includes/admin/views/pharma-case.php:123
@@ -1131,7 +1131,7 @@ msgid "Title"
 msgstr ""
 
 #: includes/admin/views/page-knowledge.php:112
-#: includes/admin/views/page-knowledge.php:172
+#: includes/admin/views/page-knowledge.php:185
 msgid "Remove"
 msgstr ""
 
@@ -1147,104 +1147,108 @@ msgstr ""
 msgid "When a visitor asks about a product, its summary and attributes are injected into the answer context."
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:130
+#: includes/admin/views/page-knowledge.php:134
 msgid "Product / service name"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:131
+#: includes/admin/views/page-knowledge.php:135
 msgid "Brochure link (optional)"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:132
+#: includes/admin/views/page-knowledge.php:136
 msgid "Image URL (optional)"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:133
+#: includes/admin/views/page-knowledge.php:137
 msgid "Remove product"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:135
+#: includes/admin/views/page-knowledge.php:139
 msgid "What is it, key facts, terms…"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:140
+#: includes/admin/views/page-knowledge.php:144
 msgid "Attribute (e.g. warranty)"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:141
+#: includes/admin/views/page-knowledge.php:145
 msgid "Value"
 msgstr ""
 
 #: includes/admin/views/page-knowledge.php:149
+msgid "+ Add attribute"
+msgstr ""
+
+#: includes/admin/views/page-knowledge.php:162
 msgid "+ Add product"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:153
+#: includes/admin/views/page-knowledge.php:166
 msgid "Save knowledge"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:158
+#: includes/admin/views/page-knowledge.php:171
 msgid "Long documents (knowledge base)"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:159
+#: includes/admin/views/page-knowledge.php:172
 msgid "%d chunks from %d documents. Relevant pieces are retrieved automatically per question."
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:164
+#: includes/admin/views/page-knowledge.php:177
 msgid "Document"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:164
+#: includes/admin/views/page-knowledge.php:177
 msgid "Chunks"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:164
+#: includes/admin/views/page-knowledge.php:177
 msgid "Added"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:182
+#: includes/admin/views/page-knowledge.php:195
 msgid "Semantic search"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:185
+#: includes/admin/views/page-knowledge.php:198
 msgid "Available with OpenAI, Gemini or an OpenAI-compatible custom endpoint. The connected provider has no embeddings API, so keyword search is used."
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:187
+#: includes/admin/views/page-knowledge.php:200
 msgid "Find answers by meaning, not only matching words (uses the provider's embeddings API: one small request per question)"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:194
+#: includes/admin/views/page-knowledge.php:207
 msgid "Index is up to date."
 msgstr ""
 
 #. translators: %d: number of chunks still waiting for indexing.
-#: includes/admin/views/page-knowledge.php:196
+#: includes/admin/views/page-knowledge.php:209
 msgid "%d chunks are waiting to be indexed (continues in the background)."
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:202
+#: includes/admin/views/page-knowledge.php:215
 msgid "Show the source documents under AI answers"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:203
+#: includes/admin/views/page-knowledge.php:216
 msgid "Save and index now"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:210
+#: includes/admin/views/page-knowledge.php:223
 msgid "Page URL to import"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:211
+#: includes/admin/views/page-knowledge.php:224
 msgid "Import page"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:216
+#: includes/admin/views/page-knowledge.php:229
 msgid "Document file to import"
 msgstr ""
 
-#: includes/admin/views/page-knowledge.php:217
+#: includes/admin/views/page-knowledge.php:230
 msgid "Upload file"
 msgstr ""
 
