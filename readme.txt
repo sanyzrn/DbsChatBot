@@ -4,11 +4,11 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-NexaChatAI — Professional AI assistant for WordPress. Setup wizard, multi-provider AI, modular architecture.
+AI assistant for WordPress that knows your business: multi-provider AI, answer scope, web search, citations, Persian/RTL-first.
 
 == Description ==
 
@@ -27,7 +27,7 @@ NexaChatAI is a professional AI assistant for WordPress: install it, run the set
 * **Multi-provider AI:** OpenAI, Gemini, Claude, OpenRouter, OpenAI-compatible, signed Webhook
 * **Security:** AES-256-CBC + HMAC encrypted keys, rate limits, honeypot, SSRF guard
 * **Privacy:** server chat history is opt-in; short-lived browser transcripts outside pharma mode; configurable server retention
-* **RTL + LTR** widget with logical CSS
+* **RTL + LTR** widget with per-message text direction
 * **Live streaming** answers (SSE) for OpenAI, Claude, Gemini and OpenAI-compatible providers
 * **Server-side conversation memory** (the browser never supplies the model's context)
 * **Answer scope** (knowledge only / your business / any question) and optional **web search** with citations
@@ -41,10 +41,12 @@ Voice, proactive invite, notifications (Bale/Telegram/email), handoff, analytics
 
 == Installation ==
 
-1. Upload the plugin folder to `/wp-content/plugins/`
-2. Activate — the setup wizard opens automatically
-3. Complete the five steps and publish
-4. Use the floating widget, shortcode `[ssc_chatbot]`, Gutenberg block, or Elementor widget
+1. Download `nexachat-ai-<version>.zip` from the project's GitHub Releases page. The "Source code" archives GitHub adds to each release are not installable plugins.
+2. Plugins → Add New → Upload Plugin, choose the ZIP and activate — the setup wizard opens automatically.
+3. Complete the five steps and publish.
+4. Use the floating widget, shortcode `[ssc_chatbot]`, Gutenberg block, or Elementor widget.
+
+Upgrading from 1.0.x (folder `smart-support-chatbot`): install and activate the new ZIP. The old copy is deactivated automatically and all data is kept; then delete the old copy.
 
 == Frequently Asked Questions ==
 
@@ -60,15 +62,29 @@ You do. NexaChatAI uses your own API keys — no middleman.
 
 Business data is preserved by default. Before deactivating/deleting the plugin, set the deletion policy under Settings → Data tools. An inactive plugin cannot display its own deletion prompt. Removing direct identifiers from a safety report does not anonymize free-text clinical narratives or audit notes.
 
+= Does the assistant answer any question? =
+
+You choose under AI Connection → "What the assistant may answer": only from your knowledge, your business and its field (default for new sites), or any question. You can also write the reply used for unrelated questions. Facts about your organization always come only from your knowledge. The rule is enforced through the model's instructions, so test it with real questions.
+
+= Can the assistant search the internet? =
+
+Optionally. Turn on web search under AI Connection; it uses your provider's own tool (OpenAI, Claude, Gemini, OpenRouter — not custom endpoints or webhooks), which the provider bills separately. You can restrict searches to your own domains (OpenAI and Claude). The pages used are listed under the answer. Web search is always off in knowledge-only and pharmaceutical modes.
+
 = Persian / English and pharmaceutical use =
 
-The widget and structured adverse-reaction form include Persian translations and English source strings; language follows the WordPress site locale. Administrative translation coverage is partial. Custom company texts must be supplied in the desired language.
+The widget, the adverse-reaction form and the whole admin panel are translated into Persian (RTL layout, Solar Hijri dates); language follows the WordPress locale. Custom company texts must be supplied in the desired language. A Persian setup guide for pharmaceutical companies ships in `docs/PHARMA-SETUP-fa.md`.
 
 Enable the Pharma module to select either approved-company-content-only answers (default) or general educational answers. Neither mode authorizes personalized diagnosis, prescribing, or dose changes. A language-model prompt is not a clinical validation system; review actual answers with the company's medical team before production.
 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.1.1 =
+
+* Fixed: the release pipeline now attaches the installable ZIP even when the release was created in the GitHub UI first, and can be re-run for an existing tag.
+* Fixed: a "translation loaded too early" notice (WordPress 6.7+) during activation; cron events are now scheduled on init.
+* Docs: README, installation steps (download `nexachat-ai-<version>.zip`, not "Source code") and the Persian pharmaceutical setup guide updated for 1.1.
 
 = 1.1.0 =
 
@@ -163,6 +179,10 @@ First stable release. Everything from the 0.6.x beta line, plus:
 * composer / PHPCS / CI scaffolding
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+
+Documentation and release-packaging update; no data changes. Upgrading from 1.0.x? See the 1.1.0 notice below.
 
 = 1.1.0 =
 
