@@ -68,6 +68,7 @@ class SSC_Admin_Appearance {
 	public function render() {
 		$s          = SSC_Settings::all();
 		$business   = SSC_Settings::business();
+		SSC_Plugin::instance()->frontend->enqueue_preview();
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-appearance.php';
 	}
 }

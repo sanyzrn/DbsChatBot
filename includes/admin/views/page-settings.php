@@ -33,12 +33,27 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		<div class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Cached AI answers cleared.', 'smart-support-chatbot' ); ?></div>
 	<?php endif; ?>
 
+	<?php
+	$ssc_tabs = array(
+		'privacy'    => __( 'Privacy', 'smart-support-chatbot' ),
+		'display'    => __( 'Display & hours', 'smart-support-chatbot' ),
+		'protection' => __( 'Protection', 'smart-support-chatbot' ),
+		'modules'    => __( 'Modules', 'smart-support-chatbot' ),
+		'data'       => __( 'Data tools', 'smart-support-chatbot' ),
+	);
+	?>
+	<nav class="ssc-tabs" role="tablist" aria-label="<?php esc_attr_e( 'Settings sections', 'smart-support-chatbot' ); ?>" hidden>
+		<?php foreach ( $ssc_tabs as $ssc_tab_id => $ssc_tab_label ) : ?>
+			<button type="button" role="tab" class="ssc-tabs__tab" id="ssc-tab-<?php echo esc_attr( $ssc_tab_id ); ?>" data-tab="<?php echo esc_attr( $ssc_tab_id ); ?>" aria-selected="false"><?php echo esc_html( $ssc_tab_label ); ?></button>
+		<?php endforeach; ?>
+	</nav>
+
 	<form method="post" class="ssc-form">
 		<?php wp_nonce_field( 'ssc_settings' ); ?>
 		<input type="hidden" name="ssc_settings_save" value="1" />
 
 		<?php if ( SSC_Modules::is_active( 'pharma' ) ) : ?>
-		<section class="ssc-card">
+		<section data-ssc-tab="privacy" class="ssc-card">
 			<h2><?php esc_html_e( 'Pharmaceutical answer policy', 'smart-support-chatbot' ); ?></h2>
 			<div class="ssc-field">
 				<label for="pharma_answer_mode"><?php esc_html_e( 'Allowed information sources', 'smart-support-chatbot' ); ?></label>
@@ -51,7 +66,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		</section>
 		<?php endif; ?>
 
-		<section class="ssc-card">
+		<section data-ssc-tab="privacy" class="ssc-card">
 			<h2><?php esc_html_e( 'Privacy & consent', 'smart-support-chatbot' ); ?></h2>
 			<p class="ssc-card__sub"><?php esc_html_e( 'Applies to every form. Server transcript logging is opt-in; browser transcripts and shared answer caching are disabled in pharmaceutical mode. Submitted forms are stored independently of chat history.', 'smart-support-chatbot' ); ?></p>
 			<label class="ssc-check"><input type="checkbox" name="consent_enabled" value="yes" <?php checked( 'yes', $s['consent_enabled'] ); ?> /> <span><?php esc_html_e( 'Require explicit consent before storing contact data', 'smart-support-chatbot' ); ?></span></label>
@@ -84,7 +99,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			</div>
 		</section>
 
-		<section class="ssc-card">
+		<section data-ssc-tab="display" class="ssc-card">
 			<h2><?php esc_html_e( 'Where the widget appears', 'smart-support-chatbot' ); ?></h2>
 			<p class="ssc-card__sub"><?php esc_html_e( 'Pages that fail these rules never load the chatbot CSS or JS — better performance and cleaner analytics.', 'smart-support-chatbot' ); ?></p>
 			<div class="ssc-grid ssc-grid--2">
@@ -119,7 +134,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			</div>
 		</section>
 
-		<section class="ssc-card">
+		<section data-ssc-tab="display" class="ssc-card">
 			<h2><?php esc_html_e( 'Business hours', 'smart-support-chatbot' ); ?></h2>
 			<p class="ssc-card__sub"><?php esc_html_e( 'Outside these hours the widget shows an offline notice. Forms still work so visitors can leave a message.', 'smart-support-chatbot' ); ?></p>
 			<label class="ssc-check"><input type="checkbox" name="business_hours_enabled" value="yes" <?php checked( 'yes', $s['business_hours_enabled'] ); ?> /> <span><?php esc_html_e( 'Limit availability to business hours', 'smart-support-chatbot' ); ?></span></label>
@@ -147,13 +162,13 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			</div>
 		</section>
 
-		<section class="ssc-card">
+		<section data-ssc-tab="display" class="ssc-card">
 			<h2><?php esc_html_e( 'Widget behaviour', 'smart-support-chatbot' ); ?></h2>
 			<label class="ssc-check"><input type="checkbox" name="streaming_enabled" value="yes" <?php checked( 'yes', $s['streaming_enabled'] ); ?> /> <span><?php esc_html_e( 'Stream AI answers as they are generated (faster first word; OpenAI, Claude, Gemini and compatible providers)', 'smart-support-chatbot' ); ?></span></label>
 			<label class="ssc-check"><input type="checkbox" name="sound_enabled" value="yes" <?php checked( 'yes', $s['sound_enabled'] ); ?> /> <span><?php esc_html_e( 'Play a soft ping when a reply arrives while the chat is closed', 'smart-support-chatbot' ); ?></span></label>
 		</section>
 
-		<section class="ssc-card">
+		<section data-ssc-tab="protection" class="ssc-card">
 			<h2><?php esc_html_e( 'Protection & limits', 'smart-support-chatbot' ); ?></h2>
 			<div class="ssc-grid ssc-grid--2">
 				<div class="ssc-field">
@@ -194,7 +209,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		</section>
 
 		<?php if ( SSC_Modules::is_active( 'voice' ) ) : ?>
-			<section class="ssc-card">
+			<section data-ssc-tab="modules" class="ssc-card">
 				<h2><?php esc_html_e( 'Voice module', 'smart-support-chatbot' ); ?></h2>
 				<label class="ssc-check"><input type="checkbox" name="voice_input" value="yes" <?php checked( 'yes', $s['voice_input'] ); ?> /> <span><?php esc_html_e( 'Microphone input', 'smart-support-chatbot' ); ?></span></label>
 				<label class="ssc-check"><input type="checkbox" name="voice_output" value="yes" <?php checked( 'yes', $s['voice_output'] ); ?> /> <span><?php esc_html_e( 'Read answers aloud', 'smart-support-chatbot' ); ?></span></label>
@@ -206,21 +221,21 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'history' ) ) : ?>
-			<section class="ssc-card">
+			<section data-ssc-tab="modules" class="ssc-card">
 				<h2><?php esc_html_e( 'Conversation history module', 'smart-support-chatbot' ); ?></h2>
 				<label class="ssc-check"><input type="checkbox" name="chatlog_enabled" value="yes" <?php checked( 'yes', $s['chatlog_enabled'] ); ?> /> <span><?php esc_html_e( 'Store conversations (needed for feedback, unanswered radar and quality review)', 'smart-support-chatbot' ); ?></span></label>
 			</section>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'csat' ) ) : ?>
-			<section class="ssc-card">
+			<section data-ssc-tab="modules" class="ssc-card">
 				<h2><?php esc_html_e( 'Satisfaction survey module', 'smart-support-chatbot' ); ?></h2>
 				<label class="ssc-check"><input type="checkbox" name="csat_enabled" value="yes" <?php checked( 'yes', $s['csat_enabled'] ); ?> /> <span><?php esc_html_e( 'Show the end-of-conversation survey', 'smart-support-chatbot' ); ?></span></label>
 			</section>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'handoff' ) ) : ?>
-			<section class="ssc-card">
+			<section data-ssc-tab="modules" class="ssc-card">
 				<h2><?php esc_html_e( 'Human handoff module', 'smart-support-chatbot' ); ?></h2>
 				<div class="ssc-field">
 					<label for="handoff_text"><?php esc_html_e( 'Handoff message', 'smart-support-chatbot' ); ?></label>
@@ -230,7 +245,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'proactive' ) ) : ?>
-			<section class="ssc-card">
+			<section data-ssc-tab="modules" class="ssc-card">
 				<h2><?php esc_html_e( 'Proactive invitation module', 'smart-support-chatbot' ); ?></h2>
 				<div class="ssc-grid ssc-grid--2">
 					<div class="ssc-field">
@@ -263,7 +278,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'leads' ) ) : ?>
-			<section class="ssc-card">
+			<section data-ssc-tab="modules" class="ssc-card">
 				<h2><?php esc_html_e( 'Request form module', 'smart-support-chatbot' ); ?></h2>
 				<p class="ssc-card__sub"><?php esc_html_e( 'Custom fields for the consultation form. Server-side validation is generated from this definition.', 'smart-support-chatbot' ); ?></p>
 				<div id="ssc-fields-list" class="ssc-fields">
@@ -290,7 +305,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'notifications' ) ) : ?>
-			<section class="ssc-card">
+			<section data-ssc-tab="modules" class="ssc-card">
 				<h2><?php esc_html_e( 'Notifications module', 'smart-support-chatbot' ); ?></h2>
 				<div class="ssc-grid ssc-grid--2">
 					<div class="ssc-field">
@@ -325,7 +340,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		</div>
 	</form>
 
-	<section class="ssc-card ssc-mt">
+	<section data-ssc-tab="data" class="ssc-card ssc-mt">
 		<h2><?php esc_html_e( 'Data tools', 'smart-support-chatbot' ); ?></h2>
 		<form method="post">
 			<?php wp_nonce_field( 'ssc_tools' ); ?>

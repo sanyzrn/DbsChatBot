@@ -155,6 +155,7 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 				data-primary="<?php echo esc_attr( $primary ); ?>"
 				data-theme-mode="<?php echo esc_attr( $theme_mode ); ?>"
 				data-dir="<?php echo esc_attr( $dir ); ?>"
+				data-dir-auto="<?php echo esc_attr( is_rtl() || in_array( substr( get_locale(), 0, 2 ), array( 'fa', 'ar', 'he', 'ur' ), true ) ? 'rtl' : 'ltr' ); ?>"
 				data-pos="<?php echo esc_attr( $pos ); ?>"
 				data-asst-name="<?php echo esc_attr( $asst_name ); ?>"
 				data-org-name="<?php echo esc_attr( $org_name ); ?>"
@@ -177,41 +178,12 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 					</div>
 				</div>
 
-				<div class="ssc-preview-stage" id="ssc-preview-stage" data-preview-theme="light">
-					<div class="ssc-pv" id="ssc-pv" data-theme="light" dir="<?php echo esc_attr( $dir ); ?>">
-						<div class="ssc-pv__head">
-							<span class="ssc-pv__avatar" id="ssc-pv-avatar"></span>
-							<div class="ssc-pv__meta">
-								<strong class="ssc-pv__name" id="ssc-pv-name"><?php echo esc_html( $asst_name ); ?></strong>
-								<span class="ssc-pv__status" id="ssc-pv-status"><?php echo esc_html( $org_name ); ?></span>
-							</div>
-						</div>
-						<div class="ssc-pv__body">
-							<p class="ssc-pv__msg ssc-pv__msg--bot" dir="auto">
-								<strong id="ssc-pv-wtitle"><?php echo esc_html( $w_title ); ?></strong>
-								<span id="ssc-pv-wtext"><?php echo esc_html( $w_text ); ?></span>
-							</p>
-							<p class="ssc-pv__msg ssc-pv__msg--user" dir="auto"><?php esc_html_e( 'Hi! Do you ship internationally?', 'smart-support-chatbot' ); ?></p>
-							<div class="ssc-pv__chips">
-								<span class="ssc-pv__chip"><?php esc_html_e( 'Ask us', 'smart-support-chatbot' ); ?></span>
-								<span class="ssc-pv__chip"><?php esc_html_e( 'Products', 'smart-support-chatbot' ); ?></span>
-							</div>
-						</div>
-						<div class="ssc-pv__composer">
-							<span class="ssc-pv__input"><?php esc_html_e( 'Write a message…', 'smart-support-chatbot' ); ?></span>
-							<span class="ssc-pv__send" aria-hidden="true">
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-							</span>
-						</div>
-						<p class="ssc-pv__foot" id="ssc-pv-foot"><?php echo esc_html( $disclaimer ); ?></p>
-					</div>
-
-					<button type="button" class="ssc-preview-launcher" id="ssc-pv-launcher" data-pos="<?php echo esc_attr( $pos ); ?>" tabindex="-1" aria-hidden="true">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-					</button>
+				<div class="ssc-preview-stage" id="ssc-preview-stage">
+					<?php // The real widget mounts here (chatbot.js preview mode, admin-only preview endpoint). ?>
+					<div id="ssc-live-preview"></div>
 				</div>
 
-				<p class="ssc-preview-panel__hint"><?php esc_html_e( 'Toggle Dark to preview night mode. Changes apply instantly — save when you are happy.', 'smart-support-chatbot' ); ?></p>
+				<p class="ssc-preview-panel__hint"><?php esc_html_e( 'This is the real assistant: changes apply instantly and you can chat with it (answers use the saved AI connection). Save when you are happy.', 'smart-support-chatbot' ); ?></p>
 			</aside>
 		</div>
 

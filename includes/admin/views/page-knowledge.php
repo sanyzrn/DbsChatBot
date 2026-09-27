@@ -168,7 +168,7 @@ $kb_state = isset( $_GET['kb'] ) ? sanitize_key( wp_unslash( $_GET['kb'] ) ) : '
 						<tr>
 							<td><?php echo esc_html( $doc['source_title'] ? $doc['source_title'] : $doc['doc_id'] ); ?></td>
 							<td><?php echo esc_html( number_format_i18n( (int) $doc['chunks'] ) ); ?></td>
-							<td><?php echo esc_html( mysql2date( get_option( 'date_format' ), $doc['created_at'] ) ); ?></td>
+							<td><?php echo esc_html( SSC_Date::display( $doc['created_at'], false ) ); ?></td>
 							<td><a class="ssc-link--danger" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'ssc_kb_action' => 'delete', 'doc' => $doc['doc_id'] ) ), 'ssc_kb_' . $doc['doc_id'] ) ); ?>"><?php esc_html_e( 'Remove', 'smart-support-chatbot' ); ?></a></td>
 						</tr>
 					<?php endforeach; ?>

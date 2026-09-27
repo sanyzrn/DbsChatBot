@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					$row_base = add_query_arg( array( 'page' => 'ssc-conversations', 'id' => $row['id'], 'source' => $filters['source'], 'rating' => $filters['rating'] ), admin_url( 'admin.php' ) );
 					?>
 					<tr>
-						<td><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $row['created_at'] ) ); ?></td>
+						<td><?php echo esc_html( SSC_Date::display( $row['created_at'] ) ); ?></td>
 						<td class="ssc-td-truncate"><?php echo esc_html( mb_substr( (string) $row['question'], 0, 80 ) ); ?></td>
 						<td class="ssc-td-truncate"><?php echo esc_html( mb_substr( (string) $row['answer'], 0, 80 ) ); ?></td>
 						<td><span class="ssc-badge ssc-badge--src-<?php echo esc_attr( $row['source'] ); ?>"><?php echo esc_html( $row['source'] ); ?></span></td>

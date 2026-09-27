@@ -265,13 +265,14 @@
 }
 
 .ssc-root .ssc-window--inline,
-.ssc-root .ssc-preview-mount .ssc-window {
+.ssc-preview-mount.ssc-root .ssc-window {
 	position: static;
 	height: 480px;
 	margin: 0 auto;
 }
 
-.ssc-root .ssc-preview-mount .ssc-launcher { display: none !important; }
+.ssc-preview-mount.ssc-root .ssc-launcher,
+.ssc-root [hidden] { display: none !important; }
 
 /* ------------------------------------------------------------------ *
  * Header
@@ -672,7 +673,7 @@
 	min-width: 0;
 }
 
-.ssc-root .ssc-input:focus { outline: 2px solid var(--ssc-primary); outline-offset: 1px; border-color: transparent; }
+.ssc-root .ssc-input:focus { outline: 2px solid var(--ssc-primary); outline-offset: 1px; border-color: transparent; box-shadow: none; }
 
 .ssc-root .ssc-send {
 	width: 38px;

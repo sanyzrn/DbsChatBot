@@ -68,6 +68,48 @@ class SSC_Frontend {
 		}
 		$this->assets_done = true;
 
+		wp_localize_script( 'smart-support-chatbot', 'SSCChatbotConfig', $this->build_config( $overrides ) );
+	}
+
+	/**
+	 * Admin preview: the REAL widget with the saved look, talking to the
+	 * capability-gated preview endpoint, with visitor-facing extras off.
+	 * Shared by the setup wizard and the Appearance page so the preview can
+	 * never drift from what visitors see.
+	 */
+	public function enqueue_preview() {
+		$this->register_assets();
+		wp_enqueue_style( 'smart-support-chatbot' );
+		wp_enqueue_script( 'smart-support-chatbot' );
+		$config = $this->build_config();
+		$config = array_merge(
+			$config,
+			array(
+				'preview'       => true,
+				'previewRoute'  => 'preview-chat',
+				'ajaxUrl'       => '',
+				'nonce'         => wp_create_nonce( 'wp_rest' ),
+				'proactiveText' => '',
+				'products'      => array(),
+				'formFields'    => array(),
+				'adrOptions'    => null,
+			)
+		);
+		foreach ( array_keys( $config['features'] ) as $feature ) {
+			$config['features'][ $feature ] = false;
+		}
+		$config['availability']['online']  = true;
+		$config['availability']['dynamic'] = false;
+		wp_localize_script( 'smart-support-chatbot', 'SSCChatbotConfig', $config );
+	}
+
+	/**
+	 * Public widget configuration (never contains secrets).
+	 *
+	 * @param array $overrides Elementor/shortcode overrides.
+	 * @return array
+	 */
+	public function build_config( $overrides = array() ) {
 		$s          = SSC_Settings::all();
 		$business   = SSC_Settings::business();
 		$font_stack = $this->enqueue_font( $s );
@@ -163,8 +205,7 @@ class SSC_Frontend {
 			'i18n'             => $this->strings(),
 		);
 
-		$config = apply_filters( 'ssc_frontend_config', $this->apply_overrides( $config, $overrides ) );
-		wp_localize_script( 'smart-support-chatbot', 'SSCChatbotConfig', $config );
+		return apply_filters( 'ssc_frontend_config', $this->apply_overrides( $config, $overrides ) );
 	}
 
 	/**

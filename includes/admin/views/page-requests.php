@@ -77,7 +77,7 @@ $base    = admin_url( 'admin.php' );
 					);
 					?>
 					<tr>
-						<td><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $row['created_at'] ) ); ?></td>
+						<td><?php echo esc_html( SSC_Date::display( $row['created_at'] ) ); ?></td>
 						<td><?php echo esc_html( $row['name'] ); ?></td>
 						<td dir="ltr"><?php echo esc_html( $row['phone'] ); ?></td>
 						<td class="ssc-td-truncate"><?php echo esc_html( mb_substr( (string) $row['description'], 0, 90 ) ); ?></td>

@@ -493,67 +493,7 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 			<?php
 			// Enqueue the real widget for the live preview (admin-only preview endpoint).
 			if ( 'review' === $current ) {
-				wp_enqueue_style( 'smart-support-chatbot' );
-				wp_enqueue_script( 'smart-support-chatbot' );
-				$preview_config = array(
-					'preview'         => true,
-					'restUrl'         => esc_url_raw( rest_url( SSC_REST::NS . '/' ) ),
-					'previewRoute'    => 'preview-chat',
-					'nonce'           => wp_create_nonce( 'wp_rest' ),
-					'assistantName'   => '' !== trim( (string) $s['assistant_display_name'] ) ? $s['assistant_display_name'] : __( 'Nexa', 'smart-support-chatbot' ),
-					'orgName'         => '' !== trim( (string) $business['org_name'] ) ? $business['org_name'] : get_bloginfo( 'name' ),
-					'welcomeTitle'    => '' !== trim( (string) $s['welcome_title'] ) ? $s['welcome_title'] : __( 'Hello! 👋', 'smart-support-chatbot' ),
-					'welcomeText'     => '' !== trim( (string) $s['welcome_text'] ) ? $s['welcome_text'] : __( 'How can I help you today?', 'smart-support-chatbot' ),
-					'disclaimer'      => (string) $s['disclaimer'],
-					'direction'       => is_rtl() ? 'rtl' : 'ltr',
-					'themeMode'       => $s['theme_mode'],
-					'position'        => $s['position'],
-					'primaryColor'    => $s['primary_color'],
-					'fontSize'        => (int) $s['font_size'],
-					'windowWidth'     => (int) $s['window_width'],
-					'windowRadius'    => (int) $s['window_radius'],
-					'bubbleRadius'    => (int) $s['bubble_radius'],
-					'userBubble'      => $s['user_bubble_color'],
-					'botBubble'       => $s['bot_bubble_color'],
-					'fontStack'       => '',
-					'avatarUrl'       => $s['avatar_url'],
-					'launcherSize'    => (int) $s['launcher_size'],
-					'launcherIconUrl' => $s['launcher_icon_url'],
-					'supportPhone'    => $business['support_phone'] ? $business['support_phone'] : $business['phone'],
-					'products'        => array(),
-					'features'        => array(
-						'leads'       => false,
-						'faq'         => false,
-						'voice'       => false,
-						'voiceInput'  => false,
-						'voiceOutput' => false,
-						'csat'        => false,
-						'handoff'     => false,
-						'proactive'   => false,
-						'pharma'      => false,
-						'feedback'    => false,
-					),
-					'handoffText'     => '',
-					'proactiveDelay'  => 0,
-					'proactiveText'   => '',
-					'voiceLanguage'   => get_locale(),
-					'formFields'      => array(),
-					'consent'         => array( 'enabled' => false, 'text' => '', 'link' => '' ),
-					'adrOptions'      => null,
-					'i18n'            => array(
-						'open'          => __( 'Open chat', 'smart-support-chatbot' ),
-						'close'         => __( 'Close chat', 'smart-support-chatbot' ),
-						'send'          => __( 'Send message', 'smart-support-chatbot' ),
-						'inputLabel'    => __( 'Message text', 'smart-support-chatbot' ),
-						'placeholder'   => __( 'Write your message…', 'smart-support-chatbot' ),
-						'sessionExpired' => __( 'Your session expired. Please refresh the page and try again.', 'smart-support-chatbot' ),
-						'connectionError' => __( 'Connection error. Please check your internet and try again.', 'smart-support-chatbot' ),
-						'rateLimited'   => __( 'Rate limit reached.', 'smart-support-chatbot' ),
-						'mainMenu'      => __( 'Main menu', 'smart-support-chatbot' ),
-						'typing'        => __( 'Typing…', 'smart-support-chatbot' ),
-					),
-				);
-				wp_localize_script( 'smart-support-chatbot', 'SSCChatbotConfig', $preview_config );
+				SSC_Plugin::instance()->frontend->enqueue_preview();
 			}
 			?>
 					<?php endif; ?>

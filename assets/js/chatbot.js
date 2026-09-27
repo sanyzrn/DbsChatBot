@@ -1677,10 +1677,57 @@
          * Public API (preview mount for the wizard)
          * ------------------------------------------------------------------ */
 
+        var previewMount = null;
+
+        /**
+         * Live restyling for admin previews: merge settings into the config and
+         * repaint only what they affect (no rebuild, the conversation stays).
+         */
+        function applyConfig(patch) {
+                Object.keys(patch || {}).forEach(function (k) { cfg[k] = patch[k]; });
+                var host = previewMount || root;
+                var vars = cssVars();
+                Object.keys(vars).forEach(function (k) { host.style.setProperty(k, vars[k]); });
+                ['--ssc-user-bubble', '--ssc-bot-bubble'].forEach(function (k) {
+                        if ((k === '--ssc-user-bubble' && !cfg.userBubble) || (k === '--ssc-bot-bubble' && !cfg.botBubble)) { host.style.removeProperty(k); }
+                });
+                host.setAttribute('dir', cfg.direction || 'rtl');
+                host.classList.toggle('ssc-pos-left', 'left' === cfg.position);
+                var mode = cfg.themeMode || 'light';
+                if ('auto' === mode && window.matchMedia) { mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+                host.setAttribute('data-theme', mode);
+                if (!win) { return; }
+                var title = win.querySelector('.ssc-head__title');
+                if (title) { title.textContent = cfg.assistantName || ''; }
+                paintStatus();
+                var avatar = win.querySelector('.ssc-head__avatar');
+                if (avatar) {
+                        if (cfg.avatarUrl) { avatar.innerHTML = '<img src="' + esc(cfg.avatarUrl) + '" alt="" />'; avatar.classList.add('has-img'); } else { avatar.innerHTML = ICON_BOT; avatar.classList.remove('has-img'); }
+                }
+                var disclaimer = win.querySelector('.ssc-disclaimer');
+                if (cfg.disclaimer) {
+                        if (!disclaimer) {
+                                disclaimer = el('p', 'ssc-disclaimer', '');
+                                disclaimer.setAttribute('dir', 'auto');
+                                win.insertBefore(disclaimer, composer);
+                        }
+                        disclaimer.textContent = cfg.disclaimer;
+                } else if (disclaimer) {
+                        disclaimer.parentElement.removeChild(disclaimer);
+                }
+                var welcome = state.items.filter(function (item) { return item.transient; })[0];
+                if (welcome) {
+                        welcome.text = (cfg.welcomeTitle ? cfg.welcomeTitle + '\n' : '') + stripHtml(cfg.welcomeText || '');
+                        welcome.node.innerHTML = md(welcome.text);
+                }
+        }
+
         window.SSCChatbot = {
                 toggle: toggleWindow,
+                applyConfig: applyConfig,
                 mountPreview: function (mountNode) {
                         if (!mountNode || !win) { return; }
+                        previewMount = mountNode;
                         mountNode.classList.add('ssc-root', 'ssc-preview-mount');
                         mountNode.setAttribute('dir', cfg.direction || 'rtl');
                         var vars = cssVars();
@@ -1690,6 +1737,7 @@
                         mountNode.appendChild(win);
                         launcher.hidden = true;
                         win.classList.add('ssc-window--inline');
+                        if ('left' === cfg.position) { mountNode.classList.add('ssc-pos-left'); }
                         toggleWindow(true);
                 }
         };

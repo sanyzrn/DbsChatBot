@@ -21,7 +21,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php echo esc_html( sprintf( __( 'ADR case #%d', 'smart-support-chatbot' ), (int) $case['id'] ) ); ?></h1>
-			<p class="ssc-page__sub"><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $case['created_at'] ) ); ?></p>
+			<p class="ssc-page__sub"><?php echo esc_html( SSC_Date::display( $case['created_at'] ) ); ?></p>
 		</div>
 		<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-pharma' ) ); ?>">← <?php esc_html_e( 'All cases', 'smart-support-chatbot' ); ?></a>
 	</header>
@@ -125,7 +125,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 				<tbody>
 					<?php foreach ( $audit as $entry ) : ?>
 						<tr>
-							<td><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $entry['created_at'] ) ); ?></td>
+							<td><?php echo esc_html( SSC_Date::display( $entry['created_at'] ) ); ?></td>
 							<td><?php echo esc_html( $entry['action'] ); ?></td>
 							<td><?php echo esc_html( $entry['from_status'] . ( $entry['to_status'] ? ' → ' . $entry['to_status'] : '' ) ); ?></td>
 							<td><?php echo esc_html( $entry['actor'] ); ?></td>

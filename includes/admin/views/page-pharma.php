@@ -66,7 +66,7 @@ if ( isset( $counts['pharma_adr'] ) ) {
 				<?php foreach ( $result['items'] as $row ) : ?>
 					<?php $is_serious = SSC_Module_Pharma::is_serious_row( $row ); ?>
 					<tr class="<?php echo $is_serious ? 'is-serious' : ''; ?>">
-						<td><a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ssc-pharma', 'view' => $row['id'] ), admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $row['created_at'] ) ); ?></a></td>
+						<td><a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ssc-pharma', 'view' => $row['id'] ), admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html( SSC_Date::display( $row['created_at'] ) ); ?></a></td>
 						<td><?php echo esc_html( $row['product'] . ( $row['batch_number'] ? ' / ' . $row['batch_number'] : '' ) ); ?></td>
 						<td><?php echo esc_html( $row['name'] ); ?></td>
 						<td><?php echo esc_html( SSC_Module_Pharma::option_label( 'severity', (string) $row['severity'] ) ); ?></td>

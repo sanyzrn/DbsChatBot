@@ -10,7 +10,7 @@ class SSC_Settings {
     public static $values = array();
     public static function get( $key, $default = null ) { return self::$values[ $key ] ?? $default; }
 }
-foreach ( array( 'input', 'availability', 'http', 'provider', 'embeddings' ) as $file ) {
+foreach ( array( 'input', 'availability', 'http', 'provider', 'embeddings', 'date' ) as $file ) {
     require __DIR__ . '/../includes/core/class-ssc-' . $file . '.php';
 }
 foreach ( array( 'openai-compat', 'openai', 'claude', 'gemini' ) as $file ) {
@@ -162,5 +162,11 @@ $v = SSC_Embeddings::normalize( array( 3, 4 ) );
 check( abs( $v[0] - 0.6 ) < 1e-9 && abs( SSC_Embeddings::cosine( $v, $v ) - 1 ) < 1e-9, 'Vectors are unit length; self-similarity is 1' );
 $round = SSC_Embeddings::unpack( SSC_Embeddings::pack( $v ) );
 check( abs( $round[1] - 0.8 ) < 1e-6 && array() === SSC_Embeddings::unpack( 'not base64 !!' ), 'Vectors survive storage; corrupt blobs are ignored' );
+
+// Solar Hijri conversion (Nowruz boundaries and a leap year).
+check( array( 1405, 7, 5 ) === SSC_Date::to_jalali( 2026, 9, 27 ), 'Gregorian 2026-09-27 is 1405/07/05' );
+check( array( 1403, 1, 1 ) === SSC_Date::to_jalali( 2024, 3, 20 ) && array( 1402, 12, 29 ) === SSC_Date::to_jalali( 2024, 3, 19 ), 'Nowruz 1403 boundary' );
+check( array( 1403, 12, 30 ) === SSC_Date::to_jalali( 2025, 3, 20 ), 'Leap year 1403 has Esfand 30' );
+check( '۱۴۰۵/۰۷/۰۵' === SSC_Date::persian_digits( '1405/07/05' ), 'Persian digits' );
 
 echo "$count unit checks passed.\n";
