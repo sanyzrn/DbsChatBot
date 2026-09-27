@@ -27,7 +27,7 @@ class SSC_Schema {
 	const KB_TABLE          = 'ssc_chatbot_kb';
 	const STATS_TABLE       = 'ssc_chatbot_stats';
 	const AUDIT_TABLE       = 'ssc_chatbot_audit';
-	const DB_VERSION        = '10';
+	const DB_VERSION        = '13';
 	const DB_VERSION_OPTION = 'ssc_chatbot_db_version';
 
 	/*
@@ -188,8 +188,11 @@ class SSC_Schema {
 			doc_id VARCHAR(40) NOT NULL DEFAULT '',
 			product_id VARCHAR(100) NOT NULL DEFAULT 'general',
 			source_title VARCHAR(191) NOT NULL DEFAULT '',
+			source_url VARCHAR(255) NOT NULL DEFAULT '',
 			chunk LONGTEXT NOT NULL,
 			search_text LONGTEXT NULL,
+			embedding LONGTEXT NULL,
+			embedding_model VARCHAR(100) NOT NULL DEFAULT '',
 			created_at DATETIME NULL,
 			PRIMARY KEY  (id),
 			KEY product_id (product_id),
@@ -278,6 +281,8 @@ class SSC_Schema {
 			self::migrate_submission_types();
 			self::migrate_qa_from_options();
 			self::migrate_stats_from_options();
+			SSC_Settings::split_storage();
+			SSC_Settings::migrate_answer_scope();
 			// Setup state safety net for IN-PLACE updates (activation hooks do
 			// not re-run): a legacy live chatbot must stay live.
 			SSC_Setup::initialize_state();
@@ -403,7 +408,7 @@ class SSC_Schema {
 	 */
 	public static function submission_types() {
 		$types = array(
-			'consult' => __( 'Consultation request', 'smart-support-chatbot' ),
+			'consult' => __( 'Consultation request', 'nexachat-ai' ),
 		);
 		/**
 		 * Modules may register additional submission types.
@@ -426,13 +431,13 @@ class SSC_Schema {
 		}
 		// Legacy display strings from 4.x.
 		$legacy = array(
-			'گزارش عوارض دارویی' => __( 'Adverse drug reaction report', 'smart-support-chatbot' ),
-			'درخواست مشاوره'     => __( 'Consultation request', 'smart-support-chatbot' ),
+			'گزارش عوارض دارویی' => __( 'Adverse drug reaction report', 'nexachat-ai' ),
+			'درخواست مشاوره'     => __( 'Consultation request', 'nexachat-ai' ),
 		);
 		if ( isset( $legacy[ $type ] ) ) {
 			return $legacy[ $type ];
 		}
-		return ( '' === $type ) ? __( 'General', 'smart-support-chatbot' ) : $type;
+		return ( '' === $type ) ? __( 'General', 'nexachat-ai' ) : $type;
 	}
 
 	/*
@@ -470,7 +475,7 @@ class SSC_Schema {
 				'reporter_type'     => isset( $data['reporter_type'] ) ? (string) $data['reporter_type'] : '',
 				'extra_fields'      => isset( $data['extra_fields'] ) ? (string) $data['extra_fields'] : '',
 				'status'            => 'new',
-				'ip'                => isset( $data['ip'] ) ? (string) $data['ip'] : '',
+				'ip'                => isset( $data['ip'] ) ? SSC_Input::stored_ip( (string) $data['ip'], (string) SSC_Settings::get( 'ip_storage', 'anonymize' ) ) : '',
 				'created_at'        => current_time( 'mysql' ),
 			),
 			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
@@ -611,7 +616,7 @@ class SSC_Schema {
 		global $wpdb;
 		$table = self::table_name();
 		$user  = wp_get_current_user();
-		self::audit( (int) $id, 'delete', '', '', $user ? $user->user_login : '', __( 'Submission deleted', 'smart-support-chatbot' ) );
+		self::audit( (int) $id, 'delete', '', '', $user ? $user->user_login : '', __( 'Submission deleted', 'nexachat-ai' ) );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- custom table delete.
 		return false !== $wpdb->delete( $table, array( 'id' => (int) $id ), array( '%d' ) );
 	}
@@ -922,9 +927,10 @@ class SSC_Schema {
 	 * @param string $title    Source title.
 	 * @param string $text     Full text.
 	 * @param string $product  Product scope.
+	 * @param string $url      Source URL for citations ('' for files).
 	 * @return int Chunks inserted.
 	 */
-	public static function kb_insert_document( $doc_id, $title, $text, $product = 'general' ) {
+	public static function kb_insert_document( $doc_id, $title, $text, $product = 'general', $url = '' ) {
 		global $wpdb;
 		$chunks = SSC_Knowledge::chunk_text( $text );
 		$n      = 0;
@@ -936,32 +942,88 @@ class SSC_Schema {
 					'doc_id'       => sanitize_key( $doc_id ),
 					'product_id'   => sanitize_text_field( $product ),
 					'source_title' => sanitize_text_field( $title ),
+					'source_url'   => esc_url_raw( (string) $url ),
 					'chunk'        => $chunk,
 					'search_text'  => SSC_Knowledge::normalize( $chunk ),
 					'created_at'   => current_time( 'mysql' ),
 				),
-				array( '%s', '%s', '%s', '%s', '%s', '%s' )
+				array( '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
 			);
 			if ( false !== $inserted ) {
 				++$n;
 			}
 		}
+		if ( $n > 0 && class_exists( 'SSC_Embeddings' ) ) {
+			SSC_Embeddings::schedule();
+		}
 		return $n;
+	}
+
+	/**
+	 * Chunks still missing a vector for the given embedding model.
+	 *
+	 * @param string $model Embedding model.
+	 * @param int    $limit Batch size.
+	 * @return array id, source_title, chunk.
+	 */
+	public static function kb_pending_embeddings( $model, $limit ) {
+		global $wpdb;
+		$table = self::kb_table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- indexing batch.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT id, source_title, chunk FROM {$table} WHERE embedding_model <> %s ORDER BY id ASC LIMIT %d", $model, (int) $limit ), ARRAY_A );
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * Number of chunks missing a vector for the model.
+	 *
+	 * @param string $model Embedding model.
+	 * @return int
+	 */
+	public static function kb_pending_count( $model ) {
+		global $wpdb;
+		$table = self::kb_table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- indexing progress.
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE embedding_model <> %s", $model ) );
+	}
+
+	/**
+	 * Store one chunk vector.
+	 *
+	 * @param int    $id    Chunk id.
+	 * @param string $blob  Packed vector.
+	 * @param string $model Embedding model.
+	 */
+	public static function kb_set_embedding( $id, $blob, $model ) {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- indexing write.
+		$wpdb->update(
+			self::kb_table_name(),
+			array(
+				'embedding'       => $blob,
+				'embedding_model' => $model,
+			),
+			array( 'id' => (int) $id ),
+			array( '%s', '%s' ),
+			array( '%d' )
+		);
 	}
 
 	/**
 	 * KB candidates (deterministic order).
 	 *
-	 * @param string $product_id Scope.
+	 * @param string $product_id   Scope.
+	 * @param bool   $with_vectors Include stored embeddings.
 	 * @return array
 	 */
-	public static function kb_candidates( $product_id ) {
+	public static function kb_candidates( $product_id, $with_vectors = false ) {
 		global $wpdb;
-		$table = self::kb_table_name();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- candidate window.
+		$table   = self::kb_table_name();
+		$columns = $with_vectors ? 'id, doc_id, source_title, source_url, chunk, embedding, embedding_model' : 'id, doc_id, source_title, source_url, chunk';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- candidate window; column list is a fixed literal.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id, source_title, chunk FROM {$table}
+				"SELECT {$columns} FROM {$table}
 				 WHERE product_id IN (%s, 'general') ORDER BY id ASC LIMIT 800",
 				sanitize_text_field( $product_id )
 			),
@@ -1076,6 +1138,28 @@ class SSC_Schema {
 	}
 
 	/**
+	 * Daily counter for rate limiting.
+	 *
+	 * With a persistent object cache (Redis, Memcached) the counter is an
+	 * atomic in-memory increment, so a chat message no longer costs several
+	 * database writes. Without one, the stats table upsert is used.
+	 *
+	 * @param string $metric Counter name.
+	 * @return int Count after this hit.
+	 */
+	public static function counter_hit( $metric ) {
+		if ( function_exists( 'wp_using_ext_object_cache' ) && wp_using_ext_object_cache() ) {
+			$key = $metric . ':' . current_time( 'Y-m-d' );
+			wp_cache_add( $key, 0, 'ssc_rl', DAY_IN_SECONDS + HOUR_IN_SECONDS );
+			$count = wp_cache_incr( $key, 1, 'ssc_rl' );
+			if ( false !== $count ) {
+				return (int) $count;
+			}
+		}
+		return self::stat_hit( $metric );
+	}
+
+	/**
 	 * Rate limit check-and-hit for a bucket.
 	 *
 	 * @param string $bucket Bucket (chat|submit|suggest|csat|feedback).
@@ -1093,7 +1177,7 @@ class SSC_Schema {
 		$blocked = false;
 
 		if ( in_array( $mode, array( 'ip', 'both' ), true ) && $limit_ip > 0 ) {
-			$count = self::stat_hit( 'rl:' . $bucket . ':ip:' . md5( $ip ) );
+			$count = self::counter_hit( 'rl:' . $bucket . ':ip:' . md5( $ip ) );
 			if ( $count > $limit_ip ) {
 				$blocked = true;
 			}
@@ -1101,13 +1185,13 @@ class SSC_Schema {
 		if ( ! $blocked && in_array( $mode, array( 'session', 'both' ), true ) && $limit_session > 0 ) {
 			// Omitting cid must not disable session quotas.
 			$cid   = '' !== $cid ? $cid : 'missing:' . $ip;
-			$count = self::stat_hit( 'rl:' . $bucket . ':sess:' . md5( $cid ) );
+			$count = self::counter_hit( 'rl:' . $bucket . ':sess:' . md5( $cid ) );
 			if ( $count > $limit_session ) {
 				$blocked = true;
 			}
 			// Backstop: sessions can be regenerated; an IP ceiling guards it.
 			$cap = max( 10, $limit_session * 10 );
-			if ( self::stat_hit( 'rl:' . $bucket . ':ipcap:' . md5( $ip ) ) > $cap ) {
+			if ( self::counter_hit( 'rl:' . $bucket . ':ipcap:' . md5( $ip ) ) > $cap ) {
 				$blocked = true;
 			}
 		}

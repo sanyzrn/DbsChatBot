@@ -32,7 +32,7 @@ class SSC_Module_Voice extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Voice Interaction', 'smart-support-chatbot' );
+		return __( 'Voice Interaction', 'nexachat-ai' );
 	}
 
 	/**
@@ -41,7 +41,7 @@ class SSC_Module_Voice extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Visitors speak to the assistant and listen to answers (microphone input and text-to-speech playback).', 'smart-support-chatbot' );
+		return __( 'Visitors speak to the assistant and listen to answers (microphone input and text-to-speech playback).', 'nexachat-ai' );
 	}
 
 	/**
@@ -50,7 +50,7 @@ class SSC_Module_Voice extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Hands-free conversations and accessible answers for visitors on the go.', 'smart-support-chatbot' );
+		return __( 'Hands-free conversations and accessible answers for visitors on the go.', 'nexachat-ai' );
 	}
 
 	/**

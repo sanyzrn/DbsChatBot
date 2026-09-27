@@ -20,8 +20,8 @@
 					Placeholder,
 					{
 						icon: 'format-chat',
-						label: __('Smart Assistant Chatbot', 'smart-support-chatbot'),
-						instructions: __('The assistant is configured in the “Smart Assistant” admin menu. Publishing is controlled there.', 'smart-support-chatbot')
+						label: __('Smart Assistant Chatbot', 'nexachat-ai'),
+						instructions: __('The assistant is configured in the “Smart Assistant” admin menu. Publishing is controlled there.', 'nexachat-ai')
 					}
 				)
 			);

@@ -63,16 +63,28 @@ class SSC_Chat_Engine {
 		$this->last_source = 'fallback';
 		$this->last_error  = '';
 
-		$message = trim( (string) $message );
+		// Hard ceiling on message size (token + abuse protection).
+		$message = SSC_Input::message( $message, 2000 );
 		if ( '' === $message ) {
 			return $this->envelope( false, '', 'empty' );
 		}
-		// Hard ceiling on message size (token + abuse protection).
-		if ( mb_strlen( $message ) > 2000 ) {
-			$message = mb_substr( $message, 0, 2000 );
-		}
 
-		$product                = $this->sanitize_product( $product );
+		$product = $this->sanitize_product( $product );
+		// Context is what THIS server answered; the browser cannot author
+		// assistant turns. Without a conversation id (an older cached widget),
+		// only the visitor's own earlier messages are accepted.
+		if ( '' !== $this->conversation ) {
+			$history = SSC_Conversation::load( $this->conversation );
+		} else {
+			$history = array_values(
+				array_filter(
+					is_array( $history ) ? $history : array(),
+					function ( $item ) {
+						return is_array( $item ) && isset( $item['role'] ) && 'user' === $item['role'];
+					}
+				)
+			);
+		}
 		$history                = $this->sanitize_history( $history );
 		$this->current_question = $message;
 		$this->current_product  = $product;
@@ -139,11 +151,15 @@ class SSC_Chat_Engine {
 	 * @return string Empty on failure.
 	 */
 	protected function ai_reply( $provider, $message, $product, $history, $on_delta = null ) {
-		$system = SSC_Prompt_Builder::build_for_chat( $message, $product );
-		$opts   = array(
-			'endpoint'     => $provider->saved_credentials()['endpoint'],
-			'product'      => $product,
-			'product_name' => $this->product_name( $product ),
+		$system            = SSC_Prompt_Builder::build_for_chat( $message, $product );
+		$web               = SSC_Providers::web_search_active();
+		$this->web_sources = array();
+		$opts              = array(
+			'endpoint'       => $provider->saved_credentials()['endpoint'],
+			'product'        => $product,
+			'product_name'   => $this->product_name( $product ),
+			'web_search'     => $web,
+			'search_domains' => $web ? SSC_Settings::parse_domains( SSC_Settings::get( 'web_search_domains', '' ) ) : array(),
 		);
 
 		// Messages: strip leading assistant turns (some APIs require user-first).
@@ -158,10 +174,11 @@ class SSC_Chat_Engine {
 
 		// Response cache only for history-less questions (deterministic + cheap).
 		// Health conversations must never enter a shared response cache.
-		$cache_enabled = ! SSC_Modules::is_active( 'pharma' ) && ( 'yes' === SSC_Settings::get( 'ai_cache_enabled', 'yes' ) ) && empty( $history );
+		// Web-searched answers are time-sensitive and carry their own citations.
+		$cache_enabled = ! $web && ! SSC_Modules::is_active( 'pharma' ) && ( 'yes' === SSC_Settings::get( 'ai_cache_enabled', 'yes' ) ) && empty( $history );
 		$cache_key     = '';
 		if ( $cache_enabled ) {
-			$cache_key = 'ssc_ai_' . md5( $provider->id() . '|' . $product . '|' . mb_strtolower( trim( $message ) ) . '|' . md5( $system ) . '|' . SSC_Setup::connection_fingerprint() );
+			$cache_key = 'ssc_ai_' . md5( SSC_Settings::ai_cache_generation() . '|' . $provider->id() . '|' . $product . '|' . mb_strtolower( trim( $message ) ) . '|' . md5( $system ) . '|' . SSC_Setup::connection_fingerprint() );
 			$cached    = get_transient( $cache_key );
 			if ( false !== $cached && '' !== $cached ) {
 				$this->last_source = 'cache';
@@ -170,7 +187,8 @@ class SSC_Chat_Engine {
 		}
 
 		$result = null;
-		if ( is_callable( $on_delta ) && SSC_Stream::provider_supports( $provider ) ) {
+		// Searching answers arrive complete (with citations) over plain HTTP.
+		if ( ! $web && is_callable( $on_delta ) && SSC_Stream::provider_supports( $provider ) ) {
 			$result = SSC_Stream::generate( $provider, $system, $messages, $opts, $on_delta );
 		}
 		if ( null === $result ) {
@@ -192,8 +210,9 @@ class SSC_Chat_Engine {
 			return '';
 		}
 
-		$reply = $result['text'];
-		if ( $cache_enabled && $cache_key ) {
+		$reply             = $result['text'];
+		$this->web_sources = isset( $result['sources'] ) && is_array( $result['sources'] ) ? $result['sources'] : array();
+		if ( $cache_enabled && $cache_key && empty( $result['partial'] ) ) {
 			$ttl = (int) apply_filters( 'ssc_ai_cache_ttl', 6 * HOUR_IN_SECONDS );
 			set_transient( $cache_key, $reply, $ttl );
 		}
@@ -210,7 +229,7 @@ class SSC_Chat_Engine {
 		$this->last_source = 'unanswered';
 		$fallback          = (string) SSC_Settings::get( 'ai_fallback_msg', '' );
 		if ( '' === trim( $fallback ) ) {
-			$fallback = __( 'Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly.', 'smart-support-chatbot' );
+			$fallback = __( 'Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly.', 'nexachat-ai' );
 		}
 		$envelope = $this->envelope( true, $fallback, 'unanswered' );
 		// Handoff is suggested only when the module is active (server-enforced).
@@ -237,7 +256,16 @@ class SSC_Chat_Engine {
 			'log_id'    => 0,
 			'log_token' => '',
 			'flags'     => $this->flags,
+			'sources'   => array(),
 		);
+		// Citations: the documents the answer was grounded on (AI answers only).
+		if ( $ok && in_array( $source, array( 'ai', 'cache' ), true ) && 'yes' === SSC_Settings::get( 'show_sources', 'yes' ) ) {
+			$out['sources'] = array_slice( array_merge( array_slice( SSC_Prompt_Builder::last_sources(), 0, 3 ), 'ai' === $source ? $this->web_sources : array() ), 0, 6 );
+		}
+
+		if ( $ok && '' !== $reply ) {
+			SSC_Conversation::append( $this->conversation, $this->current_question, $reply );
+		}
 
 		if ( $ok && SSC_Modules::is_active( 'history' ) && 'yes' === SSC_Settings::get( 'chatlog_enabled', 'no' ) && '' !== $reply ) {
 			$log_id = SSC_Schema::log_chat(
@@ -245,7 +273,7 @@ class SSC_Chat_Engine {
 				$reply,
 				( 'unanswered' === $source ) ? 'unanswered' : $source,
 				$this->current_product,
-				$this->current_ip
+				SSC_Input::stored_ip( $this->current_ip, (string) SSC_Settings::get( 'ip_storage', 'anonymize' ) )
 			);
 			if ( $log_id ) {
 				$out['log_id']    = $log_id;
@@ -278,12 +306,28 @@ class SSC_Chat_Engine {
 	protected $current_ip = '';
 
 	/**
+	 * Web pages cited by the last AI answer (web search).
+	 *
+	 * @var array[]
+	 */
+	protected $web_sources = array();
+
+	/**
+	 * Server-side conversation id ('' = none).
+	 *
+	 * @var string
+	 */
+	protected $conversation = '';
+
+	/**
 	 * Capture request context (called by transports right before chat()).
 	 *
-	 * @param string $ip  Client ip.
+	 * @param string $ip           Client ip.
+	 * @param string $conversation Conversation id from the widget (optional).
 	 */
-	public function set_context( $ip ) {
-		$this->current_ip = (string) $ip;
+	public function set_context( $ip, $conversation = '' ) {
+		$this->current_ip   = (string) $ip;
+		$this->conversation = SSC_Conversation::sanitize_id( $conversation );
 	}
 
 	/**
@@ -390,7 +434,7 @@ class SSC_Chat_Engine {
 				continue;
 			}
 			$role = $item['role'];
-			$text = sanitize_textarea_field( (string) $item['content'] );
+			$text = SSC_Input::message( $item['content'], 4000 );
 			if ( '' === trim( $text ) ) {
 				continue;
 			}

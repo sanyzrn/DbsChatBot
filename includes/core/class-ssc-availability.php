@@ -78,7 +78,7 @@ class SSC_Availability {
 		if ( '' !== $msg ) {
 			return $msg;
 		}
-		return __( 'We are currently away. Leave a message and we will get back to you during business hours.', 'smart-support-chatbot' );
+		return __( 'We are currently away. Leave a message and we will get back to you during business hours.', 'nexachat-ai' );
 	}
 
 	/**
@@ -137,7 +137,47 @@ class SSC_Availability {
 			'device'         => (string) SSC_Settings::get( 'display_devices', 'all' ),
 			'sound'          => 'yes' === SSC_Settings::get( 'sound_enabled', 'no' ),
 			'streaming'      => 'yes' === SSC_Settings::get( 'streaming_enabled', 'yes' ),
+			// Page caches freeze the rendered status; when business hours are
+			// on, the widget re-reads it live from the REST status endpoint.
+			'dynamic'        => 'yes' === SSC_Settings::get( 'business_hours_enabled', 'no' ),
 		);
+	}
+
+	/**
+	 * Live, cache-independent status (REST GET /status).
+	 *
+	 * @return array
+	 */
+	public static function live_status() {
+		$online = self::is_online();
+		return array(
+			'online'         => $online,
+			'offlineMessage' => $online ? '' : self::offline_message(),
+		);
+	}
+
+	/**
+	 * Proactive invitation text for the current page: the first matching
+	 * "path | message" rule, else the default text. "-" disables it.
+	 *
+	 * @param string $rules    Rule lines.
+	 * @param string $fallback Default text.
+	 * @param string $path     Request path (null = current request).
+	 * @return string
+	 */
+	public static function proactive_text_for( $rules, $fallback, $path = null ) {
+		$path = null === $path ? self::current_request_path() : (string) $path;
+		foreach ( preg_split( '/\r\n|\r|\n/', (string) $rules ) as $line ) {
+			$parts = explode( '|', $line, 2 );
+			if ( 2 !== count( $parts ) || '' === trim( $parts[0] ) ) {
+				continue;
+			}
+			if ( self::path_matches( $path, trim( $parts[0] ) ) ) {
+				$message = trim( $parts[1] );
+				return '-' === $message ? '' : $message;
+			}
+		}
+		return (string) $fallback;
 	}
 
 	/**
@@ -227,7 +267,7 @@ class SSC_Availability {
 	 * @param string $pattern Pattern.
 	 * @return bool
 	 */
-	protected static function path_matches( $current, $pattern ) {
+	public static function path_matches( $current, $pattern ) {
 		$pattern = trim( $pattern );
 		if ( '' === $pattern ) {
 			return false;

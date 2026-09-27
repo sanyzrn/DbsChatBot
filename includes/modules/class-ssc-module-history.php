@@ -33,7 +33,7 @@ class SSC_Module_History extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Conversation History', 'smart-support-chatbot' );
+		return __( 'Conversation History', 'nexachat-ai' );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class SSC_Module_History extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Stores conversations so you can review quality, capture answers into the FAQ bank and spot unanswered questions.', 'smart-support-chatbot' );
+		return __( 'Stores conversations so you can review quality, capture answers into the FAQ bank and spot unanswered questions.', 'nexachat-ai' );
 	}
 
 	/**
@@ -51,7 +51,7 @@ class SSC_Module_History extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Improve answer quality with real conversation evidence, with configurable retention.', 'smart-support-chatbot' );
+		return __( 'Improve answer quality with real conversation evidence, with configurable retention.', 'nexachat-ai' );
 	}
 
 	/**
@@ -106,8 +106,8 @@ class SSC_Module_History extends SSC_Module {
 		}
 		add_submenu_page(
 			'ssc-dashboard',
-			__( 'Conversations', 'smart-support-chatbot' ),
-			__( 'Conversations', 'smart-support-chatbot' ),
+			__( 'Conversations', 'nexachat-ai' ),
+			__( 'Conversations', 'nexachat-ai' ),
 			'manage_options',
 			'ssc-conversations',
 			array( $this, 'render_page' )
@@ -119,7 +119,7 @@ class SSC_Module_History extends SSC_Module {
 	 */
 	public function render_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'smart-support-chatbot' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
 		}
 		$this->handle_row_actions();
 

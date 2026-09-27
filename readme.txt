@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,12 +23,15 @@ NexaChatAI is a professional AI assistant for WordPress: install it, run the set
 * **5-step setup wizard** with auto-saved progress
 * **Invisible until published** — server-side gate, not just hidden UI
 * **Real connection tests** with clear error mapping
-* **Business knowledge base** with document chunks (offline RAG-style)
+* **Business knowledge base** with document chunks, keyword + optional semantic (embeddings) retrieval and source citations
 * **Multi-provider AI:** OpenAI, Gemini, Claude, OpenRouter, OpenAI-compatible, signed Webhook
 * **Security:** AES-256-CBC + HMAC encrypted keys, rate limits, honeypot, SSRF guard
 * **Privacy:** server chat history is opt-in; short-lived browser transcripts outside pharma mode; configurable server retention
 * **RTL + LTR** widget with logical CSS
-* **Live streaming** answers (SSE) for OpenAI-compatible providers
+* **Live streaming** answers (SSE) for OpenAI, Claude, Gemini and OpenAI-compatible providers
+* **Server-side conversation memory** (the browser never supplies the model's context)
+* **Answer scope** (knowledge only / your business / any question) and optional **web search** with citations
+* **Persian admin** (complete translation, RTL layout, Solar Hijri dates)
 * **Display rules** by page path, device, and login state
 * **Business hours / offline mode**
 
@@ -66,6 +69,20 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.1.0 =
+
+* New: semantic knowledge retrieval (OpenAI / Gemini / compatible embeddings) blended with keyword search, and source citations under AI answers.
+* New: streaming for Claude and Gemini; an interrupted stream keeps the partial answer instead of paying for a second request.
+* New: server-side conversation memory keyed by a random conversation id — forged "assistant" turns from the browser are ignored.
+* New: multi-line composer, tap-to-call and main-menu buttons, radio fields, proactive invitation triggers (scroll / exit intent) and per-page messages.
+* New: live business-hours status that works with page caches; object-cache rate-limit counters; AI cache generation keys.
+* New: settings tabs; the Appearance preview is now the real widget; complete Persian translation with RTL admin and Solar Hijri dates.
+* New: visitor IP anonymization (default) for logs and requests.
+* New: answer scope — only from your knowledge, your business and its field (default for new sites), or any question — with an optional reply for unrelated questions. Replaces the old "strict mode" checkbox; existing sites keep their behaviour.
+* New: optional web search through the provider's own tool (OpenAI Responses, Claude, Gemini Google Search, OpenRouter), with an optional domain allow-list and web citations under answers. Always off in knowledge-only and pharmaceutical modes.
+* Changed: plugin folder, main file and text domain are now `nexachat-ai`. An active pre-rename copy is detected and deactivated automatically; settings and data are shared and kept.
+* Fixed: "bottom right" appeared bottom-left on RTL sites; chat questions containing "<" were truncated; checkbox/radio label spacing.
 
 = 1.0.0 =
 
@@ -146,6 +163,10 @@ First stable release. Everything from the 0.6.x beta line, plus:
 * composer / PHPCS / CI scaffolding
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+
+The plugin now lives in the `nexachat-ai` folder. Install the new ZIP and activate it: the old `smart-support-chatbot` copy is deactivated automatically and all data is kept. Its "remove data on uninstall" policy is switched off during the hand-over so deleting the old copy cannot erase shared data. Back up first, then clear page/CDN caches.
 
 = 1.0.0 =
 

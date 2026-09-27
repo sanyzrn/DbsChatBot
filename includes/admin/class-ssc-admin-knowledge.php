@@ -20,7 +20,7 @@ class SSC_Admin_Knowledge {
 	 */
 	public function __construct() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'smart-support-chatbot' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
 		}
 		add_action( 'admin_init', array( $this, 'handle_actions' ), 5 );
 	}
@@ -115,6 +115,33 @@ class SSC_Admin_Knowledge {
 			self::prg( array( 'kb' => $result['status'], 'chunks' => $result['chunks'] ) );
 		}
 
+		// Semantic search settings + manual index run.
+		if ( isset( $_POST['ssc_kb_semantic_save'] ) && check_admin_referer( 'ssc_kb' ) ) {
+			SSC_Settings::update(
+				array(
+					'kb_semantic'  => isset( $_POST['kb_semantic'] ) ? 'yes' : 'no',
+					'show_sources' => isset( $_POST['show_sources'] ) ? 'yes' : 'no',
+				)
+			);
+			$args = array( 'kb' => 'semantic' );
+			if ( SSC_Embeddings::enabled() ) {
+				// Index a few batches right away; the rest continues in the background.
+				for ( $i = 0; $i < 3; ++$i ) {
+					$result = SSC_Embeddings::index_batch();
+					if ( '' !== $result['error'] ) {
+						$args['kb'] = 'semantic_error';
+						set_transient( 'ssc_kb_embed_error', $result['error'], 10 * MINUTE_IN_SECONDS );
+						break;
+					}
+					if ( 0 === $result['remaining'] ) {
+						break;
+					}
+				}
+				SSC_Embeddings::schedule();
+			}
+			self::prg( $args );
+		}
+
 		// KB document delete.
 		if ( isset( $_GET['ssc_kb_action'], $_GET['doc'], $_GET['_wpnonce'] ) ) {
 			$doc = sanitize_key( wp_unslash( $_GET['doc'] ) );
@@ -151,7 +178,7 @@ class SSC_Admin_Knowledge {
 		}
 		$doc_id = 'url-' . substr( md5( $url ), 0, 12 );
 		SSC_Schema::kb_delete_document( $doc_id );
-		return SSC_Schema::kb_insert_document( $doc_id, '' !== $title ? $title : $url, $text ) > 0;
+		return SSC_Schema::kb_insert_document( $doc_id, '' !== $title ? $title : $url, $text, 'general', $url ) > 0;
 	}
 
 	/**

@@ -6,11 +6,12 @@ function sanitize_text_field( $text ) { return trim( strip_tags( $text ) ); }
 function wp_strip_all_tags( $text ) { return trim( strip_tags( (string) $text ) ); }
 function sanitize_textarea_field( $text ) { return trim( strip_tags( $text ) ); }
 function apply_filters( $hook, $value ) { return $value; }
+if ( ! function_exists( 'wp_parse_url' ) ) { function wp_parse_url( $url, $component = -1 ) { return parse_url( $url, $component ); } }
 class SSC_Settings {
     public static $values = array();
     public static function get( $key, $default = null ) { return self::$values[ $key ] ?? $default; }
 }
-foreach ( array( 'input', 'availability', 'http', 'provider' ) as $file ) {
+foreach ( array( 'input', 'availability', 'http', 'provider', 'embeddings', 'date' ) as $file ) {
     require __DIR__ . '/../includes/core/class-ssc-' . $file . '.php';
 }
 foreach ( array( 'openai-compat', 'openai', 'claude', 'gemini' ) as $file ) {
@@ -128,5 +129,64 @@ foreach ( array(
 ) as $message ) {
 	check( ! $screen( $message ), 'a routine side-effect question is not escalated' );
 }
+
+// Streaming parsers: realistic event payloads per provider.
+$claude = new SSC_Provider_Claude();
+$ev     = $claude->parse_stream_event( array( 'type' => 'content_block_delta', 'index' => 0, 'delta' => array( 'type' => 'text_delta', 'text' => 'سلام' ) ) );
+check( 'سلام' === $ev['text'] && ! $ev['done'] && ! $ev['error'], 'Claude text_delta streams text' );
+check( $claude->parse_stream_event( array( 'type' => 'message_stop' ) )['done'], 'Claude message_stop completes the stream' );
+check( $claude->parse_stream_event( array( 'type' => 'error', 'error' => array( 'type' => 'overloaded_error' ) ) )['error'], 'Claude error event fails the stream' );
+check( '' === $claude->parse_stream_event( array( 'type' => 'content_block_delta', 'delta' => array( 'type' => 'input_json_delta', 'partial_json' => '{' ) ) )['text'], 'Claude non-text deltas are ignored' );
+check( true === $claude->stream_parts( 'k', 'claude-haiku-4-5', 'sys', array( array( 'role' => 'user', 'content' => 'hi' ) ) )['body']['stream'], 'Claude stream request sets stream=true' );
+$gemini = new SSC_Provider_Gemini();
+$parts  = $gemini->stream_parts( 'k', 'gemini-2.5-flash', 'sys', array( array( 'role' => 'user', 'content' => 'hi' ) ) );
+check( false !== strpos( $parts['url'], ':streamGenerateContent?alt=sse' ), 'Gemini stream uses streamGenerateContent with SSE framing' );
+$ev = $gemini->parse_stream_event( array( 'candidates' => array( array( 'content' => array( 'parts' => array( array( 'text' => 'hidden', 'thought' => true ), array( 'text' => 'Hi' ) ) ) ) ) ) );
+check( 'Hi' === $ev['text'] && ! $ev['done'], 'Gemini chunk text excludes thoughts' );
+check( $gemini->parse_stream_event( array( 'candidates' => array( array( 'content' => array( 'parts' => array( array( 'text' => '!' ) ) ), 'finishReason' => 'STOP' ) ) ) )['done'], 'Gemini finishReason completes the stream' );
+check( $gemini->parse_stream_event( array( 'candidates' => array( array( 'finishReason' => 'SAFETY' ) ) ) )['error'], 'Gemini safety stop fails the stream' );
+$openai = new SSC_Provider_Openai();
+$ev     = $openai->parse_stream_event( array( 'choices' => array( array( 'delta' => array( 'content' => 'x' ), 'finish_reason' => null ) ) ) );
+check( 'x' === $ev['text'] && ! $ev['done'] && $openai->supports_streaming() && $claude->supports_streaming() && $gemini->supports_streaming(), 'OpenAI-compatible chunk parsing unchanged' );
+
+// Embeddings: request shapes, response parsing and vector math.
+$parts = SSC_Embeddings::request_parts( 'openai', 'sk', 'text-embedding-3-small', array( 'a', 'b' ) );
+check( 'https://api.openai.com/v1/embeddings' === $parts['url'] && 512 === $parts['body']['dimensions'] && array( 'a', 'b' ) === $parts['body']['input'], 'OpenAI embeddings request' );
+$parts = SSC_Embeddings::request_parts( 'custom', 'k', 'm', array( 'a' ), 'https://llm.example.com/v1/chat/completions' );
+check( 'https://llm.example.com/v1/embeddings' === $parts['url'] && ! isset( $parts['body']['dimensions'] ), 'Custom endpoint derives /embeddings and omits dimensions' );
+$parts = SSC_Embeddings::request_parts( 'gemini', 'k', 'gemini-embedding-001', array( 'a' ) );
+check( false !== strpos( $parts['url'], ':batchEmbedContents' ) && 512 === $parts['body']['requests'][0]['outputDimensionality'], 'Gemini batch embeddings request' );
+check( null === SSC_Embeddings::request_parts( 'claude', 'k', 'm', array( 'a' ) ), 'Providers without embeddings are refused' );
+check( array( array( 1 ), array( 2 ) ) === SSC_Embeddings::extract_vectors( 'openai', array( 'data' => array( array( 'index' => 1, 'embedding' => array( 2 ) ), array( 'index' => 0, 'embedding' => array( 1 ) ) ) ) ), 'OpenAI vectors are returned in input order' );
+check( array( array( 3 ) ) === SSC_Embeddings::extract_vectors( 'gemini', array( 'embeddings' => array( array( 'values' => array( 3 ) ) ) ) ), 'Gemini vectors parsed' );
+$v = SSC_Embeddings::normalize( array( 3, 4 ) );
+check( abs( $v[0] - 0.6 ) < 1e-9 && abs( SSC_Embeddings::cosine( $v, $v ) - 1 ) < 1e-9, 'Vectors are unit length; self-similarity is 1' );
+$round = SSC_Embeddings::unpack( SSC_Embeddings::pack( $v ) );
+check( abs( $round[1] - 0.8 ) < 1e-6 && array() === SSC_Embeddings::unpack( 'not base64 !!' ), 'Vectors survive storage; corrupt blobs are ignored' );
+
+// Solar Hijri conversion (Nowruz boundaries and a leap year).
+check( array( 1405, 7, 5 ) === SSC_Date::to_jalali( 2026, 9, 27 ), 'Gregorian 2026-09-27 is 1405/07/05' );
+check( array( 1403, 1, 1 ) === SSC_Date::to_jalali( 2024, 3, 20 ) && array( 1402, 12, 29 ) === SSC_Date::to_jalali( 2024, 3, 19 ), 'Nowruz 1403 boundary' );
+check( array( 1403, 12, 30 ) === SSC_Date::to_jalali( 2025, 3, 20 ), 'Leap year 1403 has Esfand 30' );
+check( '۱۴۰۵/۰۷/۰۵' === SSC_Date::persian_digits( '1405/07/05' ), 'Persian digits' );
+
+// Web search: request shapes per provider and citation parsing.
+$msgs  = array( array( 'role' => 'user', 'content' => 'news?' ) );
+$claude = new SSC_Provider_Claude();
+$body   = $claude->request_parts( 'k', 'claude-haiku-4-5', 'sys', $msgs, array( 'web_search' => true, 'search_domains' => array( 'example.com' ) ) )['body'];
+check( 'web_search_20250305' === $body['tools'][0]['type'] && array( 'example.com' ) === $body['tools'][0]['allowed_domains'], 'Claude web search tool with domain allow-list' );
+check( ! isset( $claude->request_parts( 'k', 'claude-haiku-4-5', 'sys', $msgs )['body']['tools'] ), 'No tools unless web search is on' );
+$cites = $claude->extract_sources( array( 'content' => array( array( 'type' => 'text', 'text' => 'x', 'citations' => array( array( 'type' => 'web_search_result_location', 'url' => 'https://a.example/p', 'title' => 'A' ), array( 'url' => 'https://a.example/p', 'title' => 'dup' ), array( 'url' => 'javascript:alert(1)', 'title' => 'bad' ) ) ) ) ) );
+check( 1 === count( $cites ) && 'A' === $cites[0]['title'], 'Claude citations deduplicated; non-http links dropped' );
+$gemini = new SSC_Provider_Gemini();
+check( '{"google_search":{}}' === json_encode( $gemini->request_parts( 'k', 'gemini-2.5-flash', 's', $msgs, array( 'web_search' => true ) )['body']['tools'][0] ), 'Gemini Google Search tool serializes as an object' );
+check( 'site.example' === $gemini->extract_sources( array( 'candidates' => array( array( 'groundingMetadata' => array( 'groundingChunks' => array( array( 'web' => array( 'uri' => 'https://vertexaisearch.cloud.google.com/x', 'title' => 'site.example' ) ) ) ) ) ) ) )[0]['title'], 'Gemini grounding chunks become sources' );
+$openai = new SSC_Provider_Openai();
+$parts  = $openai->request_parts( 'sk', 'gpt-4.1-mini', 'sys', $msgs, array( 'web_search' => true, 'search_domains' => array( 'example.com' ) ) );
+check( 'https://api.openai.com/v1/responses' === $parts['url'] && 'web_search' === $parts['body']['tools'][0]['type'] && 'sys' === $parts['body']['instructions'] && array( 'example.com' ) === $parts['body']['tools'][0]['filters']['allowed_domains'], 'OpenAI searches through the Responses API' );
+check( false !== strpos( $openai->request_parts( 'sk', 'gpt-4o-mini', 'sys', $msgs )['url'], '/chat/completions' ), 'OpenAI keeps Chat Completions without search' );
+$resp = array( 'output' => array( array( 'type' => 'web_search_call' ), array( 'type' => 'message', 'content' => array( array( 'type' => 'output_text', 'text' => 'Hello ', 'annotations' => array( array( 'type' => 'url_citation', 'url' => 'https://b.example', 'title' => 'B' ) ) ), array( 'type' => 'output_text', 'text' => 'world' ) ) ) ) );
+check( 'Hello world' === $openai->extract_text( $resp ) && 'https://b.example' === $openai->extract_sources( $resp )[0]['url'], 'Responses API text and URL citations parsed' );
+check( 'Hi' === $openai->extract_text( array( 'choices' => array( array( 'message' => array( 'content' => 'Hi' ) ) ) ) ), 'Chat Completions parsing unchanged' );
 
 echo "$count unit checks passed.\n";

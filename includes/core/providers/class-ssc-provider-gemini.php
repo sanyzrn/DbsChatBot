@@ -85,6 +85,10 @@ class SSC_Provider_Gemini extends SSC_Provider {
 		if ( '' !== (string) $system ) {
 			$body['systemInstruction'] = array( 'parts' => array( array( 'text' => (string) $system ) ) );
 		}
+		if ( ! empty( $opts['web_search'] ) ) {
+			// Grounding with Google Search (an empty object, not an empty list).
+			$body['tools'] = array( array( 'google_search' => new stdClass() ) );
+		}
 
 		return array(
 			'url'         => 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode( (string) $model ) . ':generateContent',
@@ -114,6 +118,84 @@ class SSC_Provider_Gemini extends SSC_Provider {
 	}
 
 	/**
+	 * Grounding with Google Search.
+	 *
+	 * @return bool
+	 */
+	public function supports_web_search() {
+		return true;
+	}
+
+	/**
+	 * Grounding chunks of the answer (PURE).
+	 *
+	 * @param array $data Decoded response.
+	 * @return array[]
+	 */
+	public function extract_sources( $data ) {
+		$sources = array();
+		$chunks  = isset( $data['candidates'][0]['groundingMetadata']['groundingChunks'] ) ? $data['candidates'][0]['groundingMetadata']['groundingChunks'] : array();
+		foreach ( (array) $chunks as $chunk ) {
+			if ( isset( $chunk['web']['uri'] ) ) {
+				$sources[] = array(
+					'title' => isset( $chunk['web']['title'] ) ? $chunk['web']['title'] : '',
+					'url'   => $chunk['web']['uri'],
+				);
+			}
+		}
+		return self::clean_sources( $sources );
+	}
+
+	/**
+	 * Gemini streams via streamGenerateContent.
+	 *
+	 * @return bool
+	 */
+	public function supports_streaming() {
+		return true;
+	}
+
+	/**
+	 * Streaming request (PURE): streamGenerateContent with SSE framing.
+	 *
+	 * @param string $api_key  Key.
+	 * @param string $model    Model.
+	 * @param string $system   System prompt.
+	 * @param array  $messages Messages.
+	 * @param array  $opts     Options.
+	 * @return array
+	 */
+	public function stream_parts( $api_key, $model, $system, $messages, $opts = array() ) {
+		$parts        = $this->request_parts( $api_key, $model, $system, $messages, $opts );
+		$parts['url'] = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode( (string) $model ) . ':streamGenerateContent?alt=sse';
+		return $parts;
+	}
+
+	/**
+	 * One streamed GenerateContentResponse (PURE). Thought parts are skipped;
+	 * a finishReason marks the final chunk (SAFETY counts as a failure).
+	 *
+	 * @param array $event Decoded chunk.
+	 * @return array{text:string,done:bool,error:bool}
+	 */
+	public function parse_stream_event( $event ) {
+		$text = '';
+		if ( isset( $event['candidates'][0]['content']['parts'] ) && is_array( $event['candidates'][0]['content']['parts'] ) ) {
+			foreach ( $event['candidates'][0]['content']['parts'] as $part ) {
+				if ( isset( $part['text'] ) && empty( $part['thought'] ) ) {
+					$text .= (string) $part['text'];
+				}
+			}
+		}
+		$finish = isset( $event['candidates'][0]['finishReason'] ) ? (string) $event['candidates'][0]['finishReason'] : '';
+		return array(
+			'text'  => $text,
+			'done'  => '' !== $finish && 'SAFETY' !== $finish,
+			'error' => isset( $event['error'] ) || 'SAFETY' === $finish,
+		);
+	}
+
+	/**
 	 * Gemini embeds errors as {error:{code,message}} with 200 sometimes.
 	 *
 	 * @param array $data Payload.
@@ -121,7 +203,7 @@ class SSC_Provider_Gemini extends SSC_Provider {
 	 */
 	public function embedded_error( $data ) {
 		if ( isset( $data['candidates'][0]['finishReason'] ) && 'SAFETY' === $data['candidates'][0]['finishReason'] ) {
-			return __( 'The model blocked the test prompt for safety reasons.', 'smart-support-chatbot' );
+			return __( 'The model blocked the test prompt for safety reasons.', 'nexachat-ai' );
 		}
 		return parent::embedded_error( $data );
 	}

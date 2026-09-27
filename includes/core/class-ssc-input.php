@@ -34,6 +34,65 @@ class SSC_Input {
 	}
 
 	/**
+	 * Chat message text: keeps what the visitor actually typed.
+	 *
+	 * WordPress sanitize_textarea_field() strips anything that looks like a tag, so a
+	 * question such as "is 2<5?" or a pasted code snippet reached the model
+	 * truncated. Chat text is never rendered as HTML (the widget escapes it
+	 * and admin screens use esc_html), so only invalid UTF-8 and control
+	 * characters are removed here.
+	 *
+	 * @param mixed $value Raw value; anything non-scalar becomes ''.
+	 * @param int   $limit Maximum length in characters.
+	 * @return string
+	 */
+	public static function message( $value, $limit = 2000 ) {
+		if ( ! is_scalar( $value ) ) {
+			return '';
+		}
+		$value = wp_check_invalid_utf8( (string) $value, true );
+		$value = str_replace( array( "\r\n", "\r" ), "\n", $value );
+		$value = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $value );
+		return trim( mb_substr( (string) $value, 0, $limit ) );
+	}
+
+	/**
+	 * REST sanitize_callback form of message() (WordPress passes the request
+	 * as a second argument, which must not become the length limit).
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string
+	 */
+	public static function rest_message( $value ) {
+		return self::message( $value, 2000 );
+	}
+
+	/**
+	 * Store an IP according to the privacy setting.
+	 *
+	 * @param string $ip   Client IP.
+	 * @param string $mode anonymize (default) | full | none.
+	 * @return string
+	 */
+	public static function stored_ip( $ip, $mode = 'anonymize' ) {
+		$ip = (string) $ip;
+		if ( 'full' === $mode ) {
+			return $ip;
+		}
+		if ( 'none' === $mode || '' === $ip ) {
+			return '';
+		}
+		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return preg_replace( '/\.\d+$/', '.0', $ip ); // Drop the host octet (/24).
+		}
+		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+			$packed = inet_pton( $ip );
+			return inet_ntop( substr( $packed, 0, 6 ) . str_repeat( "\0", 10 ) ); // Keep the /48 network.
+		}
+		return '';
+	}
+
+	/**
 	 * Strict opt-in check: only an explicit affirmative counts as consent.
 	 *
 	 * @param mixed $value Submitted consent value.
@@ -55,8 +114,8 @@ class SSC_Input {
 			return $text;
 		}
 		return $pharma
-			? __( 'I consent to the processing of my contact and health information for safety review and follow-up.', 'smart-support-chatbot' )
-			: __( 'I consent to the processing of my contact information and message for follow-up.', 'smart-support-chatbot' );
+			? __( 'I consent to the processing of my contact and health information for safety review and follow-up.', 'nexachat-ai' )
+			: __( 'I consent to the processing of my contact information and message for follow-up.', 'nexachat-ai' );
 	}
 
 	/**

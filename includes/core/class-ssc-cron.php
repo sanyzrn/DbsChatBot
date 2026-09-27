@@ -35,6 +35,7 @@ class SSC_Cron {
 	public static function unschedule() {
 		wp_clear_scheduled_hook( self::HOOK );
 		wp_clear_scheduled_hook( self::RETRY_HOOK );
+		wp_clear_scheduled_hook( SSC_Embeddings::CRON_HOOK );
 	}
 
 	/**
@@ -43,6 +44,7 @@ class SSC_Cron {
 	public static function init() {
 		add_action( self::HOOK, array( __CLASS__, 'run' ) );
 		add_action( self::RETRY_HOOK, array( 'SSC_Module_Notifications', 'retry_failed' ) );
+		add_action( SSC_Embeddings::CRON_HOOK, array( 'SSC_Embeddings', 'cron_run' ) );
 		add_filter( 'cron_schedules', array( __CLASS__, 'schedules' ) );
 	}
 
@@ -60,7 +62,7 @@ class SSC_Cron {
 	public static function schedules( $schedules ) {
 		$schedules['ssc_five_minutes'] = array(
 			'interval' => 300,
-			'display'  => __( 'NexaChatAI: every five minutes', 'smart-support-chatbot' ),
+			'display'  => __( 'NexaChatAI: every five minutes', 'nexachat-ai' ),
 		);
 		return $schedules;
 	}
@@ -74,5 +76,7 @@ class SSC_Cron {
 			(int) SSC_Settings::get( 'submissions_retention_days', 0 )
 		);
 		SSC_Notification_Queue::purge_completed();
+		// Provider/model changes leave chunks without a current vector.
+		SSC_Embeddings::schedule();
 	}
 }

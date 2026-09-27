@@ -13,7 +13,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SLUG = 'smart-support-chatbot'
+SLUG = 'nexachat-ai'
 
 # Nothing matching these may appear anywhere in the archive.
 FORBIDDEN_PATTERNS = (
@@ -37,7 +37,7 @@ FORBIDDEN_PATTERNS = (
 
 # The plugin cannot install or run without these.
 REQUIRED = (
-    f'{SLUG}/smart-support-chatbot.php',
+    f'{SLUG}/nexachat-ai.php',
     f'{SLUG}/uninstall.php',
     f'{SLUG}/index.php',
     f'{SLUG}/readme.txt',
@@ -47,7 +47,7 @@ REQUIRED = (
     f'{SLUG}/assets/js/chatbot.js',
     f'{SLUG}/assets/css/chatbot.css',
     f'{SLUG}/blocks/chatbot/block.json',
-    f'{SLUG}/languages/smart-support-chatbot.pot',
+    f'{SLUG}/languages/nexachat-ai.pot',
 )
 
 

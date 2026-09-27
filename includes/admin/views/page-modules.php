@@ -20,20 +20,20 @@ $error       = isset( $_GET['error'] ) ? sanitize_text_field( wp_unslash( $_GET[
 <div class="ssc-page ssc-modules-page">
 	<header class="ssc-page__head">
 		<div>
-			<h1><?php esc_html_e( 'Modules', 'smart-support-chatbot' ); ?></h1>
-			<p class="ssc-page__sub"><?php esc_html_e( 'Enable exactly what your business needs. Everything is free, included, and safely reversible — data is preserved when you switch a module off.', 'smart-support-chatbot' ); ?></p>
+			<h1><?php esc_html_e( 'Modules', 'nexachat-ai' ); ?></h1>
+			<p class="ssc-page__sub"><?php esc_html_e( 'Enable exactly what your business needs. Everything is free, included, and safely reversible — data is preserved when you switch a module off.', 'nexachat-ai' ); ?></p>
 		</div>
 		<form method="get" class="ssc-search" role="search">
 			<input type="hidden" name="page" value="ssc-modules" />
-			<input type="search" name="ssc_search" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search modules…', 'smart-support-chatbot' ); ?>" aria-label="<?php esc_attr_e( 'Search modules', 'smart-support-chatbot' ); ?>" />
+			<input type="search" name="ssc_search" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search modules…', 'nexachat-ai' ); ?>" aria-label="<?php esc_attr_e( 'Search modules', 'nexachat-ai' ); ?>" />
 		</form>
 	</header>
 
 	<?php if ( $activated ) : ?>
-		<div class="ssc-notice ssc-notice--success" role="status"><span class="dashicons dashicons-yes-alt" aria-hidden="true"></span> <?php esc_html_e( 'Module activated.', 'smart-support-chatbot' ); ?></div>
+		<div class="ssc-notice ssc-notice--success" role="status"><span class="dashicons dashicons-yes-alt" aria-hidden="true"></span> <?php esc_html_e( 'Module activated.', 'nexachat-ai' ); ?></div>
 	<?php endif; ?>
 	<?php if ( $deactivated ) : ?>
-		<div class="ssc-notice ssc-notice--info" role="status"><?php esc_html_e( 'Module deactivated. Its data is kept and will be there when you re-enable it.', 'smart-support-chatbot' ); ?></div>
+		<div class="ssc-notice ssc-notice--info" role="status"><?php esc_html_e( 'Module deactivated. Its data is kept and will be there when you re-enable it.', 'nexachat-ai' ); ?></div>
 	<?php endif; ?>
 	<?php if ( $error ) : ?>
 		<div class="ssc-notice ssc-notice--error" role="alert"><?php echo esc_html( $error ); ?></div>
@@ -89,29 +89,29 @@ $error       = isset( $_GET['error'] ) ? sanitize_text_field( wp_unslash( $_GET[
 							<p class="ssc-modcard__desc"><?php echo esc_html( $module->description() ); ?></p>
 							<p class="ssc-modcard__benefit"><?php echo esc_html( $module->benefit() ); ?></p>
 							<?php if ( $dep_labels ) : ?>
-								<p class="ssc-modcard__deps"><span class="dashicons dashicons-admin-links" aria-hidden="true"></span> <?php echo esc_html( sprintf( __( 'Requires: %s', 'smart-support-chatbot' ), implode( ', ', $dep_labels ) ) ); ?></p>
+								<p class="ssc-modcard__deps"><span class="dashicons dashicons-admin-links" aria-hidden="true"></span> <?php echo esc_html( sprintf( __( 'Requires: %s', 'nexachat-ai' ), implode( ', ', $dep_labels ) ) ); ?></p>
 							<?php endif; ?>
 						</div>
 						<div class="ssc-modcard__side">
 							<span class="ssc-badge ssc-badge--<?php echo esc_attr( $status ); ?>">
 								<?php
 								if ( 'active' === $status ) {
-									esc_html_e( 'Active', 'smart-support-chatbot' );
+									esc_html_e( 'Active', 'nexachat-ai' );
 								} elseif ( 'setup' === $status ) {
-									esc_html_e( 'Setup Required', 'smart-support-chatbot' );
+									esc_html_e( 'Setup Required', 'nexachat-ai' );
 								} else {
-									esc_html_e( 'Inactive', 'smart-support-chatbot' );
+									esc_html_e( 'Inactive', 'nexachat-ai' );
 								}
 								?>
 							</span>
 							<?php if ( 'active' === $status && $module->needs_config() ) : ?>
-								<a class="ssc-modcard__configure" href="<?php echo esc_url( $module->is_industry() ? admin_url( 'admin.php?page=ssc-pharma' ) : admin_url( 'admin.php?page=ssc-settings' ) ); ?>"><?php esc_html_e( 'Configure', 'smart-support-chatbot' ); ?></a>
+								<a class="ssc-modcard__configure" href="<?php echo esc_url( $module->is_industry() ? admin_url( 'admin.php?page=ssc-pharma' ) : admin_url( 'admin.php?page=ssc-settings' ) ); ?>"><?php esc_html_e( 'Configure', 'nexachat-ai' ); ?></a>
 							<?php endif; ?>
 							<a class="ssc-btn <?php echo 'inactive' === $status ? 'ssc-btn--primary' : 'ssc-btn--ghost'; ?>" href="<?php echo esc_url( $toggle_url ); ?>">
 								<?php if ( 'inactive' === $status ) : ?>
-									<?php esc_html_e( 'Activate', 'smart-support-chatbot' ); ?>
+									<?php esc_html_e( 'Activate', 'nexachat-ai' ); ?>
 								<?php else : ?>
-									<?php esc_html_e( 'Deactivate', 'smart-support-chatbot' ); ?>
+									<?php esc_html_e( 'Deactivate', 'nexachat-ai' ); ?>
 								<?php endif; ?>
 							</a>
 						</div>
@@ -123,7 +123,7 @@ $error       = isset( $_GET['error'] ) ? sanitize_text_field( wp_unslash( $_GET[
 
 	<?php if ( 0 === $rendered ) : ?>
 		<div class="ssc-empty">
-			<p><?php esc_html_e( 'No modules match your search.', 'smart-support-chatbot' ); ?></p>
+			<p><?php esc_html_e( 'No modules match your search.', 'nexachat-ai' ); ?></p>
 		</div>
 	<?php endif; ?>
 </div>

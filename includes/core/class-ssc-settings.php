@@ -22,6 +22,18 @@ class SSC_Settings {
 	const OPTION_KEY = 'ssc_chatbot_settings';
 
 	/**
+	 * Large lists live in their own options: saving appearance no longer
+	 * rewrites (and cannot clobber) a catalog edited in another tab, and the
+	 * main settings row stays small.
+	 *
+	 * @var array<string,string> setting key => option name.
+	 */
+	const SPLIT_OPTIONS = array(
+		'products'        => 'ssc_chatbot_products',
+		'knowledge_items' => 'ssc_chatbot_knowledge',
+	);
+
+	/**
 	 * Runtime cache.
 	 *
 	 * @var array|null
@@ -90,7 +102,13 @@ class SSC_Settings {
 			'ai_max_tokens'              => 800,
 			'ai_history_limit'           => 8,
 			'ai_system_prompt_extra'     => '',
-			'ai_strict_knowledge'        => 'no',
+			'ai_strict_knowledge'        => 'no', // Legacy (pre-1.2): migrated into answer_scope.
+			// What the assistant may talk about: knowledge | business | open.
+			'answer_scope'               => 'business',
+			'off_topic_message'          => '',
+			// Provider-native web search (Claude, OpenAI, Gemini, OpenRouter).
+			'web_search'                 => 'no',
+			'web_search_domains'         => '', // Optional allow-list, one domain per line.
 			'ai_fallback_msg'            => '',
 			'ai_cache_enabled'           => 'yes',
 			'pharma_answer_mode'         => 'approved_only',
@@ -126,6 +144,7 @@ class SSC_Settings {
 			'consent_text'               => '',
 			'consent_link'               => '',
 			'privacy_acknowledged'       => 'no',
+			'ip_storage'                 => 'anonymize', // anonymize | full | none (logs + requests).
 			'chatlog_retention_days'     => 90,
 			'submissions_retention_days' => 0,
 
@@ -179,6 +198,9 @@ class SSC_Settings {
 			// Proactive module.
 			'proactive_delay'            => 12,
 			'proactive_text'             => '',
+			'proactive_trigger'          => 'delay', // delay | scroll | exit.
+			'proactive_scroll'           => 50,
+			'proactive_rules'            => '', // "path | message" per line.
 
 			// Notifications module.
 			'notify_platform'            => 'bale',
@@ -192,6 +214,8 @@ class SSC_Settings {
 
 			// Knowledge retrieval tuning (core-adjacent, advanced).
 			'kb_max_chunks'              => 3,
+			'kb_semantic'                => 'no', // Embedding-based retrieval (OpenAI / Gemini / custom).
+			'show_sources'               => 'yes', // Cite knowledge documents under AI answers.
 
 			/*
 			 * Legacy keys kept for backward read compatibility: old keys such as
@@ -210,10 +234,45 @@ class SSC_Settings {
 		if ( null !== self::$cache ) {
 			return self::$cache;
 		}
-		$saved       = get_option( self::OPTION_KEY, array() );
-		$saved       = is_array( $saved ) ? $saved : array();
+		$saved = get_option( self::OPTION_KEY, array() );
+		$saved = is_array( $saved ) ? $saved : array();
+		foreach ( self::SPLIT_OPTIONS as $key => $option ) {
+			$list = get_option( $option, null );
+			if ( is_array( $list ) ) {
+				$saved[ $key ] = $list;
+			}
+		}
 		self::$cache = self::merge_defaults( $saved, self::defaults() );
 		return self::$cache;
+	}
+
+	/**
+	 * Write settings: lists to their own options, the rest to the main row.
+	 *
+	 * @param array      $all     Complete settings.
+	 * @param array|null $touched Keys changed by this call (null = all). A
+	 *                            list is only rewritten when touched, or when
+	 *                            its option does not exist yet (migration).
+	 */
+	protected static function persist( $all, $touched = null ) {
+		foreach ( self::SPLIT_OPTIONS as $key => $option ) {
+			$exists = is_array( get_option( $option, null ) );
+			if ( array_key_exists( $key, $all ) && ( ! $exists || null === $touched || array_key_exists( $key, $touched ) ) ) {
+				update_option( $option, is_array( $all[ $key ] ) ? array_values( $all[ $key ] ) : array(), false );
+			}
+			unset( $all[ $key ] );
+		}
+		// Autoload off: the plugin reads it on its own requests only.
+		update_option( self::OPTION_KEY, $all, false );
+		self::$cache = null;
+	}
+
+	/**
+	 * One-time move of the lists out of the main option (idempotent).
+	 */
+	public static function split_storage() {
+		self::$cache = null;
+		self::persist( self::all(), array() );
 	}
 
 	/**
@@ -267,10 +326,8 @@ class SSC_Settings {
 	 * @param array $settings Partial or full settings.
 	 */
 	public static function update( $settings ) {
-		$merged = self::merge_defaults( is_array( $settings ) ? $settings : array(), self::all() );
-		// The option can grow large with product catalogs: autoload off.
-		update_option( self::OPTION_KEY, $merged, false );
-		self::$cache = null;
+		$settings = is_array( $settings ) ? $settings : array();
+		self::persist( self::merge_defaults( $settings, self::all() ), $settings );
 		self::flush_ai_cache();
 	}
 
@@ -283,8 +340,10 @@ class SSC_Settings {
 		$all = self::all();
 		if ( array_key_exists( $key, $all ) ) {
 			unset( $all[ $key ] );
-			update_option( self::OPTION_KEY, $all, false );
-			self::$cache = null;
+			if ( isset( self::SPLIT_OPTIONS[ $key ] ) ) {
+				delete_option( self::SPLIT_OPTIONS[ $key ] );
+			}
+			self::persist( $all, array() );
 		}
 	}
 
@@ -298,9 +357,22 @@ class SSC_Settings {
 	}
 
 	/**
+	 * Current AI answer cache generation (part of every cache key).
+	 *
+	 * @return int
+	 */
+	public static function ai_cache_generation() {
+		return (int) get_option( 'ssc_ai_cache_gen', 1 );
+	}
+
+	/**
 	 * Invalidate AI response cache when anything that influences answers changes.
 	 */
 	public static function flush_ai_cache() {
+		// Bumping the generation invalidates every cached answer at once, in
+		// the options table AND in a persistent object cache (Redis etc.),
+		// where the SQL purge below cannot reach.
+		update_option( 'ssc_ai_cache_gen', self::ai_cache_generation() + 1, true );
 		global $wpdb;
 		if ( ! isset( $wpdb ) || ! is_object( $wpdb ) || empty( $wpdb->options ) ) {
 			return;
@@ -442,8 +514,7 @@ class SSC_Settings {
 		$value = trim( (string) $value );
 		if ( '' === $value ) {
 			unset( $all[ $key ] );
-			update_option( self::OPTION_KEY, $all, false );
-			self::$cache = null;
+			self::persist( $all, array() );
 			return true;
 		}
 		$encrypted = self::encrypt( $value );
@@ -451,8 +522,7 @@ class SSC_Settings {
 			return false;
 		}
 		$all[ $key ] = $encrypted;
-		update_option( self::OPTION_KEY, $all, false );
-		self::$cache = null;
+		self::persist( $all, array() );
 		return true;
 	}
 
@@ -502,6 +572,9 @@ class SSC_Settings {
 			case 'business_hours_enabled':
 			case 'sound_enabled':
 			case 'streaming_enabled':
+			case 'kb_semantic':
+			case 'show_sources':
+			case 'web_search':
 				return ( 'yes' === $value || '1' === (string) $value || true === $value ) ? 'yes' : 'no';
 
 			case 'ai_provider':
@@ -519,6 +592,24 @@ class SSC_Settings {
 
 			case 'direction':
 				return in_array( $value, array( 'rtl', 'ltr', 'auto' ), true ) ? $value : 'rtl';
+
+			case 'ip_storage':
+				return in_array( $value, array( 'anonymize', 'full', 'none' ), true ) ? $value : 'anonymize';
+
+			case 'answer_scope':
+				return in_array( $value, array( 'knowledge', 'business', 'open' ), true ) ? $value : 'business';
+
+			case 'off_topic_message':
+				return sanitize_textarea_field( (string) $value );
+
+			case 'web_search_domains':
+				return implode( "\n", self::parse_domains( $value ) );
+
+			case 'proactive_trigger':
+				return in_array( $value, array( 'delay', 'scroll', 'exit' ), true ) ? $value : 'delay';
+
+			case 'proactive_rules':
+				return sanitize_textarea_field( (string) $value );
 
 			case 'rate_limit_mode':
 				return in_array( $value, array( 'ip', 'session', 'both', 'off' ), true ) ? $value : 'ip';
@@ -624,6 +715,62 @@ class SSC_Settings {
 	}
 
 	/**
+	 * Normalize a domain allow-list ("https://www.Example.com/x" -> "example.com").
+	 *
+	 * @param mixed $value Newline/comma separated list.
+	 * @return string[]
+	 */
+	public static function parse_domains( $value ) {
+		$out = array();
+		foreach ( preg_split( '/[\s,]+/', strtolower( (string) $value ) ) as $item ) {
+			$item = preg_replace( '#^[a-z]+://#', '', trim( $item ) );
+			$item = preg_replace( '#[/?\#].*$#', '', $item );
+			$item = preg_replace( '/^www\./', '', $item );
+			if ( '' !== $item && preg_match( '/^[a-z0-9-]+(\.[a-z0-9-]+)+$/', $item ) ) {
+				$out[ $item ] = true;
+			}
+		}
+		return array_slice( array_keys( $out ), 0, 20 );
+	}
+
+	/**
+	 * Effective answer scope. The pharmaceutical policy wins while its module
+	 * is active and never allows unrestricted topics.
+	 *
+	 * @return string knowledge | business | open
+	 */
+	public static function answer_scope() {
+		if ( SSC_Modules::is_active( 'pharma' ) ) {
+			return 'approved_only' === self::get( 'pharma_answer_mode', 'approved_only' ) ? 'knowledge' : 'business';
+		}
+		return self::sanitize_value( 'answer_scope', self::get( 'answer_scope', 'business' ) );
+	}
+
+	/**
+	 * Is web search allowed right now? Never in knowledge-only scope or
+	 * pharmaceutical mode (answers there must come from approved content).
+	 *
+	 * @return bool
+	 */
+	public static function web_search_enabled() {
+		return 'yes' === self::get( 'web_search', 'no' ) && 'knowledge' !== self::answer_scope() && ! SSC_Modules::is_active( 'pharma' );
+	}
+
+	/**
+	 * Pre-1.2 installs: keep their behaviour. Strict mode becomes the
+	 * knowledge-only scope; everyone else stays unrestricted ("open"), which
+	 * is what they had. New installs get the "business" default.
+	 */
+	public static function migrate_answer_scope() {
+		$saved = get_option( self::OPTION_KEY, array() );
+		if ( ! is_array( $saved ) || isset( $saved['answer_scope'] ) || empty( $saved ) ) {
+			return;
+		}
+		$scope = ( isset( $saved['ai_strict_knowledge'] ) && 'yes' === $saved['ai_strict_knowledge'] ) ? 'knowledge' : 'open';
+		self::update( array( 'answer_scope' => $scope ) );
+	}
+
+	/**
 	 * Allowed range for every integer setting. Out-of-range values (a 0px
 	 * font, a 5000px window, max_tokens of 0) broke the widget or the provider
 	 * call, and several save paths cast to int without any bounds.
@@ -645,6 +792,7 @@ class SSC_Settings {
 			'submit_rate_limit'          => array( 0, 10000 ),
 			'session_rate_limit'         => array( 0, 100000 ),
 			'proactive_delay'            => array( 2, 120 ),
+			'proactive_scroll'           => array( 10, 100 ),
 			'kb_max_chunks'              => array( 1, 8 ),
 		);
 	}
@@ -842,14 +990,14 @@ class SSC_Settings {
 	 */
 	public static function form_field_type_labels() {
 		return array(
-			'text'     => __( 'Short text', 'smart-support-chatbot' ),
-			'textarea' => __( 'Long text', 'smart-support-chatbot' ),
-			'tel'      => __( 'Phone', 'smart-support-chatbot' ),
-			'email'    => __( 'Email', 'smart-support-chatbot' ),
-			'number'   => __( 'Number', 'smart-support-chatbot' ),
-			'select'   => __( 'Dropdown', 'smart-support-chatbot' ),
-			'radio'    => __( 'Single choice', 'smart-support-chatbot' ),
-			'checkbox' => __( 'Checkbox', 'smart-support-chatbot' ),
+			'text'     => __( 'Short text', 'nexachat-ai' ),
+			'textarea' => __( 'Long text', 'nexachat-ai' ),
+			'tel'      => __( 'Phone', 'nexachat-ai' ),
+			'email'    => __( 'Email', 'nexachat-ai' ),
+			'number'   => __( 'Number', 'nexachat-ai' ),
+			'select'   => __( 'Dropdown', 'nexachat-ai' ),
+			'radio'    => __( 'Single choice', 'nexachat-ai' ),
+			'checkbox' => __( 'Checkbox', 'nexachat-ai' ),
 		);
 	}
 
@@ -923,7 +1071,7 @@ class SSC_Settings {
 			$items[] = array(
 				'id'      => 'ki-org-profile',
 				'type'    => 'general',
-				'title'   => isset( $new['business']['org_name'] ) && '' !== $new['business']['org_name'] ? $new['business']['org_name'] : __( 'About the organization', 'smart-support-chatbot' ),
+				'title'   => isset( $new['business']['org_name'] ) && '' !== $new['business']['org_name'] ? $new['business']['org_name'] : __( 'About the organization', 'nexachat-ai' ),
 				'content' => wp_kses_post( (string) $old_knowledge[ $company_id ] ),
 			);
 		}

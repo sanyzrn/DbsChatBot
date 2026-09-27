@@ -3,7 +3,7 @@
 	<description>WordPress Coding Standards for Smart Support Chatbot.</description>
 
 	<!-- Every PHP file that ships inside the distributed plugin. -->
-	<file>smart-support-chatbot.php</file>
+	<file>nexachat-ai.php</file>
 	<file>uninstall.php</file>
 	<file>index.php</file>
 	<file>includes/</file>

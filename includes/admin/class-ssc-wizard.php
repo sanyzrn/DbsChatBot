@@ -35,7 +35,7 @@ class SSC_Wizard {
 	 */
 	public function __construct() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'smart-support-chatbot' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
 		}
 
 		$this->handle_posts();
@@ -337,11 +337,11 @@ class SSC_Wizard {
 		$state    = SSC_Setup::state();
 		$steps    = SSC_Setup::steps();
 		$labels   = array(
-			'identity'   => array( __( 'Business Identity', 'smart-support-chatbot' ), 'M1 20h5V8H1v12Z M13 20h5V4h-5v16Z' ),
-			'knowledge'  => array( __( 'Business Knowledge', 'smart-support-chatbot' ), 'M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2Z M8 7h7 M8 11h7' ),
-			'connection' => array( __( 'AI Connection', 'smart-support-chatbot' ), 'M5 12h14 M12 5v14' ),
-			'appearance' => array( __( 'Appearance', 'smart-support-chatbot' ), 'M12 3a9 9 0 1 0 9 9h-9V3Z' ),
-			'review'     => array( __( 'Verify & Launch', 'smart-support-chatbot' ), 'M20 6 9 17l-5-5' ),
+			'identity'   => array( __( 'Business Identity', 'nexachat-ai' ), 'M1 20h5V8H1v12Z M13 20h5V4h-5v16Z' ),
+			'knowledge'  => array( __( 'Business Knowledge', 'nexachat-ai' ), 'M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2Z M8 7h7 M8 11h7' ),
+			'connection' => array( __( 'AI Connection', 'nexachat-ai' ), 'M5 12h14 M12 5v14' ),
+			'appearance' => array( __( 'Appearance', 'nexachat-ai' ), 'M12 3a9 9 0 1 0 9 9h-9V3Z' ),
+			'review'     => array( __( 'Verify & Launch', 'nexachat-ai' ), 'M20 6 9 17l-5-5' ),
 		);
 		$current  = $this->step;
 		$step_index = array_search( $current, $steps, true );

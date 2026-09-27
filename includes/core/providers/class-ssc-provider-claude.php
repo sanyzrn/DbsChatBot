@@ -87,6 +87,19 @@ class SSC_Provider_Claude extends SSC_Provider {
 		if ( 0 === strpos( (string) $model, 'claude-3' ) && isset( $opts['temperature'] ) ) {
 			$body['temperature'] = (float) $opts['temperature'];
 		}
+		if ( ! empty( $opts['web_search'] ) ) {
+			// Server-side web search tool: Anthropic runs the searches and
+			// returns cited text blocks in the same response.
+			$tool = array(
+				'type'     => 'web_search_20250305',
+				'name'     => 'web_search',
+				'max_uses' => 3,
+			);
+			if ( ! empty( $opts['search_domains'] ) ) {
+				$tool['allowed_domains'] = array_values( (array) $opts['search_domains'] );
+			}
+			$body['tools'] = array( apply_filters( 'ssc_claude_web_search_tool', $tool ) );
+		}
 
 		return array(
 			'url'         => 'https://api.anthropic.com/v1/messages',
@@ -116,5 +129,82 @@ class SSC_Provider_Claude extends SSC_Provider {
 			return trim( $text );
 		}
 		return '';
+	}
+
+	/**
+	 * Anthropic's server-side web search tool.
+	 *
+	 * @return bool
+	 */
+	public function supports_web_search() {
+		return true;
+	}
+
+	/**
+	 * Pages cited in text blocks (PURE).
+	 *
+	 * @param array $data Decoded response.
+	 * @return array[]
+	 */
+	public function extract_sources( $data ) {
+		$sources = array();
+		foreach ( isset( $data['content'] ) && is_array( $data['content'] ) ? $data['content'] : array() as $block ) {
+			if ( isset( $block['citations'] ) && is_array( $block['citations'] ) ) {
+				foreach ( $block['citations'] as $cite ) {
+					if ( isset( $cite['url'] ) ) {
+						$sources[] = array(
+							'title' => isset( $cite['title'] ) ? $cite['title'] : '',
+							'url'   => $cite['url'],
+						);
+					}
+				}
+			}
+		}
+		return self::clean_sources( $sources );
+	}
+
+	/**
+	 * The Messages API streams natively.
+	 *
+	 * @return bool
+	 */
+	public function supports_streaming() {
+		return true;
+	}
+
+	/**
+	 * Streaming request (PURE).
+	 *
+	 * @param string $api_key  Key.
+	 * @param string $model    Model.
+	 * @param string $system   System prompt.
+	 * @param array  $messages Messages.
+	 * @param array  $opts     Options.
+	 * @return array
+	 */
+	public function stream_parts( $api_key, $model, $system, $messages, $opts = array() ) {
+		$parts                   = $this->request_parts( $api_key, $model, $system, $messages, $opts );
+		$parts['body']['stream'] = true;
+		return $parts;
+	}
+
+	/**
+	 * One Messages API stream event (PURE): content_block_delta carries text,
+	 * message_stop ends the answer, an error event aborts it.
+	 *
+	 * @param array $event Decoded event.
+	 * @return array{text:string,done:bool,error:bool}
+	 */
+	public function parse_stream_event( $event ) {
+		$type = isset( $event['type'] ) ? (string) $event['type'] : '';
+		$text = '';
+		if ( 'content_block_delta' === $type && isset( $event['delta']['type'], $event['delta']['text'] ) && 'text_delta' === $event['delta']['type'] ) {
+			$text = (string) $event['delta']['text'];
+		}
+		return array(
+			'text'  => $text,
+			'done'  => 'message_stop' === $type,
+			'error' => 'error' === $type,
+		);
 	}
 }

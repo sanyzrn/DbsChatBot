@@ -15,6 +15,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SSC_Providers {
 
 	/**
+	 * Will the next answer use the provider's web search tool?
+	 *
+	 * @return bool
+	 */
+	public static function web_search_active() {
+		$provider = self::current();
+		return null !== $provider && SSC_Settings::web_search_enabled() && $provider->supports_web_search();
+	}
+
+	/**
 	 * All registered provider instances (id => object).
 	 *
 	 * @var array
@@ -59,7 +69,7 @@ class SSC_Providers {
 	 * @return string[]
 	 */
 	public static function labels() {
-		$out = array( 'none' => __( 'No AI engine (offline answers only)', 'smart-support-chatbot' ) );
+		$out = array( 'none' => __( 'No AI engine (offline answers only)', 'nexachat-ai' ) );
 		foreach ( self::all() as $id => $provider ) {
 			$out[ $id ] = $provider->label();
 		}

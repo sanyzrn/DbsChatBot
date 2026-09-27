@@ -128,7 +128,7 @@ class SSC_Modules {
 				'ssc_module_dep',
 				sprintf(
 					/* translators: %s: comma-separated list of required module names. */
-					__( 'This module needs: %s', 'smart-support-chatbot' ),
+					__( 'This module needs: %s', 'nexachat-ai' ),
 					implode( ', ', $missing )
 				)
 			);
@@ -231,12 +231,12 @@ class SSC_Modules {
 	 */
 	public static function categories() {
 		return array(
-			'engagement'    => __( 'Customer Engagement', 'smart-support-chatbot' ),
-			'communication' => __( 'Communication', 'smart-support-chatbot' ),
-			'analytics'     => __( 'Analytics', 'smart-support-chatbot' ),
-			'knowledge'     => __( 'Knowledge & Intelligence', 'smart-support-chatbot' ),
-			'business'      => __( 'Business Tools', 'smart-support-chatbot' ),
-			'industry'      => __( 'Industry Extensions', 'smart-support-chatbot' ),
+			'engagement'    => __( 'Customer Engagement', 'nexachat-ai' ),
+			'communication' => __( 'Communication', 'nexachat-ai' ),
+			'analytics'     => __( 'Analytics', 'nexachat-ai' ),
+			'knowledge'     => __( 'Knowledge & Intelligence', 'nexachat-ai' ),
+			'business'      => __( 'Business Tools', 'nexachat-ai' ),
+			'industry'      => __( 'Industry Extensions', 'nexachat-ai' ),
 		);
 	}
 

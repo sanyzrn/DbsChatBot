@@ -272,26 +272,50 @@ class SSC_Knowledge {
 	 * @return array[] rows: title, chunk, score.
 	 */
 	public static function retrieve_chunks( $product_id, $question, $max = 3 ) {
-		$candidates = SSC_Schema::kb_candidates( $product_id );
+		$semantic   = class_exists( 'SSC_Embeddings' ) && SSC_Embeddings::enabled();
+		$candidates = SSC_Schema::kb_candidates( $product_id, $semantic );
 		if ( empty( $candidates ) ) {
 			return array();
 		}
 		$user_tokens = self::tokenize( self::normalize( $question ) );
-		if ( empty( $user_tokens ) ) {
+
+		// Semantic signal (only chunks embedded with the current model count).
+		$query_vector = array();
+		$model        = '';
+		if ( $semantic ) {
+			$model = SSC_Embeddings::model();
+			foreach ( $candidates as $row ) {
+				if ( isset( $row['embedding_model'] ) && $row['embedding_model'] === $model ) {
+					$query_vector = SSC_Embeddings::query_vector( $question );
+					break;
+				}
+			}
+		}
+		if ( empty( $user_tokens ) && empty( $query_vector ) ) {
 			return array();
 		}
 
-		$threshold = (float) apply_filters( 'ssc_kb_threshold', 0.08 );
-		$scored    = array();
+		$threshold     = (float) apply_filters( 'ssc_kb_threshold', 0.08 );
+		$sem_threshold = (float) apply_filters( 'ssc_kb_semantic_threshold', 0.35 );
+		$scored        = array();
 		foreach ( $candidates as $row ) {
-			$score = self::overlap_score( $user_tokens, self::normalize( $row['chunk'] ) );
-			if ( $score >= $threshold ) {
-				$scored[] = array(
-					'title' => $row['source_title'],
-					'chunk' => $row['chunk'],
-					'score' => $score,
-				);
+			$keyword = empty( $user_tokens ) ? 0.0 : self::overlap_score( $user_tokens, self::normalize( $row['chunk'] ) );
+			$cosine  = 0.0;
+			if ( $query_vector && isset( $row['embedding'], $row['embedding_model'] ) && $row['embedding_model'] === $model ) {
+				$cosine = SSC_Embeddings::cosine( $query_vector, SSC_Embeddings::unpack( $row['embedding'] ) );
 			}
+			if ( $keyword < $threshold && $cosine < $sem_threshold ) {
+				continue;
+			}
+			// Hybrid: meaning first, exact wording as a tie-breaker.
+			$score    = $query_vector ? 0.65 * max( 0.0, $cosine ) + 0.35 * $keyword : $keyword;
+			$scored[] = array(
+				'title'  => $row['source_title'],
+				'url'    => isset( $row['source_url'] ) ? (string) $row['source_url'] : '',
+				'doc_id' => isset( $row['doc_id'] ) ? (string) $row['doc_id'] : '',
+				'chunk'  => $row['chunk'],
+				'score'  => $score,
+			);
 		}
 		usort(
 			$scored,
@@ -429,7 +453,7 @@ class SSC_Knowledge {
 				$body = mb_substr( $body, 0, max( 0, $budget - $used ) ) . '…';
 			}
 			$used   += mb_strlen( $body );
-			$title   = ! empty( $item['title'] ) ? $item['title'] : __( 'Reference', 'smart-support-chatbot' );
+			$title   = ! empty( $item['title'] ) ? $item['title'] : __( 'Reference', 'nexachat-ai' );
 			$parts[] = SSC_Prompt_Builder::fence( 'KNOWLEDGE', $title, $body );
 			if ( $used >= $budget ) {
 				break;

@@ -20,7 +20,7 @@ class SSC_Admin_Appearance {
 	 */
 	public function __construct() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'smart-support-chatbot' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
 		}
 		add_action( 'admin_init', array( $this, 'handle_actions' ), 5 );
 	}
@@ -68,6 +68,7 @@ class SSC_Admin_Appearance {
 	public function render() {
 		$s          = SSC_Settings::all();
 		$business   = SSC_Settings::business();
+		SSC_Plugin::instance()->frontend->enqueue_preview();
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-appearance.php';
 	}
 }

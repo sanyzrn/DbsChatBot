@@ -30,7 +30,7 @@ class SSC_Provider_Custom extends SSC_Provider_OpenAI_Compat {
 	 * @return string
 	 */
 	public function label() {
-		return __( 'OpenAI-compatible endpoint', 'smart-support-chatbot' );
+		return __( 'OpenAI-compatible endpoint', 'nexachat-ai' );
 	}
 
 	/**

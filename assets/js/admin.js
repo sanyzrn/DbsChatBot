@@ -189,164 +189,93 @@
 
 	/* ---------- Appearance live preview (light + dark) ---------- */
 
+	/*
+	 * The preview is the REAL widget (mounted by chatbot.js in preview mode);
+	 * form fields are mapped onto its config and repainted live, so the admin
+	 * always sees exactly what visitors will get.
+	 */
 	function bindPreview() {
 		var panel = $('#ssc-preview-panel');
-		if (!panel) { return; }
+		var mount = $('#ssc-live-preview');
+		if (!panel || !mount) { return; }
+		var overrideTheme = null; // Light/Dark toggle: preview only, not saved.
 
-		var pv = $('#ssc-pv');
-		var stage = $('#ssc-preview-stage');
-		var launcher = $('#ssc-pv-launcher');
-		var avatar = $('#ssc-pv-avatar');
-		var overrideTheme = null; // null = follow theme_mode select
-
-		var map = {
-			primary_color: null,
-			theme_mode: null,
-			position: null,
-			direction: null,
-			assistant_display_name: null,
-			avatar_url: null,
-			welcome_title: null,
-			welcome_text: null,
-			disclaimer: null,
-			font_size: null,
-			window_radius: null,
-			bubble_radius: null,
-			user_bubble_color: null,
-			bot_bubble_color: null,
-			launcher_size: null
+		var fields = {
+			primary_color: 'primaryColor',
+			theme_mode: 'themeMode',
+			position: 'position',
+			direction: 'direction',
+			assistant_display_name: 'assistantName',
+			avatar_url: 'avatarUrl',
+			welcome_title: 'welcomeTitle',
+			welcome_text: 'welcomeText',
+			disclaimer: 'disclaimer',
+			font_size: 'fontSize',
+			window_radius: 'windowRadius',
+			bubble_radius: 'bubbleRadius',
+			user_bubble_color: 'userBubble',
+			bot_bubble_color: 'botBubble',
+			launcher_size: 'launcherSize'
 		};
-		Object.keys(map).forEach(function (id) { map[id] = document.getElementById(id); });
+		var numeric = { font_size: 1, window_radius: 1, bubble_radius: 1, launcher_size: 1 };
 
-		function val(id, fallback) {
-			var el = map[id];
-			if (!el) { return fallback; }
-			var v = (el.value || '').trim();
-			return v === '' ? fallback : v;
-		}
-
-		function resolvedTheme() {
-			if (overrideTheme) { return overrideTheme; }
-			var mode = val('theme_mode', panel.getAttribute('data-theme-mode') || 'light');
-			if ('auto' === mode) {
-				return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-			}
-			return mode === 'dark' ? 'dark' : 'light';
+		function patch() {
+			var out = {};
+			Object.keys(fields).forEach(function (id) {
+				var el = document.getElementById(id);
+				if (!el) { return; }
+				var v = (el.value || '').trim();
+				if (numeric[id]) { v = parseInt(v, 10) || 0; }
+				out[fields[id]] = v;
+			});
+			if (!out.assistantName) { out.assistantName = panel.getAttribute('data-asst-name') || ''; }
+			if (!out.welcomeTitle) { out.welcomeTitle = panel.getAttribute('data-w-title') || ''; }
+			if (!out.welcomeText) { out.welcomeText = panel.getAttribute('data-w-text') || ''; }
+			if ('auto' === out.direction) { out.direction = panel.getAttribute('data-dir-auto') || 'rtl'; }
+			if (overrideTheme) { out.themeMode = overrideTheme; }
+			return out;
 		}
 
 		function update() {
-			if (!pv) { return; }
-			var primary = val('primary_color', panel.getAttribute('data-primary') || '#b61615');
-			var theme = resolvedTheme();
-			var dir = val('direction', panel.getAttribute('data-dir') || 'rtl');
-			if ('auto' === dir) { dir = 'rtl'; }
-			var pos = val('position', panel.getAttribute('data-pos') || 'right');
-			var name = val('assistant_display_name', panel.getAttribute('data-asst-name') || '');
-			var org = panel.getAttribute('data-org-name') || '';
-			var wtitle = val('welcome_title', panel.getAttribute('data-w-title') || '');
-			var wtext = val('welcome_text', panel.getAttribute('data-w-text') || '');
-			var foot = val('disclaimer', panel.getAttribute('data-disclaimer') || '');
-			var avatarUrl = val('avatar_url', '');
-			var fontSize = val('font_size', '14');
-			var winR = val('window_radius', '24');
-			var bubR = val('bubble_radius', '16');
-			var userBub = val('user_bubble_color', primary);
-			var botBub = val('bot_bubble_color', '');
-			var launcherSize = val('launcher_size', '60');
-
-			pv.setAttribute('data-theme', theme);
-			pv.setAttribute('dir', dir);
-			pv.style.setProperty('--pv-primary', primary);
-			pv.style.setProperty('--pv-font-size', fontSize + 'px');
-			pv.style.setProperty('--pv-win-radius', winR + 'px');
-			pv.style.setProperty('--pv-bubble-radius', bubR + 'px');
-			pv.style.setProperty('--pv-user-bubble', userBub || primary);
-			if (botBub) {
-				pv.style.setProperty('--pv-bot-bubble', botBub);
-			} else {
-				pv.style.removeProperty('--pv-bot-bubble');
-			}
-
-			if (stage) { stage.setAttribute('data-preview-theme', theme); }
-
-			if (launcher) {
-				launcher.setAttribute('data-pos', pos);
-				launcher.style.setProperty('--pv-primary', primary);
-				var px = Math.round(parseInt(launcherSize, 10) || 60);
-				// Scale mock launcher to fit the 340px panel.
-				var mock = Math.max(40, Math.min(56, Math.round(px * 0.85)));
-				launcher.style.width = mock + 'px';
-				launcher.style.height = mock + 'px';
-			}
-
-			if (avatar) {
-				if (avatarUrl) {
-					avatar.classList.add('has-img');
-					avatar.innerHTML = '<img src="" alt="" />';
-					var img = avatar.querySelector('img');
-					img.src = avatarUrl;
-				} else {
-					avatar.classList.remove('has-img');
-					avatar.innerHTML = '';
-					avatar.style.background = primary;
-				}
-			}
-
-			var nameEl = $('#ssc-pv-name');
-			if (nameEl) { nameEl.textContent = name; }
-			var statusEl = $('#ssc-pv-status');
-			if (statusEl) { statusEl.textContent = org; }
-			var wt = $('#ssc-pv-wtitle');
-			if (wt) { wt.textContent = wtitle; }
-			var wx = $('#ssc-pv-wtext');
-			if (wx) { wx.textContent = wtext; }
-			var ft = $('#ssc-pv-foot');
-			if (ft) { ft.textContent = foot; }
+			if (window.SSCChatbot && window.SSCChatbot.applyConfig) { window.SSCChatbot.applyConfig(patch()); }
 		}
 
-		// Theme toggle buttons (preview only — does not change the saved setting).
+		function mountWhenReady(tries) {
+			if (window.SSCChatbot && window.SSCChatbot.mountPreview) {
+				window.SSCChatbot.mountPreview(mount);
+				update();
+				return;
+			}
+			if (tries > 0) { window.setTimeout(function () { mountWhenReady(tries - 1); }, 100); }
+		}
+
 		$$('.ssc-preview-toggle [data-pv-theme]').forEach(function (btn) {
 			btn.addEventListener('click', function () {
 				overrideTheme = btn.getAttribute('data-pv-theme');
-				$$('.ssc-preview-toggle [data-pv-theme]').forEach(function (b) {
-					b.classList.toggle('is-on', b === btn);
-				});
+				$$('.ssc-preview-toggle [data-pv-theme]').forEach(function (b) { b.classList.toggle('is-on', b === btn); });
 				update();
 			});
 		});
 
-		// Sync toggle to the theme_mode select when the user changes the real setting.
-		if (map.theme_mode) {
-			map.theme_mode.addEventListener('change', function () {
-				overrideTheme = null;
-				var mode = map.theme_mode.value;
-				var want = ('dark' === mode) ? 'dark' : 'light';
-				$$('.ssc-preview-toggle [data-pv-theme]').forEach(function (b) {
-					b.classList.toggle('is-on', b.getAttribute('data-pv-theme') === want);
-				});
-				update();
-			});
-		}
-
-		Object.keys(map).forEach(function (id) {
-			var el = map[id];
+		Object.keys(fields).forEach(function (id) {
+			var el = document.getElementById(id);
 			if (!el) { return; }
 			el.addEventListener('input', update);
-			el.addEventListener('change', update);
+			el.addEventListener('change', function () {
+				if ('theme_mode' === id) {
+					overrideTheme = null;
+					var want = 'dark' === el.value ? 'dark' : 'light';
+					$$('.ssc-preview-toggle [data-pv-theme]').forEach(function (b) { b.classList.toggle('is-on', b.getAttribute('data-pv-theme') === want); });
+				}
+				update();
+			});
 		});
 
-		// Init toggle state from the saved theme. 'auto' keeps following the OS
-		// preference (overrideTheme stays null) so the preview matches reality.
-		(function initToggle() {
-			var mode = panel.getAttribute('data-theme-mode') || 'light';
-			overrideTheme = ('auto' === mode) ? null : (('dark' === mode) ? 'dark' : 'light');
-			var want = resolvedTheme();
-			$$('.ssc-preview-toggle [data-pv-theme]').forEach(function (b) {
-				b.classList.toggle('is-on', b.getAttribute('data-pv-theme') === want);
-			});
-		})();
+		var saved = panel.getAttribute('data-theme-mode') || 'light';
+		var want = 'dark' === saved ? 'dark' : 'light';
+		$$('.ssc-preview-toggle [data-pv-theme]').forEach(function (b) { b.classList.toggle('is-on', b.getAttribute('data-pv-theme') === want); });
 
-		update();
+		if ('complete' === document.readyState) { mountWhenReady(50); } else { window.addEventListener('load', function () { mountWhenReady(50); }); }
 	}
 
 	bindPreview();
@@ -500,4 +429,82 @@
 			if (form) { form.submit(); }
 		});
 	});
+})();
+
+/* ---------- Settings tabs (progressive: without JS every card stays visible) ---------- */
+(function () {
+	'use strict';
+	var nav = document.querySelector('.ssc-tabs');
+	if (!nav) { return; }
+	var sections = Array.prototype.slice.call(document.querySelectorAll('[data-ssc-tab]'));
+	var tabs = Array.prototype.slice.call(nav.querySelectorAll('.ssc-tabs__tab'));
+	var actions = document.querySelector('.ssc-form__actions');
+	var KEY = 'ssc_settings_tab';
+
+	// Hide tabs that have no content (e.g. no module is active).
+	tabs = tabs.filter(function (tab) {
+		var has = sections.some(function (sec) { return sec.getAttribute('data-ssc-tab') === tab.getAttribute('data-tab'); });
+		if (!has) { tab.parentElement.removeChild(tab); }
+		return has;
+	});
+	if (tabs.length < 2) { return; }
+
+	function select(id, focus) {
+		var found = tabs.some(function (tab) { return tab.getAttribute('data-tab') === id; });
+		if (!found) { id = tabs[0].getAttribute('data-tab'); }
+		tabs.forEach(function (tab) {
+			var on = tab.getAttribute('data-tab') === id;
+			tab.setAttribute('aria-selected', on ? 'true' : 'false');
+			tab.tabIndex = on ? 0 : -1;
+			if (on && focus) { tab.focus(); }
+		});
+		sections.forEach(function (sec) {
+			sec.hidden = sec.getAttribute('data-ssc-tab') !== id;
+			sec.setAttribute('role', 'tabpanel');
+			sec.setAttribute('aria-labelledby', 'ssc-tab-' + sec.getAttribute('data-ssc-tab'));
+		});
+		// Data tools have their own buttons; the main save belongs to form tabs.
+		if (actions) { actions.hidden = 'data' === id; }
+		try { sessionStorage.setItem(KEY, id); } catch (e) { /* storage unavailable */ }
+		if (window.history && window.history.replaceState) { window.history.replaceState(null, '', '#' + id); }
+	}
+
+	tabs.forEach(function (tab, i) {
+		tab.addEventListener('click', function () { select(tab.getAttribute('data-tab'), false); });
+		tab.addEventListener('keydown', function (e) {
+			var dir = (e.key === 'ArrowRight') ? 1 : (e.key === 'ArrowLeft') ? -1 : 0;
+			if (document.dir === 'rtl') { dir = -dir; }
+			if (!dir) { return; }
+			e.preventDefault();
+			var next = tabs[(i + dir + tabs.length) % tabs.length];
+			select(next.getAttribute('data-tab'), true);
+		});
+	});
+
+	var initial = (window.location.hash || '').replace('#', '');
+	if (!initial) { try { initial = sessionStorage.getItem(KEY) || ''; } catch (e) { initial = ''; } }
+	nav.hidden = false;
+	select(initial, false);
+})();
+
+/* ---------- Answer scope & web search (AI Connection) ---------- */
+(function () {
+	'use strict';
+	var card = document.getElementById('ssc-scope-card');
+	if (!card) { return; }
+	var web = document.getElementById('web_search');
+	var hint = card.querySelector('.ssc-web-unsupported');
+	var provider = document.getElementById('ai_provider');
+	var SUPPORTED = { openai: 1, claude: 1, gemini: 1, openrouter: 1 };
+
+	function sync() {
+		var scope = card.querySelector('input[name="answer_scope"]:checked');
+		var knowledgeOnly = scope && scope.value === 'knowledge';
+		var fixed = card.querySelector('.ssc-choices[disabled]'); // Pharma policy owns the scope.
+		if (web && !fixed) { web.disabled = !!knowledgeOnly; }
+		if (hint) { hint.hidden = !provider || !!SUPPORTED[provider.value]; }
+	}
+	card.addEventListener('change', sync);
+	if (provider) { provider.addEventListener('change', sync); }
+	sync();
 })();

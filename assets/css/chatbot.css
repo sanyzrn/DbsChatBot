@@ -115,13 +115,14 @@
 .ssc-root svg { display: block; max-width: none; }
 
 /* ------------------------------------------------------------------ *
- * Launcher
+ * Launcher. Floating placement uses PHYSICAL sides: the setting reads
+ * "bottom right / left", which must not flip on RTL sites.
  * ------------------------------------------------------------------ */
 
 .ssc-root .ssc-launcher {
 	position: fixed;
 	inset-block-end: 22px;
-	inset-inline-end: 22px;
+	right: 22px;
 	width: var(--ssc-launcher-size);
 	height: var(--ssc-launcher-size);
 	border-radius: 50%;
@@ -140,8 +141,8 @@
 
 .ssc-root.ssc-pos-left .ssc-launcher,
 .ssc-root .ssc-launcher.ssc-pos-left {
-	inset-inline-end: auto;
-	inset-inline-start: 22px;
+	right: auto;
+	left: 22px;
 }
 
 .ssc-root .ssc-launcher:hover { transform: translateY(-2px); }
@@ -233,7 +234,7 @@
 .ssc-root .ssc-window {
 	position: fixed;
 	inset-block-end: 94px;
-	inset-inline-end: 22px;
+	right: 22px;
 	width: var(--ssc-win-width);
 	max-width: calc(100vw - 2rem);
 	height: min(620px, calc(100vh - 130px));
@@ -251,8 +252,8 @@
 }
 
 .ssc-root.ssc-pos-left .ssc-window {
-	inset-inline-end: auto;
-	inset-inline-start: 22px;
+	right: auto;
+	left: 22px;
 }
 
 /* Closed = truly invisible AND unfocusable (WCAG-safe). */
@@ -264,13 +265,14 @@
 }
 
 .ssc-root .ssc-window--inline,
-.ssc-root .ssc-preview-mount .ssc-window {
+.ssc-preview-mount.ssc-root .ssc-window {
 	position: static;
 	height: 480px;
 	margin: 0 auto;
 }
 
-.ssc-root .ssc-preview-mount .ssc-launcher { display: none !important; }
+.ssc-preview-mount.ssc-root .ssc-launcher,
+.ssc-root [hidden] { display: none !important; }
 
 /* ------------------------------------------------------------------ *
  * Header
@@ -432,6 +434,24 @@
 	direction: ltr;
 }
 
+/* Composer textarea. */
+.ssc-root textarea.ssc-input { resize: none; overflow-y: auto; max-height: 132px; line-height: 1.5; border-radius: 20px; display: block; }
+
+/* Caption before suggestion chips ("Related questions:"). */
+.ssc-root .ssc-chips__label { flex-basis: 100%; font-size: 11.5px; color: var(--ssc-muted); }
+
+/* Screen-reader-only text. */
+.ssc-root .ssc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.ssc-root a.ssc-iconbtn { text-decoration: none; }
+
+/* Source citations under an answer. */
+.ssc-root .ssc-sources { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-block-start: 8px; padding-block-start: 7px; border-block-start: 1px dashed var(--ssc-line); font-size: 11.5px; color: var(--ssc-muted); }
+.ssc-root .ssc-sources__label { font-weight: 600; }
+.ssc-root .ssc-sources__item { background: var(--ssc-bg); border: 1px solid var(--ssc-line); border-radius: 999px; padding: 1px 8px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit; text-decoration: none; }
+.ssc-root .ssc-msg a.ssc-sources__item { text-decoration: none; }
+.ssc-root a.ssc-sources__item:hover { color: var(--ssc-ink); border-color: var(--ssc-primary); }
+
 /* Answer tools (copy + feedback). */
 .ssc-root .ssc-msgtools { display: flex; align-items: center; gap: 2px; margin-block-start: 6px; }
 .ssc-root .ssc-msgtools__btn {
@@ -552,7 +572,7 @@
 }
 
 .ssc-root .ssc-f__input:focus { outline: 2px solid var(--ssc-primary); outline-offset: 1px; border-color: transparent; }
-.ssc-root .ssc-f--check { flex-direction: row; align-items: flex-start; gap: 7px; }
+.ssc-root .ssc-f--check { display: flex; flex-direction: row; align-items: flex-start; gap: 7px; }
 .ssc-root .ssc-f--check .ssc-f__label { font-weight: 500; color: var(--ssc-ink); }
 .ssc-root .ssc-f--group { border: 1px dashed var(--ssc-line); border-radius: 9px; padding: 9px; margin: 0; display: flex; flex-direction: column; gap: 6px; }
 .ssc-root .ssc-f--group .ssc-f__label { font-weight: 600; }
@@ -632,7 +652,7 @@
 
 .ssc-root .ssc-composer {
 	display: flex;
-	align-items: center;
+	align-items: flex-end;
 	gap: 7px;
 	padding: 10px 12px;
 	background: var(--ssc-card);
@@ -654,7 +674,7 @@
 	min-width: 0;
 }
 
-.ssc-root .ssc-input:focus { outline: 2px solid var(--ssc-primary); outline-offset: 1px; border-color: transparent; }
+.ssc-root .ssc-input:focus { outline: 2px solid var(--ssc-primary); outline-offset: 1px; border-color: transparent; box-shadow: none; }
 
 .ssc-root .ssc-send {
 	width: 38px;
@@ -694,7 +714,7 @@
 .ssc-root .ssc-proactive {
 	position: fixed;
 	inset-block-end: 96px;
-	inset-inline-end: 22px;
+	right: 22px;
 	max-width: min(300px, calc(100vw - 3rem));
 	background: var(--ssc-card);
 	border: 1px solid var(--ssc-line);
@@ -706,7 +726,7 @@
 	animation: ssc-rise 0.25s ease;
 }
 
-.ssc-root.ssc-pos-left .ssc-proactive { inset-inline-end: auto; inset-inline-start: 22px; }
+.ssc-root.ssc-pos-left .ssc-proactive { right: auto; left: 22px; }
 .ssc-root .ssc-proactive__text {
 	border: 0;
 	background: transparent;
@@ -766,7 +786,7 @@
 
 	.ssc-root .ssc-launcher {
 		inset-block-end: calc(18px + env(safe-area-inset-bottom, 0px));
-		inset-inline-end: 18px;
+		right: 18px;
 	}
 
 	.ssc-root .ssc-msg { max-width: 92%; }

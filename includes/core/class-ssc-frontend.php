@@ -47,11 +47,11 @@ class SSC_Frontend {
 	 * Register (not enqueue) styles and scripts.
 	 */
 	public function register_assets() {
-		wp_register_style( 'smart-support-chatbot', SSC_CHATBOT_URL . 'assets/css/chatbot.css', array(), SSC_CHATBOT_VERSION );
-		wp_register_style( 'smart-support-chatbot-fonts', SSC_CHATBOT_URL . 'assets/css/fonts.css', array(), SSC_CHATBOT_VERSION );
-		wp_register_script( 'smart-support-chatbot', SSC_CHATBOT_URL . 'assets/js/chatbot.js', array(), SSC_CHATBOT_VERSION, true );
+		wp_register_style( 'nexachat-ai', SSC_CHATBOT_URL . 'assets/css/chatbot.css', array(), SSC_CHATBOT_VERSION );
+		wp_register_style( 'nexachat-ai-fonts', SSC_CHATBOT_URL . 'assets/css/fonts.css', array(), SSC_CHATBOT_VERSION );
+		wp_register_script( 'nexachat-ai', SSC_CHATBOT_URL . 'assets/js/chatbot.js', array(), SSC_CHATBOT_VERSION, true );
 		// Non-blocking: never compete with LCP for the main thread.
-		wp_script_add_data( 'smart-support-chatbot', 'strategy', 'defer' );
+		wp_script_add_data( 'nexachat-ai', 'strategy', 'defer' );
 	}
 
 	/**
@@ -60,14 +60,56 @@ class SSC_Frontend {
 	 * @param array $overrides Elementor/shortcode overrides.
 	 */
 	public function enqueue_with_config( $overrides = array() ) {
-		wp_enqueue_style( 'smart-support-chatbot' );
-		wp_enqueue_script( 'smart-support-chatbot' );
+		wp_enqueue_style( 'nexachat-ai' );
+		wp_enqueue_script( 'nexachat-ai' );
 
 		if ( $this->assets_done ) {
 			return;
 		}
 		$this->assets_done = true;
 
+		wp_localize_script( 'nexachat-ai', 'SSCChatbotConfig', $this->build_config( $overrides ) );
+	}
+
+	/**
+	 * Admin preview: the REAL widget with the saved look, talking to the
+	 * capability-gated preview endpoint, with visitor-facing extras off.
+	 * Shared by the setup wizard and the Appearance page so the preview can
+	 * never drift from what visitors see.
+	 */
+	public function enqueue_preview() {
+		$this->register_assets();
+		wp_enqueue_style( 'nexachat-ai' );
+		wp_enqueue_script( 'nexachat-ai' );
+		$config = $this->build_config();
+		$config = array_merge(
+			$config,
+			array(
+				'preview'       => true,
+				'previewRoute'  => 'preview-chat',
+				'ajaxUrl'       => '',
+				'nonce'         => wp_create_nonce( 'wp_rest' ),
+				'proactiveText' => '',
+				'products'      => array(),
+				'formFields'    => array(),
+				'adrOptions'    => null,
+			)
+		);
+		foreach ( array_keys( $config['features'] ) as $feature ) {
+			$config['features'][ $feature ] = false;
+		}
+		$config['availability']['online']  = true;
+		$config['availability']['dynamic'] = false;
+		wp_localize_script( 'nexachat-ai', 'SSCChatbotConfig', $config );
+	}
+
+	/**
+	 * Public widget configuration (never contains secrets).
+	 *
+	 * @param array $overrides Elementor/shortcode overrides.
+	 * @return array
+	 */
+	public function build_config( $overrides = array() ) {
 		$s          = SSC_Settings::all();
 		$business   = SSC_Settings::business();
 		$font_stack = $this->enqueue_font( $s );
@@ -88,45 +130,45 @@ class SSC_Frontend {
 			);
 		}
 
-		$display_name = '' !== trim( (string) $s['assistant_display_name'] ) ? $s['assistant_display_name'] : __( 'Nexa', 'smart-support-chatbot' );
+		$display_name = '' !== trim( (string) $s['assistant_display_name'] ) ? $s['assistant_display_name'] : __( 'Nexa', 'nexachat-ai' );
 		$direction    = $this->resolve_direction( $s['direction'] );
 
 		$config = array(
 			// Transports (REST first, admin-ajax fallback for cached pages).
-			'restUrl'         => esc_url_raw( rest_url( SSC_REST::NS . '/' ) ),
-			'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
+			'restUrl'          => esc_url_raw( rest_url( SSC_REST::NS . '/' ) ),
+			'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
 			// Public traffic is cache-safe; strict mode uses WordPress's REST action.
-			'nonce'           => apply_filters( 'ssc_enforce_rest_nonce', false ) ? wp_create_nonce( 'wp_rest' ) : '',
+			'nonce'            => apply_filters( 'ssc_enforce_rest_nonce', false ) ? wp_create_nonce( 'wp_rest' ) : '',
 
 			// Identity & texts.
-			'assistantName'   => $display_name,
-			'orgName'         => '' !== trim( (string) $business['org_name'] ) ? $business['org_name'] : get_bloginfo( 'name' ),
-			'welcomeTitle'    => '' !== trim( (string) $s['welcome_title'] ) ? $s['welcome_title'] : __( 'Hello! 👋', 'smart-support-chatbot' ),
-			'welcomeText'     => '' !== trim( (string) $s['welcome_text'] ) ? $s['welcome_text'] : __( 'How can I help you today?', 'smart-support-chatbot' ),
-			'disclaimer'      => (string) $s['disclaimer'],
-			'direction'       => $direction,
+			'assistantName'    => $display_name,
+			'orgName'          => '' !== trim( (string) $business['org_name'] ) ? $business['org_name'] : get_bloginfo( 'name' ),
+			'welcomeTitle'     => '' !== trim( (string) $s['welcome_title'] ) ? $s['welcome_title'] : __( 'Hello! 👋', 'nexachat-ai' ),
+			'welcomeText'      => '' !== trim( (string) $s['welcome_text'] ) ? $s['welcome_text'] : __( 'How can I help you today?', 'nexachat-ai' ),
+			'disclaimer'       => (string) $s['disclaimer'],
+			'direction'        => $direction,
 
 			// Appearance.
-			'themeMode'       => $s['theme_mode'],
-			'position'        => $s['position'],
-			'primaryColor'    => $s['primary_color'],
-			'fontSize'        => (int) $s['font_size'],
-			'windowWidth'     => (int) $s['window_width'],
-			'windowRadius'    => (int) $s['window_radius'],
-			'bubbleRadius'    => (int) $s['bubble_radius'],
-			'userBubble'      => $s['user_bubble_color'],
-			'botBubble'       => $s['bot_bubble_color'],
-			'fontStack'       => $font_stack,
-			'avatarUrl'       => $s['avatar_url'],
-			'launcherSize'    => (int) $s['launcher_size'],
-			'launcherIconUrl' => $s['launcher_icon_url'],
-			'supportPhone'    => $business['support_phone'] ? $business['support_phone'] : $business['phone'],
+			'themeMode'        => $s['theme_mode'],
+			'position'         => $s['position'],
+			'primaryColor'     => $s['primary_color'],
+			'fontSize'         => (int) $s['font_size'],
+			'windowWidth'      => (int) $s['window_width'],
+			'windowRadius'     => (int) $s['window_radius'],
+			'bubbleRadius'     => (int) $s['bubble_radius'],
+			'userBubble'       => $s['user_bubble_color'],
+			'botBubble'        => $s['bot_bubble_color'],
+			'fontStack'        => $font_stack,
+			'avatarUrl'        => $s['avatar_url'],
+			'launcherSize'     => (int) $s['launcher_size'],
+			'launcherIconUrl'  => $s['launcher_icon_url'],
+			'supportPhone'     => $business['support_phone'] ? $business['support_phone'] : $business['phone'],
 
 			// Catalog.
-			'products'        => array_values( $products ),
+			'products'         => array_values( $products ),
 
 			// Module-gated capabilities (server-enforced mirror).
-			'features'        => array(
+			'features'         => array(
 				'leads'       => SSC_Modules::is_active( 'leads' ),
 				'faq'         => SSC_Modules::is_active( 'faq' ),
 				'voice'       => SSC_Modules::is_active( 'voice' ),
@@ -140,29 +182,30 @@ class SSC_Frontend {
 			),
 
 			// Availability + behaviour (server-computed).
-			'availability'    => SSC_Availability::public_status(),
-			'handoffText'     => (string) $s['handoff_text'],
-			'proactiveDelay'  => (int) $s['proactive_delay'],
-			'proactiveText'   => (string) $s['proactive_text'],
-			'voiceLanguage'   => $this->voice_language(),
+			'availability'     => SSC_Availability::public_status(),
+			'handoffText'      => (string) $s['handoff_text'],
+			'proactiveDelay'   => (int) $s['proactive_delay'],
+			'proactiveText'    => SSC_Availability::proactive_text_for( (string) $s['proactive_rules'], (string) $s['proactive_text'] ),
+			'proactiveTrigger' => (string) $s['proactive_trigger'],
+			'proactiveScroll'  => (int) $s['proactive_scroll'],
+			'voiceLanguage'    => $this->voice_language(),
 
 			// Leads form (module-gated).
-			'formFields'      => ( SSC_Modules::is_active( 'leads' ) ) ? SSC_Settings::form_fields() : array(),
-			'consent'         => array(
+			'formFields'       => ( SSC_Modules::is_active( 'leads' ) ) ? SSC_Settings::form_fields() : array(),
+			'consent'          => array(
 				'enabled' => 'yes' === $s['consent_enabled'],
 				'text'    => SSC_Input::consent_text( SSC_Modules::is_active( 'pharma' ) ),
 				'link'    => (string) $s['consent_link'],
 			),
 
 			// Pharma ADR options (module-gated).
-			'adrOptions'      => SSC_Modules::is_active( 'pharma' ) ? SSC_Module_Pharma::adr_options_public() : null,
+			'adrOptions'       => SSC_Modules::is_active( 'pharma' ) ? SSC_Module_Pharma::adr_options_public() : null,
 
 			// i18n strings for the widget.
-			'i18n'            => $this->strings(),
+			'i18n'             => $this->strings(),
 		);
 
-		$config = apply_filters( 'ssc_frontend_config', $this->apply_overrides( $config, $overrides ) );
-		wp_localize_script( 'smart-support-chatbot', 'SSCChatbotConfig', $config );
+		return apply_filters( 'ssc_frontend_config', $this->apply_overrides( $config, $overrides ) );
 	}
 
 	/**
@@ -205,50 +248,51 @@ class SSC_Frontend {
 	 */
 	protected function strings() {
 		return array(
-			'open'            => __( 'Open chat', 'smart-support-chatbot' ),
-			'newConversation' => __( 'New conversation', 'smart-support-chatbot' ),
-			'close'           => __( 'Close chat', 'smart-support-chatbot' ),
-			'send'            => __( 'Send message', 'smart-support-chatbot' ),
-			'inputLabel'      => __( 'Message text', 'smart-support-chatbot' ),
-			'placeholder'     => __( 'Write your message…', 'smart-support-chatbot' ),
-			'sessionExpired'  => __( 'Your session expired. Please refresh the page and try again.', 'smart-support-chatbot' ),
-			'connectionError' => __( 'Connection error. Please check your internet and try again.', 'smart-support-chatbot' ),
-			'rateLimited'     => __( 'You have reached the daily usage limit. Please try again tomorrow.', 'smart-support-chatbot' ),
-			'mainMenu'        => __( 'Main menu', 'smart-support-chatbot' ),
-			'askUs'           => __( 'Ask us', 'smart-support-chatbot' ),
-			'askUsDesc'       => __( 'About us, services and contact info', 'smart-support-chatbot' ),
-			'products'        => __( 'Products & services', 'smart-support-chatbot' ),
-			'productsDesc'    => __( 'Product information', 'smart-support-chatbot' ),
-			'chooseProduct'   => __( 'Which one?', 'smart-support-chatbot' ),
-			'requestForm'     => __( 'Consultation request', 'smart-support-chatbot' ),
-			'reportAdr'       => __( 'Report a side effect', 'smart-support-chatbot' ),
-			'brochure'        => __( 'View brochure', 'smart-support-chatbot' ),
-			'callUs'          => __( 'Call us', 'smart-support-chatbot' ),
-			'speak'           => __( 'Listen to this answer', 'smart-support-chatbot' ),
-			'speakStop'       => __( 'Stop audio', 'smart-support-chatbot' ),
-			'mic'             => __( 'Speak', 'smart-support-chatbot' ),
-			'micListening'    => __( 'Listening…', 'smart-support-chatbot' ),
-			'handoffBtn'      => __( 'Talk to a human expert', 'smart-support-chatbot' ),
-			'csatTitle'       => __( 'How was this conversation?', 'smart-support-chatbot' ),
-			'csatThanks'      => __( 'Thanks for your rating 🙏', 'smart-support-chatbot' ),
-			'csatSkip'        => __( 'Skip', 'smart-support-chatbot' ),
-			'copy'            => __( 'Copy answer', 'smart-support-chatbot' ),
-			'copied'          => __( 'Copied ✓', 'smart-support-chatbot' ),
-			'consentRequired' => __( 'Your consent is required to continue.', 'smart-support-chatbot' ),
-			'privacy'         => __( 'Privacy policy', 'smart-support-chatbot' ),
-			'formName'        => __( 'Full name', 'smart-support-chatbot' ),
-			'formPhone'       => __( 'Phone number', 'smart-support-chatbot' ),
-			'goodAnswer'      => __( 'Good answer', 'smart-support-chatbot' ),
-			'poorAnswer'      => __( 'Poor answer', 'smart-support-chatbot' ),
-			'formMessage'     => __( 'Your message', 'smart-support-chatbot' ),
-			'formSubmit'      => __( 'Submit', 'smart-support-chatbot' ),
-			'formSent'        => __( 'Received ✓ We will contact you soon.', 'smart-support-chatbot' ),
-			'formError'       => __( 'The form could not be submitted. Please try again.', 'smart-support-chatbot' ),
-			'suggestions'     => __( 'Related questions:', 'smart-support-chatbot' ),
-			'typing'          => __( 'Typing…', 'smart-support-chatbot' ),
-			'offline'         => __( 'Offline', 'smart-support-chatbot' ),
-			'online'          => __( 'Online', 'smart-support-chatbot' ),
-			'shortcutHint'    => __( 'Press Alt+C to open chat', 'smart-support-chatbot' ),
+			'open'            => __( 'Open chat', 'nexachat-ai' ),
+			'newConversation' => __( 'New conversation', 'nexachat-ai' ),
+			'close'           => __( 'Close chat', 'nexachat-ai' ),
+			'send'            => __( 'Send message', 'nexachat-ai' ),
+			'inputLabel'      => __( 'Message text', 'nexachat-ai' ),
+			'placeholder'     => __( 'Write your message…', 'nexachat-ai' ),
+			'sessionExpired'  => __( 'Your session expired. Please refresh the page and try again.', 'nexachat-ai' ),
+			'connectionError' => __( 'Connection error. Please check your internet and try again.', 'nexachat-ai' ),
+			'rateLimited'     => __( 'You have reached the daily usage limit. Please try again tomorrow.', 'nexachat-ai' ),
+			'mainMenu'        => __( 'Main menu', 'nexachat-ai' ),
+			'askUs'           => __( 'Ask us', 'nexachat-ai' ),
+			'askUsDesc'       => __( 'About us, services and contact info', 'nexachat-ai' ),
+			'products'        => __( 'Products & services', 'nexachat-ai' ),
+			'productsDesc'    => __( 'Product information', 'nexachat-ai' ),
+			'chooseProduct'   => __( 'Which one?', 'nexachat-ai' ),
+			'requestForm'     => __( 'Consultation request', 'nexachat-ai' ),
+			'reportAdr'       => __( 'Report a side effect', 'nexachat-ai' ),
+			'brochure'        => __( 'View brochure', 'nexachat-ai' ),
+			'callUs'          => __( 'Call us', 'nexachat-ai' ),
+			'speak'           => __( 'Listen to this answer', 'nexachat-ai' ),
+			'speakStop'       => __( 'Stop audio', 'nexachat-ai' ),
+			'mic'             => __( 'Speak', 'nexachat-ai' ),
+			'micListening'    => __( 'Listening…', 'nexachat-ai' ),
+			'handoffBtn'      => __( 'Talk to a human expert', 'nexachat-ai' ),
+			'csatTitle'       => __( 'How was this conversation?', 'nexachat-ai' ),
+			'csatThanks'      => __( 'Thanks for your rating 🙏', 'nexachat-ai' ),
+			'csatSkip'        => __( 'Skip', 'nexachat-ai' ),
+			'copy'            => __( 'Copy answer', 'nexachat-ai' ),
+			'copied'          => __( 'Copied ✓', 'nexachat-ai' ),
+			'sources'         => __( 'Sources:', 'nexachat-ai' ),
+			'consentRequired' => __( 'Your consent is required to continue.', 'nexachat-ai' ),
+			'privacy'         => __( 'Privacy policy', 'nexachat-ai' ),
+			'formName'        => __( 'Full name', 'nexachat-ai' ),
+			'formPhone'       => __( 'Phone number', 'nexachat-ai' ),
+			'goodAnswer'      => __( 'Good answer', 'nexachat-ai' ),
+			'poorAnswer'      => __( 'Poor answer', 'nexachat-ai' ),
+			'formMessage'     => __( 'Your message', 'nexachat-ai' ),
+			'formSubmit'      => __( 'Submit', 'nexachat-ai' ),
+			'formSent'        => __( 'Received ✓ We will contact you soon.', 'nexachat-ai' ),
+			'formError'       => __( 'The form could not be submitted. Please try again.', 'nexachat-ai' ),
+			'suggestions'     => __( 'Related questions:', 'nexachat-ai' ),
+			'typing'          => __( 'Typing…', 'nexachat-ai' ),
+			'offline'         => __( 'Offline', 'nexachat-ai' ),
+			'online'          => __( 'Online', 'nexachat-ai' ),
+			'shortcutHint'    => __( 'Press Alt+C to open chat', 'nexachat-ai' ),
 		);
 	}
 
@@ -266,7 +310,7 @@ class SSC_Frontend {
 			$url  = isset( $s['font_url'] ) ? $s['font_url'] : '';
 			$name = isset( $s['font_name'] ) ? trim( (string) $s['font_name'] ) : '';
 			if ( $url ) {
-				wp_enqueue_style( 'smart-support-chatbot-font-custom', $url, array(), SSC_CHATBOT_VERSION );
+				wp_enqueue_style( 'nexachat-ai-font-custom', $url, array(), SSC_CHATBOT_VERSION );
 			}
 			// The stack lands in a CSS custom property: strip anything that
 			// could terminate the declaration or open a new rule.
@@ -298,7 +342,7 @@ class SSC_Frontend {
 		if ( ! file_exists( SSC_CHATBOT_DIR . 'assets/fonts/' . $bundled[ $family ]['probe'] ) ) {
 			return "Tahoma, 'Segoe UI', sans-serif";
 		}
-		wp_enqueue_style( 'smart-support-chatbot-fonts' );
+		wp_enqueue_style( 'nexachat-ai-fonts' );
 		return $bundled[ $family ]['stack'];
 	}
 

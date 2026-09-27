@@ -15,11 +15,11 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SLUG = 'smart-support-chatbot'
+SLUG = 'nexachat-ai'
 
 # Files shipped from the plugin root.
 ROOT_FILES = (
-    'smart-support-chatbot.php',
+    'nexachat-ai.php',
     'index.php',
     'uninstall.php',
     'readme.txt',
@@ -43,7 +43,7 @@ FIXED_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 
 def plugin_version() -> str:
     """Read the single source of truth for the version."""
-    source = (ROOT / 'smart-support-chatbot.php').read_text(encoding='utf-8')
+    source = (ROOT / 'nexachat-ai.php').read_text(encoding='utf-8')
     match = re.search(r"define\(\s*'SSC_CHATBOT_VERSION',\s*'([^']+)'", source)
     if not match:
         sys.exit('Could not read SSC_CHATBOT_VERSION from the plugin header.')
@@ -77,7 +77,7 @@ def collect() -> list[Path]:
 
 def main() -> None:
     version = plugin_version()
-    header = (ROOT / 'smart-support-chatbot.php').read_text(encoding='utf-8')
+    header = (ROOT / 'nexachat-ai.php').read_text(encoding='utf-8')
     declared = re.search(r'^\s*\*\s*Version:\s*(\S+)', header, re.M)
     if declared and declared.group(1) != version:
         sys.exit(
