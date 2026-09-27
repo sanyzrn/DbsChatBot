@@ -62,7 +62,9 @@ class SSC_Cron {
 	public static function schedules( $schedules ) {
 		$schedules['ssc_five_minutes'] = array(
 			'interval' => 300,
-			'display'  => __( 'NexaChatAI: every five minutes', 'nexachat-ai' ),
+			// Other plugins may run this filter before init; never load
+			// translations that early.
+			'display'  => did_action( 'init' ) ? __( 'NexaChatAI: every five minutes', 'nexachat-ai' ) : 'NexaChatAI: every five minutes',
 		);
 		return $schedules;
 	}

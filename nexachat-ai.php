@@ -3,7 +3,7 @@
  * Plugin Name:       NexaChatAI
  * Plugin URI:        https://saeedzarrini.ir/en/projects/nexachat
  * Description:       Professional AI assistant for WordPress. Setup wizard, multi-provider AI engines, business knowledge base, modular architecture. Optional voice, analytics, lead collection and pharmaceutical (pharmacovigilance) extension. Persian/RTL-first with LTR support.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Author:            DbsStudio
  * Author URI:        https://saeedzarrini.ir/en/projects/nexachat
  * Text Domain:       nexachat-ai
@@ -67,6 +67,6 @@ unset( $nexachatai_network );
 // Functions are declared in a separate file: PHP binds top-level functions
 // at compile time, so declaring them here would collide with the old copy
 // before the guard above could run.
-define( 'SSC_CHATBOT_VERSION', '1.1.0' );
+define( 'SSC_CHATBOT_VERSION', '1.1.1' );
 define( 'NEXACHATAI_MAIN_FILE', __FILE__ );
 require_once __DIR__ . '/includes/bootstrap.php';

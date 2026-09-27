@@ -79,7 +79,9 @@ final class SSC_Plugin {
 
 		// Maintenance schedule (kept regardless of module states; purge honours them).
 		SSC_Cron::init();
-		SSC_Cron::schedule();
+		// Scheduling runs the cron_schedules filter, whose label is translated:
+		// wait for init so translations are not loaded too early (WP 6.7+).
+		add_action( 'init', array( 'SSC_Cron', 'schedule' ) );
 
 		// Optional modules boot ONLY their registered hooks when active.
 		SSC_Modules::boot_active();

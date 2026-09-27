@@ -3,13 +3,31 @@ name: Release
 # Pushing a v* tag publishes the release. The ZIP is built and verified here
 # rather than uploaded by hand, so what customers download is always exactly
 # what the tagged commit produces.
+#
+# If the release was already created in the GitHub UI (which also creates the
+# tag), the ZIP is attached to that release instead of failing. The workflow
+# can also be run by hand for an existing tag (Actions -> Release -> Run
+# workflow) to repair a release that is missing its ZIP.
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to (re)build and publish, e.g. v1.1.0'
+        required: true
+        type: string
 
 permissions:
   contents: write
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
 
 jobs:
   publish:
@@ -17,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: refs/tags/${{ env.TAG }}
 
       - uses: actions/setup-python@v6
         with:
@@ -25,11 +45,11 @@ jobs:
       - name: Check the tag matches the plugin version
         run: |
           set -e
-          tag="${GITHUB_REF_NAME#v}"
+          tag="${TAG#v}"
           version=$(grep -oP "define\( 'SSC_CHATBOT_VERSION', '\K[^']+" nexachat-ai.php)
           echo "tag=$tag plugin=$version"
           if [ "$tag" != "$version" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match SSC_CHATBOT_VERSION $version"
+            echo "::error::Tag $TAG does not match SSC_CHATBOT_VERSION $version"
             exit 1
           fi
 
@@ -42,7 +62,7 @@ jobs:
       - name: Extract the changelog section for this version
         run: |
           set -e
-          version="${GITHUB_REF_NAME#v}"
+          version="${TAG#v}"
           # Written from Python directly rather than via stdout redirection so
           # the notes keep their UTF-8 (em dashes, Persian) whatever the
           # runner's stdout encoding happens to be.
@@ -60,18 +80,37 @@ jobs:
           notes = (
               match.group(1).strip()
               + '\n\n---\n\n'
-              + '**Install:** upload the ZIP below via Plugins → Add New → Upload Plugin.\n'
+              + '**Install:** download `nexachat-ai-' + version + '.zip` below and upload it via '
+              + 'Plugins → Add New → Upload Plugin. The "Source code" archives are the raw '
+              + 'repository and are not installable.\n'
               + 'Verify the download against the published `.sha256` file.\n'
           )
           io.open('RELEASE_NOTES.md', 'w', encoding='utf-8', newline='\n').write(notes)
           PY
           cat RELEASE_NOTES.md
 
-      - name: Publish the release
+      - name: Publish the release (or complete an existing one)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
-            --title "NexaChatAI ${GITHUB_REF_NAME#v}" \
-            --notes-file RELEASE_NOTES.md \
-            dist/*.zip dist/*.zip.sha256
+          set -e
+          title="NexaChatAI ${TAG#v}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists: attaching the ZIP and refreshing its notes."
+            gh release upload "$TAG" dist/*.zip dist/*.zip.sha256 --clobber
+            gh release edit "$TAG" --title "$title" --notes-file RELEASE_NOTES.md
+          else
+            gh release create "$TAG" --verify-tag \
+              --title "$title" \
+              --notes-file RELEASE_NOTES.md \
+              dist/*.zip dist/*.zip.sha256
+          fi
+
+      - name: Confirm the installable ZIP is attached
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          assets=$(gh release view "$TAG" --json assets --jq '.assets[].name')
+          echo "$assets"
+          echo "$assets" | grep -qx "nexachat-ai-${TAG#v}.zip" || { echo "::error::nexachat-ai-${TAG#v}.zip is not attached to $TAG"; exit 1; }
