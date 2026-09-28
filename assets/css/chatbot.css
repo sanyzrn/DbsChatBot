@@ -852,6 +852,10 @@
 
 	.ssc-root.is-open .ssc-launcher { display: none; }
 
+	/* The full-screen sheet must sit above the WordPress toolbar, or a
+	 * signed-in user's chat header (and close button) hides behind it. */
+	.ssc-root.is-open:not(.ssc-preview-mount) { z-index: 100000; }
+
 	/* 16px stops iOS from zooming into the field on focus. */
 	.ssc-root .ssc-input,
 	.ssc-root .ssc-f__input { font-size: 16px; }
@@ -883,3 +887,188 @@
 	.ssc-root .ssc-launcher,
 	.ssc-root .ssc-send { border: 1px solid ButtonText; }
 }
+
+/* Conversations-are-saved notice: quieter than the disclaimer. */
+.ssc-root .ssc-saved-notice { font-size: 10.5px; opacity: 0.75; padding-top: 0; }
+
+/* Previous conversations (signed-in users). */
+.ssc-root .ssc-history {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	background: var(--ssc-bg);
+}
+.ssc-root .ssc-history + .ssc-thread { display: none; }
+.ssc-root .ssc-history__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--ssc-line);
+}
+.ssc-root .ssc-history__back {
+	border: 1px solid var(--ssc-line);
+	background: var(--ssc-card);
+	color: var(--ssc-ink);
+	border-radius: 999px;
+	padding: 5px 12px;
+	font: inherit;
+	font-size: 12px;
+	cursor: pointer;
+}
+.ssc-root .ssc-history__list { flex: 1; overflow-y: auto; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+.ssc-root .ssc-history__row {
+	display: flex;
+	align-items: stretch;
+	background: var(--ssc-card);
+	border: 1px solid var(--ssc-line);
+	border-radius: 12px;
+	overflow: hidden;
+}
+.ssc-root .ssc-history__row.is-current { border-color: var(--ssc-primary); }
+.ssc-root .ssc-history__open {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	padding: 9px 12px;
+	border: 0;
+	background: none;
+	color: var(--ssc-ink);
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+.ssc-root .ssc-history__title { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ssc-root .ssc-history__meta { font-size: 11px; color: var(--ssc-muted); }
+.ssc-root .ssc-history__del {
+	border: 0;
+	background: none;
+	color: var(--ssc-muted);
+	font-size: 18px;
+	width: 38px;
+	cursor: pointer;
+}
+.ssc-root .ssc-history__del:hover { color: #c0392b; }
+.ssc-root .ssc-history__open:focus-visible,
+.ssc-root .ssc-history__del:focus-visible,
+.ssc-root .ssc-history__back:focus-visible { outline: 2px solid var(--ssc-primary); outline-offset: -2px; }
+.ssc-root .ssc-history__empty { margin: 16px 4px; color: var(--ssc-muted); text-align: center; }
+.ssc-root .ssc-disclaimer + .ssc-saved-notice { border-block-start: 0; }
+
+/* ------------------------------------------------------------------ *
+ * The assistant's character (launcher + header face).
+ *
+ * Loops are slow and small: something that is always in the corner of the
+ * page must look alive, never demand attention. What answers the visitor
+ * (hover hop, grin, wink, looking up while thinking) may be quicker,
+ * because the visitor started it. Every transform sits on SVG nodes, so
+ * each needs transform-box: fill-box to scale in place.
+ * ------------------------------------------------------------------ */
+.ssc-root { --ssc-mascot: var(--ssc-primary); --ssc-mascot-ink: var(--ssc-primary-contrast); }
+.ssc-root .ssc-mascot { width: 100%; height: 100%; display: block; overflow: visible; }
+.ssc-root .ssc-launcher--mascot {
+	background: transparent;
+	box-shadow: none;
+	overflow: visible;
+}
+.ssc-root .ssc-launcher--mascot:hover { transform: none; }
+.ssc-root .ssc-launcher__mascot {
+	width: 100%;
+	height: 100%;
+	display: block;
+	filter: drop-shadow(0 5px 10px rgba(16, 19, 34, 0.28));
+	transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.ssc-root.is-open .ssc-launcher--mascot { background: var(--ssc-primary); box-shadow: var(--ssc-shadow); }
+.ssc-root.is-open .ssc-launcher__mascot { opacity: 0; transform: scale(0.5); }
+.ssc-root .ssc-launcher--mascot .ssc-launcher__close { color: var(--ssc-primary-contrast); }
+
+@keyframes ssc-m-breathe {
+	0%, 100% { transform: scale(1, 1); }
+	50% { transform: scale(0.985, 1.02); }
+}
+/* Two blinks at uneven gaps: a regular rhythm looks mechanical. */
+@keyframes ssc-m-blink {
+	0%, 45%, 51%, 87%, 92%, 100% { transform: scaleY(1); }
+	48%, 89.5% { transform: scaleY(0.1); }
+}
+@keyframes ssc-m-sway {
+	0%, 100% { transform: rotate(-5deg); }
+	50% { transform: rotate(6deg); }
+}
+@keyframes ssc-m-hop {
+	0% { transform: translateY(0) scale(1, 1); }
+	30% { transform: translateY(-8%) scale(0.96, 1.05); }
+	60% { transform: translateY(0) scale(1.05, 0.95); }
+	100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes ssc-m-think {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-3%); }
+}
+@keyframes ssc-m-glow {
+	0%, 100% { fill-opacity: 1; }
+	50% { fill-opacity: 0.45; }
+}
+
+.ssc-root .ssc-mascot .ssc-m-body {
+	animation: ssc-m-breathe 3.3s ease-in-out infinite;
+	transform-origin: center 90%;
+	transform-box: fill-box;
+}
+.ssc-root .ssc-mascot .ssc-m-eyes {
+	animation: ssc-m-blink 7s ease-in-out infinite;
+	transform-origin: center 50%;
+	transform-box: fill-box;
+}
+.ssc-root .ssc-mascot .ssc-m-antenna {
+	animation: ssc-m-sway 4.2s ease-in-out infinite;
+	transform-origin: center bottom;
+	transform-box: fill-box;
+}
+.ssc-root .ssc-mascot .ssc-m-grin { opacity: 0; }
+.ssc-root .ssc-mascot .ssc-m-pupils,
+.ssc-root .ssc-mascot .ssc-m-face { transition: transform 0.12s linear; }
+
+/* Hover / keyboard focus: it hops, grins and opens its eyes wide. */
+.ssc-root .ssc-launcher--mascot:hover .ssc-m-body,
+.ssc-root .ssc-launcher--mascot:focus-visible .ssc-m-body { animation: ssc-m-hop 0.55s ease-out; }
+.ssc-root .ssc-launcher--mascot:hover .ssc-m-smile,
+.ssc-root .ssc-launcher--mascot:focus-visible .ssc-m-smile { opacity: 0; }
+.ssc-root .ssc-launcher--mascot:hover .ssc-m-grin,
+.ssc-root .ssc-launcher--mascot:focus-visible .ssc-m-grin { opacity: 1; transition: opacity 0.12s ease-out; }
+.ssc-root .ssc-launcher--mascot:hover .ssc-m-eyes,
+.ssc-root .ssc-launcher--mascot:focus-visible .ssc-m-eyes { animation: none; transform: scale(1.07); transition: transform 0.18s ease-out; }
+/* Click: a wink with one eye (both at once would be a blink). */
+.ssc-root .ssc-launcher--mascot:active .ssc-m-eyes > ellipse:nth-of-type(2),
+.ssc-root .ssc-launcher--mascot:active .ssc-m-eyes > ellipse:nth-of-type(4),
+.ssc-root .ssc-launcher--mascot:active .ssc-m-pupils circle:nth-of-type(2),
+.ssc-root .ssc-launcher--mascot:active .ssc-m-pupils circle:nth-of-type(4) {
+	transform: scaleY(0.1);
+	transform-origin: 63px 44px;
+	transform-box: view-box;
+}
+
+/* Thinking: eyes up, a slow bob, the antenna tip pulses. */
+.ssc-root.is-thinking .ssc-mascot .ssc-m-pupils { transform: translate(1.5px, -3.5px) !important; }
+.ssc-root.is-thinking .ssc-mascot .ssc-m-body { animation: ssc-m-think 1.1s ease-in-out infinite; }
+.ssc-root.is-thinking .ssc-mascot .ssc-m-tip { animation: ssc-m-glow 0.9s ease-in-out infinite; }
+
+/* Header face. */
+.ssc-root .ssc-head__avatar.has-mascot { background: transparent; padding: 0; overflow: visible; }
+.ssc-root .ssc-head__avatar.has-mascot .ssc-mascot { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25)); }
+
+@media (prefers-reduced-motion: reduce) {
+	.ssc-root .ssc-mascot .ssc-m-body,
+	.ssc-root .ssc-mascot .ssc-m-eyes,
+	.ssc-root .ssc-mascot .ssc-m-antenna,
+	.ssc-root .ssc-mascot .ssc-m-tip,
+	.ssc-root.is-thinking .ssc-mascot .ssc-m-body,
+	.ssc-root .ssc-launcher--mascot:hover .ssc-m-body { animation: none !important; }
+}
+.ssc-root .ssc-head__avatar.has-mascot svg { width: 100%; height: 100%; }

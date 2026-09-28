@@ -1155,3 +1155,4 @@ tr.is-serious { background: var(--ssc-danger-soft); }
 .ssc-template__icon { font-size: 20px; }
 .ssc-template__label { font-weight: 600; }
 .ssc-template__hint { font-size: 12px; color: var(--ssc-muted); }
+.ssc-td-full { white-space: pre-wrap; vertical-align: top; min-width: 220px; }

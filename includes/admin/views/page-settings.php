@@ -68,7 +68,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 
 		<section data-ssc-tab="privacy" class="ssc-card">
 			<h2><?php esc_html_e( 'Privacy & consent', 'nexachat-ai' ); ?></h2>
-			<p class="ssc-card__sub"><?php esc_html_e( 'Applies to every form. Server transcript logging is opt-in; browser transcripts and shared answer caching are disabled in pharmaceutical mode. Submitted forms are stored independently of chat history.', 'nexachat-ai' ); ?></p>
+			<p class="ssc-card__sub"><?php esc_html_e( 'Applies to every form. Conversations are logged for quality review while the History module is on (the widget says so); browser transcripts and shared answer caching are disabled in pharmaceutical mode. Submitted forms are stored independently of chat history.', 'nexachat-ai' ); ?></p>
 			<label class="ssc-check"><input type="checkbox" name="consent_enabled" value="yes" <?php checked( 'yes', $s['consent_enabled'] ); ?> /> <span><?php esc_html_e( 'Require explicit consent before storing contact data', 'nexachat-ai' ); ?></span></label>
 			<div class="ssc-field">
 				<label for="consent_text"><?php esc_html_e( 'Consent text', 'nexachat-ai' ); ?></label>
@@ -84,6 +84,11 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 					<input id="chatlog_retention_days" name="chatlog_retention_days" type="number" min="0" max="3650" value="<?php echo esc_attr( (string) $s['chatlog_retention_days'] ); ?>" />
 				</div>
 				<div class="ssc-field">
+					<label for="memory_days"><?php esc_html_e( 'Remember a visitor\'s conversation for (days)', 'nexachat-ai' ); ?></label>
+					<input id="memory_days" name="memory_days" type="number" min="1" max="90" value="<?php echo esc_attr( (string) $s['memory_days'] ); ?>" />
+					<p class="ssc-field__hint"><?php esc_html_e( 'A visitor who comes back within this time continues the same conversation, and the assistant still knows what was said. Pharmaceutical mode always uses one day and never keeps the chat in the browser.', 'nexachat-ai' ); ?></p>
+				</div>
+				<div class="ssc-field">
 					<label for="submissions_retention_days"><?php esc_html_e( 'Request retention (days, 0 = keep forever; ADR cases are never auto-deleted)', 'nexachat-ai' ); ?></label>
 					<input id="submissions_retention_days" name="submissions_retention_days" type="number" min="0" max="3650" value="<?php echo esc_attr( (string) $s['submissions_retention_days'] ); ?>" />
 				</div>
@@ -97,6 +102,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 				</select>
 				<p class="ssc-field__hint"><?php esc_html_e( 'Rate limiting still works in every mode: it uses a one-way hash that is never stored with the conversation.', 'nexachat-ai' ); ?></p>
 			</div>
+			<label class="ssc-check"><input type="checkbox" name="chat_threads" value="yes" <?php checked( 'yes', $s['chat_threads'] ); ?> /> <span><?php esc_html_e( 'Signed-in users can reopen their previous conversations on any device', 'nexachat-ai' ); ?></span></label>
 		</section>
 
 		<section data-ssc-tab="display" class="ssc-card">
@@ -320,6 +326,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			<section data-ssc-tab="modules" class="ssc-card">
 				<h2><?php esc_html_e( 'Conversation history module', 'nexachat-ai' ); ?></h2>
 				<label class="ssc-check"><input type="checkbox" name="chatlog_enabled" value="yes" <?php checked( 'yes', $s['chatlog_enabled'] ); ?> /> <span><?php esc_html_e( 'Store conversations (needed for feedback, unanswered radar and quality review)', 'nexachat-ai' ); ?></span></label>
+				<label class="ssc-check"><input type="checkbox" name="chatlog_notice" value="yes" <?php checked( 'yes', $s['chatlog_notice'] ); ?> /> <span><?php esc_html_e( 'Tell visitors in the chat window that conversations are saved', 'nexachat-ai' ); ?></span></label>
 			</section>
 		<?php endif; ?>
 

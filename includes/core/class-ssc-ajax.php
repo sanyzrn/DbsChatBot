@@ -116,7 +116,7 @@ class SSC_Ajax {
 		}
 		$reply = $result['reply'];
 		if ( 'unanswered' === $result['source'] && '' !== $this->engine->last_error && current_user_can( 'manage_options' ) ) {
-			$reply = '⚠️ ' . __( 'Admin-only notice — AI engine error:', 'nexachat-ai' ) . ' ' . $this->engine->last_error;
+			$reply = $this->engine->admin_error_notice();
 		}
 		wp_send_json_success(
 			array(

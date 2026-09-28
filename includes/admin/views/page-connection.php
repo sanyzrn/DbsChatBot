@@ -193,6 +193,7 @@ $sel  = (string) $s['ai_provider'];
 				<div class="ssc-field">
 					<label for="ai_history_limit"><?php esc_html_e( 'Conversation memory (messages)', 'nexachat-ai' ); ?></label>
 					<input id="ai_history_limit" name="ai_history_limit" type="number" min="0" max="20" value="<?php echo esc_attr( (string) $s['ai_history_limit'] ); ?>" />
+					<p class="ssc-field__hint"><?php esc_html_e( 'The latest messages the AI reads word for word. Older messages are not forgotten: they are kept as a short summary.', 'nexachat-ai' ); ?></p>
 				</div>
 				<div class="ssc-field">
 					<label for="kb_max_chunks"><?php esc_html_e( 'Retrieved knowledge chunks per answer', 'nexachat-ai' ); ?></label>

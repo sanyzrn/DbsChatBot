@@ -1120,5 +1120,32 @@
   "Understand the visitor's need before recommending a service. Offer the quote request form for anything that needs a custom price.": "پیش از پیشنهاد خدمت، نیاز بازدیدکننده را بفهم. برای هر موردی که قیمت اختصاصی لازم دارد، فرم استعلام قیمت را پیشنهاد بده.",
   "Unknown template.": "قالب ناشناخته است.",
   "Your published pages, posts and products become the assistant's knowledge automatically, and stay up to date when you edit them.": "صفحه‌ها، نوشته‌ها و محصولات منتشرشده شما خودکار به دانش دستیار تبدیل می‌شوند و با هر ویرایش به‌روز می‌مانند.",
-  "The assistant knows your site from minute one, without copying anything by hand.": "دستیار از همان دقیقه اول سایتتان را می‌شناسد، بدون هیچ کپی دستی."
+  "The assistant knows your site from minute one, without copying anything by hand.": "دستیار از همان دقیقه اول سایتتان را می‌شناسد، بدون هیچ کپی دستی.",
+  "Assistant look": "ظاهر دستیار",
+  "Animated character (brand colour)": "شخصیت متحرک (به رنگ برند)",
+  "Simple chat icon": "آیکون ساده گفتگو",
+  "The character breathes, blinks, follows the pointer and looks up while it thinks. A custom button image or avatar below always wins.": "شخصیت نفس می‌کشد، پلک می‌زند، نگاهش نشانگر ماوس را دنبال می‌کند و وقتی در حال فکر کردن است به بالا نگاه می‌کند. اگر تصویر دکمه یا آواتار دلخواه در پایین تعیین کنید، همان نمایش داده می‌شود.",
+  "The latest messages the AI reads word for word. Older messages are not forgotten: they are kept as a short summary.": "تعداد آخرین پیام‌هایی که هوش مصنوعی کلمه‌به‌کلمه می‌خواند. پیام‌های قدیمی‌تر فراموش نمی‌شوند و به‌صورت یک خلاصهٔ کوتاه نگه داشته می‌شوند.",
+  "Showing one whole conversation, oldest message first.": "نمایش یک گفتگوی کامل، از قدیمی‌ترین پیام.",
+  "Back to all conversations": "بازگشت به همهٔ گفتگوها",
+  "Whole conversation": "کل گفتگو",
+  "The AI engine failed to answer %1$d time in the last day: %2$s\u0000The AI engine failed to answer %1$d times in the last day: %2$s": [
+    "موتور هوش مصنوعی در یک روز گذشته %1$d بار نتوانست پاسخ دهد: %2$s",
+    "موتور هوش مصنوعی در یک روز گذشته %1$d بار نتوانست پاسخ دهد: %2$s"
+  ],
+  "Applies to every form. Conversations are logged for quality review while the History module is on (the widget says so); browser transcripts and shared answer caching are disabled in pharmaceutical mode. Submitted forms are stored independently of chat history.": "برای همهٔ فرم‌ها اعمال می‌شود. تا وقتی ماژول تاریخچه روشن است، گفتگوها برای بررسی کیفیت ثبت می‌شوند (و ویجت هم این را اعلام می‌کند)؛ در حالت دارویی متن گفتگو در مرورگر ذخیره نمی‌شود و پاسخ‌ها کش مشترک ندارند. فرم‌های ارسال‌شده جدا از تاریخچهٔ گفتگو نگهداری می‌شوند.",
+  "Remember a visitor's conversation for (days)": "مدت به خاطر سپردن گفتگوی بازدیدکننده (روز)",
+  "A visitor who comes back within this time continues the same conversation, and the assistant still knows what was said. Pharmaceutical mode always uses one day and never keeps the chat in the browser.": "بازدیدکننده‌ای که در این مدت برگردد، همان گفتگو را ادامه می‌دهد و دستیار هنوز می‌داند چه گفته شده است. در حالت دارویی این مدت همیشه یک روز است و گفتگو در مرورگر نگه داشته نمی‌شود.",
+  "Signed-in users can reopen their previous conversations on any device": "کاربرانِ واردشده بتوانند گفتگوهای قبلی خود را روی هر دستگاهی دوباره باز کنند",
+  "Tell visitors in the chat window that conversations are saved": "در پنجرهٔ گفتگو به بازدیدکنندگان اطلاع داده شود که گفتگوها ذخیره می‌شوند",
+  "Admin-only notice: the AI could not answer.": "پیام مخصوص مدیر: هوش مصنوعی نتوانست پاسخ دهد.",
+  "Provider detail:": "جزئیات سرویس‌دهنده:",
+  "Previous conversations": "گفتگوهای قبلی",
+  "No previous conversations yet.": "هنوز گفتگوی قبلی ندارید.",
+  "Back to chat": "بازگشت به گفتگو",
+  "Delete this conversation": "حذف این گفتگو",
+  "This conversation is no longer available.": "این گفتگو دیگر در دسترس نیست.",
+  "Conversations are saved to improve our answers.": "گفتگوها برای بهبود پاسخ‌ها ذخیره می‌شوند.",
+  "Sign in to see your conversations.": "برای دیدن گفتگوهایتان وارد حساب شوید.",
+  "The assistant is not available.": "دستیار در دسترس نیست."
 }

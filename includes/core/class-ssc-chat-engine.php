@@ -36,6 +36,18 @@ class SSC_Chat_Engine {
 	public $last_error = '';
 
 	/**
+	 * Canonical code of the last provider failure (auth, credits, model…).
+	 *
+	 * @var string
+	 */
+	public $last_error_code = '';
+
+	/**
+	 * Option recording recent provider failures for the dashboard.
+	 */
+	const FAILURE_OPTION = 'ssc_ai_failures';
+
+	/**
 	 * Chat token for feedback binding (module-gated).
 	 *
 	 * @var string
@@ -60,8 +72,9 @@ class SSC_Chat_Engine {
 	 * @return array envelope: ok, reply, source, handoff, log_id, log_token, flags.
 	 */
 	public function chat( $message, $product = 'general', $history = array(), $on_delta = null ) {
-		$this->last_source = 'fallback';
-		$this->last_error  = '';
+		$this->last_source     = 'fallback';
+		$this->last_error      = '';
+		$this->last_error_code = '';
 
 		// Hard ceiling on message size (token + abuse protection).
 		$message = SSC_Input::message( $message, 2000 );
@@ -73,8 +86,15 @@ class SSC_Chat_Engine {
 		// Context is what THIS server answered; the browser cannot author
 		// assistant turns. Without a conversation id (an older cached widget),
 		// only the visitor's own earlier messages are accepted.
+		$this->summary = '';
 		if ( '' !== $this->conversation ) {
-			$history = SSC_Conversation::load( $this->conversation );
+			// Safety net for sites where WP-Cron does not run: summarize inline
+			// once twice the usual backlog has built up.
+			if ( SSC_Conversation::pending_count( $this->conversation ) >= 2 * SSC_Conversation::REFRESH_AFTER ) {
+				SSC_Conversation::refresh_summary( $this->conversation );
+			}
+			$history       = SSC_Conversation::load( $this->conversation );
+			$this->summary = SSC_Conversation::summary( $this->conversation );
 		} else {
 			$history = array_values(
 				array_filter(
@@ -169,7 +189,7 @@ class SSC_Chat_Engine {
 	 * @return string Empty on failure.
 	 */
 	protected function ai_reply( $provider, $message, $product, $history, $on_delta = null ) {
-		$system            = SSC_Prompt_Builder::build_for_chat( $message, $product );
+		$system            = SSC_Prompt_Builder::build_for_chat( $message, $product, $this->summary, $this->channel['channel'] );
 		$web               = SSC_Providers::web_search_active();
 		$this->web_sources = array();
 		$opts              = array(
@@ -193,7 +213,7 @@ class SSC_Chat_Engine {
 		// Response cache only for history-less questions (deterministic + cheap).
 		// Health conversations must never enter a shared response cache.
 		// Web-searched answers are time-sensitive and carry their own citations.
-		$cache_enabled = ! $web && ! SSC_Modules::is_active( 'pharma' ) && ( 'yes' === SSC_Settings::get( 'ai_cache_enabled', 'yes' ) ) && empty( $history );
+		$cache_enabled = ! $web && ! SSC_Modules::is_active( 'pharma' ) && ( 'yes' === SSC_Settings::get( 'ai_cache_enabled', 'yes' ) ) && empty( $history ) && '' === $this->summary;
 		$cache_key     = '';
 		if ( $cache_enabled ) {
 			$cache_key = 'ssc_ai_' . md5( SSC_Settings::ai_cache_generation() . '|' . $provider->id() . '|' . $product . '|' . mb_strtolower( trim( $message ) ) . '|' . md5( $system ) . '|' . SSC_Setup::connection_fingerprint() );
@@ -220,7 +240,9 @@ class SSC_Chat_Engine {
 		}
 
 		if ( ! $result['ok'] ) {
-			$this->last_error = isset( $result['error']['message'] ) ? $result['error']['message'] : 'unknown';
+			$this->last_error      = isset( $result['error']['message'] ) ? $result['error']['message'] : 'unknown';
+			$this->last_error_code = isset( $result['error']['code'] ) ? sanitize_key( $result['error']['code'] ) : '';
+			self::record_failure( $this->last_error_code, $this->last_error );
 			if ( $this->last_error ) {
 				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- provider failure diagnostics.
 				error_log( '[SSC Chatbot] provider ' . $provider->id() . ' failed (' . sanitize_key( $result['error']['code'] ?? 'unknown' ) . ')' );
@@ -228,6 +250,7 @@ class SSC_Chat_Engine {
 			return '';
 		}
 
+		self::record_recovery();
 		$reply             = $result['text'];
 		$this->web_sources = isset( $result['sources'] ) && is_array( $result['sources'] ) ? $result['sources'] : array();
 		if ( $cache_enabled && $cache_key && empty( $result['partial'] ) ) {
@@ -236,6 +259,69 @@ class SSC_Chat_Engine {
 		}
 		$this->last_source = 'ai';
 		return $reply;
+	}
+
+	/**
+	 * Count a provider failure (the dashboard warns with the exact reason).
+	 *
+	 * @param string $code    Canonical error code.
+	 * @param string $message Provider message.
+	 */
+	public static function record_failure( $code, $message ) {
+		$day  = gmdate( 'Ymd' );
+		$prev = get_option( self::FAILURE_OPTION, array() );
+		$prev = is_array( $prev ) && isset( $prev['day'] ) && $day === $prev['day'] ? $prev : array( 'count' => 0 );
+		update_option(
+			self::FAILURE_OPTION,
+			array(
+				'day'       => $day,
+				'count'     => (int) $prev['count'] + 1,
+				'code'      => (string) $code,
+				'message'   => mb_substr( wp_strip_all_tags( (string) $message ), 0, 300 ),
+				'at'        => time(),
+				'recovered' => 0,
+			),
+			false
+		);
+	}
+
+	/**
+	 * A successful answer after failures: the warning can go away. Writes
+	 * only when there is something to clear, not on every answer.
+	 */
+	public static function record_recovery() {
+		$prev = get_option( self::FAILURE_OPTION, array() );
+		if ( is_array( $prev ) && ! empty( $prev['count'] ) && empty( $prev['recovered'] ) ) {
+			$prev['recovered'] = time();
+			update_option( self::FAILURE_OPTION, $prev, false );
+		}
+	}
+
+	/**
+	 * Unresolved provider failures of the last day, or null.
+	 *
+	 * @return array|null count, code, message, at.
+	 */
+	public static function recent_failures() {
+		$data = get_option( self::FAILURE_OPTION, array() );
+		if ( ! is_array( $data ) || empty( $data['count'] ) || ! empty( $data['recovered'] ) || time() - (int) $data['at'] > DAY_IN_SECONDS ) {
+			return null;
+		}
+		return $data;
+	}
+
+	/**
+	 * What an administrator sees instead of the visitor fallback when the AI
+	 * failed: the actual reason in plain words, then the provider's detail.
+	 *
+	 * @return string '' when the last answer did not fail.
+	 */
+	public function admin_error_notice() {
+		if ( '' === $this->last_error ) {
+			return '';
+		}
+		$friendly = '' !== $this->last_error_code ? SSC_HTTP::friendly_error( $this->last_error_code ) : '';
+		return '⚠️ ' . __( 'Admin-only notice: the AI could not answer.', 'nexachat-ai' ) . ' ' . $friendly . "\n\n" . __( 'Provider detail:', 'nexachat-ai' ) . ' ' . $this->last_error;
 	}
 
 	/**
@@ -284,7 +370,7 @@ class SSC_Chat_Engine {
 		}
 
 		if ( $ok && '' !== $reply ) {
-			SSC_Conversation::append( $this->conversation, $this->current_question, $reply );
+			SSC_Conversation::append( $this->conversation, $this->current_question, $reply, $this->channel['channel'] );
 		}
 
 		if ( $ok ) {
@@ -312,13 +398,14 @@ class SSC_Chat_Engine {
 			do_action( 'ssc_chat_exchange', $this->conversation, $this->current_question, $reply, $source, $this->channel );
 		}
 
-		if ( $ok && SSC_Modules::is_active( 'history' ) && 'yes' === SSC_Settings::get( 'chatlog_enabled', 'no' ) && '' !== $reply ) {
+		if ( $ok && SSC_Modules::is_active( 'history' ) && 'yes' === SSC_Settings::get( 'chatlog_enabled', 'yes' ) && '' !== $reply ) {
 			$log_id = SSC_Schema::log_chat(
 				$this->current_question,
 				$reply,
 				( 'unanswered' === $source ) ? 'unanswered' : $source,
 				$this->current_product,
-				SSC_Input::stored_ip( $this->current_ip, (string) SSC_Settings::get( 'ip_storage', 'anonymize' ) )
+				SSC_Input::stored_ip( $this->current_ip, (string) SSC_Settings::get( 'ip_storage', 'anonymize' ) ),
+				'' !== $this->conversation ? SSC_Conversation::hash( $this->conversation ) : ''
 			);
 			if ( $log_id ) {
 				$out['log_id']    = $log_id;
@@ -363,6 +450,13 @@ class SSC_Chat_Engine {
 	 * @var string
 	 */
 	protected $conversation = '';
+
+	/**
+	 * Rolling summary of the conversation's older part ('' = none).
+	 *
+	 * @var string
+	 */
+	protected $summary = '';
 
 	/**
 	 * Where the conversation happens: channel (web|bale|telegram),

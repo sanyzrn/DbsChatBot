@@ -143,7 +143,9 @@ class SSC_Frontend {
 			'restUrl'          => esc_url_raw( rest_url( SSC_REST::NS . '/' ) ),
 			'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
 			// Public traffic is cache-safe; strict mode uses WordPress's REST action.
-			'nonce'            => apply_filters( 'ssc_enforce_rest_nonce', false ) ? wp_create_nonce( 'wp_rest' ) : '',
+			// Signed-in users need it too: without it REST treats them as guests
+			// and their conversations could not follow them across devices.
+			'nonce'            => ( apply_filters( 'ssc_enforce_rest_nonce', false ) || is_user_logged_in() ) ? wp_create_nonce( 'wp_rest' ) : '',
 
 			// Identity & texts.
 			'assistantName'    => $display_name,
@@ -167,6 +169,7 @@ class SSC_Frontend {
 			'avatarUrl'        => $s['avatar_url'],
 			'launcherSize'     => (int) $s['launcher_size'],
 			'launcherIconUrl'  => $s['launcher_icon_url'],
+			'launcherStyle'    => $s['launcher_style'],
 			'supportPhone'     => $business['support_phone'] ? $business['support_phone'] : $business['phone'],
 
 			// Catalog.
@@ -194,6 +197,15 @@ class SSC_Frontend {
 			'proactiveTrigger' => (string) $s['proactive_trigger'],
 			'proactiveScroll'  => (int) $s['proactive_scroll'],
 			'voiceLanguage'    => $this->voice_language(),
+
+			// Conversation memory: kept across visits (not tab-only), except
+			// health conversations, which end with the browser tab.
+			'memory'           => array(
+				'persist' => ! SSC_Modules::is_active( 'pharma' ),
+				'days'    => SSC_Conversation::days(),
+				'threads' => is_user_logged_in() && 'yes' === $s['chat_threads'],
+				'notice'  => SSC_Modules::is_active( 'history' ) && 'yes' === $s['chatlog_enabled'] && 'yes' === $s['chatlog_notice'],
+			),
 
 			// Leads form (module-gated).
 			'formFields'       => ( SSC_Modules::is_active( 'leads' ) ) ? SSC_Settings::form_fields() : array(),
@@ -296,6 +308,12 @@ class SSC_Frontend {
 			'offline'         => __( 'Offline', 'nexachat-ai' ),
 			'online'          => __( 'Online', 'nexachat-ai' ),
 			'shortcutHint'    => __( 'Press Alt+C to open chat', 'nexachat-ai' ),
+			'history'         => __( 'Previous conversations', 'nexachat-ai' ),
+			'historyEmpty'    => __( 'No previous conversations yet.', 'nexachat-ai' ),
+			'historyBack'     => __( 'Back to chat', 'nexachat-ai' ),
+			'historyDelete'   => __( 'Delete this conversation', 'nexachat-ai' ),
+			'historyGone'     => __( 'This conversation is no longer available.', 'nexachat-ai' ),
+			'savedNotice'     => __( 'Conversations are saved to improve our answers.', 'nexachat-ai' ),
 		);
 	}
 

@@ -55,6 +55,10 @@ class SSC_Stream {
 		if ( empty( $result['ok'] ) ) {
 			self::emit_error( 'ssc_chat_failed' );
 		}
+		// Admin-only diagnostics, as on the plain transport.
+		if ( ! empty( $result['ok'] ) && 'unanswered' === $result['source'] && '' !== $engine->last_error && current_user_can( 'manage_options' ) ) {
+			$result['reply'] = $engine->admin_error_notice();
+		}
 		self::emit_done( $result );
 	}
 

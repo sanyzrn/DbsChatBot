@@ -19,6 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</header>
 
+	<?php if ( '' !== $filters['conv'] ) : ?>
+		<div class="notice notice-info inline"><p><?php esc_html_e( 'Showing one whole conversation, oldest message first.', 'nexachat-ai' ); ?> <a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ssc-conversations' ), admin_url( 'admin.php' ) ) ); ?>"><?php esc_html_e( 'Back to all conversations', 'nexachat-ai' ); ?></a></p></div>
+	<?php endif; ?>
+
 	<form method="get" class="ssc-filterbar">
 		<input type="hidden" name="page" value="ssc-conversations" />
 		<select name="source" aria-label="<?php esc_attr_e( 'Answer source', 'nexachat-ai' ); ?>">
@@ -43,17 +47,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr><th><?php esc_html_e( 'Time', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Question', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Answer', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Source', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Rating', 'nexachat-ai' ); ?></th><th></th></tr>
 			</thead>
 			<tbody>
+				<?php
+				// One conversation is read in full; the overview stays one line per row.
+				$cut        = '' !== $filters['conv'] ? 4000 : 80;
+				$cell_class = '' !== $filters['conv'] ? 'ssc-td-full' : 'ssc-td-truncate';
+				?>
 				<?php foreach ( $result['items'] as $row ) : ?>
 					<?php
 					$row_base = add_query_arg( array( 'page' => 'ssc-conversations', 'id' => $row['id'], 'source' => $filters['source'], 'rating' => $filters['rating'] ), admin_url( 'admin.php' ) );
 					?>
 					<tr>
 						<td><?php echo esc_html( SSC_Date::display( $row['created_at'] ) ); ?></td>
-						<td class="ssc-td-truncate"><?php echo esc_html( mb_substr( (string) $row['question'], 0, 80 ) ); ?></td>
-						<td class="ssc-td-truncate"><?php echo esc_html( mb_substr( (string) $row['answer'], 0, 80 ) ); ?></td>
+						<td class="<?php echo esc_attr( $cell_class ); ?>"><?php echo esc_html( mb_substr( (string) $row['question'], 0, $cut ) ); ?></td>
+						<td class="<?php echo esc_attr( $cell_class ); ?>"><?php echo esc_html( mb_substr( (string) $row['answer'], 0, $cut ) ); ?></td>
 						<td><span class="ssc-badge ssc-badge--src-<?php echo esc_attr( $row['source'] ); ?>"><?php echo esc_html( $row['source'] ); ?></span></td>
 						<td><?php echo (int) $row['rating'] > 0 ? '👍' : ( (int) $row['rating'] < 0 ? '👎' : '—' ); // phpcs:ignore WordPress.Security.EscapeOutput.EmojiNotSupported -- admin UI. ?></td>
 						<td class="ssc-td-actions">
+							<?php if ( ! empty( $row['conv_hash'] ) && '' === $filters['conv'] ) : ?>
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ssc-conversations', 'conv' => $row['conv_hash'] ), admin_url( 'admin.php' ) ) ); ?>"><?php esc_html_e( 'Whole conversation', 'nexachat-ai' ); ?></a>
+							<?php endif; ?>
 							<?php if ( 'unanswered' === $row['source'] ) : ?>
 								<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'ssc_log_action', 'tobank', $row_base ), 'ssc_log_' . $row['id'] ) ); ?>"><?php esc_html_e( 'Add to FAQ', 'nexachat-ai' ); ?></a>
 							<?php endif; ?>
@@ -69,7 +81,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php if ( $p === (int) $result['page'] ) : ?>
 						<span class="ssc-pagination__cur"><?php echo (int) $p; ?></span>
 					<?php else : ?>
-						<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ssc-conversations', 'paged' => $p, 'source' => $filters['source'], 'rating' => $filters['rating'] ), admin_url( 'admin.php' ) ) ); ?>"><?php echo (int) $p; ?></a>
+						<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ssc-conversations', 'paged' => $p, 'source' => $filters['source'], 'rating' => $filters['rating'], 'conv' => $filters['conv'] ), admin_url( 'admin.php' ) ) ); ?>"><?php echo (int) $p; ?></a>
 					<?php endif; ?>
 				<?php endfor; ?>
 			</nav>

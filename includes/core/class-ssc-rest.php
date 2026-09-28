@@ -62,6 +62,72 @@ class SSC_REST {
 	}
 
 	/**
+	 * Conversation list: signed-in users only, and only when enabled.
+	 *
+	 * @param WP_REST_Request|null $request Request.
+	 * @return true|WP_Error
+	 */
+	public function threads_permission( $request = null ) {
+		if ( ! is_user_logged_in() || 'yes' !== SSC_Settings::get( 'chat_threads', 'yes' ) ) {
+			return new WP_Error( 'ssc_forbidden', __( 'Sign in to see your conversations.', 'nexachat-ai' ), array( 'status' => 403 ) );
+		}
+		if ( ! SSC_Setup::is_live() && ! current_user_can( 'manage_options' ) ) {
+			return new WP_Error( 'ssc_offline', __( 'The assistant is not available.', 'nexachat-ai' ), array( 'status' => 403 ) );
+		}
+		return $this->public_permission( $request );
+	}
+
+	/**
+	 * The signed-in user's conversations.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function threads() {
+		return rest_ensure_response(
+			array(
+				'ok'      => true,
+				'threads' => SSC_Conversation::threads( get_current_user_id() ),
+			)
+		);
+	}
+
+	/**
+	 * One of the signed-in user's conversations.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function thread( $request ) {
+		$row = SSC_Conversation::row( (string) $request['id'] );
+		if ( ! $row || get_current_user_id() !== (int) $row['user_id'] ) {
+			return new WP_Error( 'ssc_not_found', __( 'This conversation is no longer available.', 'nexachat-ai' ), array( 'status' => 404 ) );
+		}
+		return rest_ensure_response(
+			array(
+				'ok'       => true,
+				'id'       => (string) $row['conv_id'],
+				'title'    => (string) $row['title'],
+				'messages' => $row['messages'],
+			)
+		);
+	}
+
+	/**
+	 * Delete one of the signed-in user's conversations.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function forget_thread( $request ) {
+		$row = SSC_Conversation::row( (string) $request['id'] );
+		if ( ! $row || get_current_user_id() !== (int) $row['user_id'] ) {
+			return new WP_Error( 'ssc_not_found', __( 'This conversation is no longer available.', 'nexachat-ai' ), array( 'status' => 404 ) );
+		}
+		SSC_Conversation::forget( (string) $request['id'] );
+		return rest_ensure_response( array( 'ok' => true ) );
+	}
+
+	/**
 	 * Admin-only permission callback.
 	 *
 	 * @return true|WP_Error
@@ -256,6 +322,33 @@ class SSC_REST {
 			)
 		);
 
+		/* Signed-in users: their own conversations, on any device. */
+		register_rest_route(
+			self::NS,
+			'/conversations',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'permission_callback' => array( $this, 'threads_permission' ),
+				'callback'            => array( $this, 'threads' ),
+			)
+		);
+		register_rest_route(
+			self::NS,
+			'/conversations/(?P<id>[a-f0-9]{24,64})',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'permission_callback' => array( $this, 'threads_permission' ),
+					'callback'            => array( $this, 'thread' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'permission_callback' => array( $this, 'threads_permission' ),
+					'callback'            => array( $this, 'forget_thread' ),
+				),
+			)
+		);
+
 		/* Public: live availability (business hours), never cached. */
 		register_rest_route(
 			self::NS,
@@ -403,7 +496,7 @@ class SSC_REST {
 		// Admin-only diagnostics: real provider errors never reach visitors.
 		$reply = $result['reply'];
 		if ( 'unanswered' === $result['source'] && '' !== $this->engine->last_error && current_user_can( 'manage_options' ) ) {
-			$reply = '⚠️ ' . __( 'Admin-only notice — AI engine error:', 'nexachat-ai' ) . ' ' . $this->engine->last_error;
+			$reply = $this->engine->admin_error_notice();
 		}
 
 		return rest_ensure_response(
@@ -607,7 +700,7 @@ class SSC_REST {
 		}
 		return rest_ensure_response(
 			array(
-				'reply'   => $result['reply'],
+				'reply'   => 'unanswered' === $result['source'] && '' !== $this->engine->last_error ? $this->engine->admin_error_notice() : $result['reply'],
 				'source'  => $result['source'],
 				'handoff' => ! empty( $result['handoff'] ),
 				'flags'   => isset( $result['flags'] ) ? (object) $result['flags'] : new stdClass(),

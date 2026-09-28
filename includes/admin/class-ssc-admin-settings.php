@@ -42,7 +42,9 @@ class SSC_Admin_Settings {
 			$patch['consent_enabled'] = isset( $_POST['consent_enabled'] ) ? 'yes' : 'no';
 			$patch['consent_text']    = isset( $_POST['consent_text'] ) ? wp_kses_post( wp_unslash( $_POST['consent_text'] ) ) : '';
 			$patch['consent_link']    = isset( $_POST['consent_link'] ) ? esc_url_raw( wp_unslash( $_POST['consent_link'] ) ) : '';
-			$patch['chatlog_retention_days'] = isset( $_POST['chatlog_retention_days'] ) ? SSC_Settings::clamp_int( 'chatlog_retention_days', wp_unslash( $_POST['chatlog_retention_days'] ) ) : 90;
+			$patch['chatlog_retention_days'] = isset( $_POST['chatlog_retention_days'] ) ? SSC_Settings::clamp_int( 'chatlog_retention_days', wp_unslash( $_POST['chatlog_retention_days'] ) ) : 30;
+			$patch['memory_days']            = isset( $_POST['memory_days'] ) ? SSC_Settings::clamp_int( 'memory_days', wp_unslash( $_POST['memory_days'] ) ) : 7;
+			$patch['chat_threads']           = isset( $_POST['chat_threads'] ) ? 'yes' : 'no';
 			$patch['submissions_retention_days'] = isset( $_POST['submissions_retention_days'] ) ? SSC_Settings::clamp_int( 'submissions_retention_days', wp_unslash( $_POST['submissions_retention_days'] ) ) : 0;
 
 			$patch['ip_storage'] = isset( $_POST['ip_storage'] ) ? SSC_Settings::sanitize_value( 'ip_storage', wp_unslash( $_POST['ip_storage'] ) ) : 'anonymize';
@@ -78,6 +80,7 @@ class SSC_Admin_Settings {
 			$patch['voice_output']  = isset( $_POST['voice_output'] ) ? 'yes' : 'no';
 			$patch['voice_language'] = isset( $_POST['voice_language'] ) ? sanitize_key( $_POST['voice_language'] ) : 'auto';
 			$patch['chatlog_enabled'] = isset( $_POST['chatlog_enabled'] ) ? 'yes' : 'no';
+			$patch['chatlog_notice']  = isset( $_POST['chatlog_notice'] ) ? 'yes' : 'no';
 			$patch['csat_enabled']  = isset( $_POST['csat_enabled'] ) ? 'yes' : 'no';
 			$patch['handoff_text']  = isset( $_POST['handoff_text'] ) ? wp_kses_post( wp_unslash( $_POST['handoff_text'] ) ) : '';
 			$patch['proactive_delay'] = isset( $_POST['proactive_delay'] ) ? SSC_Settings::clamp_int( 'proactive_delay', wp_unslash( $_POST['proactive_delay'] ) ) : 12;
@@ -218,7 +221,7 @@ class SSC_Admin_Settings {
 		$groups = array(
 			'pharma' => array( 'pharma_answer_mode', 'adr_form' ),
 			'voice' => array( 'voice_input', 'voice_output', 'voice_language' ),
-			'history' => array( 'chatlog_enabled' ),
+			'history' => array( 'chatlog_enabled', 'chatlog_notice' ),
 			'csat' => array( 'csat_enabled' ),
 			'handoff' => array( 'handoff_text' ),
 			'proactive' => array( 'proactive_delay', 'proactive_text', 'proactive_trigger', 'proactive_scroll', 'proactive_rules' ),

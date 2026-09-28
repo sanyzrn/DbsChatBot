@@ -89,6 +89,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$last_fail = SSC_Module_Notifications::last_failure();
 		$warnings[] = sprintf( __( '%d notification deliveries are pending retry (last error: %s).', 'nexachat-ai' ), $notify_pending, $last_fail ? $last_fail['error'] : '' );
 	}
+	$ai_failures = SSC_Chat_Engine::recent_failures();
+	if ( $ai_failures ) {
+		/* translators: 1: number of failed answers, 2: the reason in plain words. */
+		$warnings[] = sprintf( _n( 'The AI engine failed to answer %1$d time in the last day: %2$s', 'The AI engine failed to answer %1$d times in the last day: %2$s', (int) $ai_failures['count'], 'nexachat-ai' ), (int) $ai_failures['count'], '' !== $ai_failures['code'] ? SSC_HTTP::friendly_error( $ai_failures['code'] ) : $ai_failures['message'] );
+	}
 	if ( $unanswered_count > 0 ) {
 		$warnings[] = sprintf( _n( '%d question went unanswered in the last 14 days — consider adding it to your FAQ bank.', '%d questions went unanswered in the last 14 days — consider adding them to your FAQ bank.', $unanswered_count, 'nexachat-ai' ), $unanswered_count );
 	}

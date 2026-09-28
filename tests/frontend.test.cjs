@@ -32,16 +32,38 @@ test('Escaping protects quote-bearing URLs and model output from HTML injection'
   assert.ok(!md('<img src=x onerror=alert(1)>').includes('<img'));
   assert.ok(!md('[x](javascript:alert)').includes('<a'));
 });
-test('Conversation ids are 128-bit hex, reused within a tab and replaced on reset', () => {
-  const store = {};
-  const sessionStorage = { getItem: (k) => store[k] || null, setItem: (k, v) => { store[k] = v; }, removeItem: (k) => { delete store[k]; } };
-  const window = { crypto: require('node:crypto').webcrypto };
-  const ctx = load('        var CONV_KEY', '        /* ------------------------------------------------------------------ *\n         * DOM construction', { state: { persist: true }, sessionStorage, window, Uint8Array, Math });
+function memoryContext(persist, days, extra = {}) {
+  const local = {}, session = {};
+  const storage = (bag) => ({ getItem: (k) => (k in bag ? bag[k] : null), setItem: (k, v) => { bag[k] = String(v); }, removeItem: (k) => { delete bag[k]; } });
+  const window = { crypto: require('node:crypto').webcrypto, localStorage: storage(local), sessionStorage: storage(session) };
+  const ctx = Object.assign({ cfg: { memory: { persist, days } }, state: { persist: true }, window, Uint8Array, Math, JSON, Date, Number }, extra);
+  load('        var MEM = cfg.memory', '        /** Conversation transcript persisted', ctx);
+  vm.runInContext(source.slice(source.indexOf('        var CONV_KEY'), source.indexOf('        /* ------------------------------------------------------------------ *\n         * DOM construction')), ctx);
+  return { ctx, local, session };
+}
+test('Conversation ids are 128-bit hex, reused across visits and replaced on reset', () => {
+  const { ctx, local } = memoryContext(true, 7);
   const first = ctx.getConv();
   assert.match(first, /^[a-f0-9]{32}$/);
-  assert.equal(ctx.getConv(), first);
+  assert.equal(JSON.parse(local.ssc_conv_v1).id, first, 'kept in local storage: closing the tab does not lose it');
+  ctx.convId = null;
+  assert.equal(ctx.getConv(), first, 'a new page load continues the same conversation');
   ctx.resetConv();
   assert.notEqual(ctx.getConv(), first);
+});
+test('A remembered conversation expires after the configured days', () => {
+  const { ctx, local } = memoryContext(true, 2);
+  const first = ctx.getConv();
+  local.ssc_conv_v1 = JSON.stringify({ id: first, at: Date.now() - 3 * 24 * 3600 * 1000 });
+  ctx.convId = null;
+  assert.notEqual(ctx.getConv(), first);
+});
+test('Health conversations stay out of long-lived browser storage', () => {
+  const { ctx, local, session } = memoryContext(false, 1);
+  ctx.state.persist = false;
+  ctx.getConv();
+  assert.deepEqual(Object.keys(local), []);
+  assert.deepEqual(Object.keys(session), []);
 });
 test('A failed POST is never automatically replayed via AJAX', async () => {
   const calls = [];
@@ -79,8 +101,8 @@ test('Only real conversation turns are persisted (welcome never duplicates)', ()
     { kind: 'user', text: 'Hi', history: true },
     { kind: 'bot', text: 'Hello!', history: true },
   ] };
-  const sessionStorage = { setItem(k, v) { stored = JSON.parse(v); } };
-  const { saveThread } = load('        function saveThread(', '        function loadThread(', { state, sessionStorage, THREAD_KEY: 't', JSON, Date });
+  const memSet = (k, v) => { if (k === 't') { stored = JSON.parse(v); } };
+  const { saveThread } = load('        function saveThread(', '        function loadThread(', { state, memSet, THREAD_KEY: 't', CONV_KEY: 'c', convId: null, JSON, Date });
   saveThread();
   assert.deepEqual(stored.items.map((i) => i.t), ['Hi', 'Hello!']);
 });
