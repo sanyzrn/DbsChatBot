@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,7 +88,7 @@ PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifi
 
 == Changelog ==
 
-= Unreleased =
+= 1.3.0 =
 
 * New: conversations survive closing the tab. A visitor who comes back within the "remember for" period (default 7 days; pharmaceutical mode: 1 day and never stored in the browser) continues the same conversation, and the assistant still knows what was said.
 * New: long conversations are no longer cut off. The latest messages (default 10) go to the AI word for word; older ones are folded into a short rolling summary, refreshed in the background. A failed summary never breaks an answer.
