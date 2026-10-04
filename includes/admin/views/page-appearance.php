@@ -112,6 +112,61 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 					</div>
 				</section>
 
+				<section class="ssc-card ssc-posbox" id="ssc-posbox">
+					<h2><?php esc_html_e( 'Button position & spacing', 'nexachat-ai' ); ?></h2>
+					<p class="ssc-card__sub"><?php esc_html_e( 'Move the floating button so it never covers your menu, for example a bottom navigation bar on phones. The drawings on the right show where it will sit.', 'nexachat-ai' ); ?></p>
+					<div class="ssc-posbox__grid">
+						<div class="ssc-posbox__fields">
+							<fieldset class="ssc-posbox__set">
+								<legend><span class="dashicons dashicons-smartphone" aria-hidden="true"></span> <?php esc_html_e( 'Phones', 'nexachat-ai' ); ?></legend>
+								<div class="ssc-grid ssc-grid--2">
+									<div class="ssc-field">
+										<label for="launcher_offset_y_mobile"><?php esc_html_e( 'Distance from the bottom (px)', 'nexachat-ai' ); ?></label>
+										<input id="launcher_offset_y_mobile" name="launcher_offset_y_mobile" type="number" min="0" max="300" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_y_mobile'] ); ?>" />
+									</div>
+									<div class="ssc-field">
+										<label for="launcher_offset_x_mobile"><?php esc_html_e( 'Distance from the side (px)', 'nexachat-ai' ); ?></label>
+										<input id="launcher_offset_x_mobile" name="launcher_offset_x_mobile" type="number" min="0" max="120" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_x_mobile'] ); ?>" />
+									</div>
+								</div>
+								<div class="ssc-posbox__presets" role="group" aria-label="<?php esc_attr_e( 'Quick choices for phones', 'nexachat-ai' ); ?>">
+									<button type="button" class="ssc-chip" data-ssc-pos-preset="18"><?php esc_html_e( 'Corner (default)', 'nexachat-ai' ); ?></button>
+									<button type="button" class="ssc-chip" data-ssc-pos-preset="84"><?php esc_html_e( 'Above a bottom menu', 'nexachat-ai' ); ?></button>
+								</div>
+								<label class="ssc-check ssc-check--tight"><input type="checkbox" id="launcher_avoid_bars" name="launcher_avoid_bars" value="yes" <?php checked( 'yes', $s['launcher_avoid_bars'] ); ?> /> <span><?php esc_html_e( 'Lift the button automatically above a fixed bar at the bottom of the page (menu, cookie notice)', 'nexachat-ai' ); ?></span></label>
+							</fieldset>
+							<fieldset class="ssc-posbox__set">
+								<legend><span class="dashicons dashicons-desktop" aria-hidden="true"></span> <?php esc_html_e( 'Desktop & tablet', 'nexachat-ai' ); ?></legend>
+								<div class="ssc-grid ssc-grid--2">
+									<div class="ssc-field">
+										<label for="launcher_offset_y"><?php esc_html_e( 'Distance from the bottom (px)', 'nexachat-ai' ); ?></label>
+										<input id="launcher_offset_y" name="launcher_offset_y" type="number" min="0" max="300" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_y'] ); ?>" />
+									</div>
+									<div class="ssc-field">
+										<label for="launcher_offset_x"><?php esc_html_e( 'Distance from the side (px)', 'nexachat-ai' ); ?></label>
+										<input id="launcher_offset_x" name="launcher_offset_x" type="number" min="0" max="200" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_x'] ); ?>" />
+									</div>
+								</div>
+							</fieldset>
+						</div>
+						<div class="ssc-posbox__mocks" aria-hidden="true">
+							<figure class="ssc-posmock ssc-posmock--phone" data-ssc-posmock="phone" data-vw="390" data-vh="760">
+								<div class="ssc-posmock__screen">
+									<div class="ssc-posmock__bar"><i></i><i></i><i></i></div>
+									<span class="ssc-posmock__dot"></span>
+								</div>
+								<figcaption><?php esc_html_e( 'Phone', 'nexachat-ai' ); ?></figcaption>
+							</figure>
+							<figure class="ssc-posmock ssc-posmock--desktop" data-ssc-posmock="desktop" data-vw="1280" data-vh="720">
+								<div class="ssc-posmock__screen">
+									<span class="ssc-posmock__dot"></span>
+								</div>
+								<figcaption><?php esc_html_e( 'Desktop', 'nexachat-ai' ); ?></figcaption>
+							</figure>
+						</div>
+					</div>
+				</section>
+
 				<details class="ssc-card ssc-details">
 					<summary><?php esc_html_e( 'Advanced styling', 'nexachat-ai' ); ?></summary>
 					<div class="ssc-grid ssc-grid--2">

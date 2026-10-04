@@ -79,6 +79,7 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 		'ssc_messenger_secret',
 		'ssc_messenger_offset',
 		'ssc_sitesync_state',
+		'ssc_import_backup',
 		// Legacy namespace leftovers.
 		'nafas_chatbot_settings',
 		'nafas_chatbot_chat_stats',

@@ -80,6 +80,8 @@ class SSC_Cron {
 		);
 		SSC_Notification_Queue::purge_completed();
 		SSC_Conversation::purge();
+		// An import's undo snapshot is a convenience, not an archive: keep it for 30 days.
+		SSC_Transfer::purge_backup( 30 * DAY_IN_SECONDS );
 		// Provider/model changes leave chunks without a current vector.
 		SSC_Embeddings::schedule();
 	}

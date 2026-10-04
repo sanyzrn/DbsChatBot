@@ -1,27 +1,347 @@
 <?php
 /**
- * Business Knowledge view.
+ * Business Knowledge view: a progress hero, a row of section tiles that act
+ * as tabs, and one section at a time (no giant form).
  *
  * @package SmartSupportChatbot
- * @var array $business  Business profile.
- * @var array $items     Knowledge items.
- * @var array $products  Product catalog.
- * @var array $kb_docs   KB documents.
- * @var int   $kb_count  KB chunk count.
+ * @var array  $business  Business profile.
+ * @var array  $items     Knowledge items.
+ * @var array  $products  Product catalog.
+ * @var array  $kb_docs   KB documents (every document, website pages included).
+ * @var int    $kb_count  KB chunk count.
+ * @var array  $site_docs Documents mirrored from the website.
+ * @var array  $own_docs  Uploaded and imported documents.
+ * @var array  $score     SSC_Knowledge_Score::compute() result.
+ * @var string $kb_state  Result of the last action.
+ * @var string $initial   Section to open first.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$saved = isset( $_GET['saved'] ) ? (int) $_GET['saved'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+$saved    = isset( $_GET['saved'] ) ? (int) $_GET['saved'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
 $kb_state = isset( $_GET['kb'] ) ? sanitize_key( wp_unslash( $_GET['kb'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+
+$ssc_site_on  = SSC_Modules::is_active( 'sitesync' );
+$ssc_suggest  = get_transient( 'ssc_suggest_' . get_current_user_id() );
+if ( is_array( $ssc_suggest ) ) {
+	$initial = 'ai';
+}
+
+/*
+ * Section definitions: what each is called, one line on what it is for, and
+ * the short line shown under its name in the tile.
+ */
+$ssc_meta = array(
+	'identity'  => array(
+		'icon'  => 'building',
+		'title' => __( 'Your business', 'nexachat-ai' ),
+		'tile'  => __( 'Name and what you do', 'nexachat-ai' ),
+		'intro' => __( 'Who you are. The assistant introduces your business with these words.', 'nexachat-ai' ),
+	),
+	'contact'   => array(
+		'icon'  => 'phone',
+		'title' => __( 'Contact & hours', 'nexachat-ai' ),
+		'tile'  => __( 'Phone, email, opening hours', 'nexachat-ai' ),
+		'intro' => __( 'How people can reach you. The assistant shares these details when someone asks.', 'nexachat-ai' ),
+	),
+	'persona'   => array(
+		'icon'  => 'user',
+		'title' => __( 'Assistant persona', 'nexachat-ai' ),
+		'tile'  => __( 'Name, role and manner', 'nexachat-ai' ),
+		'intro' => __( 'Who is talking: the assistant’s name, role and way of speaking.', 'nexachat-ai' ),
+	),
+	'facts'     => array(
+		'icon'  => 'book',
+		'title' => __( 'Knowledge entries', 'nexachat-ai' ),
+		'tile'  => __( 'Policies, prices, answers', 'nexachat-ai' ),
+		'intro' => __( 'Short, reliable facts the assistant can quote: hours, policies, prices, answers to common questions.', 'nexachat-ai' ),
+	),
+	'products'  => array(
+		'icon'  => 'box',
+		'title' => __( 'Products & services', 'nexachat-ai' ),
+		'tile'  => __( 'What you offer', 'nexachat-ai' ),
+		'intro' => __( 'What you sell or offer. Add specifications so the answers are precise.', 'nexachat-ai' ),
+	),
+	'documents' => array(
+		'icon'  => 'file',
+		'title' => __( 'Documents', 'nexachat-ai' ),
+		'tile'  => __( 'Brochures, catalogues, pages', 'nexachat-ai' ),
+		'intro' => __( 'Upload brochures, catalogues or price lists. The assistant finds the relevant parts for each question.', 'nexachat-ai' ),
+	),
+	'website'   => array(
+		'icon'  => 'globe',
+		'title' => __( 'Your website', 'nexachat-ai' ),
+		'tile'  => __( 'Learn from your own pages', 'nexachat-ai' ),
+		'intro' => __( 'Let the assistant learn from your pages, posts and products and keep up with changes automatically.', 'nexachat-ai' ),
+	),
+	'ai'        => array(
+		'icon'  => 'sparkles',
+		'title' => __( 'AI helper', 'nexachat-ai' ),
+		'tile'  => __( 'Let AI draft it for you', 'nexachat-ai' ),
+		'intro' => __( 'Not sure what to write? The AI reads what you have and drafts questions and a persona for you to review.', 'nexachat-ai' ),
+	),
+);
+
+/* Wording of the progress line, in one place so the script can reuse it. */
+$ssc_fmt = array(
+	'fields'      => __( '%1$d of %2$d filled', 'nexachat-ai' ),
+	'none'        => __( 'Not started', 'nexachat-ai' ),
+	'entries_one' => __( '1 entry', 'nexachat-ai' ),
+	'entries'     => __( '%d entries', 'nexachat-ai' ),
+	'products_one' => __( '1 product', 'nexachat-ai' ),
+	'products'    => __( '%d products', 'nexachat-ai' ),
+	'docs_one'    => __( '1 document', 'nexachat-ai' ),
+	'docs'        => __( '%d documents', 'nexachat-ai' ),
+	'pages_one'   => __( '1 page', 'nexachat-ai' ),
+	'pages'       => __( '%d pages', 'nexachat-ai' ),
+	'empty'       => __( 'None yet', 'nexachat-ai' ),
+	'off'         => __( 'Module is off', 'nexachat-ai' ),
+	'ready_yes'   => __( 'The minimum to go live is done: your business name and something to answer from.', 'nexachat-ai' ),
+	'ready_no'    => __( 'To go live you only need two things: your business name and one fact, product or document.', 'nexachat-ai' ),
+);
+$ssc_levels = array(
+	'start' => array(
+		'label' => __( 'Just starting', 'nexachat-ai' ),
+		'line'  => __( 'Let’s begin with the basics. It takes about two minutes.', 'nexachat-ai' ),
+	),
+	'basic' => array(
+		'label' => __( 'Getting there', 'nexachat-ai' ),
+		'line'  => __( 'A good start. A few more facts and the answers will get much better.', 'nexachat-ai' ),
+	),
+	'good'  => array(
+		'label' => __( 'Good', 'nexachat-ai' ),
+		'line'  => __( 'Looking good. A few more details will make the answers precise.', 'nexachat-ai' ),
+	),
+	'great' => array(
+		'label' => __( 'Excellent', 'nexachat-ai' ),
+		'line'  => __( 'Your assistant is well prepared. Keep it up to date as things change.', 'nexachat-ai' ),
+	),
+);
+$ssc_step_text = array(
+	'org_name'     => __( 'Add your organization’s name', 'nexachat-ai' ),
+	'description'  => __( 'Describe in a few sentences what you do', 'nexachat-ai' ),
+	'first_fact'   => __( 'Add your first fact, such as your opening hours', 'nexachat-ai' ),
+	'contact'      => __( 'Add a phone number or an email', 'nexachat-ai' ),
+	'hours'        => __( 'Add your working hours', 'nexachat-ai' ),
+	'more_facts'   => __( 'Add a few more facts', 'nexachat-ai' ),
+	'persona_name' => __( 'Give your assistant a name', 'nexachat-ai' ),
+	'products'     => __( 'Add your products or services', 'nexachat-ai' ),
+	'documents'    => __( 'Upload a brochure or a price list', 'nexachat-ai' ),
+	'website'      => __( 'Let the assistant learn from your website', 'nexachat-ai' ),
+	'website_sync' => __( 'Sync your website pages now', 'nexachat-ai' ),
+);
+
+/**
+ * Progress line of a section.
+ */
+$ssc_status = function ( $id ) use ( $score, $ssc_fmt ) {
+	$row = $score['panels'][ $id ];
+	if ( $row['locked'] ) {
+		return $ssc_fmt['off'];
+	}
+	if ( null !== $row['count'] ) {
+		$map = array(
+			'facts'     => array( 'entries_one', 'entries' ),
+			'products'  => array( 'products_one', 'products' ),
+			'documents' => array( 'docs_one', 'docs' ),
+			'website'   => array( 'pages_one', 'pages' ),
+		);
+		if ( 0 === $row['count'] ) {
+			return $ssc_fmt['empty'];
+		}
+		return 1 === $row['count'] ? $ssc_fmt[ $map[ $id ][0] ] : sprintf( $ssc_fmt[ $map[ $id ][1] ], $row['count'] );
+	}
+	return 0 === $row['filled'] ? $ssc_fmt['none'] : sprintf( $ssc_fmt['fields'], $row['filled'], $row['total'] );
+};
+
+/**
+ * Ring modifier for a section.
+ */
+$ssc_ring_class = function ( $id ) use ( $score ) {
+	$row = $score['panels'][ $id ];
+	if ( $row['ratio'] >= 1 ) {
+		return 'ssc-ring--sm is-ok';
+	}
+	return 'ssc-ring--sm' . ( $row['ratio'] <= 0 ? ' is-low' : '' );
+};
+
+/**
+ * One profile field.
+ */
+$ssc_field = function ( $key, $label, $args = array() ) use ( $business ) {
+	$args  = array_merge(
+		array(
+			'type'        => 'text',
+			'dir'         => 'auto',
+			'placeholder' => '',
+			'badge'       => '',
+			'rows'        => 0,
+			'wide'        => false,
+		),
+		$args
+	);
+	$value = isset( $business[ $key ] ) ? (string) $business[ $key ] : '';
+	?>
+	<div class="ssc-field ssc-kfield<?php echo $args['wide'] ? ' ssc-kfield--wide' : ''; ?>">
+		<label for="b_<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?><?php if ( '' !== $args['badge'] ) : ?> <span class="ssc-kbadge"><?php echo esc_html( $args['badge'] ); ?></span><?php endif; ?></label>
+		<?php if ( $args['rows'] > 0 ) : ?>
+			<textarea id="b_<?php echo esc_attr( $key ); ?>" name="business[<?php echo esc_attr( $key ); ?>]" rows="<?php echo esc_attr( (string) $args['rows'] ); ?>" dir="auto" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" data-ssc-score="1"><?php echo esc_textarea( $value ); ?></textarea>
+		<?php else : ?>
+			<input id="b_<?php echo esc_attr( $key ); ?>" name="business[<?php echo esc_attr( $key ); ?>]" type="<?php echo esc_attr( $args['type'] ); ?>" dir="<?php echo esc_attr( $args['dir'] ); ?>" value="<?php echo esc_attr( $value ); ?>" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" data-ssc-score="1" />
+		<?php endif; ?>
+	</div>
+	<?php
+};
+
+/**
+ * Panel heading.
+ */
+$ssc_head = function ( $id ) use ( $ssc_meta ) {
+	?>
+	<header class="ssc-kpanel__head">
+		<span class="ssc-kpanel__ico"><?php echo SSC_Icons::get( $ssc_meta[ $id ]['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+		<div>
+			<h2><?php echo esc_html( $ssc_meta[ $id ]['title'] ); ?></h2>
+			<p><?php echo esc_html( $ssc_meta[ $id ]['intro'] ); ?></p>
+		</div>
+	</header>
+	<?php
+};
+
+$ssc_types = array(
+	'general' => __( 'General', 'nexachat-ai' ),
+	'product' => __( 'Products', 'nexachat-ai' ),
+	'service' => __( 'Services', 'nexachat-ai' ),
+	'faq'     => __( 'FAQ', 'nexachat-ai' ),
+	'policy'  => __( 'Policies', 'nexachat-ai' ),
+	'support' => __( 'Support', 'nexachat-ai' ),
+	'custom'  => __( 'Custom', 'nexachat-ai' ),
+);
+
+/**
+ * One knowledge entry card. Also rendered blank into a <template>.
+ */
+$ssc_fact_row = function ( $i, $item, $open = false ) use ( $ssc_types ) {
+	$type    = isset( $item['type'] ) && isset( $ssc_types[ $item['type'] ] ) ? $item['type'] : 'general';
+	$title   = isset( $item['title'] ) ? (string) $item['title'] : '';
+	$content = isset( $item['content'] ) ? (string) $item['content'] : '';
+	?>
+	<details class="ssc-ki ssc-kcard" data-type="<?php echo esc_attr( $type ); ?>"<?php echo $open ? ' open' : ''; ?>>
+		<summary class="ssc-kcard__sum">
+			<span class="ssc-kcard__ico"><?php echo SSC_Icons::get( 'book' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+			<span class="ssc-kcard__title" data-ssc-kmirror="title" data-empty="<?php esc_attr_e( 'New entry', 'nexachat-ai' ); ?>"><?php echo esc_html( '' !== $title ? $title : __( 'New entry', 'nexachat-ai' ) ); ?></span>
+			<span class="ssc-kcard__excerpt" data-ssc-kmirror="content"><?php echo esc_html( wp_html_excerpt( wp_strip_all_tags( $content ), 90, '…' ) ); ?></span>
+			<span class="ssc-kcard__chev"><?php echo SSC_Icons::get( 'chevron' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+		</summary>
+		<div class="ssc-kcard__body">
+			<input type="hidden" name="ki[<?php echo esc_attr( (string) $i ); ?>][id]" value="<?php echo esc_attr( isset( $item['id'] ) ? $item['id'] : '' ); ?>" />
+			<div class="ssc-ki__row">
+				<select name="ki[<?php echo esc_attr( (string) $i ); ?>][type]" aria-label="<?php esc_attr_e( 'Type', 'nexachat-ai' ); ?>" data-ssc-ktype>
+					<?php foreach ( $ssc_types as $t_id => $t_label ) : ?>
+						<option value="<?php echo esc_attr( $t_id ); ?>" <?php selected( $type, $t_id ); ?>><?php echo esc_html( $t_label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<input type="text" name="ki[<?php echo esc_attr( (string) $i ); ?>][title]" value="<?php echo esc_attr( $title ); ?>" placeholder="<?php esc_attr_e( 'Title', 'nexachat-ai' ); ?>" data-ssc-ktitle />
+				<button type="button" class="ssc-ki__remove" aria-label="<?php esc_attr_e( 'Remove', 'nexachat-ai' ); ?>">×</button>
+			</div>
+			<textarea name="ki[<?php echo esc_attr( (string) $i ); ?>][content]" rows="3" placeholder="<?php esc_attr_e( 'Facts…', 'nexachat-ai' ); ?>" data-ssc-kcontent><?php echo esc_textarea( $content ); ?></textarea>
+		</div>
+	</details>
+	<?php
+};
+
+/**
+ * One product card. Also rendered blank into a <template>.
+ */
+$ssc_product_row = function ( $i, $p, $open = false ) {
+	$attrs = ! empty( $p['attributes'] ) && is_array( $p['attributes'] ) ? $p['attributes'] : array( '' => '' );
+	$name  = isset( $p['name'] ) ? (string) $p['name'] : '';
+	$specs = isset( $p['attributes'] ) && is_array( $p['attributes'] ) ? count( $p['attributes'] ) : 0;
+	?>
+	<details class="ssc-product ssc-kcard ssc-kcard--product"<?php echo $open ? ' open' : ''; ?>>
+		<summary class="ssc-kcard__sum">
+			<span class="ssc-kcard__ico"><?php echo SSC_Icons::get( 'box' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+			<span class="ssc-kcard__title" data-ssc-kmirror="name" data-empty="<?php esc_attr_e( 'New product or service', 'nexachat-ai' ); ?>"><?php echo esc_html( '' !== $name ? $name : __( 'New product or service', 'nexachat-ai' ) ); ?></span>
+			<span class="ssc-kcard__badge" data-ssc-kspecs data-one="<?php esc_attr_e( '1 specification', 'nexachat-ai' ); ?>" data-many="<?php esc_attr_e( '%d specifications', 'nexachat-ai' ); ?>"<?php echo $specs > 0 ? '' : ' hidden'; ?>><?php echo esc_html( 1 === $specs ? __( '1 specification', 'nexachat-ai' ) : sprintf( __( '%d specifications', 'nexachat-ai' ), $specs ) ); ?></span>
+			<span class="ssc-kcard__chev"><?php echo SSC_Icons::get( 'chevron' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+		</summary>
+		<div class="ssc-kcard__body">
+			<div class="ssc-ki__row">
+				<input type="hidden" name="products[<?php echo esc_attr( (string) $i ); ?>][id]" value="<?php echo esc_attr( isset( $p['id'] ) ? $p['id'] : '' ); ?>" />
+				<input type="text" name="products[<?php echo esc_attr( (string) $i ); ?>][name]" value="<?php echo esc_attr( $name ); ?>" placeholder="<?php esc_attr_e( 'Product / service name', 'nexachat-ai' ); ?>" data-ssc-kname />
+				<button type="button" class="ssc-ki__remove" aria-label="<?php esc_attr_e( 'Remove product', 'nexachat-ai' ); ?>">×</button>
+			</div>
+			<textarea name="products[<?php echo esc_attr( (string) $i ); ?>][summary]" rows="2" placeholder="<?php esc_attr_e( 'What is it, key facts, terms…', 'nexachat-ai' ); ?>"><?php echo esc_textarea( isset( $p['summary'] ) ? $p['summary'] : '' ); ?></textarea>
+			<p class="ssc-kgroup"><?php echo SSC_Icons::get( 'list' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <?php esc_html_e( 'Specifications', 'nexachat-ai' ); ?></p>
+			<div class="ssc-product__attrs">
+				<?php foreach ( $attrs as $ak => $av ) : ?>
+					<div class="ssc-product__attrrow">
+						<input type="text" name="product_attributes[<?php echo esc_attr( (string) $i ); ?>][]" value="<?php echo esc_attr( $ak ); ?>" placeholder="<?php esc_attr_e( 'Attribute (e.g. warranty)', 'nexachat-ai' ); ?>" />
+						<input type="text" name="product_attributes[<?php echo esc_attr( (string) $i ); ?>][]" value="<?php echo esc_attr( $av ); ?>" placeholder="<?php esc_attr_e( 'Value', 'nexachat-ai' ); ?>" />
+					</div>
+				<?php endforeach; ?>
+			</div>
+			<button type="button" class="ssc-btn ssc-btn--ghost ssc-btn--sm ssc-product__attradd"><?php esc_html_e( '+ Add attribute', 'nexachat-ai' ); ?></button>
+			<p class="ssc-kgroup"><?php echo SSC_Icons::get( 'link' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <?php esc_html_e( 'Links (optional)', 'nexachat-ai' ); ?></p>
+			<div class="ssc-grid ssc-grid--2">
+				<input type="url" name="products[<?php echo esc_attr( (string) $i ); ?>][brochure]" dir="ltr" value="<?php echo esc_attr( isset( $p['brochure'] ) ? $p['brochure'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Brochure link (optional)', 'nexachat-ai' ); ?>" />
+				<input type="url" name="products[<?php echo esc_attr( (string) $i ); ?>][image]" dir="ltr" value="<?php echo esc_attr( isset( $p['image'] ) ? $p['image'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Image URL (optional)', 'nexachat-ai' ); ?>" />
+			</div>
+		</div>
+	</details>
+	<?php
+};
+
+$ssc_starters = array(
+	array(
+		'type'  => 'general',
+		'title' => __( 'Working hours', 'nexachat-ai' ),
+		'hint'  => __( 'For example: Saturday to Wednesday, 9:00 to 17:00. Closed on Thursdays and Fridays.', 'nexachat-ai' ),
+	),
+	array(
+		'type'  => 'policy',
+		'title' => __( 'Return & refund policy', 'nexachat-ai' ),
+		'hint'  => __( 'For example: Unused items in their original packaging can be returned within 7 days.', 'nexachat-ai' ),
+	),
+	array(
+		'type'  => 'service',
+		'title' => __( 'Shipping & delivery', 'nexachat-ai' ),
+		'hint'  => __( 'For example: Orders ship within 2 working days. Delivery takes 2 to 5 days across the country.', 'nexachat-ai' ),
+	),
+	array(
+		'type'  => 'general',
+		'title' => __( 'Prices & payment', 'nexachat-ai' ),
+		'hint'  => __( 'For example: Prices are listed in Toman. You can pay online or on delivery.', 'nexachat-ai' ),
+	),
+	array(
+		'type'  => 'support',
+		'title' => __( 'Warranty & after-sales', 'nexachat-ai' ),
+		'hint'  => __( 'For example: All products carry an 18-month warranty. Contact support with your invoice number.', 'nexachat-ai' ),
+	),
+	array(
+		'type'  => 'faq',
+		'title' => __( 'A common question', 'nexachat-ai' ),
+		'hint'  => __( 'Write the question as the title and the answer here.', 'nexachat-ai' ),
+	),
+);
+$ssc_tone_choices = array(
+	'professional' => __( 'Professional', 'nexachat-ai' ),
+	'friendly'     => __( 'Friendly', 'nexachat-ai' ),
+	'formal'       => __( 'Formal', 'nexachat-ai' ),
+	'casual'       => __( 'Casual', 'nexachat-ai' ),
+);
+$ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'ai' ) );
 ?>
-<div class="ssc-page">
+<div class="ssc-page ssc-kh" id="ssc-kh" data-initial="<?php echo esc_attr( $initial ); ?>" data-extra="<?php echo SSC_Schema::kb_count() > 0 || SSC_Schema::qa_count() > 0 ? '1' : '0'; ?>"
+	data-fmt="<?php echo esc_attr( (string) wp_json_encode( $ssc_fmt ) ); ?>"
+	data-levels="<?php echo esc_attr( (string) wp_json_encode( array_map( function ( $id ) use ( $ssc_levels ) { return array_merge( array( 'id' => $id, 'min' => SSC_Knowledge_Score::levels()[ $id ] ), $ssc_levels[ $id ] ); }, array_keys( SSC_Knowledge_Score::levels() ) ) ) ); ?>"
+	data-weights="<?php echo esc_attr( (string) wp_json_encode( array_map( function ( $row ) { return $row['locked'] ? 0 : $row['weight']; }, $score['panels'] ) ) ); ?>">
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php esc_html_e( 'Business Knowledge', 'nexachat-ai' ); ?></h1>
-			<p class="ssc-page__sub"><?php esc_html_e( 'The facts your assistant relies on. Everything you write here reaches the AI on every answer.', 'nexachat-ai' ); ?></p>
+			<p class="ssc-page__sub"><?php esc_html_e( 'Teach your assistant about your business, a little at a time. Start with the basics and add more whenever you like. Everything here reaches the AI on every answer.', 'nexachat-ai' ); ?></p>
 		</div>
 	</header>
 
@@ -58,297 +378,329 @@ $kb_state = isset( $_GET['kb'] ) ? sanitize_key( wp_unslash( $_GET['kb'] ) ) : '
 		<div class="ssc-notice ssc-notice--error" role="alert"><?php echo esc_html( __( 'Indexing failed:', 'nexachat-ai' ) . ' ' . (string) get_transient( 'ssc_kb_embed_error' ) ); ?></div>
 	<?php endif; ?>
 
-	<form method="post" class="ssc-form" enctype="multipart/form-data">
-		<?php wp_nonce_field( 'ssc_knowledge' ); ?>
-		<input type="hidden" name="ssc_knowledge_save" value="1" />
-
-		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Business profile', 'nexachat-ai' ); ?></h2>
-			<p class="ssc-card__sub"><?php esc_html_e( 'Always included in the assistant\'s instructions.', 'nexachat-ai' ); ?></p>
-			<div class="ssc-grid ssc-grid--2">
-				<?php
-				$fields = array(
-					'org_name'   => __( 'Official organization name', 'nexachat-ai' ),
-					'brand_name' => __( 'Brand / trading name', 'nexachat-ai' ),
-					'category'   => __( 'Business category', 'nexachat-ai' ),
-					'industry'   => __( 'Industry', 'nexachat-ai' ),
-					'url'        => __( 'Website', 'nexachat-ai' ),
-					'location'   => __( 'Location', 'nexachat-ai' ),
-					'phone'      => __( 'Contact phone', 'nexachat-ai' ),
-					'email'      => __( 'Contact email', 'nexachat-ai' ),
-					'support_phone' => __( 'Support phone', 'nexachat-ai' ),
-					'support_email' => __( 'Support email', 'nexachat-ai' ),
-					'hours'      => __( 'Working hours', 'nexachat-ai' ),
-					'assistant_name' => __( 'Assistant name', 'nexachat-ai' ),
-					'assistant_role' => __( 'Assistant role', 'nexachat-ai' ),
-					'language'   => __( 'Primary answer language', 'nexachat-ai' ),
-				);
-				foreach ( $fields as $key => $label ) :
-					$type = in_array( $key, array( 'url', 'email', 'support_email' ), true ) ? ( 'url' === $key ? 'url' : 'email' ) : 'text';
-					?>
-					<div class="ssc-field">
-						<label for="b_<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label>
-						<input id="b_<?php echo esc_attr( $key ); ?>" name="business[<?php echo esc_attr( $key ); ?>]" type="<?php echo esc_attr( $type ); ?>" dir="<?php echo in_array( $key, array( 'url', 'email', 'support_email', 'phone', 'support_phone', 'language' ), true ) ? 'ltr' : 'auto'; ?>" value="<?php echo esc_attr( isset( $business[ $key ] ) ? $business[ $key ] : '' ); ?>" />
-					</div>
-				<?php endforeach; ?>
-			</div>
-			<div class="ssc-field">
-				<label for="b_tone"><?php esc_html_e( 'Communication tone', 'nexachat-ai' ); ?></label>
-				<select id="b_tone" name="business[tone]">
-					<?php foreach ( array( 'professional' => __( 'Professional', 'nexachat-ai' ), 'friendly' => __( 'Friendly', 'nexachat-ai' ), 'formal' => __( 'Formal', 'nexachat-ai' ), 'casual' => __( 'Casual', 'nexachat-ai' ) ) as $t_id => $t_label ) : ?>
-						<option value="<?php echo esc_attr( $t_id ); ?>" <?php selected( $business['tone'], $t_id ); ?>><?php echo esc_html( $t_label ); ?></option>
-					<?php endforeach; ?>
-				</select>
-			</div>
-			<?php foreach ( array( 'description' => __( 'What does your organization do?', 'nexachat-ai' ), 'products' => __( 'Products & services overview', 'nexachat-ai' ), 'differentiators' => __( 'Differentiators', 'nexachat-ai' ) ) as $key => $label ) : ?>
-				<div class="ssc-field">
-					<label for="b_<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label>
-					<textarea id="b_<?php echo esc_attr( $key ); ?>" name="business[<?php echo esc_attr( $key ); ?>]" rows="3"><?php echo esc_textarea( isset( $business[ $key ] ) ? $business[ $key ] : '' ); ?></textarea>
-				</div>
-			<?php endforeach; ?>
-		</section>
-
-		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Knowledge entries', 'nexachat-ai' ); ?></h2>
-			<p class="ssc-card__sub"><?php esc_html_e( 'Short, factual reference blocks the assistant quotes verbatim. (Policies, prices, hours, FAQs…)', 'nexachat-ai' ); ?></p>
-			<div id="ssc-ki-list" class="ssc-ki-list">
-				<?php $rows = $items ? $items : array( array( 'type' => 'general', 'title' => '', 'content' => '' ) ); ?>
-				<?php foreach ( $rows as $i => $item ) : ?>
-					<div class="ssc-ki">
-						<input type="hidden" name="ki[<?php echo esc_attr( (string) $i ); ?>][id]" value="<?php echo esc_attr( isset( $item['id'] ) ? $item['id'] : '' ); ?>" />
-						<div class="ssc-ki__row">
-							<select name="ki[<?php echo esc_attr( (string) $i ); ?>][type]" aria-label="<?php esc_attr_e( 'Type', 'nexachat-ai' ); ?>">
-								<?php foreach ( array( 'general' => __( 'General', 'nexachat-ai' ), 'product' => __( 'Products', 'nexachat-ai' ), 'service' => __( 'Services', 'nexachat-ai' ), 'faq' => __( 'FAQ', 'nexachat-ai' ), 'policy' => __( 'Policies', 'nexachat-ai' ), 'support' => __( 'Support', 'nexachat-ai' ), 'custom' => __( 'Custom', 'nexachat-ai' ) ) as $t_id => $t_label ) : ?>
-									<option value="<?php echo esc_attr( $t_id ); ?>" <?php selected( isset( $item['type'] ) ? $item['type'] : 'general', $t_id ); ?>><?php echo esc_html( $t_label ); ?></option>
-								<?php endforeach; ?>
-							</select>
-							<input type="text" name="ki[<?php echo esc_attr( (string) $i ); ?>][title]" value="<?php echo esc_attr( isset( $item['title'] ) ? $item['title'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Title', 'nexachat-ai' ); ?>" />
-							<button type="button" class="ssc-ki__remove" aria-label="<?php esc_attr_e( 'Remove', 'nexachat-ai' ); ?>">×</button>
-						</div>
-						<textarea name="ki[<?php echo esc_attr( (string) $i ); ?>][content]" rows="3" placeholder="<?php esc_attr_e( 'Facts…', 'nexachat-ai' ); ?>"><?php echo esc_textarea( isset( $item['content'] ) ? $item['content'] : '' ); ?></textarea>
-					</div>
-				<?php endforeach; ?>
-			</div>
-			<button type="button" class="ssc-btn ssc-btn--ghost ssc-ki__add" data-target="#ssc-ki-list"><?php esc_html_e( '+ Add entry', 'nexachat-ai' ); ?></button>
-		</section>
-
-		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Products & services', 'nexachat-ai' ); ?></h2>
-			<p class="ssc-card__sub"><?php esc_html_e( 'When a visitor asks about a product, its summary and attributes are injected into the answer context.', 'nexachat-ai' ); ?></p>
-			<?php
-			/*
-			 * One product row. Also rendered blank into a <template>, so "Add product"
-			 * works when the list is still empty (there is no row to copy yet).
-			 */
-			$ssc_product_row = function ( $i, $p ) {
-				?>
-			<div class="ssc-product">
-				<div class="ssc-ki__row">
-					<input type="hidden" name="products[<?php echo esc_attr( (string) $i ); ?>][id]" value="<?php echo esc_attr( isset( $p['id'] ) ? $p['id'] : '' ); ?>" />
-					<input type="text" name="products[<?php echo esc_attr( (string) $i ); ?>][name]" value="<?php echo esc_attr( isset( $p['name'] ) ? $p['name'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Product / service name', 'nexachat-ai' ); ?>" />
-					<input type="url" name="products[<?php echo esc_attr( (string) $i ); ?>][brochure]" dir="ltr" value="<?php echo esc_attr( isset( $p['brochure'] ) ? $p['brochure'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Brochure link (optional)', 'nexachat-ai' ); ?>" />
-					<input type="url" name="products[<?php echo esc_attr( (string) $i ); ?>][image]" dir="ltr" value="<?php echo esc_attr( isset( $p['image'] ) ? $p['image'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Image URL (optional)', 'nexachat-ai' ); ?>" />
-					<button type="button" class="ssc-ki__remove" aria-label="<?php esc_attr_e( 'Remove product', 'nexachat-ai' ); ?>">×</button>
-				</div>
-				<textarea name="products[<?php echo esc_attr( (string) $i ); ?>][summary]" rows="2" placeholder="<?php esc_attr_e( 'What is it, key facts, terms…', 'nexachat-ai' ); ?>"><?php echo esc_textarea( isset( $p['summary'] ) ? $p['summary'] : '' ); ?></textarea>
-				<div class="ssc-product__attrs">
-					<?php $attrs = ! empty( $p['attributes'] ) && is_array( $p['attributes'] ) ? $p['attributes'] : array( '' => '' ); ?>
-					<?php foreach ( $attrs as $ak => $av ) : ?>
-						<div class="ssc-product__attrrow">
-							<input type="text" name="product_attributes[<?php echo esc_attr( (string) $i ); ?>][]" value="<?php echo esc_attr( $ak ); ?>" placeholder="<?php esc_attr_e( 'Attribute (e.g. warranty)', 'nexachat-ai' ); ?>" />
-							<input type="text" name="product_attributes[<?php echo esc_attr( (string) $i ); ?>][]" value="<?php echo esc_attr( $av ); ?>" placeholder="<?php esc_attr_e( 'Value', 'nexachat-ai' ); ?>" />
-						</div>
-					<?php endforeach; ?>
-				</div>
-				<button type="button" class="ssc-btn ssc-btn--ghost ssc-btn--sm ssc-product__attradd"><?php esc_html_e( '+ Add attribute', 'nexachat-ai' ); ?></button>
-			</div>
-				<?php
-			};
-			?>
-			<div id="ssc-product-list" class="ssc-products">
-				<?php
-				foreach ( $products as $i => $p ) {
-					$ssc_product_row( $i, $p );
-				}
-				?>
-			</div>
-			<template id="ssc-product-template"><?php $ssc_product_row( 0, array() ); ?></template>
-			<button type="button" class="ssc-btn ssc-btn--ghost ssc-product__add" data-target="#ssc-product-list" data-template="#ssc-product-template"><?php esc_html_e( '+ Add product', 'nexachat-ai' ); ?></button>
-		</section>
-
-		<div class="ssc-form__actions">
-			<button type="submit" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Save knowledge', 'nexachat-ai' ); ?></button>
+	<section class="ssc-card ssc-khero">
+		<div class="ssc-khero__ring" data-ssc-kring="overall">
+			<?php echo SSC_Icons::ring( $score['percent'], 'ssc-ring--xl' . ( $score['percent'] >= 75 ? ' is-ok' : '' ), __( 'How much the assistant knows about your business', 'nexachat-ai' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?>
 		</div>
-	</form>
-
-	<section class="ssc-card ssc-mt">
-		<h2><?php esc_html_e( 'Long documents (knowledge base)', 'nexachat-ai' ); ?></h2>
-		<p class="ssc-card__sub"><?php echo esc_html( sprintf( __( '%d chunks from %d documents. Relevant pieces are retrieved automatically per question.', 'nexachat-ai' ), $kb_count, count( $kb_docs ) ) ); ?></p>
-
-		<?php
-		$ssc_site_docs = array_filter(
-			$kb_docs,
-			function ( $doc ) {
-				return 0 === strpos( (string) $doc['doc_id'], 'wp-' );
-			}
-		);
-		$kb_docs       = array_diff_key( $kb_docs, $ssc_site_docs );
-		?>
-		<?php if ( $ssc_site_docs ) : ?>
-			<p class="ssc-field__hint"><?php echo esc_html( sprintf( /* translators: %d: number of pages. */ _n( '%d page from your website is kept up to date automatically (see "Learn from my website" below).', '%d pages from your website are kept up to date automatically (see "Learn from my website" below).', count( $ssc_site_docs ), 'nexachat-ai' ), count( $ssc_site_docs ) ) ); ?></p>
-		<?php endif; ?>
-		<?php if ( $kb_docs ) : ?>
-			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table">
-				<thead>
-					<tr><th><?php esc_html_e( 'Document', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Chunks', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Added', 'nexachat-ai' ); ?></th><th></th></tr>
-				</thead>
-				<tbody>
-					<?php foreach ( $kb_docs as $doc ) : ?>
-						<tr>
-							<td><?php echo esc_html( $doc['source_title'] ? $doc['source_title'] : $doc['doc_id'] ); ?></td>
-							<td><?php echo esc_html( number_format_i18n( (int) $doc['chunks'] ) ); ?></td>
-							<td><?php echo esc_html( SSC_Date::display( $doc['created_at'], false ) ); ?></td>
-							<td><a class="ssc-link--danger" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'ssc_kb_action' => 'delete', 'doc' => $doc['doc_id'] ) ), 'ssc_kb_' . $doc['doc_id'] ) ); ?>"><?php esc_html_e( 'Remove', 'nexachat-ai' ); ?></a></td>
-						</tr>
+		<div class="ssc-khero__main">
+			<p class="ssc-khero__level"><span data-ssc-klevel><?php echo esc_html( $ssc_levels[ $score['level'] ]['label'] ); ?></span></p>
+			<h2 data-ssc-kline><?php echo esc_html( $ssc_levels[ $score['level'] ]['line'] ); ?></h2>
+			<p class="ssc-khero__ready <?php echo $score['ready'] ? 'is-ready' : ''; ?>" data-ssc-kready>
+				<?php echo SSC_Icons::get( 'check', 'ssc-khero__yes' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?>
+				<?php echo SSC_Icons::get( 'info', 'ssc-khero__no' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?>
+				<span><?php echo esc_html( $score['ready'] ? $ssc_fmt['ready_yes'] : $ssc_fmt['ready_no'] ); ?></span>
+			</p>
+		</div>
+		<?php if ( $score['steps'] ) : ?>
+			<div class="ssc-khero__steps">
+				<h3><?php esc_html_e( 'Best next steps', 'nexachat-ai' ); ?></h3>
+				<ul>
+					<?php foreach ( $score['steps'] as $ssc_step ) : ?>
+						<li>
+							<a href="#<?php echo esc_attr( $ssc_step['panel'] ); ?>" data-ssc-kgo="<?php echo esc_attr( $ssc_step['panel'] ); ?>">
+								<span class="ssc-khero__stepico"><?php echo SSC_Icons::get( $ssc_meta[ $ssc_step['panel'] ]['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+								<span><?php echo esc_html( $ssc_step_text[ $ssc_step['id'] ] ); ?></span>
+								<?php if ( $ssc_step['gain'] > 0 ) : ?>
+									<em>+<?php echo esc_html( (string) $ssc_step['gain'] ); ?>%</em>
+								<?php endif; ?>
+							</a>
+						</li>
 					<?php endforeach; ?>
-				</tbody>
-			</table></div>
+				</ul>
+			</div>
 		<?php endif; ?>
+	</section>
 
-		<form method="post" class="ssc-kb-semantic">
-			<?php wp_nonce_field( 'ssc_kb' ); ?>
-			<input type="hidden" name="ssc_kb_semantic_save" value="1" />
-			<h3><?php esc_html_e( 'Semantic search', 'nexachat-ai' ); ?></h3>
-			<?php $ssc_embed_model = SSC_Embeddings::model(); ?>
-			<?php if ( '' === $ssc_embed_model ) : ?>
-				<p class="ssc-field__hint"><?php esc_html_e( 'Available with OpenAI, Gemini or an OpenAI-compatible custom endpoint. The connected provider has no embeddings API, so keyword search is used.', 'nexachat-ai' ); ?></p>
-			<?php else : ?>
-				<label class="ssc-check"><input type="checkbox" name="kb_semantic" value="yes" <?php checked( 'yes', SSC_Settings::get( 'kb_semantic', 'no' ) ); ?> /> <span><?php esc_html_e( 'Find answers by meaning, not only matching words (uses the provider\'s embeddings API: one small request per question)', 'nexachat-ai' ); ?></span></label>
-				<?php if ( 'yes' === SSC_Settings::get( 'kb_semantic', 'no' ) ) : ?>
-					<?php $ssc_pending = SSC_Schema::kb_pending_count( $ssc_embed_model ); ?>
-					<p class="ssc-field__hint">
-						<?php
-						echo esc_html(
-							0 === $ssc_pending
-								? __( 'Index is up to date.', 'nexachat-ai' )
-								/* translators: %d: number of chunks still waiting for indexing. */
-								: sprintf( __( '%d chunks are waiting to be indexed (continues in the background).', 'nexachat-ai' ), $ssc_pending )
-						);
-						?>
-					</p>
+	<nav class="ssc-ktiles" role="tablist" aria-label="<?php esc_attr_e( 'Knowledge sections', 'nexachat-ai' ); ?>" hidden>
+		<?php foreach ( $ssc_order as $ssc_id ) : ?>
+			<button type="button" role="tab" class="ssc-ktile<?php echo 'website' === $ssc_id && ! $ssc_site_on ? ' is-locked' : ''; ?>" id="ssc-ktab-<?php echo esc_attr( $ssc_id ); ?>" data-ssc-ktab="<?php echo esc_attr( $ssc_id ); ?>" aria-controls="ssc-kpanel-<?php echo esc_attr( $ssc_id ); ?>" aria-selected="false">
+				<span class="ssc-ktile__ico"><?php echo SSC_Icons::get( $ssc_meta[ $ssc_id ]['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+				<span class="ssc-ktile__txt">
+					<strong><?php echo esc_html( $ssc_meta[ $ssc_id ]['title'] ); ?></strong>
+					<small<?php echo isset( $score['panels'][ $ssc_id ] ) ? ' data-ssc-kstatus="' . esc_attr( $ssc_id ) . '"' : ''; ?>><?php echo esc_html( isset( $score['panels'][ $ssc_id ] ) ? $ssc_status( $ssc_id ) : $ssc_meta[ $ssc_id ]['tile'] ); ?></small>
+				</span>
+				<?php if ( 'ai' === $ssc_id ) : ?>
+					<span class="ssc-ktile__badge"><?php echo SSC_Icons::get( 'sparkles' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+				<?php elseif ( $score['panels'][ $ssc_id ]['locked'] ) : ?>
+					<span class="ssc-ktile__badge"><?php echo SSC_Icons::get( 'lock' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+				<?php else : ?>
+					<span class="ssc-ktile__ring" data-ssc-kring="<?php echo esc_attr( $ssc_id ); ?>"><?php echo SSC_Icons::ring( (int) round( 100 * $score['panels'][ $ssc_id ]['ratio'] ), $ssc_ring_class( $ssc_id ), $ssc_meta[ $ssc_id ]['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?></span>
 				<?php endif; ?>
-			<?php endif; ?>
-			<label class="ssc-check"><input type="checkbox" name="show_sources" value="yes" <?php checked( 'yes', SSC_Settings::get( 'show_sources', 'yes' ) ); ?> /> <span><?php esc_html_e( 'Show the source documents under AI answers', 'nexachat-ai' ); ?></span></label>
-			<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Save and index now', 'nexachat-ai' ); ?></button>
+			</button>
+		<?php endforeach; ?>
+	</nav>
+
+	<div class="ssc-kpanels">
+		<form method="post" class="ssc-form ssc-kform" id="ssc-kform">
+			<?php wp_nonce_field( 'ssc_knowledge' ); ?>
+			<input type="hidden" name="ssc_knowledge_save" value="1" />
+			<input type="hidden" name="ssc_panel" value="<?php echo esc_attr( $initial ); ?>" data-ssc-kpanelfield />
+
+			<section class="ssc-card ssc-kpanel" id="ssc-kpanel-identity" role="tabpanel" aria-labelledby="ssc-ktab-identity" data-ssc-kpanel="identity" data-ssc-form="1">
+				<?php $ssc_head( 'identity' ); ?>
+				<div class="ssc-grid ssc-grid--2">
+					<?php
+					$ssc_field( 'org_name', __( 'Official organization name', 'nexachat-ai' ), array( 'badge' => __( 'Start here', 'nexachat-ai' ), 'placeholder' => __( 'e.g. Atlas Pharmacy', 'nexachat-ai' ) ) );
+					$ssc_field( 'brand_name', __( 'Brand / trading name', 'nexachat-ai' ), array( 'placeholder' => __( 'The name customers know you by', 'nexachat-ai' ) ) );
+					$ssc_field( 'category', __( 'Business category', 'nexachat-ai' ), array( 'placeholder' => __( 'e.g. Pharmacy, online shop, law firm', 'nexachat-ai' ) ) );
+					$ssc_field( 'industry', __( 'Industry', 'nexachat-ai' ), array( 'placeholder' => __( 'e.g. Healthcare, retail', 'nexachat-ai' ) ) );
+					$ssc_field( 'description', __( 'What does your organization do?', 'nexachat-ai' ), array( 'rows' => 3, 'wide' => true, 'badge' => __( 'Start here', 'nexachat-ai' ), 'placeholder' => __( 'In two or three sentences: what you do and for whom.', 'nexachat-ai' ) ) );
+					$ssc_field( 'differentiators', __( 'Differentiators', 'nexachat-ai' ), array( 'rows' => 3, 'wide' => true, 'placeholder' => __( 'What makes you different? Warranty, speed, experience…', 'nexachat-ai' ) ) );
+					?>
+				</div>
+			</section>
+
+			<section class="ssc-card ssc-kpanel" id="ssc-kpanel-contact" role="tabpanel" aria-labelledby="ssc-ktab-contact" data-ssc-kpanel="contact" data-ssc-form="1">
+				<?php $ssc_head( 'contact' ); ?>
+				<div class="ssc-grid ssc-grid--2">
+					<?php
+					$ssc_field( 'phone', __( 'Contact phone', 'nexachat-ai' ), array( 'type' => 'text', 'dir' => 'ltr' ) );
+					$ssc_field( 'email', __( 'Contact email', 'nexachat-ai' ), array( 'type' => 'email', 'dir' => 'ltr' ) );
+					$ssc_field( 'support_phone', __( 'Support phone', 'nexachat-ai' ), array( 'type' => 'text', 'dir' => 'ltr' ) );
+					$ssc_field( 'support_email', __( 'Support email', 'nexachat-ai' ), array( 'type' => 'email', 'dir' => 'ltr' ) );
+					$ssc_field( 'url', __( 'Website', 'nexachat-ai' ), array( 'type' => 'url', 'dir' => 'ltr', 'placeholder' => 'https://' ) );
+					$ssc_field( 'location', __( 'Location', 'nexachat-ai' ), array( 'placeholder' => __( 'City and address', 'nexachat-ai' ) ) );
+					$ssc_field( 'hours', __( 'Working hours', 'nexachat-ai' ), array( 'wide' => true, 'placeholder' => __( 'e.g. Saturday to Wednesday, 9:00 to 17:00', 'nexachat-ai' ) ) );
+					?>
+				</div>
+			</section>
+
+			<section class="ssc-card ssc-kpanel" id="ssc-kpanel-persona" role="tabpanel" aria-labelledby="ssc-ktab-persona" data-ssc-kpanel="persona" data-ssc-form="1">
+				<?php $ssc_head( 'persona' ); ?>
+				<div class="ssc-grid ssc-grid--2">
+					<?php
+					$ssc_field( 'assistant_name', __( 'Assistant name', 'nexachat-ai' ), array( 'placeholder' => __( 'e.g. Sara', 'nexachat-ai' ) ) );
+					$ssc_field( 'assistant_role', __( 'Assistant role', 'nexachat-ai' ), array( 'placeholder' => __( 'e.g. Customer support assistant', 'nexachat-ai' ) ) );
+					$ssc_field( 'language', __( 'Primary answer language', 'nexachat-ai' ), array( 'dir' => 'ltr', 'placeholder' => __( 'e.g. Persian', 'nexachat-ai' ) ) );
+					?>
+					<div class="ssc-field ssc-kfield">
+						<label for="b_tone"><?php esc_html_e( 'Communication tone', 'nexachat-ai' ); ?></label>
+						<select id="b_tone" name="business[tone]">
+							<?php foreach ( $ssc_tone_choices as $t_id => $t_label ) : ?>
+								<option value="<?php echo esc_attr( $t_id ); ?>" <?php selected( $business['tone'], $t_id ); ?>><?php echo esc_html( $t_label ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+				</div>
+			</section>
+
+			<section class="ssc-card ssc-kpanel" id="ssc-kpanel-facts" role="tabpanel" aria-labelledby="ssc-ktab-facts" data-ssc-kpanel="facts" data-ssc-form="1" data-ssc-target="<?php echo esc_attr( (string) SSC_Knowledge_Score::panels()['facts']['target'] ); ?>">
+				<?php $ssc_head( 'facts' ); ?>
+				<div class="ssc-kstarters">
+					<span><?php esc_html_e( 'Start from an example:', 'nexachat-ai' ); ?></span>
+					<?php foreach ( $ssc_starters as $ssc_starter ) : ?>
+						<button type="button" class="ssc-chip" data-ssc-kstarter data-type="<?php echo esc_attr( $ssc_starter['type'] ); ?>" data-title="<?php echo esc_attr( $ssc_starter['title'] ); ?>" data-hint="<?php echo esc_attr( $ssc_starter['hint'] ); ?>">+ <?php echo esc_html( $ssc_starter['title'] ); ?></button>
+					<?php endforeach; ?>
+				</div>
+				<div id="ssc-ki-list" class="ssc-ki-list ssc-klist" data-allow-empty="1" data-count="<?php echo esc_attr( (string) count( $items ) ); ?>"><?php
+				foreach ( $items as $ssc_i => $ssc_item ) {
+					$ssc_fact_row( $ssc_i, $ssc_item );
+				}
+				?></div>
+				<div class="ssc-kempty">
+					<span class="ssc-kempty__ico"><?php echo SSC_Icons::get( 'book' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					<p><strong><?php esc_html_e( 'No entries yet', 'nexachat-ai' ); ?></strong><br /><?php esc_html_e( 'An entry is one short fact. Pick an example above and just replace the text, or write your own.', 'nexachat-ai' ); ?></p>
+				</div>
+				<template id="ssc-ki-template"><?php $ssc_fact_row( 0, array(), true ); ?></template>
+				<button type="button" class="ssc-btn ssc-btn--ghost ssc-ki__add" data-target="#ssc-ki-list" data-template="#ssc-ki-template"><?php esc_html_e( '+ Add entry', 'nexachat-ai' ); ?></button>
+			</section>
+
+			<section class="ssc-card ssc-kpanel" id="ssc-kpanel-products" role="tabpanel" aria-labelledby="ssc-ktab-products" data-ssc-kpanel="products" data-ssc-form="1" data-ssc-target="<?php echo esc_attr( (string) SSC_Knowledge_Score::panels()['products']['target'] ); ?>">
+				<?php $ssc_head( 'products' ); ?>
+				<?php $ssc_field( 'products', __( 'Products & services overview', 'nexachat-ai' ), array( 'rows' => 3, 'wide' => true, 'placeholder' => __( 'A short summary of everything you offer.', 'nexachat-ai' ) ) ); ?>
+				<div id="ssc-product-list" class="ssc-products ssc-klist" data-allow-empty="1" data-count="<?php echo esc_attr( (string) count( $products ) ); ?>"><?php
+				foreach ( $products as $ssc_i => $ssc_p ) {
+					$ssc_product_row( $ssc_i, $ssc_p );
+				}
+				?></div>
+				<div class="ssc-kempty">
+					<span class="ssc-kempty__ico"><?php echo SSC_Icons::get( 'box' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					<p><strong><?php esc_html_e( 'No products yet', 'nexachat-ai' ); ?></strong><br /><?php esc_html_e( 'When a visitor asks about a product, its summary and specifications are added to the answer. Add the ones people ask about most.', 'nexachat-ai' ); ?></p>
+				</div>
+				<template id="ssc-product-template"><?php $ssc_product_row( 0, array(), true ); ?></template>
+				<button type="button" class="ssc-btn ssc-btn--ghost ssc-product__add" data-target="#ssc-product-list" data-template="#ssc-product-template"><?php esc_html_e( '+ Add product', 'nexachat-ai' ); ?></button>
+			</section>
+
+			<div class="ssc-ksave" data-ssc-ksave>
+				<span class="ssc-ksave__state" data-ssc-kdirty hidden><span class="ssc-ksave__dot"></span> <?php esc_html_e( 'You have unsaved changes', 'nexachat-ai' ); ?></span>
+				<button type="submit" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Save knowledge', 'nexachat-ai' ); ?></button>
+			</div>
 		</form>
 
-		<div class="ssc-kb-import">
-			<form method="post" class="ssc-kb-import__form">
-				<?php wp_nonce_field( 'ssc_kb' ); ?>
-				<input type="hidden" name="ssc_kb_import_url" value="1" />
-				<input type="url" name="kb_url" dir="ltr" placeholder="https://example.com/about" aria-label="<?php esc_attr_e( 'Page URL to import', 'nexachat-ai' ); ?>" />
-				<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Import page', 'nexachat-ai' ); ?></button>
-			</form>
-			<form method="post" class="ssc-kb-import__form" enctype="multipart/form-data">
-				<?php wp_nonce_field( 'ssc_kb' ); ?>
-				<input type="hidden" name="ssc_kb_import_file" value="1" />
-				<input type="file" name="kb_file" accept=".pdf,.docx,.txt,.md,.csv,.json" aria-label="<?php esc_attr_e( 'Document file to import', 'nexachat-ai' ); ?>" />
-				<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Upload file', 'nexachat-ai' ); ?></button>
-			</form>
-		</div>
-	</section>
-	<?php if ( SSC_Modules::is_active( 'sitesync' ) ) : ?>
-		<?php
-		$ssc_sync       = SSC_Module_Sitesync::state();
-		$ssc_sync_types = SSC_Module_Sitesync::types();
-		$ssc_type_opts  = get_post_types( array( 'public' => true ), 'objects' );
-		unset( $ssc_type_opts['attachment'] );
-		?>
-		<section class="ssc-card ssc-mt" id="ssc-sitesync">
-			<h2><?php esc_html_e( 'Learn from my website', 'nexachat-ai' ); ?></h2>
-			<p class="ssc-card__sub"><?php esc_html_e( 'Published content becomes knowledge automatically. Edits are picked up within a minute; trashed or unpublished content is removed.', 'nexachat-ai' ); ?></p>
-			<p>
-				<?php if ( $ssc_sync['running'] ) : ?>
-					<strong><?php echo esc_html( sprintf( /* translators: 1: done, 2: total. */ __( 'Syncing… %1$d of %2$d', 'nexachat-ai' ), (int) $ssc_sync['done'], (int) $ssc_sync['total'] ) ); ?></strong>
-				<?php else : ?>
-					<?php echo esc_html( sprintf( /* translators: %d: number of pages. */ _n( '%d page in the knowledge base.', '%d pages in the knowledge base.', count( SSC_Module_Sitesync::documents() ), 'nexachat-ai' ), count( SSC_Module_Sitesync::documents() ) ) ); ?>
-					<?php if ( $ssc_sync['finished'] ) : ?>
-						<?php echo esc_html( sprintf( /* translators: %s: date. */ __( 'Last full sync: %s', 'nexachat-ai' ), SSC_Date::display( $ssc_sync['finished'] ) ) ); ?>
-					<?php endif; ?>
-				<?php endif; ?>
-			</p>
-			<form method="post">
-				<?php wp_nonce_field( 'ssc_kb' ); ?>
-				<fieldset class="ssc-field">
-					<legend class="ssc-field__label"><?php esc_html_e( 'Content to learn from', 'nexachat-ai' ); ?></legend>
-					<?php foreach ( $ssc_type_opts as $ssc_type ) : ?>
-						<label class="ssc-check ssc-check--tight"><input type="checkbox" name="sitesync_types[]" value="<?php echo esc_attr( $ssc_type->name ); ?>" <?php checked( in_array( $ssc_type->name, $ssc_sync_types, true ) ); ?> /> <span><?php echo esc_html( $ssc_type->labels->name ); ?></span></label>
-					<?php endforeach; ?>
-				</fieldset>
-				<div class="ssc-field">
-					<label for="sitesync_exclude"><?php esc_html_e( 'Never include these IDs (comma separated)', 'nexachat-ai' ); ?></label>
-					<input id="sitesync_exclude" name="sitesync_exclude" type="text" dir="ltr" value="<?php echo esc_attr( implode( ', ', SSC_Module_Sitesync::excluded() ) ); ?>" placeholder="12, 57" />
-				</div>
-				<div class="ssc-form__actions ssc-form__actions--start">
-					<button type="submit" name="ssc_sitesync_action" value="run" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Save and sync now', 'nexachat-ai' ); ?></button>
-					<button type="submit" name="ssc_sitesync_action" value="save" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Save', 'nexachat-ai' ); ?></button>
-					<button type="submit" name="ssc_sitesync_action" value="clear" class="ssc-btn ssc-btn--ghost ssc-link--danger" onclick="return window.confirm(this.getAttribute('data-confirm'));" data-confirm="<?php esc_attr_e( 'Remove every page that came from the website from the knowledge base? Your own entries and uploaded documents stay.', 'nexachat-ai' ); ?>"><?php esc_html_e( 'Remove website pages', 'nexachat-ai' ); ?></button>
-				</div>
-			</form>
-		</section>
-	<?php endif; ?>
+		<section class="ssc-card ssc-kpanel" id="ssc-kpanel-documents" role="tabpanel" aria-labelledby="ssc-ktab-documents" data-ssc-kpanel="documents">
+			<?php $ssc_head( 'documents' ); ?>
+			<p class="ssc-card__sub"><?php echo esc_html( sprintf( /* translators: 1: number of chunks, 2: number of documents. */ __( '%1$d chunks from %2$d documents. Relevant pieces are retrieved automatically per question.', 'nexachat-ai' ), $kb_count, count( $kb_docs ) ) ); ?></p>
+			<?php if ( $site_docs ) : ?>
+				<p class="ssc-field__hint"><?php echo esc_html( sprintf( /* translators: %d: number of pages. */ _n( '%d page from your website is kept up to date automatically (see "Learn from my website" below).', '%d pages from your website are kept up to date automatically (see "Learn from my website" below).', count( $site_docs ), 'nexachat-ai' ), count( $site_docs ) ) ); ?></p>
+			<?php endif; ?>
 
-	<?php $ssc_suggest = get_transient( 'ssc_suggest_' . get_current_user_id() ); ?>
-	<section class="ssc-card ssc-mt" id="ssc-suggest">
-		<h2><?php esc_html_e( 'Suggest FAQs and a persona with AI', 'nexachat-ai' ); ?></h2>
-		<?php if ( ! is_array( $ssc_suggest ) ) : ?>
-			<p class="ssc-card__sub"><?php esc_html_e( 'The AI reads your business profile, knowledge and pages, then proposes the questions visitors are most likely to ask (answered only from your material) and a name, role and welcome text for the assistant. You review everything before it is added.', 'nexachat-ai' ); ?></p>
-			<form method="post">
-				<?php wp_nonce_field( 'ssc_kb' ); ?>
-				<button type="submit" name="ssc_suggest" value="1" class="ssc-btn ssc-btn--primary" onclick="this.classList.add('is-busy');this.textContent=this.getAttribute('data-busy');" data-busy="<?php esc_attr_e( 'Reading your material… (up to a minute)', 'nexachat-ai' ); ?>"><?php esc_html_e( 'Write suggestions', 'nexachat-ai' ); ?></button>
-			</form>
-		<?php else : ?>
-			<p class="ssc-card__sub"><?php esc_html_e( 'Tick what you want to keep and edit freely. Nothing is saved until you press "Add selected".', 'nexachat-ai' ); ?></p>
-			<form method="post" class="ssc-suggest">
-				<?php wp_nonce_field( 'ssc_kb' ); ?>
-				<?php if ( ! empty( $ssc_suggest['persona'] ) ) : ?>
-					<h3><?php esc_html_e( 'Assistant persona', 'nexachat-ai' ); ?></h3>
-					<?php
-					$ssc_persona_labels = array(
-						'assistant_name' => __( 'Assistant name', 'nexachat-ai' ),
-						'assistant_role' => __( 'Assistant role', 'nexachat-ai' ),
-						'tone'           => __( 'Communication tone', 'nexachat-ai' ),
-						'welcome_title'  => __( 'Welcome title', 'nexachat-ai' ),
-						'welcome_text'   => __( 'Welcome text', 'nexachat-ai' ),
-					);
-					foreach ( $ssc_suggest['persona'] as $ssc_key => $ssc_value ) :
-						if ( ! isset( $ssc_persona_labels[ $ssc_key ] ) ) {
-							continue;
-						}
-						?>
-						<div class="ssc-suggest__row">
-							<label class="ssc-check ssc-check--tight"><input type="checkbox" name="persona_pick[]" value="<?php echo esc_attr( $ssc_key ); ?>" checked /> <span><?php echo esc_html( $ssc_persona_labels[ $ssc_key ] ); ?></span></label>
-							<input type="text" name="persona[<?php echo esc_attr( $ssc_key ); ?>]" value="<?php echo esc_attr( $ssc_value ); ?>" dir="auto" />
-						</div>
+			<div class="ssc-kimport">
+				<form method="post" class="ssc-kimport__card" enctype="multipart/form-data">
+					<?php wp_nonce_field( 'ssc_kb' ); ?>
+					<input type="hidden" name="ssc_kb_import_file" value="1" />
+					<span class="ssc-kimport__ico"><?php echo SSC_Icons::get( 'upload' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					<strong><?php esc_html_e( 'Upload a file', 'nexachat-ai' ); ?></strong>
+					<small><?php esc_html_e( 'PDF, Word (.docx), .txt, .md, .csv or .json', 'nexachat-ai' ); ?></small>
+					<input type="file" name="kb_file" accept=".pdf,.docx,.txt,.md,.csv,.json" aria-label="<?php esc_attr_e( 'Document file to import', 'nexachat-ai' ); ?>" />
+					<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Upload file', 'nexachat-ai' ); ?></button>
+				</form>
+				<form method="post" class="ssc-kimport__card">
+					<?php wp_nonce_field( 'ssc_kb' ); ?>
+					<input type="hidden" name="ssc_kb_import_url" value="1" />
+					<span class="ssc-kimport__ico"><?php echo SSC_Icons::get( 'link' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					<strong><?php esc_html_e( 'Import a web page', 'nexachat-ai' ); ?></strong>
+					<small><?php esc_html_e( 'Paste the address of any public page', 'nexachat-ai' ); ?></small>
+					<input type="url" name="kb_url" dir="ltr" placeholder="https://example.com/about" aria-label="<?php esc_attr_e( 'Page URL to import', 'nexachat-ai' ); ?>" />
+					<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Import page', 'nexachat-ai' ); ?></button>
+				</form>
+			</div>
+
+			<?php if ( $own_docs ) : ?>
+				<ul class="ssc-kdocs">
+					<?php foreach ( $own_docs as $ssc_doc ) : ?>
+						<li>
+							<span class="ssc-kdocs__ico"><?php echo SSC_Icons::get( 'file' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+							<span class="ssc-kdocs__name"><strong><?php echo esc_html( $ssc_doc['source_title'] ? $ssc_doc['source_title'] : $ssc_doc['doc_id'] ); ?></strong>
+								<small><?php echo esc_html( sprintf( /* translators: 1: number of chunks, 2: date. */ __( '%1$s chunks · added %2$s', 'nexachat-ai' ), number_format_i18n( (int) $ssc_doc['chunks'] ), SSC_Date::display( $ssc_doc['created_at'], false ) ) ); ?></small></span>
+							<a class="ssc-link--danger" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'ssc_kb_action' => 'delete', 'doc' => $ssc_doc['doc_id'] ) ), 'ssc_kb_' . $ssc_doc['doc_id'] ) ); ?>"><?php esc_html_e( 'Remove', 'nexachat-ai' ); ?></a>
+						</li>
 					<?php endforeach; ?>
-				<?php endif; ?>
-				<?php if ( ! empty( $ssc_suggest['faqs'] ) ) : ?>
-					<h3><?php echo esc_html( SSC_Modules::is_active( 'faq' ) ? __( 'Questions for the FAQ bank', 'nexachat-ai' ) : __( 'Questions to add as knowledge entries', 'nexachat-ai' ) ); ?></h3>
-					<?php foreach ( $ssc_suggest['faqs'] as $ssc_i => $ssc_faq ) : ?>
-						<div class="ssc-suggest__faq">
-							<label class="ssc-check ssc-check--tight"><input type="checkbox" name="faq[<?php echo esc_attr( (string) $ssc_i ); ?>][pick]" value="1" checked aria-label="<?php esc_attr_e( 'Keep this question', 'nexachat-ai' ); ?>" /></label>
-							<div>
-								<input type="text" name="faq[<?php echo esc_attr( (string) $ssc_i ); ?>][q]" value="<?php echo esc_attr( $ssc_faq['q'] ); ?>" dir="auto" aria-label="<?php esc_attr_e( 'Question', 'nexachat-ai' ); ?>" />
-								<textarea name="faq[<?php echo esc_attr( (string) $ssc_i ); ?>][a]" rows="2" dir="auto" aria-label="<?php esc_attr_e( 'Answer', 'nexachat-ai' ); ?>"><?php echo esc_textarea( $ssc_faq['a'] ); ?></textarea>
-							</div>
-						</div>
-					<?php endforeach; ?>
-				<?php endif; ?>
-				<div class="ssc-form__actions ssc-form__actions--start">
-					<button type="submit" name="ssc_suggest_apply" value="1" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Add selected', 'nexachat-ai' ); ?></button>
-					<button type="submit" name="ssc_suggest_discard" value="1" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Discard', 'nexachat-ai' ); ?></button>
+				</ul>
+			<?php else : ?>
+				<div class="ssc-kempty is-shown">
+					<span class="ssc-kempty__ico"><?php echo SSC_Icons::get( 'file' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					<p><strong><?php esc_html_e( 'No documents yet', 'nexachat-ai' ); ?></strong><br /><?php esc_html_e( 'A brochure, a catalogue or a price list is the quickest way to teach the assistant a lot at once.', 'nexachat-ai' ); ?></p>
 				</div>
-			</form>
-		<?php endif; ?>
-	</section>
+			<?php endif; ?>
+
+			<details class="ssc-kmore">
+				<summary><?php echo SSC_Icons::get( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <?php esc_html_e( 'Search options', 'nexachat-ai' ); ?></summary>
+				<form method="post" class="ssc-kb-semantic">
+					<?php wp_nonce_field( 'ssc_kb' ); ?>
+					<input type="hidden" name="ssc_kb_semantic_save" value="1" />
+					<h3><?php esc_html_e( 'Semantic search', 'nexachat-ai' ); ?></h3>
+					<?php $ssc_embed_model = SSC_Embeddings::model(); ?>
+					<?php if ( '' === $ssc_embed_model ) : ?>
+						<p class="ssc-field__hint"><?php esc_html_e( 'Available with OpenAI, Gemini or an OpenAI-compatible custom endpoint. The connected provider has no embeddings API, so keyword search is used.', 'nexachat-ai' ); ?></p>
+					<?php else : ?>
+						<label class="ssc-check"><input type="checkbox" name="kb_semantic" value="yes" <?php checked( 'yes', SSC_Settings::get( 'kb_semantic', 'no' ) ); ?> /> <span><?php esc_html_e( 'Find answers by meaning, not only matching words (uses the provider\'s embeddings API: one small request per question)', 'nexachat-ai' ); ?></span></label>
+						<?php if ( 'yes' === SSC_Settings::get( 'kb_semantic', 'no' ) ) : ?>
+							<?php $ssc_pending = SSC_Schema::kb_pending_count( $ssc_embed_model ); ?>
+							<p class="ssc-field__hint">
+								<?php
+								echo esc_html(
+									0 === $ssc_pending
+										? __( 'Index is up to date.', 'nexachat-ai' )
+										/* translators: %d: number of chunks still waiting for indexing. */
+										: sprintf( __( '%d chunks are waiting to be indexed (continues in the background).', 'nexachat-ai' ), $ssc_pending )
+								);
+								?>
+							</p>
+						<?php endif; ?>
+					<?php endif; ?>
+					<label class="ssc-check"><input type="checkbox" name="show_sources" value="yes" <?php checked( 'yes', SSC_Settings::get( 'show_sources', 'yes' ) ); ?> /> <span><?php esc_html_e( 'Show the source documents under AI answers', 'nexachat-ai' ); ?></span></label>
+					<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Save and index now', 'nexachat-ai' ); ?></button>
+				</form>
+			</details>
+		</section>
+
+		<section class="ssc-card ssc-kpanel" id="ssc-kpanel-website" role="tabpanel" aria-labelledby="ssc-ktab-website" data-ssc-kpanel="website">
+			<?php $ssc_head( 'website' ); ?>
+			<?php if ( $ssc_site_on ) : ?>
+				<?php
+				$ssc_sync       = SSC_Module_Sitesync::state();
+				$ssc_sync_types = SSC_Module_Sitesync::types();
+				$ssc_type_opts  = get_post_types( array( 'public' => true ), 'objects' );
+				unset( $ssc_type_opts['attachment'] );
+				?>
+				<p class="ssc-card__sub">
+					<?php if ( $ssc_sync['running'] ) : ?>
+						<strong><?php echo esc_html( sprintf( /* translators: 1: done, 2: total. */ __( 'Syncing… %1$d of %2$d', 'nexachat-ai' ), (int) $ssc_sync['done'], (int) $ssc_sync['total'] ) ); ?></strong>
+					<?php else : ?>
+						<?php echo esc_html( sprintf( /* translators: %d: number of pages. */ _n( '%d page in the knowledge base.', '%d pages in the knowledge base.', count( SSC_Module_Sitesync::documents() ), 'nexachat-ai' ), count( SSC_Module_Sitesync::documents() ) ) ); ?>
+						<?php if ( $ssc_sync['finished'] ) : ?>
+							<?php echo esc_html( sprintf( /* translators: %s: date. */ __( 'Last full sync: %s', 'nexachat-ai' ), SSC_Date::display( $ssc_sync['finished'] ) ) ); ?>
+						<?php endif; ?>
+					<?php endif; ?>
+				</p>
+				<form method="post">
+					<?php wp_nonce_field( 'ssc_kb' ); ?>
+					<fieldset class="ssc-field">
+						<legend class="ssc-field__label"><?php esc_html_e( 'Content to learn from', 'nexachat-ai' ); ?></legend>
+						<?php foreach ( $ssc_type_opts as $ssc_type ) : ?>
+							<label class="ssc-check ssc-check--tight"><input type="checkbox" name="sitesync_types[]" value="<?php echo esc_attr( $ssc_type->name ); ?>" <?php checked( in_array( $ssc_type->name, $ssc_sync_types, true ) ); ?> /> <span><?php echo esc_html( $ssc_type->labels->name ); ?></span></label>
+						<?php endforeach; ?>
+					</fieldset>
+					<div class="ssc-field">
+						<label for="sitesync_exclude"><?php esc_html_e( 'Never include these IDs (comma separated)', 'nexachat-ai' ); ?></label>
+						<input id="sitesync_exclude" name="sitesync_exclude" type="text" dir="ltr" value="<?php echo esc_attr( implode( ', ', SSC_Module_Sitesync::excluded() ) ); ?>" placeholder="12, 57" />
+					</div>
+					<div class="ssc-form__actions ssc-form__actions--start">
+						<button type="submit" name="ssc_sitesync_action" value="run" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Save and sync now', 'nexachat-ai' ); ?></button>
+						<button type="submit" name="ssc_sitesync_action" value="save" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Save', 'nexachat-ai' ); ?></button>
+						<button type="submit" name="ssc_sitesync_action" value="clear" class="ssc-btn ssc-btn--ghost ssc-link--danger" onclick="return window.confirm(this.getAttribute('data-confirm'));" data-confirm="<?php esc_attr_e( 'Remove every page that came from the website from the knowledge base? Your own entries and uploaded documents stay.', 'nexachat-ai' ); ?>"><?php esc_html_e( 'Remove website pages', 'nexachat-ai' ); ?></button>
+					</div>
+				</form>
+			<?php else : ?>
+				<div class="ssc-klocked">
+					<span class="ssc-kempty__ico"><?php echo SSC_Icons::get( 'lock' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					<p><strong><?php esc_html_e( 'This is an optional module', 'nexachat-ai' ); ?></strong><br /><?php esc_html_e( 'Switch on “Learn from my website” and your published pages, posts and products become knowledge automatically, and stay up to date.', 'nexachat-ai' ); ?></p>
+					<a class="ssc-btn ssc-btn--primary" href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-modules' ) ); ?>"><?php esc_html_e( 'Open Modules', 'nexachat-ai' ); ?></a>
+				</div>
+			<?php endif; ?>
+		</section>
+
+		<section class="ssc-card ssc-kpanel" id="ssc-kpanel-ai" role="tabpanel" aria-labelledby="ssc-ktab-ai" data-ssc-kpanel="ai">
+			<?php $ssc_head( 'ai' ); ?>
+			<?php if ( ! is_array( $ssc_suggest ) ) : ?>
+				<p class="ssc-card__sub"><?php esc_html_e( 'The AI reads your business profile, knowledge and pages, then proposes the questions visitors are most likely to ask (answered only from your material) and a name, role and welcome text for the assistant. You review everything before it is added.', 'nexachat-ai' ); ?></p>
+				<form method="post">
+					<?php wp_nonce_field( 'ssc_kb' ); ?>
+					<button type="submit" name="ssc_suggest" value="1" class="ssc-btn ssc-btn--primary" onclick="this.classList.add('is-busy');this.textContent=this.getAttribute('data-busy');" data-busy="<?php esc_attr_e( 'Reading your material… (up to a minute)', 'nexachat-ai' ); ?>"><?php echo SSC_Icons::get( 'sparkles' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <?php esc_html_e( 'Write suggestions', 'nexachat-ai' ); ?></button>
+				</form>
+			<?php else : ?>
+				<p class="ssc-card__sub"><?php esc_html_e( 'Tick what you want to keep and edit freely. Nothing is saved until you press "Add selected".', 'nexachat-ai' ); ?></p>
+				<form method="post" class="ssc-suggest">
+					<?php wp_nonce_field( 'ssc_kb' ); ?>
+					<?php if ( ! empty( $ssc_suggest['persona'] ) ) : ?>
+						<h3><?php esc_html_e( 'Assistant persona', 'nexachat-ai' ); ?></h3>
+						<?php
+						$ssc_persona_labels = array(
+							'assistant_name' => __( 'Assistant name', 'nexachat-ai' ),
+							'assistant_role' => __( 'Assistant role', 'nexachat-ai' ),
+							'tone'           => __( 'Communication tone', 'nexachat-ai' ),
+							'welcome_title'  => __( 'Welcome title', 'nexachat-ai' ),
+							'welcome_text'   => __( 'Welcome text', 'nexachat-ai' ),
+						);
+						foreach ( $ssc_suggest['persona'] as $ssc_key => $ssc_value ) :
+							if ( ! isset( $ssc_persona_labels[ $ssc_key ] ) ) {
+								continue;
+							}
+							?>
+							<div class="ssc-suggest__row">
+								<label class="ssc-check ssc-check--tight"><input type="checkbox" name="persona_pick[]" value="<?php echo esc_attr( $ssc_key ); ?>" checked /> <span><?php echo esc_html( $ssc_persona_labels[ $ssc_key ] ); ?></span></label>
+								<input type="text" name="persona[<?php echo esc_attr( $ssc_key ); ?>]" value="<?php echo esc_attr( $ssc_value ); ?>" dir="auto" />
+							</div>
+						<?php endforeach; ?>
+					<?php endif; ?>
+					<?php if ( ! empty( $ssc_suggest['faqs'] ) ) : ?>
+						<h3><?php echo esc_html( SSC_Modules::is_active( 'faq' ) ? __( 'Questions for the FAQ bank', 'nexachat-ai' ) : __( 'Questions to add as knowledge entries', 'nexachat-ai' ) ); ?></h3>
+						<?php foreach ( $ssc_suggest['faqs'] as $ssc_i => $ssc_faq ) : ?>
+							<div class="ssc-suggest__faq">
+								<label class="ssc-check ssc-check--tight"><input type="checkbox" name="faq[<?php echo esc_attr( (string) $ssc_i ); ?>][pick]" value="1" checked aria-label="<?php esc_attr_e( 'Keep this question', 'nexachat-ai' ); ?>" /></label>
+								<div>
+									<input type="text" name="faq[<?php echo esc_attr( (string) $ssc_i ); ?>][q]" value="<?php echo esc_attr( $ssc_faq['q'] ); ?>" dir="auto" aria-label="<?php esc_attr_e( 'Question', 'nexachat-ai' ); ?>" />
+									<textarea name="faq[<?php echo esc_attr( (string) $ssc_i ); ?>][a]" rows="2" dir="auto" aria-label="<?php esc_attr_e( 'Answer', 'nexachat-ai' ); ?>"><?php echo esc_textarea( $ssc_faq['a'] ); ?></textarea>
+								</div>
+							</div>
+						<?php endforeach; ?>
+					<?php endif; ?>
+					<div class="ssc-form__actions ssc-form__actions--start">
+						<button type="submit" name="ssc_suggest_apply" value="1" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Add selected', 'nexachat-ai' ); ?></button>
+						<button type="submit" name="ssc_suggest_discard" value="1" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Discard', 'nexachat-ai' ); ?></button>
+					</div>
+				</form>
+			<?php endif; ?>
+		</section>
+	</div>
 </div>

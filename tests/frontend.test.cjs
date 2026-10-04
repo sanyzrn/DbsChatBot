@@ -123,3 +123,72 @@ test('Text on custom colours is picked by contrast', () => {
   assert.equal(inkFor('#fff'), '#101322', 'short hex is understood');
   assert.equal(luminance('rgb(1,2,3)'), -1, 'unknown formats are reported, not guessed');
 });
+
+test('Button distances: zero is a real value, only junk falls back', () => {
+  const { distance } = load('        /** A distance setting as CSS px', '        function cssVars(');
+  assert.equal(distance(0, 22), '0px', 'zero is honoured');
+  assert.equal(distance('64', 22), '64px', 'numeric strings from the config are read');
+  assert.equal(distance(undefined, 22), '22px');
+  assert.equal(distance('abc', 18), '18px');
+  assert.equal(distance(-5, 18), '18px', 'negative distances fall back');
+});
+
+function barPage({ width, bars, avoid = true, preview = false }) {
+  // elementsFromPoint answers with every fixed bar whose box contains the point.
+  const hits = (x, y) => bars.filter((b) => x >= b.left && x <= b.left + b.width && y >= b.top && y <= b.top + b.height).map((b) => b.node);
+  const widget = { id: 'widget' };
+  const html = { id: 'html' }, body = { id: 'body' };
+  const context = {
+    cfg: { avoidBars: avoid, preview },
+    previewMount: null,
+    root: { contains: (n) => n === widget },
+    window: { innerWidth: width, innerHeight: 700, getComputedStyle: (n) => ({ position: n.position || 'static', opacity: n.opacity || '1' }) },
+    document: { documentElement: html, body, elementsFromPoint: (x, y) => [...hits(x, y), body, html] },
+    Math, parseFloat,
+  };
+  for (const b of bars) {
+    b.node.getBoundingClientRect = () => ({ left: b.left, top: b.top, width: b.width, height: b.height, bottom: b.top + b.height });
+  }
+  load('        var lift = 0;', '        function applyLift(', context);
+  return { lift: () => vm.runInContext('bottomBarLift()', context), widget };
+}
+const bar = (over = {}) => ({ left: 12, top: 626, width: 366, height: 64, node: { position: 'fixed' }, ...over });
+
+test('A fixed menu bar along the bottom lifts the launcher above it', () => {
+  // The screenshot case: a floating pill menu 10px above the edge on a 390px phone.
+  assert.equal(barPage({ width: 390, bars: [bar()] }).lift(), 700 - 626 + 12);
+  assert.equal(barPage({ width: 390, bars: [bar({ top: 636, height: 64 })] }).lift(), 64 + 12, 'a bar flush with the edge');
+});
+
+test('Only bars count: nothing, tall panels, narrow chips, hidden or static boxes do not', () => {
+  assert.equal(barPage({ width: 390, bars: [] }).lift(), 0, 'no bar, no lift');
+  assert.equal(barPage({ width: 390, bars: [bar({ top: 100, height: 600 })] }).lift(), 0, 'a full-height drawer is not a bar');
+  assert.equal(barPage({ width: 390, bars: [bar({ left: 300, width: 80 })] }).lift(), 0, 'a small floating chip is not a bar');
+  assert.equal(barPage({ width: 390, bars: [bar({ node: { position: 'fixed', opacity: '0' } })] }).lift(), 0, 'a faded-out bar is ignored');
+  assert.equal(barPage({ width: 390, bars: [bar({ node: { position: 'static' } })] }).lift(), 0, 'only fixed or sticky boxes');
+  assert.equal(barPage({ width: 390, bars: [bar({ top: 300, height: 60 })] }).lift(), 0, 'a bar away from the bottom edge');
+});
+
+test('Bar avoidance stays off on desktops, in previews and when switched off', () => {
+  assert.equal(barPage({ width: 1280, bars: [bar({ width: 1200, left: 40 })] }).lift(), 0, 'wide screens keep their configured distance');
+  assert.equal(barPage({ width: 390, bars: [bar()], avoid: false }).lift(), 0, 'the setting can turn it off');
+  assert.equal(barPage({ width: 390, bars: [bar()], preview: true }).lift(), 0, 'admin previews never move');
+});
+
+test('The tallest of several bars wins', () => {
+  const page = barPage({ width: 390, bars: [bar({ top: 636, height: 64 }), bar({ top: 610, height: 90, node: { position: 'sticky' } })] });
+  assert.equal(page.lift(), 90 + 12);
+});
+
+test('Handoff without a configured text adds no empty bubble', () => {
+  const added = [], chips = [];
+  const context = { cfg: { features: { handoff: true }, handoffText: '' }, addItem: (kind, text) => added.push([kind, text]), addChips: (list) => chips.push(list),
+    liveText: () => 'live', requestHuman() {}, showLeadForm() {}, showAdrForm() {}, suggestRelated() {} };
+  load('        function handleFlags(', '        /** Knowledge documents the answer', context);
+  vm.runInContext('handleFlags({ handoff: true })', context);
+  assert.deepEqual(added, [], 'no blank bot message');
+  assert.equal(chips.length, 1, 'the button to reach a person is still offered');
+  context.cfg.handoffText = 'We will connect you.';
+  vm.runInContext('handleFlags({ handoff: true })', context);
+  assert.deepEqual(added, [['bot', 'We will connect you.']], 'a configured text is shown');
+});

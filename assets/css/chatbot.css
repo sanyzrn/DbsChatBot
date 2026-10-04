@@ -25,6 +25,14 @@
 	--ssc-win-radius: 24px;
 	--ssc-bubble-radius: 16px;
 	--ssc-launcher-size: 60px;
+	/* Floating button spacing. The script writes the -d (desktop) and -m (phone)
+	 * pairs from the settings; --ssc-lift is how far a fixed bottom bar on the
+	 * page (tab bar, cookie notice) pushes the button up, detected at runtime. */
+	--ssc-off-x: var(--ssc-off-x-d, 22px);
+	--ssc-off-y: var(--ssc-off-y-d, 22px);
+	--ssc-lift: 0px;
+	--ssc-safe: env(safe-area-inset-bottom, 0px);
+	--ssc-bottom: calc(var(--ssc-off-y) + var(--ssc-safe));
 	--ssc-shadow: 0 8px 28px rgba(16, 19, 34, 0.16);
 	--ssc-z: 99990;
 
@@ -51,6 +59,11 @@
 	word-spacing: normal;
 	text-indent: 0;
 	white-space: normal;
+}
+
+/* Whichever is higher wins: the configured distance, or clear of a bottom bar. */
+@supports (width: max(1px, 2px)) {
+	.ssc-root { --ssc-bottom: max(calc(var(--ssc-off-y) + var(--ssc-safe)), var(--ssc-lift)); }
 }
 
 /* Native controls (checkboxes, select lists, scrollbars) follow the widget
@@ -138,8 +151,8 @@
 
 .ssc-root .ssc-launcher {
 	position: fixed;
-	inset-block-end: 22px;
-	right: 22px;
+	inset-block-end: var(--ssc-bottom);
+	right: var(--ssc-off-x);
 	width: var(--ssc-launcher-size);
 	height: var(--ssc-launcher-size);
 	border-radius: 50%;
@@ -153,13 +166,13 @@
 	box-shadow: 0 6px 18px rgba(16, 19, 34, 0.28);
 	z-index: var(--ssc-z);
 	padding: 0;
-	transition: transform 0.18s ease, box-shadow 0.18s ease;
+	transition: transform 0.18s ease, box-shadow 0.18s ease, inset-block-end 0.25s ease;
 }
 
 .ssc-root.ssc-pos-left .ssc-launcher,
 .ssc-root .ssc-launcher.ssc-pos-left {
 	right: auto;
-	left: 22px;
+	left: var(--ssc-off-x);
 }
 
 .ssc-root .ssc-launcher:hover { transform: translateY(-2px); }
@@ -250,11 +263,11 @@
 
 .ssc-root .ssc-window {
 	position: fixed;
-	inset-block-end: 94px;
-	right: 22px;
+	inset-block-end: calc(var(--ssc-bottom) + var(--ssc-launcher-size) + 12px);
+	right: var(--ssc-off-x);
 	width: var(--ssc-win-width);
-	max-width: calc(100vw - 2rem);
-	height: min(620px, calc(100vh - 130px));
+	max-width: calc(100vw - var(--ssc-off-x) - 16px);
+	height: min(620px, calc(100vh - var(--ssc-bottom) - var(--ssc-launcher-size) - 48px));
 	display: flex;
 	flex-direction: column;
 	background: var(--ssc-bg);
@@ -270,7 +283,7 @@
 
 .ssc-root.ssc-pos-left .ssc-window {
 	right: auto;
-	left: 22px;
+	left: var(--ssc-off-x);
 }
 
 /* Closed = truly invisible AND unfocusable (WCAG-safe). */
@@ -785,8 +798,8 @@
 
 .ssc-root .ssc-proactive {
 	position: fixed;
-	inset-block-end: 96px;
-	right: 22px;
+	inset-block-end: calc(var(--ssc-bottom) + var(--ssc-launcher-size) + 14px);
+	right: var(--ssc-off-x);
 	max-width: min(300px, calc(100vw - 3rem));
 	background: var(--ssc-card);
 	border: 1px solid var(--ssc-line);
@@ -798,7 +811,7 @@
 	animation: ssc-rise 0.25s ease;
 }
 
-.ssc-root.ssc-pos-left .ssc-proactive { right: auto; left: 22px; }
+.ssc-root.ssc-pos-left .ssc-proactive { right: auto; left: var(--ssc-off-x); }
 .ssc-root .ssc-proactive__text {
 	border: 0;
 	background: transparent;
@@ -834,6 +847,11 @@
  * ------------------------------------------------------------------ */
 
 @media (max-width: 480px) {
+	.ssc-root {
+		--ssc-off-x: var(--ssc-off-x-m, 18px);
+		--ssc-off-y: var(--ssc-off-y-m, 18px);
+	}
+
 	/* Phones: the open window becomes a full-screen sheet (dvh follows the
 	 * visible viewport when the browser toolbar or keyboard changes it). */
 	.ssc-root .ssc-window {
@@ -860,13 +878,13 @@
 	.ssc-root .ssc-input,
 	.ssc-root .ssc-f__input { font-size: 16px; }
 
-	.ssc-root .ssc-launcher {
-		inset-block-end: calc(18px + env(safe-area-inset-bottom, 0px));
-		right: 18px;
-	}
+	/* The left-position rules are more specific than the sheet's inset: without
+	 * this a left-placed widget opened shifted sideways on phones. */
+	.ssc-root.ssc-pos-left .ssc-window { left: 0; right: 0; }
 
 	.ssc-root .ssc-msg { max-width: 92%; }
 	.ssc-root .ssc-proactive { inset-inline: 10px; max-width: none; }
+	.ssc-root.ssc-pos-left .ssc-proactive { left: 10px; right: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -889,7 +907,7 @@
 }
 
 /* Conversations-are-saved notice: quieter than the disclaimer. */
-.ssc-root .ssc-saved-notice { font-size: 10.5px; opacity: 0.75; padding-top: 0; }
+.ssc-root .ssc-saved-notice { font-size: 10.5px; opacity: 0.75; }
 
 /* Previous conversations (signed-in users). */
 .ssc-root .ssc-history {
@@ -958,7 +976,7 @@
 .ssc-root .ssc-history__del:focus-visible,
 .ssc-root .ssc-history__back:focus-visible { outline: 2px solid var(--ssc-primary); outline-offset: -2px; }
 .ssc-root .ssc-history__empty { margin: 16px 4px; color: var(--ssc-muted); text-align: center; }
-.ssc-root .ssc-disclaimer + .ssc-saved-notice { border-block-start: 0; }
+.ssc-root .ssc-disclaimer + .ssc-saved-notice { border-block-start: 0; padding-block-start: 0; }
 
 /* ------------------------------------------------------------------ *
  * The assistant's character (launcher + header face).

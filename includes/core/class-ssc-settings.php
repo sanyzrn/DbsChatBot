@@ -136,6 +136,14 @@ class SSC_Settings {
 			'launcher_icon'              => 'chat',
 			'launcher_style'             => 'mascot',
 			'launcher_icon_url'          => '',
+			// Where the floating button sits: distance from the screen edge (px).
+			// Phones have their own pair so it can clear a bottom menu bar.
+			'launcher_offset_x'          => 22,
+			'launcher_offset_y'          => 22,
+			'launcher_offset_x_mobile'   => 18,
+			'launcher_offset_y_mobile'   => 18,
+			// Phones/tablets: ride above a fixed bar along the bottom edge (tab bar, cookie notice).
+			'launcher_avoid_bars'        => 'yes',
 			'font_family'                => 'vazirmatn', // vazirmatn | inter | roboto | system | custom.
 			'font_name'                  => '',
 			'font_url'                   => '',
@@ -294,6 +302,14 @@ class SSC_Settings {
 		}
 		self::$cache = self::merge_defaults( $saved, self::defaults() );
 		return self::$cache;
+	}
+
+	/**
+	 * Drop the per-request cache (after the stored options were rewritten
+	 * outside this class, e.g. by a backup restore).
+	 */
+	public static function reset_cache() {
+		self::$cache = null;
 	}
 
 	/**
@@ -627,6 +643,7 @@ class SSC_Settings {
 			case 'kb_semantic':
 			case 'show_sources':
 			case 'web_search':
+			case 'launcher_avoid_bars':
 				return ( 'yes' === $value || '1' === (string) $value || true === $value ) ? 'yes' : 'no';
 
 			case 'ai_provider':
@@ -875,6 +892,10 @@ class SSC_Settings {
 			'ai_history_limit'           => array( 0, 20 ),
 			'memory_days'                => array( 1, 90 ),
 			'launcher_size'              => array( 48, 72 ),
+			'launcher_offset_x'          => array( 0, 200 ),
+			'launcher_offset_y'          => array( 0, 300 ),
+			'launcher_offset_x_mobile'   => array( 0, 120 ),
+			'launcher_offset_y_mobile'   => array( 0, 300 ),
 			'font_size'                  => array( 12, 20 ),
 			'window_width'               => array( 320, 520 ),
 			'window_radius'              => array( 0, 32 ),

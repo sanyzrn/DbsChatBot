@@ -665,6 +665,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 
 	<section data-ssc-tab="data" class="ssc-card ssc-mt">
 		<h2><?php esc_html_e( 'Data tools', 'nexachat-ai' ); ?></h2>
+		<p class="ssc-card__sub"><?php esc_html_e( 'To back up everything you set up, or to move it to another website, use Export & Import.', 'nexachat-ai' ); ?> <a href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-transfer' ) ); ?>"><?php esc_html_e( 'Open Export & Import', 'nexachat-ai' ); ?></a></p>
 		<form method="post">
 			<?php wp_nonce_field( 'ssc_tools' ); ?>
 			<button type="submit" name="ssc_flush_cache" value="1" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Clear cached AI answers', 'nexachat-ai' ); ?></button>
