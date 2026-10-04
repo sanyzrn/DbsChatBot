@@ -1030,25 +1030,169 @@ class SSC_Schema {
 	 */
 
 	/**
-	 * QA candidates for a product scope. Deterministic order (recent first)
-	 * so rows beyond the candidate cap are stable, never silently unreachable.
+	 * Rows scored for one question. Up to CANDIDATE_LIMIT rows are all scored.
+	 * Beyond that the rows that contain a word of the question are chosen
+	 * (newest first), so an answer is never left out only because of where it
+	 * sits in the table; with no match the newest rows are used.
+	 */
+	const CANDIDATE_LIMIT = 800;
+
+	/**
+	 * The rows of a table most likely to answer a question, when the table is
+	 * larger than the scoring window: rows that contain the question's rarer
+	 * words (a word found in a third of all rows tells nothing), those with
+	 * the most such words first. Empty when no usable word is found, so the
+	 * caller falls back to the plain window.
 	 *
-	 * @param string $product_id Scope.
+	 * @param string   $table    Table (a plugin table name).
+	 * @param string   $select   Column list (fixed literal).
+	 * @param string[] $columns  Columns searched (fixed names).
+	 * @param string   $scope    Product scope.
+	 * @param string[] $tokens   Normalized words of the question.
+	 * @param string   $order    ASC or DESC for ties (id order).
+	 * @param int      $total    Rows in scope.
+	 * @return array[]
+	 */
+	protected static function relevant_rows( $table, $select, $columns, $scope, $tokens, $order, $total ) {
+		global $wpdb;
+		$words = array();
+		foreach ( (array) $tokens as $token ) {
+			$token = (string) $token;
+			if ( mb_strlen( $token ) >= 3 ) {
+				$words[ $token ] = true;
+			}
+		}
+		$words = array_slice( array_keys( $words ), 0, 12 );
+		if ( ! $words ) {
+			return array();
+		}
+		// One condition per word (also in the Arabic letter forms older text may use).
+		$conds  = array();
+		$params = array();
+		foreach ( $words as $word ) {
+			$parts = array();
+			$vals  = array();
+			foreach ( array_unique(
+				array(
+					$word,
+					strtr(
+						$word,
+						array(
+							'ی' => 'ي',
+							'ک' => 'ك',
+						)
+					),
+				)
+			) as $variant ) {
+				foreach ( $columns as $column ) {
+					$parts[] = "{$column} LIKE %s";
+					$vals[]  = '%' . $wpdb->esc_like( $variant ) . '%';
+				}
+			}
+			$conds[]  = '(' . implode( ' OR ', $parts ) . ')';
+			$params[] = $vals;
+		}
+		// How many rows contain each word.
+		$sums = array();
+		$flat = array();
+		foreach ( $conds as $i => $cond ) {
+			$sums[] = "SUM(CASE WHEN {$cond} THEN 1 ELSE 0 END) AS d{$i}";
+			$flat   = array_merge( $flat, $params[ $i ] );
+		}
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- plugin table, fixed column names, escaped LIKE patterns.
+		$counts = $wpdb->get_row( $wpdb->prepare( 'SELECT ' . implode( ', ', $sums ) . " FROM {$table} WHERE product_id IN (%s, 'general')", array_merge( $flat, array( $scope ) ) ), ARRAY_A );
+		if ( ! is_array( $counts ) ) {
+			return array();
+		}
+		$ranked = array();
+		foreach ( $conds as $i => $cond ) {
+			$df = (int) $counts[ 'd' . $i ];
+			if ( $df > 0 ) {
+				$ranked[ $i ] = $df;
+			}
+		}
+		if ( ! $ranked ) {
+			return array();
+		}
+		asort( $ranked );
+		$useful = array_filter(
+			$ranked,
+			function ( $df ) use ( $total ) {
+				return $df <= max( 1, (int) floor( $total / 3 ) );
+			}
+		);
+		$keep   = array_slice( array_keys( $useful ? $useful : array_slice( $ranked, 0, 1, true ) ), 0, 6 );
+
+		$where = array();
+		$score = array();
+		$args  = array( $scope );
+		foreach ( $keep as $i ) {
+			$where[] = $conds[ $i ];
+			$score[] = "(CASE WHEN {$conds[ $i ]} THEN 1 ELSE 0 END)";
+			$args    = array_merge( $args, $params[ $i ] );
+		}
+		foreach ( $keep as $i ) {
+			$args = array_merge( $args, $params[ $i ] );
+		}
+		$args[] = self::CANDIDATE_LIMIT;
+		$dir    = 'DESC' === $order ? 'DESC' : 'ASC';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- plugin table, fixed column names, escaped LIKE patterns.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT {$select} FROM {$table} WHERE product_id IN (%s, 'general') AND (" . implode( ' OR ', $where ) . ') ORDER BY (' . implode( ' + ', $score ) . ") DESC, id {$dir} LIMIT %d", $args ), ARRAY_A );
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * QA candidates for a product scope.
+	 *
+	 * @param string   $product_id Scope.
+	 * @param string[] $tokens     Normalized words of the question (used only when the bank is larger than the window).
 	 * @return array
 	 */
-	public static function qa_candidates( $product_id ) {
+	public static function qa_candidates( $product_id, $tokens = array() ) {
 		global $wpdb;
 		$table = self::qa_table_name();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- candidate window.
+		$scope = sanitize_text_field( $product_id );
+		$limit = self::CANDIDATE_LIMIT;
+		if ( $tokens ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- count in scope.
+			$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE product_id IN (%s, 'general')", $scope ) );
+			if ( $total > $limit ) {
+				$rows = self::relevant_rows( $table, 'id, question, keywords, answer', array( 'question', 'keywords' ), $scope, $tokens, 'DESC', $total );
+				if ( $rows ) {
+					return $rows;
+				}
+			}
+		}
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- candidate window.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id, question, keywords, answer FROM {$table}
-				 WHERE product_id IN (%s, 'general') ORDER BY id DESC LIMIT 800",
-				sanitize_text_field( $product_id )
+				 WHERE product_id IN (%s, 'general') ORDER BY id DESC LIMIT %d",
+				$scope,
+				$limit
 			),
 			ARRAY_A
 		);
 		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * One page of the QA bank for the admin list (newest first) and the total.
+	 *
+	 * @param int $page     Page, from 1.
+	 * @param int $per_page Rows per page.
+	 * @return array rows, total.
+	 */
+	public static function qa_page( $page, $per_page ) {
+		global $wpdb;
+		$table = self::qa_table_name();
+		$per   = max( 1, (int) $per_page );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- admin listing.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT id, question, keywords, answer FROM {$table} ORDER BY id DESC LIMIT %d OFFSET %d", $per, ( max( 1, (int) $page ) - 1 ) * $per ), ARRAY_A );
+		return array(
+			'rows'  => is_array( $rows ) ? $rows : array(),
+			'total' => self::qa_count(),
+		);
 	}
 
 	/**
@@ -1157,6 +1301,99 @@ class SSC_Schema {
 	 */
 
 	/**
+	 * Marker (in product_id) for chunks of a document that is still being built.
+	 * No search looks at them, no list shows them; they only become the document
+	 * when all of them are in place (see kb_replace_document()).
+	 */
+	const KB_PENDING = '~pending';
+
+	/**
+	 * Replace a document with a new version, all or nothing. The new version is
+	 * built first under a temporary id and checked; only then does it take the
+	 * place of the old one, in one transaction. If anything fails on the way, the
+	 * old version is still there, complete and searchable.
+	 *
+	 * @param string $doc_id  Document id.
+	 * @param string $title   Source title.
+	 * @param string $text    Full text.
+	 * @param string $product Product scope.
+	 * @param string $url     Source URL.
+	 * @return int|false Chunks of the new version, or false when it could not be built (the old version is untouched).
+	 */
+	public static function kb_replace_document( $doc_id, $title, $text, $product = 'general', $url = '' ) {
+		global $wpdb;
+		$doc_id = sanitize_key( $doc_id );
+		$chunks = SSC_Knowledge::chunk_text( $text );
+		if ( '' === $doc_id || ! $chunks ) {
+			return false;
+		}
+		$table   = self::kb_table_name();
+		$product = sanitize_text_field( $product );
+		$temp    = sanitize_key( 'tmp-' . wp_generate_password( 14, false ) );
+		try {
+			$built = self::kb_insert_document( $temp, $title, $text, self::KB_PENDING, $url );
+			/**
+			 * Fires when the new version is fully built and not yet in place.
+			 *
+			 * @param string $doc_id Document id.
+			 * @param string $temp   Temporary id of the new version.
+			 */
+			do_action( 'ssc_kb_replace_built', $doc_id, $temp );
+			if ( count( $chunks ) !== $built ) {
+				self::kb_delete_document( $temp );
+				return false;
+			}
+			// The swap: the new chunks take the document's id first, then the older chunks of that id go.
+			// New rows always have higher ids than the rows that were there, so nothing is lost if the
+			// second step fails on an engine without transactions: the two versions then coexist until the next replace.
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- the swap on the custom table.
+			$first = (int) $wpdb->get_var( $wpdb->prepare( "SELECT MIN(id) FROM {$table} WHERE doc_id = %s", $temp ) );
+			$wpdb->query( 'START TRANSACTION' );
+			$moved = $wpdb->update(
+				$table,
+				array(
+					'doc_id'     => $doc_id,
+					'product_id' => $product,
+				),
+				array( 'doc_id' => $temp ),
+				array( '%s', '%s' ),
+				array( '%s' )
+			);
+			if ( $first < 1 || $moved !== $built ) {
+				$wpdb->query( 'ROLLBACK' );
+				self::kb_delete_document( $temp );
+				return false;
+			}
+			$removed = $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE doc_id = %s AND id < %d", $doc_id, $first ) );
+			if ( false === $removed ) {
+				$wpdb->query( 'ROLLBACK' );
+				return false;
+			}
+			$wpdb->query( 'COMMIT' );
+			// phpcs:enable
+			return $built;
+		} catch ( Throwable $e ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- see above.
+			$wpdb->query( 'ROLLBACK' );
+			self::kb_delete_document( $temp );
+			return false;
+		}
+	}
+
+	/**
+	 * Remove what a build that died on the way left behind (chunks still marked
+	 * as pending for more than an hour).
+	 *
+	 * @return int Chunks removed.
+	 */
+	public static function kb_purge_pending() {
+		global $wpdb;
+		$cutoff = gmdate( 'Y-m-d H:i:s', strtotime( current_time( 'mysql' ) ) - HOUR_IN_SECONDS );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- internal table name.
+		return (int) $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . self::kb_table_name() . ' WHERE product_id = %s AND created_at < %s', self::KB_PENDING, $cutoff ) );
+	}
+
+	/**
 	 * Insert a KB document as chunks.
 	 *
 	 * @param string $doc_id   Stable document id.
@@ -1248,7 +1485,7 @@ class SSC_Schema {
 		global $wpdb;
 		$table = self::kb_table_name();
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- export read.
-		$rows = $wpdb->get_results( "SELECT doc_id, product_id, source_title, source_url, chunk FROM {$table} WHERE doc_id NOT LIKE 'wp-%' ORDER BY doc_id ASC, id ASC", ARRAY_A );
+		$rows = $wpdb->get_results( "SELECT doc_id, product_id, source_title, source_url, chunk FROM {$table} WHERE doc_id NOT LIKE 'wp-%' AND product_id <> '" . self::KB_PENDING . "' ORDER BY doc_id ASC, id ASC", ARRAY_A );
 		$docs = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 			$id = (string) $row['doc_id'];
@@ -1319,20 +1556,34 @@ class SSC_Schema {
 	/**
 	 * KB candidates (deterministic order).
 	 *
-	 * @param string $product_id   Scope.
-	 * @param bool   $with_vectors Include stored embeddings.
+	 * @param string   $product_id   Scope.
+	 * @param bool     $with_vectors Include stored embeddings.
+	 * @param string[] $tokens       Normalized words of the question (used only when the base is larger than the window).
 	 * @return array
 	 */
-	public static function kb_candidates( $product_id, $with_vectors = false ) {
+	public static function kb_candidates( $product_id, $with_vectors = false, $tokens = array() ) {
 		global $wpdb;
 		$table   = self::kb_table_name();
 		$columns = $with_vectors ? 'id, doc_id, source_title, source_url, chunk, embedding, embedding_model' : 'id, doc_id, source_title, source_url, chunk';
+		$scope   = sanitize_text_field( $product_id );
+		$limit   = self::CANDIDATE_LIMIT;
+		if ( $tokens ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- count in scope.
+			$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE product_id IN (%s, 'general')", $scope ) );
+			if ( $total > $limit ) {
+				$rows = self::relevant_rows( $table, $columns, array( 'search_text', 'source_title' ), $scope, $tokens, 'ASC', $total );
+				if ( $rows ) {
+					return $rows;
+				}
+			}
+		}
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- candidate window; column list is a fixed literal.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT {$columns} FROM {$table}
-				 WHERE product_id IN (%s, 'general') ORDER BY id ASC LIMIT 800",
-				sanitize_text_field( $product_id )
+				 WHERE product_id IN (%s, 'general') ORDER BY id ASC LIMIT %d",
+				$scope,
+				$limit
 			),
 			ARRAY_A
 		);
@@ -1362,7 +1613,7 @@ class SSC_Schema {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- document listing.
 		$rows = $wpdb->get_results(
 			"SELECT doc_id, source_title, COUNT(*) AS chunks, MIN(created_at) AS created_at
-			 FROM {$table} GROUP BY doc_id, source_title ORDER BY doc_id ASC",
+			 FROM {$table} WHERE product_id <> '" . self::KB_PENDING . "' GROUP BY doc_id, source_title ORDER BY doc_id ASC",
 			ARRAY_A
 		);
 		return is_array( $rows ) ? $rows : array();
@@ -1376,7 +1627,7 @@ class SSC_Schema {
 	public static function kb_count() {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- count.
-		return (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::kb_table_name() );
+		return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . self::kb_table_name() . ' WHERE product_id <> %s', self::KB_PENDING ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- internal table name.
 	}
 
 	/**

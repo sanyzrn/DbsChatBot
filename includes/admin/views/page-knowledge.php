@@ -22,6 +22,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $saved    = isset( $_GET['saved'] ) ? (int) $_GET['saved'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
 $kb_state = isset( $_GET['kb'] ) ? sanitize_key( wp_unslash( $_GET['kb'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+$ssc_bad  = isset( $_GET['malformed'] ) ? sanitize_text_field( wp_unslash( $_GET['malformed'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+
+// Every entry carries an id (older ones get a stable one) and the form remembers what it was built from, so a stale tab cannot silently overwrite newer changes.
+$items        = SSC_Merge::with_ids( 'ki', $items );
+$products     = SSC_Merge::with_ids( 'products', $products );
+$ssc_base     = SSC_Merge::snapshot( SSC_Settings::sanitize_business( $business ), $items, $products );
+$ssc_conflict = isset( $_GET['conflict'] ) ? get_transient( SSC_Admin_Knowledge::conflict_key() ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
 
 $ssc_site_on  = SSC_Modules::is_active( 'sitesync' );
 $ssc_suggest  = get_transient( 'ssc_suggest_' . get_current_user_id() );
@@ -122,7 +129,7 @@ $ssc_levels = array(
 $ssc_step_text = array(
 	'org_name'     => __( 'Add your organization’s name', 'nexachat-ai' ),
 	'description'  => __( 'Describe in a few sentences what you do', 'nexachat-ai' ),
-	'first_fact'   => __( 'Add your first fact, such as your opening hours', 'nexachat-ai' ),
+	'first_fact'   => __( 'Add your first fact, such as your return policy', 'nexachat-ai' ),
 	'contact'      => __( 'Add a phone number or an email', 'nexachat-ai' ),
 	'hours'        => __( 'Add your working hours', 'nexachat-ai' ),
 	'more_facts'   => __( 'Add a few more facts', 'nexachat-ai' ),
@@ -179,6 +186,8 @@ $ssc_field = function ( $key, $label, $args = array() ) use ( $business ) {
 			'badge'       => '',
 			'rows'        => 0,
 			'wide'        => false,
+			'hint'        => '',
+			'fill'        => '',
 		),
 		$args
 	);
@@ -190,6 +199,12 @@ $ssc_field = function ( $key, $label, $args = array() ) use ( $business ) {
 			<textarea id="b_<?php echo esc_attr( $key ); ?>" name="business[<?php echo esc_attr( $key ); ?>]" rows="<?php echo esc_attr( (string) $args['rows'] ); ?>" dir="auto" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" data-ssc-score="1"><?php echo esc_textarea( $value ); ?></textarea>
 		<?php else : ?>
 			<input id="b_<?php echo esc_attr( $key ); ?>" name="business[<?php echo esc_attr( $key ); ?>]" type="<?php echo esc_attr( $args['type'] ); ?>" dir="<?php echo esc_attr( $args['dir'] ); ?>" value="<?php echo esc_attr( $value ); ?>" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" data-ssc-score="1" />
+		<?php endif; ?>
+		<?php if ( '' !== $args['hint'] ) : ?>
+			<p class="ssc-field__hint"><?php echo esc_html( $args['hint'] ); ?></p>
+		<?php endif; ?>
+		<?php if ( '' !== $args['fill'] ) : ?>
+			<button type="button" class="ssc-btn ssc-btn--ghost ssc-btn--sm" data-ssc-fill="b_<?php echo esc_attr( $key ); ?>" data-text="<?php echo esc_attr( $args['fill'] ); ?>"><?php esc_html_e( 'Use the chat schedule', 'nexachat-ai' ); ?></button>
 		<?php endif; ?>
 	</div>
 	<?php
@@ -221,21 +236,87 @@ $ssc_types = array(
 );
 
 /**
+ * What to tell the admin about an entry that repeats the profile.
+ */
+$ssc_overlap_text = function ( $found ) {
+	$kind  = $found['kind'];
+	$state = $found['state'];
+	$texts = array(
+		'hours'   => array(
+			'repeats' => __( 'Your working hours are already in Contact & hours. Keep them there only, so the assistant never gives two different answers.', 'nexachat-ai' ),
+			'belongs' => __( 'Working hours belong in Contact & hours, so the assistant and the chat schedule use one version.', 'nexachat-ai' ),
+		),
+		'phone'   => array(
+			'repeats' => __( 'This phone number is already in Contact & hours. Keep it in one place.', 'nexachat-ai' ),
+			'belongs' => __( 'Phone numbers belong in Contact & hours.', 'nexachat-ai' ),
+			/* translators: %s: the phone number written in the entry. */
+			'differs' => __( 'This mentions a phone number (%s) that is not the one in Contact & hours. If it is another department, say so in the text; otherwise correct the profile.', 'nexachat-ai' ),
+		),
+		'email'   => array(
+			'repeats' => __( 'This email address is already in Contact & hours. Keep it in one place.', 'nexachat-ai' ),
+			'belongs' => __( 'Email addresses belong in Contact & hours.', 'nexachat-ai' ),
+			/* translators: %s: the email address written in the entry. */
+			'differs' => __( 'This mentions an email address (%s) that is not the one in Contact & hours. If it is another department, say so in the text; otherwise correct the profile.', 'nexachat-ai' ),
+		),
+		'address' => array(
+			'repeats' => __( 'Your addresses are already in Contact & hours (Places). Keep them there only.', 'nexachat-ai' ),
+			'belongs' => __( 'Addresses belong in Contact & hours (Places), where each one can have a map link.', 'nexachat-ai' ),
+		),
+	);
+	if ( ! isset( $texts[ $kind ][ $state ] ) ) {
+		return '';
+	}
+	return 'differs' === $state ? sprintf( $texts[ $kind ][ $state ], $found['found'] ) : $texts[ $kind ][ $state ];
+};
+
+/**
+ * One place (head office, factory…). Also rendered blank into a <template>.
+ */
+$ssc_place_row = function ( $i, $place ) {
+	$types = SSC_Locations::types();
+	$type  = isset( $place['type'], $types[ $place['type'] ] ) ? $place['type'] : 'hq';
+	?>
+	<div class="ssc-ki ssc-loc">
+		<div class="ssc-ki__row ssc-loc__row">
+			<select name="business[locations][<?php echo esc_attr( (string) $i ); ?>][type]" aria-label="<?php esc_attr_e( 'Kind of place', 'nexachat-ai' ); ?>">
+				<?php foreach ( $types as $t_id => $t_label ) : ?>
+					<option value="<?php echo esc_attr( $t_id ); ?>" <?php selected( $type, $t_id ); ?>><?php echo esc_html( $t_label ); ?></option>
+				<?php endforeach; ?>
+			</select>
+			<input type="text" name="business[locations][<?php echo esc_attr( (string) $i ); ?>][name]" value="<?php echo esc_attr( isset( $place['name'] ) ? $place['name'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Name (optional), e.g. Tehran office', 'nexachat-ai' ); ?>" maxlength="80" />
+			<button type="button" class="ssc-ki__remove" aria-label="<?php esc_attr_e( 'Remove', 'nexachat-ai' ); ?>">×</button>
+		</div>
+		<textarea name="business[locations][<?php echo esc_attr( (string) $i ); ?>][address]" rows="2" maxlength="300" placeholder="<?php esc_attr_e( 'Full address', 'nexachat-ai' ); ?>"><?php echo esc_textarea( isset( $place['address'] ) ? $place['address'] : '' ); ?></textarea>
+		<div class="ssc-grid ssc-grid--2">
+			<input type="text" dir="ltr" inputmode="tel" name="business[locations][<?php echo esc_attr( (string) $i ); ?>][phone]" value="<?php echo esc_attr( isset( $place['phone'] ) ? $place['phone'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Phone (optional)', 'nexachat-ai' ); ?>" maxlength="30" />
+			<input type="url" dir="ltr" name="business[locations][<?php echo esc_attr( (string) $i ); ?>][map]" value="<?php echo esc_attr( isset( $place['map'] ) ? $place['map'] : '' ); ?>" placeholder="<?php esc_attr_e( 'Map link, e.g. https://maps.app.goo.gl/…', 'nexachat-ai' ); ?>" maxlength="600" />
+		</div>
+	</div>
+	<?php
+};
+
+/**
  * One knowledge entry card. Also rendered blank into a <template>.
  */
-$ssc_fact_row = function ( $i, $item, $open = false ) use ( $ssc_types ) {
+$ssc_fact_row = function ( $i, $item, $open = false, $state = '' ) use ( $ssc_types, $business, $ssc_overlap_text ) {
 	$type    = isset( $item['type'] ) && isset( $ssc_types[ $item['type'] ] ) ? $item['type'] : 'general';
 	$title   = isset( $item['title'] ) ? (string) $item['title'] : '';
 	$content = isset( $item['content'] ) ? (string) $item['content'] : '';
+	$overlap = ( $title || $content ) ? SSC_Knowledge_Overlap::check( $item, $business ) : null;
+	$note    = $overlap ? $ssc_overlap_text( $overlap ) : '';
 	?>
-	<details class="ssc-ki ssc-kcard" data-type="<?php echo esc_attr( $type ); ?>"<?php echo $open ? ' open' : ''; ?>>
+	<details class="ssc-ki ssc-kcard<?php echo '' !== $note ? ' has-overlap' : ''; ?>" data-type="<?php echo esc_attr( $type ); ?>"<?php echo $open ? ' open' : ''; ?>>
 		<summary class="ssc-kcard__sum">
 			<span class="ssc-kcard__ico"><?php echo SSC_Icons::get( 'book' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 			<span class="ssc-kcard__title" data-ssc-kmirror="title" data-empty="<?php esc_attr_e( 'New entry', 'nexachat-ai' ); ?>"><?php echo esc_html( '' !== $title ? $title : __( 'New entry', 'nexachat-ai' ) ); ?></span>
 			<span class="ssc-kcard__excerpt" data-ssc-kmirror="content"><?php echo esc_html( wp_html_excerpt( wp_strip_all_tags( $content ), 90, '…' ) ); ?></span>
+			<span class="ssc-kcard__badge ssc-kcard__badge--warn" data-ssc-kstate data-cut="<?php esc_attr_e( 'Partly used', 'nexachat-ai' ); ?>" data-out="<?php esc_attr_e( 'Not used', 'nexachat-ai' ); ?>"<?php echo in_array( $state, array( 'cut', 'out' ), true ) ? '' : ' hidden'; ?>><?php echo esc_html( 'cut' === $state ? __( 'Partly used', 'nexachat-ai' ) : ( 'out' === $state ? __( 'Not used', 'nexachat-ai' ) : '' ) ); ?></span>
 			<span class="ssc-kcard__chev"><?php echo SSC_Icons::get( 'chevron' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 		</summary>
 		<div class="ssc-kcard__body">
+			<?php if ( '' !== $note ) : ?>
+				<p class="ssc-koverlap" role="note"><span class="ssc-koverlap__ico"><?php echo SSC_Icons::get( 'alert' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span><span><?php echo esc_html( $note ); ?> <a href="#contact" data-ssc-hubgo="contact"><?php esc_html_e( 'Open Contact & hours', 'nexachat-ai' ); ?></a></span></p>
+			<?php endif; ?>
 			<input type="hidden" name="ki[<?php echo esc_attr( (string) $i ); ?>][id]" value="<?php echo esc_attr( isset( $item['id'] ) ? $item['id'] : '' ); ?>" />
 			<div class="ssc-ki__row">
 				<select name="ki[<?php echo esc_attr( (string) $i ); ?>][type]" aria-label="<?php esc_attr_e( 'Type', 'nexachat-ai' ); ?>" data-ssc-ktype>
@@ -294,12 +375,8 @@ $ssc_product_row = function ( $i, $p, $open = false ) {
 	<?php
 };
 
+// Hours, phone, email and addresses live in Contact & hours, so they are not offered as entries here.
 $ssc_starters = array(
-	array(
-		'type'  => 'general',
-		'title' => __( 'Working hours', 'nexachat-ai' ),
-		'hint'  => __( 'For example: Saturday to Wednesday, 9:00 to 17:00. Closed on Thursdays and Fridays.', 'nexachat-ai' ),
-	),
 	array(
 		'type'  => 'policy',
 		'title' => __( 'Return & refund policy', 'nexachat-ai' ),
@@ -351,10 +428,94 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php esc_html_e( 'Business Knowledge', 'nexachat-ai' ); ?></h1>
-			<p class="ssc-page__sub"><?php esc_html_e( 'Teach your assistant about your business, a little at a time. Start with the basics and add more whenever you like. Everything here reaches the AI on every answer.', 'nexachat-ai' ); ?></p>
+			<p class="ssc-page__sub"><?php esc_html_e( 'Teach your assistant about your business, a little at a time. Start with the basics and add more whenever you like. Your details and entries are read on every answer (entries up to the limit shown in that section); documents and website pages are searched when a question needs them.', 'nexachat-ai' ); ?></p>
 		</div>
 	</header>
 
+	<?php if ( '' !== $ssc_bad ) : ?>
+		<?php
+		$ssc_bad_parts = array_pad( explode( ':', $ssc_bad, 3 ), 3, '' );
+		$ssc_bad_names = array(
+			'business'           => __( 'Business profile', 'nexachat-ai' ),
+			'ki'                 => __( 'Knowledge entries', 'nexachat-ai' ),
+			'products'           => __( 'Products & services', 'nexachat-ai' ),
+			'product_attributes' => __( 'Product specifications', 'nexachat-ai' ),
+		);
+		$ssc_bad_where = isset( $ssc_bad_names[ $ssc_bad_parts[0] ] ) ? $ssc_bad_names[ $ssc_bad_parts[0] ] : __( 'the form', 'nexachat-ai' );
+		?>
+		<div class="ssc-notice ssc-notice--error" role="alert">
+			<?php
+			echo esc_html(
+				sprintf(
+					/* translators: 1: section name, 2: row number (or "-"), 3: field name. */
+					__( 'Nothing was saved: the form had an invalid value in %1$s (entry %2$s, field “%3$s”). Reload the page and try again.', 'nexachat-ai' ),
+					$ssc_bad_where,
+					ctype_digit( $ssc_bad_parts[1] ) ? (string) ( (int) $ssc_bad_parts[1] + 1 ) : '–',
+					preg_replace( '/[^A-Za-z0-9_\-]/', '', $ssc_bad_parts[2] )
+				)
+			);
+			?>
+		</div>
+	<?php endif; ?>
+	<?php if ( is_array( $ssc_conflict ) && ! empty( $ssc_conflict['conflicts'] ) ) : ?>
+		<?php
+		$ssc_field_names = array(
+			'org_name'        => __( 'Official organization name', 'nexachat-ai' ),
+			'brand_name'      => __( 'Brand / trading name', 'nexachat-ai' ),
+			'category'        => __( 'Business category', 'nexachat-ai' ),
+			'industry'        => __( 'Industry', 'nexachat-ai' ),
+			'description'     => __( 'What does your organization do?', 'nexachat-ai' ),
+			'differentiators' => __( 'Differentiators', 'nexachat-ai' ),
+			'products'        => __( 'Products & services overview', 'nexachat-ai' ),
+			'phone'           => __( 'Contact phone', 'nexachat-ai' ),
+			'email'           => __( 'Contact email', 'nexachat-ai' ),
+			'support_phone'   => __( 'Support phone', 'nexachat-ai' ),
+			'support_email'   => __( 'Support email', 'nexachat-ai' ),
+			'url'             => __( 'Website', 'nexachat-ai' ),
+			'hours'           => __( 'Working hours', 'nexachat-ai' ),
+			'location'        => __( 'Places', 'nexachat-ai' ),
+			'locations'       => __( 'Places', 'nexachat-ai' ),
+			'assistant_name'  => __( 'Assistant name', 'nexachat-ai' ),
+			'assistant_role'  => __( 'Assistant role', 'nexachat-ai' ),
+			'language'        => __( 'Primary answer language', 'nexachat-ai' ),
+			'tone'            => __( 'Communication tone', 'nexachat-ai' ),
+		);
+		$ssc_clash_names = array();
+		foreach ( $ssc_conflict['conflicts'] as $ssc_c_section => $ssc_c_keys ) {
+			foreach ( (array) $ssc_c_keys as $ssc_c_key ) {
+				if ( 'business' === $ssc_c_section ) {
+					$ssc_clash_names[ $ssc_field_names[ $ssc_c_key ] ?? $ssc_c_key ] = true;
+					continue;
+				}
+				$ssc_label = '';
+				foreach ( array( (array) $ssc_conflict['mine'][ $ssc_c_section ], (array) ( 'ki' === $ssc_c_section ? $items : $products ) ) as $ssc_pool ) {
+					foreach ( SSC_Merge::with_ids( $ssc_c_section, $ssc_pool ) as $ssc_c_entry ) {
+						if ( $ssc_c_entry['id'] === $ssc_c_key ) {
+							$ssc_label = 'ki' === $ssc_c_section ? ( isset( $ssc_c_entry['title'] ) ? (string) $ssc_c_entry['title'] : '' ) : ( isset( $ssc_c_entry['name'] ) ? (string) $ssc_c_entry['name'] : '' );
+							break 2;
+						}
+					}
+				}
+				$ssc_clash_names[ '' !== $ssc_label ? $ssc_label : ( 'ki' === $ssc_c_section ? __( 'A knowledge entry', 'nexachat-ai' ) : __( 'A product', 'nexachat-ai' ) ) ] = true;
+			}
+		}
+		?>
+		<div class="ssc-notice ssc-notice--error ssc-kconflict" role="alert">
+			<p><strong><?php esc_html_e( 'Not saved yet: this information was changed after you opened this page (in another tab, or by someone else).', 'nexachat-ai' ); ?></strong></p>
+			<ul>
+				<?php foreach ( array_keys( $ssc_clash_names ) as $ssc_clash ) : ?>
+					<li><?php echo esc_html( (string) $ssc_clash ); ?></li>
+				<?php endforeach; ?>
+			</ul>
+			<p><?php esc_html_e( 'Everything else you changed is ready to save. Choose which version to keep for the items above:', 'nexachat-ai' ); ?></p>
+			<form method="post" class="ssc-kconflict__actions">
+				<?php wp_nonce_field( 'ssc_knowledge_resolve' ); ?>
+				<button type="submit" name="ssc_knowledge_resolve" value="mine" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Use my version', 'nexachat-ai' ); ?></button>
+				<button type="submit" name="ssc_knowledge_resolve" value="latest" class="ssc-btn"><?php esc_html_e( 'Keep the latest version', 'nexachat-ai' ); ?></button>
+				<button type="submit" name="ssc_knowledge_resolve" value="discard" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Discard my changes', 'nexachat-ai' ); ?></button>
+			</form>
+		</div>
+	<?php endif; ?>
 	<?php if ( $saved ) : ?>
 		<div class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Knowledge saved.', 'nexachat-ai' ); ?></div>
 	<?php endif; ?>
@@ -444,6 +605,7 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 		<form method="post" class="ssc-form ssc-kform" id="ssc-kform">
 			<?php wp_nonce_field( 'ssc_knowledge' ); ?>
 			<input type="hidden" name="ssc_knowledge_save" value="1" />
+			<input type="hidden" name="ssc_base" value="<?php echo esc_attr( (string) wp_json_encode( $ssc_base ) ); ?>" />
 			<input type="hidden" name="ssc_panel" value="<?php echo esc_attr( $initial ); ?>" data-ssc-hubfield />
 
 			<section class="ssc-card ssc-hpanel" id="ssc-hpanel-identity" role="tabpanel" aria-labelledby="ssc-htab-identity" data-ssc-hubpanel="identity" data-ssc-hue="blue" data-ssc-form="1">
@@ -469,9 +631,41 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 					$ssc_field( 'support_phone', __( 'Support phone', 'nexachat-ai' ), array( 'type' => 'text', 'dir' => 'ltr' ) );
 					$ssc_field( 'support_email', __( 'Support email', 'nexachat-ai' ), array( 'type' => 'email', 'dir' => 'ltr' ) );
 					$ssc_field( 'url', __( 'Website', 'nexachat-ai' ), array( 'type' => 'url', 'dir' => 'ltr', 'placeholder' => 'https://' ) );
-					$ssc_field( 'location', __( 'Location', 'nexachat-ai' ), array( 'placeholder' => __( 'City and address', 'nexachat-ai' ) ) );
-					$ssc_field( 'hours', __( 'Working hours', 'nexachat-ai' ), array( 'wide' => true, 'placeholder' => __( 'e.g. Saturday to Wednesday, 9:00 to 17:00', 'nexachat-ai' ) ) );
+					$ssc_schedule = SSC_Availability::describe_schedule();
+					$ssc_field(
+						'hours',
+						__( 'Working hours', 'nexachat-ai' ),
+						array(
+							'wide'        => true,
+							'placeholder' => __( 'e.g. Saturday to Wednesday, 9:00 to 17:00', 'nexachat-ai' ),
+							'hint'        => '' !== $ssc_schedule
+								/* translators: %s: the chat schedule, such as "Sat–Wed, 09:00–18:00". */
+								? sprintf( __( 'This is what the assistant tells visitors. Leave it empty to use the chat schedule from Settings (%s). That schedule only decides when the chat shows as online.', 'nexachat-ai' ), $ssc_schedule )
+								: __( 'Write your hours once, here: this is what the assistant tells visitors. To show the chat as online only during set hours, use Settings → Display & hours.', 'nexachat-ai' ),
+							'fill'        => '' !== $ssc_schedule ? $ssc_schedule : '',
+						)
+					);
 					?>
+				</div>
+
+				<?php
+				$ssc_places = SSC_Locations::effective( $business );
+				?>
+				<div class="ssc-hplaces" id="places">
+					<header class="ssc-hplaces__head">
+						<span class="ssc-hplaces__ico"><?php echo SSC_Icons::get( 'pin' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+						<div>
+							<h3><?php esc_html_e( 'Places', 'nexachat-ai' ); ?></h3>
+							<p><?php esc_html_e( 'Head office, factory, branches… Give each one an address and, if you like, a map link (for example from Google Maps): the assistant shares it when someone asks where you are.', 'nexachat-ai' ); ?></p>
+						</div>
+					</header>
+					<div id="ssc-loc-list" class="ssc-loc-list" data-allow-empty="1" data-count="<?php echo esc_attr( (string) count( $ssc_places ) ); ?>"><?php
+					foreach ( $ssc_places as $ssc_pi => $ssc_place ) {
+						$ssc_place_row( $ssc_pi, $ssc_place );
+					}
+					?></div>
+					<template id="ssc-loc-template"><?php $ssc_place_row( 0, array() ); ?></template>
+					<button type="button" class="ssc-btn ssc-btn--ghost ssc-ki__add" data-target="#ssc-loc-list" data-template="#ssc-loc-template"><?php esc_html_e( '+ Add a place', 'nexachat-ai' ); ?></button>
 				</div>
 			</section>
 
@@ -479,7 +673,7 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 				<?php $ssc_head( 'persona' ); ?>
 				<div class="ssc-grid ssc-grid--2">
 					<?php
-					$ssc_field( 'assistant_name', __( 'Assistant name', 'nexachat-ai' ), array( 'placeholder' => __( 'e.g. Sara', 'nexachat-ai' ) ) );
+					$ssc_field( 'assistant_name', __( 'Assistant name', 'nexachat-ai' ), array( 'placeholder' => __( 'e.g. Sara', 'nexachat-ai' ), 'hint' => __( 'Also shown in the chat header, unless you set a display name in Appearance.', 'nexachat-ai' ) ) );
 					$ssc_field( 'assistant_role', __( 'Assistant role', 'nexachat-ai' ), array( 'placeholder' => __( 'e.g. Customer support assistant', 'nexachat-ai' ) ) );
 					$ssc_field( 'language', __( 'Primary answer language', 'nexachat-ai' ), array( 'dir' => 'ltr', 'placeholder' => __( 'e.g. Persian', 'nexachat-ai' ) ) );
 					?>
@@ -502,9 +696,20 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 						<button type="button" class="ssc-chip" data-ssc-kstarter data-type="<?php echo esc_attr( $ssc_starter['type'] ); ?>" data-title="<?php echo esc_attr( $ssc_starter['title'] ); ?>" data-hint="<?php echo esc_attr( $ssc_starter['hint'] ); ?>">+ <?php echo esc_html( $ssc_starter['title'] ); ?></button>
 					<?php endforeach; ?>
 				</div>
+				<?php
+				$ssc_plan  = SSC_Knowledge::plan_knowledge( $items );
+				$ssc_over  = $ssc_plan['cut'] + $ssc_plan['out'];
+				$ssc_share = $ssc_plan['limit'] > 0 ? min( 100, (int) round( 100 * $ssc_plan['used'] / $ssc_plan['limit'] ) ) : 0;
+				?>
+				<div class="ssc-kbudget<?php echo $ssc_over > 0 ? ' is-over' : ''; ?>" data-ssc-kbudget data-limit="<?php echo esc_attr( (string) $ssc_plan['limit'] ); ?>" data-fmt="<?php echo esc_attr( __( '%1$s of %2$s characters used', 'nexachat-ai' ) ); ?>">
+					<div class="ssc-kbudget__bar" aria-hidden="true"><span style="width:<?php echo esc_attr( (string) $ssc_share ); ?>%"></span></div>
+					<p class="ssc-kbudget__text" data-ssc-kbudget-text><?php echo esc_html( sprintf( __( '%1$s of %2$s characters used', 'nexachat-ai' ), number_format_i18n( $ssc_plan['used'] ), number_format_i18n( $ssc_plan['limit'] ) ) ); ?></p>
+					<p class="ssc-kbudget__hint"><?php esc_html_e( 'The assistant reads these entries in every answer, from the top down, up to this limit. Long texts belong in Documents: there only the parts that match the question are used.', 'nexachat-ai' ); ?></p>
+					<p class="ssc-kbudget__warn" role="alert" data-ssc-kbudget-warn<?php echo $ssc_over > 0 ? '' : ' hidden'; ?>><span class="ssc-koverlap__ico"><?php echo SSC_Icons::get( 'alert' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span><span><?php esc_html_e( 'Some entries do not fit, so the assistant does not see them (or only their beginning). Shorten the entries, remove the least important ones, or move long texts to Documents.', 'nexachat-ai' ); ?></span></p>
+				</div>
 				<div id="ssc-ki-list" class="ssc-ki-list ssc-klist" data-allow-empty="1" data-count="<?php echo esc_attr( (string) count( $items ) ); ?>"><?php
 				foreach ( $items as $ssc_i => $ssc_item ) {
-					$ssc_fact_row( $ssc_i, $ssc_item );
+					$ssc_fact_row( $ssc_i, $ssc_item, false, isset( $ssc_plan['rows'][ $ssc_i ]['state'] ) ? $ssc_plan['rows'][ $ssc_i ]['state'] : '' );
 				}
 				?></div>
 				<div class="ssc-hempty">
@@ -630,6 +835,9 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 						<?php echo esc_html( sprintf( /* translators: %d: number of pages. */ _n( '%d page in the knowledge base.', '%d pages in the knowledge base.', count( SSC_Module_Sitesync::documents() ), 'nexachat-ai' ), count( SSC_Module_Sitesync::documents() ) ) ); ?>
 						<?php if ( $ssc_sync['finished'] ) : ?>
 							<?php echo esc_html( sprintf( /* translators: %s: date. */ __( 'Last full sync: %s', 'nexachat-ai' ), SSC_Date::display( $ssc_sync['finished'] ) ) ); ?>
+						<?php endif; ?>
+						<?php if ( ! empty( $ssc_sync['failed'] ) ) : ?>
+							<strong class="ssc-text-warn"><?php echo esc_html( sprintf( /* translators: %d: number of pages. */ _n( '%d page could not be updated; its previous version was kept.', '%d pages could not be updated; their previous versions were kept.', (int) $ssc_sync['failed'], 'nexachat-ai' ), (int) $ssc_sync['failed'] ) ); ?></strong>
 						<?php endif; ?>
 					<?php endif; ?>
 				</p>

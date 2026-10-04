@@ -40,7 +40,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		'consent'   => __( 'Require consent before storing contact data', 'nexachat-ai' ),
 		'retention' => __( 'Limit how long conversations are kept', 'nexachat-ai' ),
 		'ratelimit' => __( 'Turn rate limiting back on', 'nexachat-ai' ),
-		'proxy'     => __( 'Set the trusted proxy header: your site is behind a proxy', 'nexachat-ai' ),
+		'proxy'     => __( 'Choose the proxy header and list your proxy’s addresses: your site is behind a proxy', 'nexachat-ai' ),
 		'https'     => __( 'Serve your site over HTTPS', 'nexachat-ai' ),
 		'crypto'    => __( 'Fix server encryption (OpenSSL and AUTH_KEY)', 'nexachat-ai' ),
 	);
@@ -180,6 +180,18 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Business hours', 'nexachat-ai' ); ?></h2>
 			<p class="ssc-card__sub"><?php esc_html_e( 'Outside these hours the widget shows an offline notice. Forms still work so visitors can leave a message.', 'nexachat-ai' ); ?></p>
+			<?php $ssc_profile_hours = trim( (string) SSC_Settings::business()['hours'] ); ?>
+			<p class="ssc-field__hint ssc-hoursnote">
+				<?php
+				if ( '' !== $ssc_profile_hours ) {
+					/* translators: %s: the working hours written in the business profile. */
+					echo esc_html( sprintf( __( 'This schedule only decides when the chat shows as online. What the assistant tells visitors about your hours is written in Business Knowledge: “%s”.', 'nexachat-ai' ), $ssc_profile_hours ) );
+				} else {
+					esc_html_e( 'This schedule only decides when the chat shows as online. You have not written your hours in Business Knowledge, so the assistant will quote this schedule.', 'nexachat-ai' );
+				}
+				?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-knowledge#contact' ) ); ?>"><?php esc_html_e( 'Open Contact & hours', 'nexachat-ai' ); ?></a>
+			</p>
 			<label class="ssc-check"><input type="checkbox" name="business_hours_enabled" value="yes" <?php checked( 'yes', $s['business_hours_enabled'] ); ?> /> <span><?php esc_html_e( 'Limit availability to business hours', 'nexachat-ai' ); ?></span></label>
 			<div class="ssc-grid ssc-grid--2">
 				<div class="ssc-field">
@@ -250,6 +262,33 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 						<option value="HTTP_X_CLIENT_IP" <?php selected( $s['trusted_proxy_header'], 'HTTP_X_CLIENT_IP' ); ?>>X-Client-IP</option>
 					</select>
 					<p class="ssc-field__hint"><?php esc_html_e( 'Required when the site sits behind Cloudflare or any reverse proxy — otherwise every visitor shares one IP and one rate-limit quota. Only enable the header your proxy actually sets and strips from client requests.', 'nexachat-ai' ); ?></p>
+				</div>
+				<div class="ssc-field">
+					<label for="trusted_proxies"><?php esc_html_e( 'Trusted proxies (addresses or CIDR blocks, one per line)', 'nexachat-ai' ); ?></label>
+					<textarea id="trusted_proxies" name="trusted_proxies" rows="3" dir="ltr" placeholder="203.0.113.0/24&#10;2001:db8::/32"><?php echo esc_textarea( (string) $s['trusted_proxies'] ); ?></textarea>
+					<p class="ssc-field__hint"><?php esc_html_e( 'The header above is believed only when the connection comes from one of these addresses, or from a private network (for example nginx on the same server). A visitor who reaches the server directly cannot choose his own address and slip past the limits. Cloudflare publishes its ranges at cloudflare.com/ips.', 'nexachat-ai' ); ?></p>
+					<button type="button" class="ssc-btn ssc-btn--ghost ssc-btn--sm" data-ssc-fill="trusted_proxies" data-text="<?php echo esc_attr( implode( "\n", SSC_Client_IP::cloudflare_ranges() ) ); ?>"><?php esc_html_e( 'Use Cloudflare’s ranges', 'nexachat-ai' ); ?></button>
+					<?php
+					$ssc_remote = isset( $_SERVER['REMOTE_ADDR'] ) ? SSC_Client_IP::clean( sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) ) : '';
+					if ( '' !== $ssc_remote ) :
+						$ssc_listed = SSC_Client_IP::is_trusted( $ssc_remote, SSC_Client_IP::parse_list( (string) $s['trusted_proxies'] ) );
+						$ssc_seen   = ( new SSC_Chat_Engine() )->client_ip();
+						?>
+						<p class="ssc-field__hint ssc-proxynote">
+							<?php
+							if ( '' === (string) $s['trusted_proxy_header'] ) {
+								/* translators: %s: the address of this connection. */
+								echo esc_html( sprintf( __( 'Right now: no header is chosen, so the connecting address (%s) is used for visitors.', 'nexachat-ai' ), $ssc_remote ) );
+							} elseif ( $ssc_listed ) {
+								/* translators: 1: the address of this connection, 2: the visitor address read from the header. */
+								echo esc_html( sprintf( __( 'Right now: your connection comes from %1$s, a proxy this site believes. The visitor address read from the header is %2$s.', 'nexachat-ai' ), $ssc_remote, $ssc_seen ) );
+							} else {
+								/* translators: %s: the address of this connection. */
+								echo esc_html( sprintf( __( 'Right now: your connection comes from %s, which is not a listed proxy, so the header is ignored and that address is used for visitors.', 'nexachat-ai' ), $ssc_remote ) );
+							}
+							?>
+						</p>
+					<?php endif; ?>
 				</div>
 			</div>
 		</section>

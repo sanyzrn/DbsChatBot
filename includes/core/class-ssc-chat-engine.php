@@ -622,18 +622,20 @@ class SSC_Chat_Engine {
 	}
 
 	/**
-	 * Client IP (REMOTE_ADDR by default; trusted proxy header opt-in).
+	 * Client IP: the connecting address (REMOTE_ADDR) unless a proxy that the
+	 * site owner listed (Settings → Protection → Trusted proxies) reports the
+	 * visitor's address in the chosen header. A header on a request that did
+	 * not come from such a proxy is ignored, so a visitor cannot choose his own
+	 * address and slip past the rate limits.
 	 *
 	 * Behind Cloudflare / nginx / any reverse proxy, REMOTE_ADDR is the
-	 * proxy IP — every visitor would share one rate-limit bucket. Set the
-	 * trusted header in Settings → Protection, or via the ssc_ip_header filter.
+	 * proxy IP — every visitor would share one rate-limit bucket — so choose
+	 * the header AND list the proxy's addresses (private-network proxies such
+	 * as nginx on the same machine need no list).
 	 *
 	 * @return string
 	 */
 	public function client_ip() {
-		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-
-		// Setting wins; filter can still override for advanced setups.
 		$header = (string) SSC_Settings::get( 'trusted_proxy_header', '' );
 		/**
 		 * Trusted proxy header name for real client IPs (empty = REMOTE_ADDR only).
@@ -642,27 +644,27 @@ class SSC_Chat_Engine {
 		 */
 		$header = (string) apply_filters( 'ssc_ip_header', $header );
 
-		if ( '' !== $header && ! empty( $_SERVER[ $header ] ) ) {
-			// Only accept well-known proxy header names (defense in depth).
-			$allowed = array(
-				'HTTP_X_FORWARDED_FOR',
-				'HTTP_X_REAL_IP',
-				'HTTP_CF_CONNECTING_IP',
-				'HTTP_TRUE_CLIENT_IP',
-				'HTTP_X_CLIENT_IP',
-				'HTTP_FASTLY_CLIENT_IP',
-			);
-			$allowed = apply_filters( 'ssc_trusted_proxy_headers', $allowed );
-			if ( in_array( $header, $allowed, true ) ) {
-				$forwarded = sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) );
-				$parts     = explode( ',', $forwarded );
-				$first     = trim( $parts[0] );
-				if ( filter_var( $first, FILTER_VALIDATE_IP ) ) {
-					$ip = $first;
-				}
+		/**
+		 * Header names that may carry the client address.
+		 *
+		 * @param string[] $headers Default names.
+		 */
+		$allowed = (array) apply_filters( 'ssc_trusted_proxy_headers', SSC_Client_IP::headers() );
+
+		/**
+		 * Addresses and CIDR blocks of the proxies whose header is believed.
+		 *
+		 * @param string[] $proxies From Settings.
+		 */
+		$proxies = (array) apply_filters( 'ssc_trusted_proxies', SSC_Client_IP::parse_list( (string) SSC_Settings::get( 'trusted_proxies', '' ) ) );
+
+		$server = array();
+		foreach ( array_merge( array( 'REMOTE_ADDR' ), $allowed ) as $key ) {
+			if ( isset( $_SERVER[ $key ] ) && is_string( $_SERVER[ $key ] ) ) {
+				$server[ $key ] = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
 			}
 		}
-		return $ip;
+		return SSC_Client_IP::resolve( $server, $header, SSC_Client_IP::parse_list( $proxies ), true, $allowed );
 	}
 
 	/**

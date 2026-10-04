@@ -173,13 +173,18 @@
                 try { return MEM.persist === false ? window.sessionStorage : window.localStorage; } catch (e) { return null; }
         }
 
+        /* A widget that must not keep a conversation in the browser (health chats, the admin preview) never touches the stores. */
+        function memAllowed() {
+                return typeof state === 'undefined' || state.persist !== false;
+        }
+
         function memGet(key) {
-                var store = memStore();
+                var store = memAllowed() ? memStore() : null;
                 try { return store ? store.getItem(key) : null; } catch (e) { return null; }
         }
 
         function memSet(key, value) {
-                var store = memStore();
+                var store = memAllowed() ? memStore() : null;
                 try { if (store) { store.setItem(key, value); } } catch (e) { /* storage full or blocked */ }
         }
 
@@ -966,8 +971,12 @@
          * Conversation flow
          * ------------------------------------------------------------------ */
 
-        function startConversation() {
-                var saved = loadThread();
+        /**
+         * Open the chat. A thread can be handed in (an opened previous conversation, held in memory only);
+         * otherwise the one kept in this browser, when the widget is allowed to keep one, is restored.
+         */
+        function startConversation(handedIn) {
+                var saved = handedIn || loadThread();
                 state.started = true;
                 var welcome = (cfg.welcomeTitle ? cfg.welcomeTitle + '\n' : '') + stripHtml(cfg.welcomeText || '');
                 if (avail && avail.online === false && avail.offlineMessage) {
@@ -1073,12 +1082,17 @@
                         closeHistory();
                         clearConversation();
                         convId = data.id;
-                        memSet(CONV_KEY, JSON.stringify({ id: convId, at: Date.now() }));
                         var items = (data.messages || []).map(function (m) {
                                 return { k: m.role === 'assistant' ? 'bot' : 'user', t: m.content, h: true };
                         });
-                        memSet(THREAD_KEY, JSON.stringify({ at: Date.now(), product: null, items: items }));
-                        startConversation();
+                        var opened = { at: Date.now(), product: null, items: items };
+                        // Kept in this browser only where the widget may (never for health chats): the server owns the transcript.
+                        memSet(CONV_KEY, JSON.stringify({ id: convId, at: Date.now() }));
+                        memSet(THREAD_KEY, JSON.stringify(opened));
+                        startConversation(opened);
+                        if (!items.length) {
+                                addItem('bot', (cfg.i18n && cfg.i18n.historyGone) || 'This conversation is no longer available.', { history: false, transient: true });
+                        }
                 }).catch(function () {
                         closeHistory();
                         addItem('bot', (cfg.i18n && cfg.i18n.historyGone) || 'This conversation is no longer available.', { history: false, transient: true });
@@ -2072,8 +2086,14 @@
                         }
                         input.name = f.key;
                         if (f.type === 'tel' || f.type === 'number') { input.dir = 'ltr'; }
-                        if (f.type === 'number') { input.step = 'any'; }
-                        if (f.key === 'patient_age') { input.min = '0'; input.max = '130'; }
+                        if (f.type === 'number') {
+                                // A text box with a numeric keypad: type="number" empties Persian digits in some browsers.
+                                // The server reads ۲۵, ٢٥ and 25 alike and checks the range.
+                                input.type = 'text';
+                                input.setAttribute('inputmode', 'decimal');
+                                input.setAttribute('autocomplete', 'off');
+                                input.pattern = '[0-9\u06F0-\u06F9\u0660-\u0669.\u066B]*';
+                        }
                         if (f.required) { input.required = true; }
                         wrap3.appendChild(input);
                         host.appendChild(wrap3);

@@ -26,7 +26,8 @@ function ssc_test_screen( $get, $render ) {
 }
 
 $screens_before = array(
-	'modules' => get_option( SSC_Modules::OPTION, null ),
+	'modules'  => get_option( SSC_Modules::OPTION, null ),
+	'settings' => get_option( SSC_Settings::OPTION_KEY, null ),
 );
 
 // Dashboard.
@@ -150,6 +151,112 @@ check( false !== strpos( $html, 'data-ssc-wk' ) && substr_count( $html, 'data-ss
 $health_env = array( 'https' => is_ssl(), 'crypto' => true, 'behind_proxy' => false, 'forms' => true, 'history' => true );
 $health     = SSC_Settings_Health::compute( SSC_Settings::all(), $health_env );
 check( $health['percent'] >= 0 && $health['percent'] <= 100, 'The health score stays between 0 and 100 for the live settings' );
+
+
+// An OpenAI-compatible endpoint can take an API key (optional); a webhook is signed instead.
+list( $html, ) = ssc_test_screen( array( 'page' => 'ssc-connection' ), function () {
+	( new SSC_Admin_Connection() )->render();
+} );
+check( false !== strpos( $html, 'name="custom_api_key"' ) && false !== strpos( $html, 'API key (optional)' ) && false !== strpos( $html, 'name="openai_api_key"' ) && false === strpos( $html, 'name="ai_webhook_url_api_key"' ) && false === strpos( $html, 'name="webhook_api_key"' ), 'The custom endpoint has an optional API key field on the Connection screen; the webhook still uses a secret' );
+check( ( new SSC_Provider_Custom() )->accepts_key() && ! ( new SSC_Provider_Custom() )->needs_key() && ! ( new SSC_Provider_Webhook() )->accepts_key() && ( new SSC_Provider_OpenAI() )->needs_key(), 'Providers say whether a key can be entered and whether it is required' );
+SSC_Settings::set_secret( 'custom_api_key', 'sk-test-custom-key' );
+$creds = ( new SSC_Provider_Custom() )->saved_credentials();
+$parts = ( new SSC_Provider_Custom() )->request_parts( $creds['api_key'], 'm', 'sys', array( array( 'role' => 'user', 'content' => 'hi' ) ), array( 'endpoint' => 'https://gw.example/v1/chat/completions' ) );
+check( 'sk-test-custom-key' === $creds['api_key'] && false !== strpos( wp_json_encode( $parts ), 'Bearer sk-test-custom-key' ), 'A stored custom key is sent as a Bearer token' );
+SSC_Settings::set_secret( 'custom_api_key', '' );
+
+// The Appearance screen and the wizard follow the page direction (they used to force left-to-right).
+list( $html, ) = ssc_test_screen( array( 'page' => 'ssc-appearance' ), function () {
+	( new SSC_Admin_Appearance() )->render();
+} );
+check( false === strpos( $html, 'class="ssc-page ssc-appearance" dir="ltr"' ) && false !== strpos( $html, 'id="ssc-preview-panel"' ), 'Appearance does not force left-to-right and still has the live preview' );
+list( $html, ) = ssc_test_screen( array( 'page' => 'ssc-wizard', 'step' => 'appearance' ), function () {
+	( new SSC_Wizard() )->render();
+} );
+check( false === strpos( $html, 'class="ssc-wizard" dir="ltr"' ) && false !== strpos( $html, 'id="ssc-preview-panel"' ) && false === strpos( $html, 'ssc-preview__win' ), 'The wizard does not force left-to-right and its Appearance step uses the real live preview' );
+
+// Hours, phone, email and addresses are written once; places carry map links.
+$old_settings = SSC_Settings::all();
+SSC_Settings::update(
+	array(
+		'business'                => SSC_Settings::sanitize_business(
+			array(
+				'org_name'       => 'Atlas',
+				'phone'          => '021-92001520',
+				'email'          => 'info@atlas.example',
+				'hours'          => '',
+				'assistant_name' => '',
+				'locations'      => array(
+					array( 'type' => 'hq', 'name' => 'دفتر مرکزی', 'address' => 'تهران، ولیعصر ۱۲', 'phone' => '021-1', 'map' => 'https://maps.app.goo.gl/AbC' ),
+					array( 'type' => 'factory', 'address' => 'Qazvin plot 5', 'map' => 'javascript:alert(1)' ),
+				),
+			)
+		),
+		'assistant_display_name'  => 'نفس‌یار',
+		'business_hours_enabled'  => 'yes',
+		'business_hours_days'     => '6,7,1,2,3',
+		'business_hours_start'    => '09:00',
+		'business_hours_end'      => '17:00',
+		'business_timezone'       => '',
+	)
+);
+$saved = SSC_Settings::business();
+check( 2 === count( $saved['locations'] ) && '' === $saved['locations'][1]['map'] && 'تهران، ولیعصر ۱۲' === $saved['location'], 'Saved places keep their map links, drop script links and mirror the first address' );
+$prompt = SSC_Prompt_Builder::build_for_chat( 'where is the factory?', 'general', '', 'web' );
+check( false !== strpos( $prompt, 'https://maps.app.goo.gl/AbC' ) && false !== strpos( $prompt, 'Qazvin plot 5' ) && false === strpos( $prompt, '- Location:' ), 'The assistant is given every place with its map link, instead of one address' );
+check( false !== strpos( $prompt, 'Working hours: ' . SSC_Availability::describe_schedule() ) && false !== strpos( SSC_Availability::describe_schedule(), '09:00–17:00' ), 'With no hours written in the profile the assistant quotes the chat schedule' );
+check( false !== strpos( $prompt, 'نفس‌یار' ), 'A name set only in Appearance is the name the assistant introduces itself with' );
+check( 'نفس‌یار' === SSC_Frontend::display_name( SSC_Settings::all() ) && 'Sara' === SSC_Frontend::display_name( array( 'assistant_display_name' => '', 'business' => array( 'assistant_name' => 'Sara' ) ) ) && 'Nexa' === SSC_Frontend::display_name( array( 'assistant_display_name' => '', 'business' => array() ) ), 'The chat header shows the Appearance name, else the persona name, else Nexa' );
+SSC_Settings::update( array( 'business' => array_merge( SSC_Settings::business(), array( 'hours' => 'شنبه تا چهارشنبه ۹ تا ۱۷' ) ) ) );
+check( false !== strpos( SSC_Prompt_Builder::build_for_chat( 'hours?', 'general', '', 'web' ), 'Working hours: شنبه تا چهارشنبه ۹ تا ۱۷' ), 'Hours written in the profile win over the schedule');
+
+// Places survive an export and an import.
+$bundle = SSC_Transfer::build( array( 'business' ), '' );
+SSC_Settings::update( array( 'business' => SSC_Settings::sanitize_business( array( 'org_name' => 'Other' ) ) ) );
+SSC_Transfer::apply( $bundle, array( 'business' ), 'replace', '' );
+$after = SSC_Settings::business();
+check( 2 === count( $after['locations'] ) && 'https://maps.app.goo.gl/AbC' === $after['locations'][0]['map'], 'Places travel in the export file and come back on import' );
+
+// The wizard's identity step must not wipe the places.
+$_POST = array( 'business' => array( 'org_name' => 'Atlas', 'location' => 'ignored' ) );
+$method = new ReflectionMethod( 'SSC_Wizard', 'posted_business' );
+$method->setAccessible( true );
+$posted = $method->invoke( new SSC_Wizard() );
+$_POST  = array();
+check( 2 === count( $posted['locations'] ) && 'تهران، ولیعصر ۱۲' === $posted['location'], 'Saving the wizard identity step keeps a saved list of places' );
+
+// Knowledge screen: places editor, hours hint, and notes on entries that repeat the profile.
+SSC_Settings::update(
+	array(
+		'knowledge_items' => array(
+			array( 'id' => 'ki-a', 'type' => 'general', 'title' => 'ساعات کاری', 'content' => 'شنبه تا پنجشنبه' ),
+			array( 'id' => 'ki-b', 'type' => 'support', 'title' => 'سفارش تلفنی', 'content' => 'با ۰۹۱۲۳۴۵۶۷۸۹ تماس بگیرید' ),
+			array( 'id' => 'ki-c', 'type' => 'policy', 'title' => 'مرجوعی', 'content' => 'هفت روز' ),
+		),
+	)
+);
+list( $html, $notices ) = ssc_test_screen( array( 'page' => 'ssc-knowledge' ), function () {
+	( new SSC_Admin_Knowledge() )->render();
+} );
+check( array() === $notices && substr_count( $html, 'class="ssc-koverlap"' ) === 2 && substr_count( $html, 'has-overlap' ) >= 2, 'Two of the three entries are flagged: the hours and the other phone number; the policy is not' );
+check( false !== strpos( $html, 'id="ssc-loc-list"' ) && false !== strpos( $html, 'id="ssc-loc-template"' ) && false !== strpos( $html, 'name="business[locations][1][map]"' ) && false === strpos( $html, 'name="business[location]"' ), 'The Contact section edits places (with a blank template) instead of one address' );
+check( false === strpos( $html, 'data-title="Working hours"' ) && false !== strpos( $html, 'data-ssc-fill="b_hours"' ), 'Working hours are no longer offered as an entry, and the hours field can take the chat schedule' );
+list( $html, ) = ssc_test_screen( array( 'page' => 'ssc-wizard', 'step' => 'knowledge' ), function () {
+	( new SSC_Wizard() )->render();
+} );
+check( substr_count( $html, 'data-ssc-wkstart' ) === 5 && false === strpos( $html, 'data-title="Opening hours"' ) && false === strpos( $html, 'data-title="How to contact us"' ), 'The wizard quick-start topics leave hours and contact details to the profile' );
+list( $html, ) = ssc_test_screen( array( 'page' => 'ssc-settings' ), function () {
+	( new SSC_Admin_Settings() )->render();
+} );
+check( false !== strpos( $html, 'ssc-hoursnote' ) && false !== strpos( $html, 'page=ssc-knowledge#contact' ), 'Settings says the schedule only decides when the chat is online and points to where the hours are written' );
+
+// Put the settings back.
+if ( null === $screens_before['settings'] ) {
+	delete_option( SSC_Settings::OPTION_KEY );
+} else {
+	update_option( SSC_Settings::OPTION_KEY, $screens_before['settings'] );
+}
+SSC_Settings::reset_cache();
 
 if ( null === $screens_before['modules'] ) {
 	delete_option( SSC_Modules::OPTION );

@@ -26,7 +26,7 @@ class SSC_HTTP {
 	 * @return string[]
 	 */
 	public static function error_codes() {
-		return array( 'auth', 'model', 'credits', 'rate_limit', 'region', 'network', 'timeout', 'endpoint', 'malformed' );
+		return array( 'auth', 'permission', 'policy', 'forbidden', 'model', 'credits', 'rate_limit', 'region', 'network', 'timeout', 'endpoint', 'malformed' );
 	}
 
 	/**
@@ -149,8 +149,10 @@ class SSC_HTTP {
 				'data'   => is_array( $data ) ? $data : null,
 				'raw'    => $raw,
 				'error'  => array(
-					'code'    => self::map_status( $status, $detail ),
-					'message' => 'HTTP ' . $status . ( '' !== $detail ? ' — ' . $detail : '' ),
+					'code'       => self::map_status( $status, $detail ),
+					'message'    => 'HTTP ' . $status . ( '' !== $detail ? ' — ' . $detail : '' ),
+					// The provider's own request id: what its support asks for.
+					'request_id' => self::request_id( $response ),
 				),
 			);
 		}
@@ -169,7 +171,44 @@ class SSC_HTTP {
 	}
 
 	/**
+	 * The request id a provider put in its response headers (for its support), cleaned.
+	 *
+	 * @param array|WP_Error $response HTTP response.
+	 * @return string '' when there is none.
+	 */
+	public static function request_id( $response ) {
+		foreach ( array( 'x-request-id', 'request-id', 'x-amzn-requestid', 'cf-ray' ) as $name ) {
+			$value = wp_remote_retrieve_header( $response, $name );
+			if ( is_string( $value ) && '' !== $value ) {
+				return substr( preg_replace( '/[^A-Za-z0-9._:\-]/', '', $value ), 0, 80 );
+			}
+		}
+		return '';
+	}
+
+	/**
+	 * Does the text contain any of the phrases?
+	 *
+	 * @param string   $text    Lower-case text.
+	 * @param string[] $phrases Phrases.
+	 * @return bool
+	 */
+	protected static function mentions( $text, $phrases ) {
+		foreach ( $phrases as $phrase ) {
+			if ( false !== strpos( $text, $phrase ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Map an HTTP status + detail text to a canonical error code.
+	 *
+	 * 401 means the key was not accepted. 403 means the provider (or something in
+	 * front of it) refused the request: that is NOT always the key, so it is told
+	 * apart: a key the provider calls invalid, a policy or firewall block, missing
+	 * permission for the model or action, or a refusal with no reason given.
 	 *
 	 * @param int    $status HTTP status.
 	 * @param string $detail Provider detail text.
@@ -178,13 +217,22 @@ class SSC_HTTP {
 	public static function map_status( $status, $detail = '' ) {
 		$d = strtolower( $detail );
 		if ( 401 === $status || 403 === $status ) {
-			if ( false !== strpos( $d, 'quota' ) || false !== strpos( $d, 'credit' ) || false !== strpos( $d, 'billing' ) ) {
+			if ( self::mentions( $d, array( 'quota', 'credit', 'billing' ) ) ) {
 				return 'credits';
 			}
-			if ( false !== strpos( $d, 'region' ) || false !== strpos( $d, 'country' ) || false !== strpos( $d, 'location' ) ) {
+			if ( self::mentions( $d, array( 'region', 'country', 'location' ) ) ) {
 				return 'region';
 			}
-			return 'auth';
+			if ( 401 === $status || self::mentions( $d, array( 'invalid api key', 'invalid_api_key', 'incorrect api key', 'api key not valid', 'api_key_invalid', 'invalid key', 'invalid x-api-key', 'invalid_authentication', 'invalid authentication', 'api key expired', 'expired api key' ) ) ) {
+				return 'auth';
+			}
+			if ( self::mentions( $d, array( 'policy', 'firewall', 'waf', 'blocked', 'access denied', 'denied by' ) ) ) {
+				return 'policy';
+			}
+			if ( self::mentions( $d, array( 'permission', 'not allowed', 'does not have access', 'do not have access', 'no access', 'not authorized', 'unauthorized to' ) ) ) {
+				return 'permission';
+			}
+			return 'forbidden';
 		}
 		if ( 429 === $status ) {
 			if ( false !== strpos( $d, 'insufficient_quota' ) || false !== strpos( $d, 'billing' ) || false !== strpos( $d, 'credit' ) ) {
@@ -219,6 +267,9 @@ class SSC_HTTP {
 	public static function friendly_error( $code ) {
 		$map = array(
 			'auth'       => __( 'The API key was rejected. Double-check the key and that it belongs to the selected provider.', 'nexachat-ai' ),
+			'permission' => __( 'The provider refused the request: this key or project has no permission for the selected model or action (HTTP 403). The key itself may be fine. Check the project permissions and model access.', 'nexachat-ai' ),
+			'policy'     => __( 'The request was blocked by a security policy at the provider or at a firewall in front of it (HTTP 403). This is not necessarily a wrong key. Check the account\'s access rules, IP restrictions and content policy, then test again.', 'nexachat-ai' ),
+			'forbidden'  => __( 'The provider refused the request (HTTP 403) without saying why. That does not always mean the key is wrong. Check the account\'s access rules and the model, and quote the request id if you contact the provider.', 'nexachat-ai' ),
 			'model'      => __( 'The selected model is not available for this account or does not exist. Pick another model or enter the model ID manually.', 'nexachat-ai' ),
 			'credits'    => __( 'The account has insufficient credits or billing is not active. Check your provider account balance.', 'nexachat-ai' ),
 			'rate_limit' => __( 'The provider is rate-limiting requests right now. Wait a moment and test again.', 'nexachat-ai' ),

@@ -47,6 +47,7 @@ class SSC_Admin_Dashboard {
 		$business  = SSC_Settings::business();
 		$provider  = SSC_Providers::current();
 		$conn_ok   = SSC_Setup::connection_is_verified();
+		$conn_info = SSC_Setup::connection_status();
 		$modules   = SSC_Modules::statuses();
 		$notify_pending = class_exists( 'SSC_Module_Notifications' ) ? SSC_Module_Notifications::pending_count() : 0;
 

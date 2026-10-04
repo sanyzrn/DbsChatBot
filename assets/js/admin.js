@@ -635,6 +635,48 @@
 		return api;
 	}
 
+	/* Knowledge entries: how much of the reading budget is used, and which entries the assistant will not see. Mirrors SSC_Knowledge::plan_knowledge(). */
+	(function bindKnowledgeBudget() {
+		var meter = $('[data-ssc-kbudget]');
+		var list = $('#ssc-ki-list');
+		if (!meter || !list) { return; }
+		var limit = parseInt(meter.getAttribute('data-limit'), 10) || 4000;
+		var fmt = meter.getAttribute('data-fmt') || '%1$s of %2$s';
+		var text = $('[data-ssc-kbudget-text]', meter);
+		var bar = $('.ssc-kbudget__bar span', meter);
+		var warn = $('[data-ssc-kbudget-warn]', meter);
+		function chars(value) { return Array.from(value.trim()).length; }
+		function paint() {
+			var used = 0;
+			var over = 0;
+			$$('.ssc-ki', list).forEach(function (row) {
+				var area = $('textarea[data-ssc-kcontent]', row);
+				var badge = $('[data-ssc-kstate]', row);
+				var n = area ? chars(area.value) : 0;
+				var state = '';
+				if (n > 0) {
+					if (used >= limit) { state = 'out'; }
+					else if (used + n > limit) { state = 'cut'; used = limit; }
+					else { used += n; }
+				}
+				if (state) { over++; }
+				row.classList.toggle('is-unseen', state === 'out');
+				if (badge) {
+					badge.hidden = !state;
+					badge.textContent = state ? (badge.getAttribute('data-' + state) || '') : '';
+				}
+			});
+			var nf = new Intl.NumberFormat(document.documentElement.lang || undefined);
+			if (text) { text.textContent = fmt.replace('%1$s', nf.format(used)).replace('%2$s', nf.format(limit)); }
+			if (bar) { bar.style.width = Math.min(100, Math.round(100 * used / limit)) + '%'; }
+			meter.classList.toggle('is-over', over > 0);
+			if (warn) { warn.hidden = over === 0; }
+		}
+		list.addEventListener('input', paint);
+		list.addEventListener('ssc-rows-changed', paint);
+		paint();
+	})();
+
 	/* Wizard, knowledge step: quick-start topics and a progress ring that follows what is typed. */
 	(function bindWizardKnowledge() {
 		var root = $('[data-ssc-wk]');
@@ -744,6 +786,17 @@
 			});
 		});
 	})();
+
+	/* A "use this" button next to a field copies its suggested text into the field. */
+	$$('[data-ssc-fill]').forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			var target = document.getElementById(btn.getAttribute('data-ssc-fill'));
+			if (!target) { return; }
+			target.value = btn.getAttribute('data-text') || '';
+			target.dispatchEvent(new Event('input', { bubbles: true }));
+			target.focus();
+		});
+	});
 
 	/* The brand strip on the Appearance screen follows the colour and the name as they are typed. */
 	(function bindBrandStrip() {
@@ -1046,16 +1099,31 @@
 			out.className = 'ssc-conn-test__result';
 			out.textContent = '…';
 
-			api('test-connection', gatherCredentials()).then(function (res) {
+			var sent = gatherCredentials();
+			api('test-connection', sent).then(function (res) {
 				btn.removeAttribute('disabled');
+				// The summary at the top follows the latest test of the SAVED connection (a test of a key that is only typed in does not change it).
+				var hero = $('[data-ssc-connhero]');
+				var heroTitle = hero ? $('h2', hero) : null;
+				var heroSub = hero ? $('.ssc-hhero__sub', hero) : null;
+				var forSaved = !sent.api_key;
 				if (res && res.ok) {
 					out.className = 'ssc-conn-test__result is-ok';
 					out.textContent = '✓ ' + (res.message || 'Connection verified');
+					if (hero && forSaved && heroTitle && heroSub) {
+						heroTitle.textContent = hero.getAttribute('data-ok-title') || heroTitle.textContent;
+						heroSub.textContent = hero.getAttribute('data-ok-sub') || heroSub.textContent;
+					}
 				} else {
 					out.className = 'ssc-conn-test__result is-err';
 					var msg = (res && res.message) ? res.message : 'Connection failed';
 					if (res && res.code) { msg += ' (' + res.code + ')'; }
+					if (res && res.request_id) { msg += ' [' + res.request_id + ']'; }
 					out.textContent = '✕ ' + msg;
+					if (hero && forSaved && heroTitle && heroSub) {
+						heroTitle.textContent = hero.getAttribute('data-fail-title') || heroTitle.textContent;
+						heroSub.textContent = (res && res.message) ? res.message : '';
+					}
 				}
 			}).catch(function () {
 				btn.removeAttribute('disabled');

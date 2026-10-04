@@ -116,6 +116,7 @@ class SSC_Admin_Connection {
 		$labels       = SSC_Providers::labels();
 		$verified     = SSC_Setup::connection_is_verified();
 		$verify_state = SSC_Setup::state()['connection_verified'];
+		$conn_status  = SSC_Setup::connection_status();
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-connection.php';
 	}
 }

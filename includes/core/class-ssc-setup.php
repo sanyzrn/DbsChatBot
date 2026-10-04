@@ -50,6 +50,7 @@ class SSC_Setup {
 				'started_at'          => 0,
 				'completed_at'        => 0,
 				'connection_verified' => array(),
+				'connection_attempt'  => array(),
 				'identity_verified'   => 0,
 				'upgraded_from'       => '',
 				'redirect_done'       => false,
@@ -267,10 +268,19 @@ class SSC_Setup {
 	 *                                    input). Empty = current saved state.
 	 */
 	public static function mark_verified( $mode, $note = '', $tested_fingerprint = '' ) {
-		$patch = array(
+		$fingerprint = '' !== $tested_fingerprint ? $tested_fingerprint : self::connection_fingerprint();
+		$patch       = array(
 			'connection_verified' => array(
-				'fingerprint' => '' !== $tested_fingerprint ? $tested_fingerprint : self::connection_fingerprint(),
+				'fingerprint' => $fingerprint,
 				'at'          => time(),
+			),
+			// A success is also the latest attempt, so an older failure stops being shown.
+			'connection_attempt'  => array(
+				'ok'          => true,
+				'fingerprint' => $fingerprint,
+				'at'          => time(),
+				'code'        => '',
+				'request_id'  => '',
 			),
 		);
 		if ( 'identity' === $mode ) {
@@ -280,16 +290,67 @@ class SSC_Setup {
 	}
 
 	/**
-	 * Is the recorded connection verification still valid?
+	 * Record a connection test that failed. The last success is kept as it was
+	 * (with its time), but it no longer counts as the current state.
+	 *
+	 * Only the error CODE is kept, never the provider's own text: that can echo
+	 * part of a key or other private details. The wording is made from the code
+	 * when it is shown.
+	 *
+	 * @param string $fingerprint Fingerprint of the credentials that were tested.
+	 * @param string $code        Canonical error code.
+	 * @param string $request_id  The provider's request id, if it sent one.
+	 */
+	public static function mark_failed( $fingerprint, $code, $request_id = '' ) {
+		self::update_state(
+			array(
+				'connection_attempt' => array(
+					'ok'          => false,
+					'fingerprint' => (string) $fingerprint,
+					'at'          => time(),
+					'code'        => sanitize_key( $code ),
+					'request_id'  => substr( preg_replace( '/[^A-Za-z0-9._:\-]/', '', (string) $request_id ), 0, 80 ),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Where the connection stands: the last success and the last attempt are
+	 * kept apart, so a failure after a success is visible.
+	 *
+	 * @return array state (ok | unverified | failed | failed_after_ok), verified (bool), verified_at (int), attempt (array|null: ok, at, code, request_id).
+	 */
+	public static function connection_status() {
+		$state       = self::state();
+		$fingerprint = self::connection_fingerprint();
+		$v           = is_array( $state['connection_verified'] ) ? $state['connection_verified'] : array();
+		$valid       = ! empty( $v['fingerprint'] ) && hash_equals( (string) $v['fingerprint'], $fingerprint );
+		$a           = is_array( $state['connection_attempt'] ) ? $state['connection_attempt'] : array();
+		// An attempt only counts for the connection that is saved now.
+		$attempt = ( ! empty( $a['fingerprint'] ) && hash_equals( (string) $a['fingerprint'], $fingerprint ) ) ? $a : null;
+		$failed  = null !== $attempt && empty( $attempt['ok'] );
+		$at      = $valid ? (int) $v['at'] : 0;
+		if ( $failed ) {
+			$status = $valid ? 'failed_after_ok' : 'failed';
+		} else {
+			$status = $valid ? 'ok' : 'unverified';
+		}
+		return array(
+			'state'       => $status,
+			'verified'    => $valid && ! $failed,
+			'verified_at' => $at,
+			'attempt'     => $attempt,
+		);
+	}
+
+	/**
+	 * Is the connection verified right now (a test passed for what is saved, and no newer test failed)?
 	 *
 	 * @return bool
 	 */
 	public static function connection_is_verified() {
-		$v = self::state()['connection_verified'];
-		if ( empty( $v['fingerprint'] ) ) {
-			return false;
-		}
-		return hash_equals( (string) $v['fingerprint'], self::connection_fingerprint() );
+		return self::connection_status()['verified'];
 	}
 
 	/**
@@ -357,7 +418,8 @@ class SSC_Setup {
 				return true;
 			}
 		}
-		return SSC_Schema::kb_count() > 0 || SSC_Schema::qa_count() > 0;
+		// Saved FAQ answers only count while the FAQ module is on: otherwise the assistant would not use them.
+		return SSC_Schema::kb_count() > 0 || ( SSC_Knowledge::bank_enabled() && SSC_Schema::qa_count() > 0 );
 	}
 
 	/**

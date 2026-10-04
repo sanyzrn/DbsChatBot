@@ -152,65 +152,96 @@ class SSC_Conversation {
 		global $wpdb;
 		$table = SSC_Schema::live_table( 'memory' );
 		$hash  = self::hash( $id );
-		$now   = current_time( 'mysql' );
 		$user  = get_current_user_id();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- internal table name.
-		$raw = $wpdb->get_row( $wpdb->prepare( "SELECT id, user_id, updated_at FROM {$table} WHERE conv_hash = %s", $hash ), ARRAY_A );
-		if ( $raw && (int) $raw['user_id'] > 0 && (int) $raw['user_id'] !== $user ) {
-			return; // Someone else's conversation: never written to.
-		}
-		$row      = $raw ? self::row( $id ) : null;
-		$messages = $row ? $row['messages'] : array();
-		$pair     = array(
-			array(
-				'role'    => 'user',
-				'content' => (string) $question,
-			),
-			array(
-				'role'    => 'assistant',
-				'content' => (string) $answer,
-			),
-		);
-		$messages = array_slice( array_merge( $messages, $pair ), -self::MAX_MESSAGES );
-		$data     = array(
-			'messages'   => wp_json_encode( $messages ),
-			'updated_at' => $now,
-		);
-		if ( $raw && ! $row ) {
-			// Expired: start over in the same row.
-			$data += array(
-				'total'      => 2,
-				'summary'    => '',
-				'summarized' => 0,
-				'title'      => self::title_of( $question ),
-				'created_at' => $now,
+		// Two requests of one conversation can arrive together. Each one reads the
+		// stored turns, adds its own, and writes only if nothing changed in between
+		// (the row still has the total and time it was read with); otherwise it
+		// reads again and adds its turns after the ones that got there first.
+		for ( $attempt = 0; $attempt < 6; $attempt++ ) {
+			$now = current_time( 'mysql' );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- internal table name.
+			$raw = $wpdb->get_row( $wpdb->prepare( "SELECT id, user_id, updated_at, total FROM {$table} WHERE conv_hash = %s", $hash ), ARRAY_A );
+			if ( $raw && (int) $raw['user_id'] > 0 && (int) $raw['user_id'] !== $user ) {
+				return; // Someone else's conversation: never written to.
+			}
+			$row      = $raw ? self::row( $id ) : null;
+			$messages = $row ? $row['messages'] : array();
+			$pair     = array(
+				array(
+					'role'    => 'user',
+					'content' => (string) $question,
+				),
+				array(
+					'role'    => 'assistant',
+					'content' => (string) $answer,
+				),
 			);
-		} elseif ( $row ) {
-			$data['total'] = (int) $row['total'] + 2;
-		}
-		if ( $user && ( ! $raw || 0 === (int) $raw['user_id'] ) ) {
-			// A visitor who signs in keeps the conversation; only signed-in
-			// users' raw ids are stored, so they can reopen it elsewhere.
-			$data['user_id'] = $user;
-			$data['conv_id'] = $id;
-		}
-		if ( $raw ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- custom table.
-			$wpdb->update( $table, $data, array( 'id' => (int) $raw['id'] ) );
-		} else {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- custom table.
-			$wpdb->insert(
-				$table,
-				$data + array(
-					'conv_hash'  => $hash,
-					'channel'    => sanitize_key( $channel ) ? sanitize_key( $channel ) : 'web',
-					'title'      => self::title_of( $question ),
+			$messages = array_slice( array_merge( $messages, $pair ), -self::MAX_MESSAGES );
+			$data     = array(
+				'messages'   => wp_json_encode( $messages ),
+				'updated_at' => $now,
+			);
+			if ( $raw && ! $row ) {
+				// Expired: start over in the same row.
+				$data += array(
 					'total'      => 2,
+					'summary'    => '',
+					'summarized' => 0,
+					'title'      => self::title_of( $question ),
 					'created_at' => $now,
-				)
-			);
+				);
+			} elseif ( $row ) {
+				$data['total'] = (int) $row['total'] + 2;
+			}
+			if ( $user && ( ! $raw || 0 === (int) $raw['user_id'] ) ) {
+				// A visitor who signs in keeps the conversation; only signed-in
+				// users' raw ids are stored, so they can reopen it elsewhere.
+				$data['user_id'] = $user;
+				$data['conv_id'] = $id;
+			}
+			/**
+			 * Fires just before a conversation's new turns are written.
+			 *
+			 * @param string $id      Conversation id.
+			 * @param int    $attempt Attempt number, from 0.
+			 */
+			do_action( 'ssc_conversation_before_save', $id, $attempt );
+			if ( $raw ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- custom table.
+				$written = $wpdb->update(
+					$table,
+					$data,
+					array(
+						'id'         => (int) $raw['id'],
+						'total'      => (int) $raw['total'],
+						'updated_at' => (string) $raw['updated_at'],
+					)
+				);
+				if ( false === $written ) {
+					return; // The database refused; the reply was already sent, nothing more to do.
+				}
+				$stored = 1 === (int) $written;
+			} else {
+				// A lost race is expected here and handled below: keep the database's duplicate-key notice off the page.
+				$quiet = $wpdb->suppress_errors( true );
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- custom table.
+				$stored = (bool) $wpdb->insert(
+					$table,
+					$data + array(
+						'conv_hash'  => $hash,
+						'channel'    => sanitize_key( $channel ) ? sanitize_key( $channel ) : 'web',
+						'title'      => self::title_of( $question ),
+						'total'      => 2,
+						'created_at' => $now,
+					)
+				); // A second insert of the same conversation fails on its unique key, and the next round adds to the row that got there first.
+				$wpdb->suppress_errors( $quiet );
+			}
+			if ( $stored ) {
+				break;
+			}
 		}
-		if ( self::pending_count( $id ) >= self::REFRESH_AFTER && ! wp_next_scheduled( self::SUMMARY_HOOK, array( $id ) ) ) {
+		if ( ! empty( $stored ) && self::pending_count( $id ) >= self::REFRESH_AFTER && ! wp_next_scheduled( self::SUMMARY_HOOK, array( $id ) ) ) {
 			wp_schedule_single_event( time(), self::SUMMARY_HOOK, array( $id ) );
 		}
 	}
@@ -263,6 +294,34 @@ class SSC_Conversation {
 	 * @return bool Updated.
 	 */
 	public static function refresh_summary( $id, $force = false ) {
+		$id = self::sanitize_id( $id );
+		if ( '' === $id ) {
+			return false;
+		}
+		// One run per conversation at a time: a second one (the background job and the inline safety net,
+		// or two jobs) would pay for the same model call and could overwrite the first one's result.
+		$lease_name = 'summary-' . self::hash( $id );
+		$lease      = SSC_Lease::acquire( $lease_name, 180 );
+		if ( false === $lease ) {
+			return false;
+		}
+		try {
+			return self::summarize( $id, $force );
+		} finally {
+			SSC_Lease::release( $lease_name, $lease );
+		}
+	}
+
+	/**
+	 * The work of refresh_summary(), run while the conversation's lease is held.
+	 * It reads the conversation again first, so a run that follows another one
+	 * finds nothing left to do and does not call the model.
+	 *
+	 * @param string $id    Conversation id.
+	 * @param bool   $force Summarize even below REFRESH_AFTER.
+	 * @return bool Updated.
+	 */
+	protected static function summarize( $id, $force ) {
 		$row = self::row( $id );
 		if ( ! $row ) {
 			return false;
@@ -306,16 +365,20 @@ class SSC_Conversation {
 			return false;
 		}
 		global $wpdb;
+		// Written only if the summary is still the one this run started from.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- custom table.
-		$wpdb->update(
+		$written = $wpdb->update(
 			SSC_Schema::live_table( 'memory' ),
 			array(
 				'summary'    => mb_substr( trim( wp_strip_all_tags( (string) $result['text'] ) ), 0, self::MAX_SUMMARY_CHARS ),
 				'summarized' => (int) $row['total'] - self::window(),
 			),
-			array( 'id' => (int) $row['id'] )
+			array(
+				'id'         => (int) $row['id'],
+				'summarized' => (int) $row['summarized'],
+			)
 		);
-		return true;
+		return 1 === (int) $written;
 	}
 
 	/**

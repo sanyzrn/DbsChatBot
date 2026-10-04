@@ -65,6 +65,25 @@ test('Health conversations stay out of long-lived browser storage', () => {
   assert.deepEqual(Object.keys(local), []);
   assert.deepEqual(Object.keys(session), []);
 });
+test('F03: a widget that must not keep a conversation never writes the transcript to any browser store', () => {
+  const { ctx, local, session } = memoryContext(false, 1);
+  ctx.state.persist = false;
+  ctx.memSet('ssc_thread_v1', JSON.stringify({ items: [{ k: 'user', t: 'secret symptom' }] }));
+  ctx.memSet('ssc_conv_v1', '{}');
+  assert.deepEqual(Object.keys(local), [], 'nothing in local storage');
+  assert.deepEqual(Object.keys(session), [], 'nothing in session storage');
+  assert.equal(ctx.memGet('ssc_thread_v1'), null, 'and nothing is read back');
+  // The same calls do store when the widget may keep a conversation.
+  const allowed = memoryContext(false, 1);
+  allowed.ctx.memSet('ssc_thread_v1', 'x');
+  assert.equal(allowed.session.ssc_thread_v1, 'x');
+});
+test('F03: opening a previous conversation hands the thread straight to the chat, so it shows even when nothing is stored', () => {
+  const open = source.slice(source.indexOf('        function openThread('), source.indexOf('        function stripHtml('));
+  assert.ok(/startConversation\(opened\)/.test(open), 'the fetched messages are passed to startConversation');
+  const start = source.slice(source.indexOf('        function startConversation('), source.indexOf('        /** Forget the current conversation'));
+  assert.ok(/handedIn \|\| loadThread\(\)/.test(start), 'a handed-in thread wins over the one kept in the browser');
+});
 test('A failed POST is never automatically replayed via AJAX', async () => {
   const calls = [];
   const context = { cfg: { restUrl: '/rest/', ajaxUrl: '/ajax/' }, URLSearchParams, getCid: () => 'test', AbortController, setTimeout, clearTimeout,

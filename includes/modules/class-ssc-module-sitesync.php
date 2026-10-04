@@ -238,26 +238,31 @@ class SSC_Module_Sitesync extends SSC_Module {
 	}
 
 	/**
-	 * (Re)index one post.
+	 * (Re)index one post. The new version is built beside the old one and takes
+	 * its place only when it is complete, so a failure keeps what was there.
 	 *
 	 * @param int $post_id Post id.
-	 * @return int Chunks stored.
+	 * @return int Chunks stored; 0 when the post is not wanted or has nothing worth answering from; -1 when the new version could not be built (the previous version stays).
 	 */
 	public static function index_post( $post_id ) {
 		$post = get_post( $post_id );
-		self::forget_post( $post_id );
 		if ( ! SSC_Modules::is_active( 'sitesync' ) || ! self::wanted( $post ) ) {
+			self::forget_post( $post_id );
 			return 0;
 		}
 		$text = self::post_text( $post );
 		if ( mb_strlen( $text ) < 40 ) {
+			self::forget_post( $post_id );
 			return 0; // Nothing worth answering from.
 		}
-		$chunks = (int) SSC_Schema::kb_insert_document( self::doc_id( $post_id ), mb_substr( wp_strip_all_tags( get_the_title( $post ) ), 0, 180 ), $text, 'general', (string) get_permalink( $post ) );
+		$chunks = SSC_Schema::kb_replace_document( self::doc_id( $post_id ), mb_substr( wp_strip_all_tags( get_the_title( $post ) ), 0, 180 ), $text, 'general', (string) get_permalink( $post ) );
+		if ( false === $chunks ) {
+			return -1;
+		}
 		if ( $chunks && 'yes' === SSC_Settings::get( 'kb_semantic', 'no' ) && class_exists( 'SSC_Embeddings' ) ) {
 			SSC_Embeddings::schedule();
 		}
-		return $chunks;
+		return (int) $chunks;
 	}
 
 	/**
@@ -273,6 +278,7 @@ class SSC_Module_Sitesync extends SSC_Module {
 				'cursor'   => 0,
 				'done'     => 0,
 				'total'    => 0,
+				'failed'   => 0,
 				'finished' => '',
 			),
 			is_array( $state ) ? $state : array()
@@ -300,6 +306,7 @@ class SSC_Module_Sitesync extends SSC_Module {
 					'cursor'  => 0,
 					'done'    => 0,
 					'total'   => $total,
+					'failed'  => 0,
 					'seen'    => array(),
 				)
 			),
@@ -321,6 +328,7 @@ class SSC_Module_Sitesync extends SSC_Module {
 		if ( ! $state['running'] || ! SSC_Modules::is_active( 'sitesync' ) ) {
 			return $state;
 		}
+		SSC_Schema::kb_purge_pending(); // Leftovers of a build that died.
 		$until = microtime( true ) + max( 0, (int) $budget );
 		do {
 			global $wpdb;
@@ -329,7 +337,9 @@ class SSC_Module_Sitesync extends SSC_Module {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- one placeholder per type, built above.
 			$ids = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE ID > %d AND post_status = 'publish' AND post_type IN ({$in}) ORDER BY ID ASC LIMIT %d", array_merge( array( (int) $state['cursor'] ), $types, array( self::BATCH ) ) ) );
 			foreach ( $ids as $id ) {
-				self::index_post( (int) $id );
+				if ( self::index_post( (int) $id ) < 0 ) {
+					++$state['failed']; // The page keeps its previous version; the count is shown in the sync panel.
+				}
 				$state['cursor'] = (int) $id;
 				++$state['done'];
 			}
