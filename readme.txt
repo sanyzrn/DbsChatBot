@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.0
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,30 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.6.0 =
+
+* New: several places (head office, factory, branches…) with an address, phone and map link each. The assistant shares them when someone asks where you are.
+* New: your working hours, phone numbers, email addresses and addresses are written once, in Contact & hours. Knowledge entries that repeat or contradict them are flagged, and the assistant quotes the chat schedule when no hours are written.
+* New: the custom OpenAI-compatible endpoint has an optional API key field (sent as a Bearer token).
+* New: the Knowledge screen shows how much of the 4,000-character reading budget the entries use and marks the entries that do not fit.
+* New: saving the Knowledge form from an older tab no longer undoes what another tab saved. Changes are merged, and when both tabs changed the same thing you choose which version to keep.
+* New: the Connection screen and the Dashboard show the last connection test, with its time and the provider's request id, instead of a stale "verified" after a newer failure.
+* New: Trusted proxies in Settings (with a Cloudflare preset).
+* Fixed: the Appearance page and the setup wizard were left-to-right in Persian.
+* Fixed (safety): an urgent message such as "I can't breathe" gets emergency guidance at once, before the AI and without the side-effect form.
+* Fixed (safety): a stored FAQ answer is no longer given to the opposite question ("allowed" / "not allowed", "stop" / "do not stop", before / after food, adults / children, pregnancy / breastfeeding, different doses).
+* Fixed (security): a visitor can no longer choose their own address through a forwarded header to get around the rate limits; headers are believed only from listed proxies.
+* Fixed (privacy): in pharmaceutical mode a returning visitor's conversation is restored from the server, and no transcript is kept in the browser.
+* Fixed: switching the FAQ module off now stops the answer bank everywhere, including the fallback after an AI failure.
+* Fixed: a 403 from the AI provider is no longer always reported as a wrong key. Invalid key, security policy, missing permission, a refusal without a reason, rate limits and timeouts each have their own message.
+* Fixed: Word and PDF files that unpack to far more data than their size suggests are refused with a clear message instead of using the server's memory; nothing is added.
+* Fixed: a long text without punctuation is cut into pieces under a hard ceiling, never in the middle of a word.
+* Fixed: large answer banks and knowledge bases no longer miss entries that fall outside the newest rows.
+* Fixed: a form or import file with a list where text belongs is refused whole, naming the place, instead of a fatal error.
+* Fixed: the patient's age in the adverse-reaction form accepts Persian and Arabic digits.
+* Fixed: two requests of one conversation arriving together no longer lose a turn, and a conversation summary is made once.
+* Fixed: a page learned from the website is replaced all or nothing, so a failure keeps its previous version; failures are counted in the sync panel.
 
 = 1.5.0 =
 
