@@ -1,17 +1,27 @@
 name: Release
 
-# Pushing a v* tag publishes the release. The ZIP is built and verified here
-# rather than uploaded by hand, so what customers download is always exactly
-# what the tagged commit produces.
+# Releases publish themselves. When CI finishes green on main, this workflow
+# looks at the plugin version: if that version has not been released yet, the
+# ZIP is built and verified here and the release is published. A merge that
+# does not change the version publishes nothing. (tools/plan-release.py makes
+# that decision; tests/plan_release_test.py covers it.)
 #
-# If the release was already created in the GitHub UI (which also creates the
-# tag), the ZIP is attached to that release instead of failing.
+# The ZIP is built and verified here rather than uploaded by hand, so what
+# customers download is always exactly what the released commit produces.
 #
-# It can also be run by hand (Actions -> Release -> Run workflow):
+# It can still be started by hand (Actions -> Release -> Run workflow), or by
+# pushing a v* tag:
 #   - for an existing tag: rebuilds from that tag and repairs its release;
 #   - for a new tag: builds the branch you run it on (normally main) and
 #     GitHub creates the tag together with the release.
+#
+# If the release was already created in the GitHub UI (which also creates the
+# tag), the ZIP is attached to that release instead of failing.
 on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
   push:
     tags:
       - 'v*'
@@ -21,25 +31,64 @@ on:
         description: 'Tag to publish, e.g. v1.1.1 (created from the selected branch if it does not exist yet)'
         required: true
         type: string
+      dry_run:
+        description: 'Build and verify only: publish nothing (to test the workflow itself)'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
+# One run per commit (or per tag), so two merges in a row are both released.
 concurrency:
-  group: release-${{ inputs.tag || github.ref_name }}
+  group: release-${{ inputs.tag || github.event.workflow_run.head_sha || github.ref_name }}
   cancel-in-progress: false
 
-env:
-  TAG: ${{ inputs.tag || github.ref_name }}
-
 jobs:
+  plan:
+    name: Decide what to publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      publish: ${{ steps.plan.outputs.publish }}
+      tag: ${{ steps.plan.outputs.tag }}
+    steps:
+      # For a CI run, the exact commit CI tested (main may have moved on since).
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Decide
+        id: plan
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          RUN_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RUN_EVENT: ${{ github.event.workflow_run.event }}
+          RUN_BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: python tools/plan-release.py
+
   publish:
     name: Build, verify and publish
+    needs: plan
+    if: needs.plan.outputs.publish == 'true'
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.plan.outputs.tag }}
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Select the source (existing tag, or the branch for a new tag)
         run: |
@@ -49,12 +98,12 @@ jobs:
             echo "TAG_EXISTS=1" >> "$GITHUB_ENV"
             echo "Building existing tag $TAG ($(git rev-parse --short HEAD))"
           else
-            if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            if [ "${{ github.ref_type }}" = "tag" ]; then
               echo "::error::Tag $TAG not found"; exit 1
             fi
             echo "TAG_EXISTS=0" >> "$GITHUB_ENV"
             echo "TARGET_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-            echo "Tag $TAG does not exist yet: building $(git rev-parse --short HEAD) from ${{ github.ref_name }}"
+            echo "Tag $TAG does not exist yet: building $(git rev-parse --short HEAD) (${{ github.event_name }} on ${{ github.event.workflow_run.head_branch || github.ref_name }})"
           fi
 
       - uses: actions/setup-python@v6
@@ -108,7 +157,13 @@ jobs:
           PY
           cat RELEASE_NOTES.md
 
+      - name: Dry run finished
+        if: ${{ inputs.dry_run == true }}
+        run: |
+          echo "Dry run - ${TAG} was built and verified; nothing was published."
+
       - name: Publish the release (or complete an existing one)
+        if: ${{ inputs.dry_run != true }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -132,6 +187,7 @@ jobs:
           fi
 
       - name: Confirm the installable ZIP is attached
+        if: ${{ inputs.dry_run != true }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
