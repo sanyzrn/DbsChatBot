@@ -1091,7 +1091,7 @@ msgid "Consultation"
 msgstr "مشاوره"
 
 msgid "Consultation & Lead Collection"
-msgstr "مشاوره و جذب مشتری"
+msgstr "ثبت درخواست مشاوره"
 
 msgid "Consultation request"
 msgstr "درخواست مشاوره"
