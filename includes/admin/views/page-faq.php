@@ -1,6 +1,7 @@
 <?php
 /**
- * FAQ bank view (faq module).
+ * FAQ bank (faq module): summary tiles, the add form and bulk tools in
+ * collapsible cards, and the answers.
  *
  * @package SmartSupportChatbot
  * @var array   $rows  Current page rows.
@@ -18,8 +19,16 @@ $deleted  = isset( $_GET['deleted'] ) ? (int) $_GET['deleted'] : 0; // phpcs:ign
 $imported = isset( $_GET['imported'] ) ? (int) $_GET['imported'] : -1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
 $skipped  = isset( $_GET['skipped'] ) ? (int) $_GET['skipped'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
 $err      = isset( $_GET['error'] ) ? sanitize_key( wp_unslash( $_GET['error'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+
+$ssc_unanswered = count( SSC_Schema::unanswered_questions( 14, 100 ) );
+$ssc_qa_labels  = array(
+	'ai_first'   => __( 'AI first', 'nexachat-ai' ),
+	'bank_first' => __( 'FAQ bank first', 'nexachat-ai' ),
+	'bank_only'  => __( 'FAQ bank only', 'nexachat-ai' ),
+);
+$ssc_qa_mode    = (string) SSC_Settings::get( 'qa_mode', 'ai_first' );
 ?>
-<div class="ssc-page">
+<div class="ssc-page ssc-faq">
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php esc_html_e( 'FAQ Bank', 'nexachat-ai' ); ?></h1>
@@ -56,8 +65,15 @@ $err      = isset( $_GET['error'] ) ? sanitize_key( wp_unslash( $_GET['error'] )
 		</div>
 	<?php endif; ?>
 
-	<section class="ssc-card">
-		<h2><?php esc_html_e( 'Add an answer', 'nexachat-ai' ); ?></h2>
+	<section class="ssc-hstats">
+		<?php
+		SSC_Admin_UI::stat( 'book', 'violet', number_format_i18n( $total ), _n( 'Answer', 'Answers', $total, 'nexachat-ai' ) );
+		SSC_Admin_UI::stat( 'search', $ssc_unanswered > 0 ? 'amber' : 'green', number_format_i18n( $ssc_unanswered ), __( 'Unanswered questions (14 days)', 'nexachat-ai' ), SSC_Modules::is_active( 'analytics' ) ? admin_url( 'admin.php?page=ssc-analytics' ) : '' );
+		SSC_Admin_UI::stat( 'cpu', 'blue', isset( $ssc_qa_labels[ $ssc_qa_mode ] ) ? $ssc_qa_labels[ $ssc_qa_mode ] : $ssc_qa_mode, __( 'Answer priority', 'nexachat-ai' ), admin_url( 'admin.php?page=ssc-connection#advanced' ) );
+		?>
+	</section>
+
+	<?php SSC_Admin_UI::acc_open( 'ssc-faq-add', 'plus', __( 'Add an answer', 'nexachat-ai' ), 'violet', ! $rows || $added, '', __( 'A question with the exact answer you want visitors to get.', 'nexachat-ai' ) ); ?>
 		<form method="post" class="ssc-form">
 			<?php wp_nonce_field( 'ssc_faq' ); ?>
 			<input type="hidden" name="ssc_faq_add" value="1" />
@@ -75,9 +91,11 @@ $err      = isset( $_GET['error'] ) ? sanitize_key( wp_unslash( $_GET['error'] )
 			</div>
 			<button type="submit" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Add answer', 'nexachat-ai' ); ?></button>
 		</form>
-	</section>
+	<?php SSC_Admin_UI::acc_close(); ?>
 
-	<?php if ( $rows ) : ?>
+	<?php if ( ! $rows ) : ?>
+		<?php SSC_Admin_UI::empty_state( 'book', 'violet', __( 'No answers yet', 'nexachat-ai' ), __( 'Add the questions customers ask most, with the exact answer you want them to get. They are answered instantly, even without an AI engine.', 'nexachat-ai' ) ); ?>
+	<?php else : ?>
 		<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--wide">
 			<thead><tr><th><?php esc_html_e( 'Question', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Answer', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Keywords', 'nexachat-ai' ); ?></th><th></th></tr></thead>
 			<tbody>
@@ -104,8 +122,8 @@ $err      = isset( $_GET['error'] ) ? sanitize_key( wp_unslash( $_GET['error'] )
 		<?php endif; ?>
 	<?php endif; ?>
 
-	<section class="ssc-card ssc-mt">
-		<h2><?php esc_html_e( 'Bulk import / export', 'nexachat-ai' ); ?></h2>
+	<div class="ssc-mt">
+	<?php SSC_Admin_UI::acc_open( 'ssc-faq-bulk', 'download', __( 'Bulk import / export', 'nexachat-ai' ), 'slate', false, '', __( 'Move many answers at once with a CSV or JSON file.', 'nexachat-ai' ) ); ?>
 		<form method="post" enctype="multipart/form-data" class="ssc-form">
 			<?php wp_nonce_field( 'ssc_faq' ); ?>
 			<input type="file" name="faq_file" accept=".csv,.json" aria-label="<?php esc_attr_e( 'FAQ file', 'nexachat-ai' ); ?>" />
@@ -116,5 +134,6 @@ $err      = isset( $_GET['error'] ) ? sanitize_key( wp_unslash( $_GET['error'] )
 			<button type="submit" name="ssc_faq_import" value="1" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Import', 'nexachat-ai' ); ?></button>
 			<button type="submit" name="ssc_faq_export" value="1" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Export CSV', 'nexachat-ai' ); ?></button>
 		</form>
-	</section>
+	<?php SSC_Admin_UI::acc_close(); ?>
+	</div>
 </div>

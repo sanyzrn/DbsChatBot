@@ -184,8 +184,8 @@ $ssc_field = function ( $key, $label, $args = array() ) use ( $business ) {
 	);
 	$value = isset( $business[ $key ] ) ? (string) $business[ $key ] : '';
 	?>
-	<div class="ssc-field ssc-kfield<?php echo $args['wide'] ? ' ssc-kfield--wide' : ''; ?>">
-		<label for="b_<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?><?php if ( '' !== $args['badge'] ) : ?> <span class="ssc-kbadge"><?php echo esc_html( $args['badge'] ); ?></span><?php endif; ?></label>
+	<div class="ssc-field ssc-hfield<?php echo $args['wide'] ? ' ssc-hfield--wide' : ''; ?>">
+		<label for="b_<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?><?php if ( '' !== $args['badge'] ) : ?> <span class="ssc-hbadge"><?php echo esc_html( $args['badge'] ); ?></span><?php endif; ?></label>
 		<?php if ( $args['rows'] > 0 ) : ?>
 			<textarea id="b_<?php echo esc_attr( $key ); ?>" name="business[<?php echo esc_attr( $key ); ?>]" rows="<?php echo esc_attr( (string) $args['rows'] ); ?>" dir="auto" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" data-ssc-score="1"><?php echo esc_textarea( $value ); ?></textarea>
 		<?php else : ?>
@@ -200,8 +200,8 @@ $ssc_field = function ( $key, $label, $args = array() ) use ( $business ) {
  */
 $ssc_head = function ( $id ) use ( $ssc_meta ) {
 	?>
-	<header class="ssc-kpanel__head">
-		<span class="ssc-kpanel__ico"><?php echo SSC_Icons::get( $ssc_meta[ $id ]['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+	<header class="ssc-hpanel__head">
+		<span class="ssc-hpanel__ico"><?php echo SSC_Icons::get( $ssc_meta[ $id ]['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 		<div>
 			<h2><?php echo esc_html( $ssc_meta[ $id ]['title'] ); ?></h2>
 			<p><?php echo esc_html( $ssc_meta[ $id ]['intro'] ); ?></p>
@@ -332,9 +332,19 @@ $ssc_tone_choices = array(
 	'formal'       => __( 'Formal', 'nexachat-ai' ),
 	'casual'       => __( 'Casual', 'nexachat-ai' ),
 );
+$ssc_hues  = array(
+	'identity'  => 'blue',
+	'contact'   => 'green',
+	'persona'   => 'violet',
+	'facts'     => 'amber',
+	'products'  => 'cyan',
+	'documents' => 'rose',
+	'website'   => 'teal',
+	'ai'        => 'indigo',
+);
 $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'ai' ) );
 ?>
-<div class="ssc-page ssc-kh" id="ssc-kh" data-initial="<?php echo esc_attr( $initial ); ?>" data-extra="<?php echo SSC_Schema::kb_count() > 0 || SSC_Schema::qa_count() > 0 ? '1' : '0'; ?>"
+<div class="ssc-page ssc-kh" id="ssc-kh" data-ssc-hub="knowledge" data-initial="<?php echo esc_attr( $initial ); ?>" data-initial-forced="<?php echo isset( $_GET['panel'] ) || '' !== $kb_state || is_array( $ssc_suggest ) ? '1' : '0'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only. ?>" data-extra="<?php echo SSC_Schema::kb_count() > 0 || SSC_Schema::qa_count() > 0 ? '1' : '0'; ?>"
 	data-fmt="<?php echo esc_attr( (string) wp_json_encode( $ssc_fmt ) ); ?>"
 	data-levels="<?php echo esc_attr( (string) wp_json_encode( array_map( function ( $id ) use ( $ssc_levels ) { return array_merge( array( 'id' => $id, 'min' => SSC_Knowledge_Score::levels()[ $id ] ), $ssc_levels[ $id ] ); }, array_keys( SSC_Knowledge_Score::levels() ) ) ) ); ?>"
 	data-weights="<?php echo esc_attr( (string) wp_json_encode( array_map( function ( $row ) { return $row['locked'] ? 0 : $row['weight']; }, $score['panels'] ) ) ); ?>">
@@ -378,27 +388,27 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 		<div class="ssc-notice ssc-notice--error" role="alert"><?php echo esc_html( __( 'Indexing failed:', 'nexachat-ai' ) . ' ' . (string) get_transient( 'ssc_kb_embed_error' ) ); ?></div>
 	<?php endif; ?>
 
-	<section class="ssc-card ssc-khero">
-		<div class="ssc-khero__ring" data-ssc-kring="overall">
+	<section class="ssc-card ssc-hhero">
+		<div class="ssc-hhero__ring" data-ssc-kring="overall">
 			<?php echo SSC_Icons::ring( $score['percent'], 'ssc-ring--xl' . ( $score['percent'] >= 75 ? ' is-ok' : '' ), __( 'How much the assistant knows about your business', 'nexachat-ai' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?>
 		</div>
-		<div class="ssc-khero__main">
-			<p class="ssc-khero__level"><span data-ssc-klevel><?php echo esc_html( $ssc_levels[ $score['level'] ]['label'] ); ?></span></p>
+		<div class="ssc-hhero__main">
+			<p class="ssc-hhero__level"><span data-ssc-klevel><?php echo esc_html( $ssc_levels[ $score['level'] ]['label'] ); ?></span></p>
 			<h2 data-ssc-kline><?php echo esc_html( $ssc_levels[ $score['level'] ]['line'] ); ?></h2>
-			<p class="ssc-khero__ready <?php echo $score['ready'] ? 'is-ready' : ''; ?>" data-ssc-kready>
-				<?php echo SSC_Icons::get( 'check', 'ssc-khero__yes' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?>
-				<?php echo SSC_Icons::get( 'info', 'ssc-khero__no' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?>
+			<p class="ssc-hhero__ready <?php echo $score['ready'] ? 'is-ready' : ''; ?>" data-ssc-kready>
+				<?php echo SSC_Icons::get( 'check', 'ssc-hhero__yes' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?>
+				<?php echo SSC_Icons::get( 'info', 'ssc-hhero__no' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?>
 				<span><?php echo esc_html( $score['ready'] ? $ssc_fmt['ready_yes'] : $ssc_fmt['ready_no'] ); ?></span>
 			</p>
 		</div>
 		<?php if ( $score['steps'] ) : ?>
-			<div class="ssc-khero__steps">
+			<div class="ssc-hhero__steps">
 				<h3><?php esc_html_e( 'Best next steps', 'nexachat-ai' ); ?></h3>
 				<ul>
 					<?php foreach ( $score['steps'] as $ssc_step ) : ?>
 						<li>
-							<a href="#<?php echo esc_attr( $ssc_step['panel'] ); ?>" data-ssc-kgo="<?php echo esc_attr( $ssc_step['panel'] ); ?>">
-								<span class="ssc-khero__stepico"><?php echo SSC_Icons::get( $ssc_meta[ $ssc_step['panel'] ]['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+							<a href="#<?php echo esc_attr( $ssc_step['panel'] ); ?>" data-ssc-hubgo="<?php echo esc_attr( $ssc_step['panel'] ); ?>">
+								<span class="ssc-hhero__stepico"><?php echo SSC_Icons::get( $ssc_meta[ $ssc_step['panel'] ]['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 								<span><?php echo esc_html( $ssc_step_text[ $ssc_step['id'] ] ); ?></span>
 								<?php if ( $ssc_step['gain'] > 0 ) : ?>
 									<em>+<?php echo esc_html( (string) $ssc_step['gain'] ); ?>%</em>
@@ -411,32 +421,32 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 		<?php endif; ?>
 	</section>
 
-	<nav class="ssc-ktiles" role="tablist" aria-label="<?php esc_attr_e( 'Knowledge sections', 'nexachat-ai' ); ?>" hidden>
+	<nav class="<?php echo esc_attr( SSC_Admin_UI::tiles_class( count( $ssc_order ) ) ); ?>" role="tablist" aria-label="<?php esc_attr_e( 'Knowledge sections', 'nexachat-ai' ); ?>" hidden>
 		<?php foreach ( $ssc_order as $ssc_id ) : ?>
-			<button type="button" role="tab" class="ssc-ktile<?php echo 'website' === $ssc_id && ! $ssc_site_on ? ' is-locked' : ''; ?>" id="ssc-ktab-<?php echo esc_attr( $ssc_id ); ?>" data-ssc-ktab="<?php echo esc_attr( $ssc_id ); ?>" aria-controls="ssc-kpanel-<?php echo esc_attr( $ssc_id ); ?>" aria-selected="false">
-				<span class="ssc-ktile__ico"><?php echo SSC_Icons::get( $ssc_meta[ $ssc_id ]['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
-				<span class="ssc-ktile__txt">
+			<button type="button" role="tab" class="ssc-htile<?php echo 'website' === $ssc_id && ! $ssc_site_on ? ' is-locked' : ''; ?>" id="ssc-htab-<?php echo esc_attr( $ssc_id ); ?>" data-ssc-hubtab="<?php echo esc_attr( $ssc_id ); ?>" data-ssc-hue="<?php echo esc_attr( $ssc_hues[ $ssc_id ] ); ?>" aria-controls="ssc-hpanel-<?php echo esc_attr( $ssc_id ); ?>" aria-selected="false">
+				<span class="ssc-htile__ico"><?php echo SSC_Icons::get( $ssc_meta[ $ssc_id ]['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+				<span class="ssc-htile__txt">
 					<strong><?php echo esc_html( $ssc_meta[ $ssc_id ]['title'] ); ?></strong>
 					<small<?php echo isset( $score['panels'][ $ssc_id ] ) ? ' data-ssc-kstatus="' . esc_attr( $ssc_id ) . '"' : ''; ?>><?php echo esc_html( isset( $score['panels'][ $ssc_id ] ) ? $ssc_status( $ssc_id ) : $ssc_meta[ $ssc_id ]['tile'] ); ?></small>
 				</span>
 				<?php if ( 'ai' === $ssc_id ) : ?>
-					<span class="ssc-ktile__badge"><?php echo SSC_Icons::get( 'sparkles' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					<span class="ssc-htile__badge"><?php echo SSC_Icons::get( 'sparkles' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 				<?php elseif ( $score['panels'][ $ssc_id ]['locked'] ) : ?>
-					<span class="ssc-ktile__badge"><?php echo SSC_Icons::get( 'lock' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					<span class="ssc-htile__badge"><?php echo SSC_Icons::get( 'lock' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 				<?php else : ?>
-					<span class="ssc-ktile__ring" data-ssc-kring="<?php echo esc_attr( $ssc_id ); ?>"><?php echo SSC_Icons::ring( (int) round( 100 * $score['panels'][ $ssc_id ]['ratio'] ), $ssc_ring_class( $ssc_id ), $ssc_meta[ $ssc_id ]['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?></span>
+					<span class="ssc-htile__ring" data-ssc-kring="<?php echo esc_attr( $ssc_id ); ?>"><?php echo SSC_Icons::ring( (int) round( 100 * $score['panels'][ $ssc_id ]['ratio'] ), $ssc_ring_class( $ssc_id ), $ssc_meta[ $ssc_id ]['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?></span>
 				<?php endif; ?>
 			</button>
 		<?php endforeach; ?>
 	</nav>
 
-	<div class="ssc-kpanels">
+	<div class="ssc-hpanels">
 		<form method="post" class="ssc-form ssc-kform" id="ssc-kform">
 			<?php wp_nonce_field( 'ssc_knowledge' ); ?>
 			<input type="hidden" name="ssc_knowledge_save" value="1" />
-			<input type="hidden" name="ssc_panel" value="<?php echo esc_attr( $initial ); ?>" data-ssc-kpanelfield />
+			<input type="hidden" name="ssc_panel" value="<?php echo esc_attr( $initial ); ?>" data-ssc-hubfield />
 
-			<section class="ssc-card ssc-kpanel" id="ssc-kpanel-identity" role="tabpanel" aria-labelledby="ssc-ktab-identity" data-ssc-kpanel="identity" data-ssc-form="1">
+			<section class="ssc-card ssc-hpanel" id="ssc-hpanel-identity" role="tabpanel" aria-labelledby="ssc-htab-identity" data-ssc-hubpanel="identity" data-ssc-hue="blue" data-ssc-form="1">
 				<?php $ssc_head( 'identity' ); ?>
 				<div class="ssc-grid ssc-grid--2">
 					<?php
@@ -450,7 +460,7 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 				</div>
 			</section>
 
-			<section class="ssc-card ssc-kpanel" id="ssc-kpanel-contact" role="tabpanel" aria-labelledby="ssc-ktab-contact" data-ssc-kpanel="contact" data-ssc-form="1">
+			<section class="ssc-card ssc-hpanel" id="ssc-hpanel-contact" role="tabpanel" aria-labelledby="ssc-htab-contact" data-ssc-hubpanel="contact" data-ssc-hue="green" data-ssc-form="1">
 				<?php $ssc_head( 'contact' ); ?>
 				<div class="ssc-grid ssc-grid--2">
 					<?php
@@ -465,7 +475,7 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 				</div>
 			</section>
 
-			<section class="ssc-card ssc-kpanel" id="ssc-kpanel-persona" role="tabpanel" aria-labelledby="ssc-ktab-persona" data-ssc-kpanel="persona" data-ssc-form="1">
+			<section class="ssc-card ssc-hpanel" id="ssc-hpanel-persona" role="tabpanel" aria-labelledby="ssc-htab-persona" data-ssc-hubpanel="persona" data-ssc-hue="violet" data-ssc-form="1">
 				<?php $ssc_head( 'persona' ); ?>
 				<div class="ssc-grid ssc-grid--2">
 					<?php
@@ -473,7 +483,7 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 					$ssc_field( 'assistant_role', __( 'Assistant role', 'nexachat-ai' ), array( 'placeholder' => __( 'e.g. Customer support assistant', 'nexachat-ai' ) ) );
 					$ssc_field( 'language', __( 'Primary answer language', 'nexachat-ai' ), array( 'dir' => 'ltr', 'placeholder' => __( 'e.g. Persian', 'nexachat-ai' ) ) );
 					?>
-					<div class="ssc-field ssc-kfield">
+					<div class="ssc-field ssc-hfield">
 						<label for="b_tone"><?php esc_html_e( 'Communication tone', 'nexachat-ai' ); ?></label>
 						<select id="b_tone" name="business[tone]">
 							<?php foreach ( $ssc_tone_choices as $t_id => $t_label ) : ?>
@@ -484,7 +494,7 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 				</div>
 			</section>
 
-			<section class="ssc-card ssc-kpanel" id="ssc-kpanel-facts" role="tabpanel" aria-labelledby="ssc-ktab-facts" data-ssc-kpanel="facts" data-ssc-form="1" data-ssc-target="<?php echo esc_attr( (string) SSC_Knowledge_Score::panels()['facts']['target'] ); ?>">
+			<section class="ssc-card ssc-hpanel" id="ssc-hpanel-facts" role="tabpanel" aria-labelledby="ssc-htab-facts" data-ssc-hubpanel="facts" data-ssc-hue="amber" data-ssc-form="1" data-ssc-target="<?php echo esc_attr( (string) SSC_Knowledge_Score::panels()['facts']['target'] ); ?>">
 				<?php $ssc_head( 'facts' ); ?>
 				<div class="ssc-kstarters">
 					<span><?php esc_html_e( 'Start from an example:', 'nexachat-ai' ); ?></span>
@@ -497,15 +507,15 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 					$ssc_fact_row( $ssc_i, $ssc_item );
 				}
 				?></div>
-				<div class="ssc-kempty">
-					<span class="ssc-kempty__ico"><?php echo SSC_Icons::get( 'book' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+				<div class="ssc-hempty">
+					<span class="ssc-hempty__ico"><?php echo SSC_Icons::get( 'book' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 					<p><strong><?php esc_html_e( 'No entries yet', 'nexachat-ai' ); ?></strong><br /><?php esc_html_e( 'An entry is one short fact. Pick an example above and just replace the text, or write your own.', 'nexachat-ai' ); ?></p>
 				</div>
 				<template id="ssc-ki-template"><?php $ssc_fact_row( 0, array(), true ); ?></template>
 				<button type="button" class="ssc-btn ssc-btn--ghost ssc-ki__add" data-target="#ssc-ki-list" data-template="#ssc-ki-template"><?php esc_html_e( '+ Add entry', 'nexachat-ai' ); ?></button>
 			</section>
 
-			<section class="ssc-card ssc-kpanel" id="ssc-kpanel-products" role="tabpanel" aria-labelledby="ssc-ktab-products" data-ssc-kpanel="products" data-ssc-form="1" data-ssc-target="<?php echo esc_attr( (string) SSC_Knowledge_Score::panels()['products']['target'] ); ?>">
+			<section class="ssc-card ssc-hpanel" id="ssc-hpanel-products" role="tabpanel" aria-labelledby="ssc-htab-products" data-ssc-hubpanel="products" data-ssc-hue="cyan" data-ssc-form="1" data-ssc-target="<?php echo esc_attr( (string) SSC_Knowledge_Score::panels()['products']['target'] ); ?>">
 				<?php $ssc_head( 'products' ); ?>
 				<?php $ssc_field( 'products', __( 'Products & services overview', 'nexachat-ai' ), array( 'rows' => 3, 'wide' => true, 'placeholder' => __( 'A short summary of everything you offer.', 'nexachat-ai' ) ) ); ?>
 				<div id="ssc-product-list" class="ssc-products ssc-klist" data-allow-empty="1" data-count="<?php echo esc_attr( (string) count( $products ) ); ?>"><?php
@@ -513,21 +523,21 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 					$ssc_product_row( $ssc_i, $ssc_p );
 				}
 				?></div>
-				<div class="ssc-kempty">
-					<span class="ssc-kempty__ico"><?php echo SSC_Icons::get( 'box' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+				<div class="ssc-hempty">
+					<span class="ssc-hempty__ico"><?php echo SSC_Icons::get( 'box' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 					<p><strong><?php esc_html_e( 'No products yet', 'nexachat-ai' ); ?></strong><br /><?php esc_html_e( 'When a visitor asks about a product, its summary and specifications are added to the answer. Add the ones people ask about most.', 'nexachat-ai' ); ?></p>
 				</div>
 				<template id="ssc-product-template"><?php $ssc_product_row( 0, array(), true ); ?></template>
 				<button type="button" class="ssc-btn ssc-btn--ghost ssc-product__add" data-target="#ssc-product-list" data-template="#ssc-product-template"><?php esc_html_e( '+ Add product', 'nexachat-ai' ); ?></button>
 			</section>
 
-			<div class="ssc-ksave" data-ssc-ksave>
-				<span class="ssc-ksave__state" data-ssc-kdirty hidden><span class="ssc-ksave__dot"></span> <?php esc_html_e( 'You have unsaved changes', 'nexachat-ai' ); ?></span>
+			<div class="ssc-hsave" data-ssc-hubsave>
+				<span class="ssc-hsave__state" data-ssc-hubdirty hidden><span class="ssc-hsave__dot"></span> <?php esc_html_e( 'You have unsaved changes', 'nexachat-ai' ); ?></span>
 				<button type="submit" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Save knowledge', 'nexachat-ai' ); ?></button>
 			</div>
 		</form>
 
-		<section class="ssc-card ssc-kpanel" id="ssc-kpanel-documents" role="tabpanel" aria-labelledby="ssc-ktab-documents" data-ssc-kpanel="documents">
+		<section class="ssc-card ssc-hpanel" id="ssc-hpanel-documents" role="tabpanel" aria-labelledby="ssc-htab-documents" data-ssc-hubpanel="documents" data-ssc-hue="rose">
 			<?php $ssc_head( 'documents' ); ?>
 			<p class="ssc-card__sub"><?php echo esc_html( sprintf( /* translators: 1: number of chunks, 2: number of documents. */ __( '%1$d chunks from %2$d documents. Relevant pieces are retrieved automatically per question.', 'nexachat-ai' ), $kb_count, count( $kb_docs ) ) ); ?></p>
 			<?php if ( $site_docs ) : ?>
@@ -567,8 +577,8 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 					<?php endforeach; ?>
 				</ul>
 			<?php else : ?>
-				<div class="ssc-kempty is-shown">
-					<span class="ssc-kempty__ico"><?php echo SSC_Icons::get( 'file' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+				<div class="ssc-hempty is-shown">
+					<span class="ssc-hempty__ico"><?php echo SSC_Icons::get( 'file' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 					<p><strong><?php esc_html_e( 'No documents yet', 'nexachat-ai' ); ?></strong><br /><?php esc_html_e( 'A brochure, a catalogue or a price list is the quickest way to teach the assistant a lot at once.', 'nexachat-ai' ); ?></p>
 				</div>
 			<?php endif; ?>
@@ -604,7 +614,7 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 			</details>
 		</section>
 
-		<section class="ssc-card ssc-kpanel" id="ssc-kpanel-website" role="tabpanel" aria-labelledby="ssc-ktab-website" data-ssc-kpanel="website">
+		<section class="ssc-card ssc-hpanel" id="ssc-hpanel-website" role="tabpanel" aria-labelledby="ssc-htab-website" data-ssc-hubpanel="website" data-ssc-hue="teal">
 			<?php $ssc_head( 'website' ); ?>
 			<?php if ( $ssc_site_on ) : ?>
 				<?php
@@ -643,14 +653,14 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 				</form>
 			<?php else : ?>
 				<div class="ssc-klocked">
-					<span class="ssc-kempty__ico"><?php echo SSC_Icons::get( 'lock' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					<span class="ssc-hempty__ico"><?php echo SSC_Icons::get( 'lock' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 					<p><strong><?php esc_html_e( 'This is an optional module', 'nexachat-ai' ); ?></strong><br /><?php esc_html_e( 'Switch on “Learn from my website” and your published pages, posts and products become knowledge automatically, and stay up to date.', 'nexachat-ai' ); ?></p>
 					<a class="ssc-btn ssc-btn--primary" href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-modules' ) ); ?>"><?php esc_html_e( 'Open Modules', 'nexachat-ai' ); ?></a>
 				</div>
 			<?php endif; ?>
 		</section>
 
-		<section class="ssc-card ssc-kpanel" id="ssc-kpanel-ai" role="tabpanel" aria-labelledby="ssc-ktab-ai" data-ssc-kpanel="ai">
+		<section class="ssc-card ssc-hpanel" id="ssc-hpanel-ai" role="tabpanel" aria-labelledby="ssc-htab-ai" data-ssc-hubpanel="ai" data-ssc-hue="indigo">
 			<?php $ssc_head( 'ai' ); ?>
 			<?php if ( ! is_array( $ssc_suggest ) ) : ?>
 				<p class="ssc-card__sub"><?php esc_html_e( 'The AI reads your business profile, knowledge and pages, then proposes the questions visitors are most likely to ask (answered only from your material) and a name, role and welcome text for the assistant. You review everything before it is added.', 'nexachat-ai' ); ?></p>

@@ -1,6 +1,7 @@
 <?php
 /**
- * Conversations view (history module).
+ * Conversations (history module): summary tiles, source and rating chips,
+ * and the exchanges. One whole conversation is read without the summary.
  *
  * @package SmartSupportChatbot
  * @var array $result  Rows.
@@ -10,8 +11,30 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+$ssc_whole   = '' !== $filters['conv'];
+$ssc_totals  = $ssc_whole ? array( 'total' => 0, 'sources' => array(), 'up' => 0, 'down' => 0 ) : SSC_Schema::chatlog_counts();
+$ssc_sources = array(
+	'ai'         => array( __( 'AI', 'nexachat-ai' ), 'blue' ),
+	'bank'       => array( __( 'FAQ bank', 'nexachat-ai' ), 'violet' ),
+	'cache'      => array( __( 'Cache', 'nexachat-ai' ), 'slate' ),
+	'unanswered' => array( __( 'Unanswered', 'nexachat-ai' ), 'amber' ),
+);
+$ssc_unanswered = isset( $ssc_totals['sources']['unanswered'] ) ? (int) $ssc_totals['sources']['unanswered'] : 0;
+$ssc_answered   = $ssc_totals['total'] > 0 ? (int) round( 100 * ( $ssc_totals['total'] - $ssc_unanswered ) / $ssc_totals['total'] ) : 0;
+$ssc_filtered   = '' !== $filters['source'] || '' !== $filters['rating'];
+$ssc_url        = function ( $source, $rating ) {
+	return add_query_arg(
+		array(
+			'page'   => 'ssc-conversations',
+			'source' => $source,
+			'rating' => $rating,
+		),
+		admin_url( 'admin.php' )
+	);
+};
 ?>
-<div class="ssc-page">
+<div class="ssc-page ssc-conversations">
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php esc_html_e( 'Conversations', 'nexachat-ai' ); ?></h1>
@@ -20,27 +43,76 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</header>
 
 	<?php if ( '' !== $filters['conv'] ) : ?>
-		<div class="notice notice-info inline"><p><?php esc_html_e( 'Showing one whole conversation, oldest message first.', 'nexachat-ai' ); ?> <a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ssc-conversations' ), admin_url( 'admin.php' ) ) ); ?>"><?php esc_html_e( 'Back to all conversations', 'nexachat-ai' ); ?></a></p></div>
+		<div class="ssc-notice ssc-notice--info" role="status"><?php esc_html_e( 'Showing one whole conversation, oldest message first.', 'nexachat-ai' ); ?> <a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ssc-conversations' ), admin_url( 'admin.php' ) ) ); ?>"><?php esc_html_e( 'Back to all conversations', 'nexachat-ai' ); ?></a></div>
 	<?php endif; ?>
 
-	<form method="get" class="ssc-filterbar">
-		<input type="hidden" name="page" value="ssc-conversations" />
-		<select name="source" aria-label="<?php esc_attr_e( 'Answer source', 'nexachat-ai' ); ?>">
-			<option value=""><?php esc_html_e( 'All sources', 'nexachat-ai' ); ?></option>
-			<?php foreach ( array( 'ai' => __( 'AI', 'nexachat-ai' ), 'bank' => __( 'FAQ bank', 'nexachat-ai' ), 'cache' => __( 'Cache', 'nexachat-ai' ), 'unanswered' => __( 'Unanswered', 'nexachat-ai' ) ) as $src => $src_label ) : ?>
-				<option value="<?php echo esc_attr( $src ); ?>" <?php selected( $filters['source'], $src ); ?>><?php echo esc_html( $src_label ); ?></option>
-			<?php endforeach; ?>
-		</select>
-		<select name="rating" aria-label="<?php esc_attr_e( 'Rating', 'nexachat-ai' ); ?>">
-			<option value=""><?php esc_html_e( 'Any rating', 'nexachat-ai' ); ?></option>
-			<option value="1" <?php selected( $filters['rating'], '1' ); ?>>👍</option>
-			<option value="-1" <?php selected( $filters['rating'], '-1' ); ?>>👎</option>
-		</select>
-		<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Filter', 'nexachat-ai' ); ?></button>
-	</form>
+	<?php if ( ! $ssc_whole ) : ?>
+		<section class="ssc-hstats">
+			<?php
+			SSC_Admin_UI::stat( 'chat', 'cyan', number_format_i18n( $ssc_totals['total'] ), __( 'Exchanges', 'nexachat-ai' ) );
+			SSC_Admin_UI::stat( 'check', 'violet', $ssc_answered . '%', __( 'Answered', 'nexachat-ai' ), $ssc_url( '', '' ), $ssc_answered );
+			SSC_Admin_UI::stat( 'heart', 'green', number_format_i18n( $ssc_totals['up'] ), __( 'Helpful', 'nexachat-ai' ), $ssc_url( '', '1' ) );
+			SSC_Admin_UI::stat( 'alert', 'red', number_format_i18n( $ssc_totals['down'] ), __( 'Not helpful', 'nexachat-ai' ), $ssc_url( '', '-1' ) );
+			?>
+		</section>
+
+		<?php
+		$ssc_chips = array(
+			array(
+				'label'  => __( 'All sources', 'nexachat-ai' ),
+				'url'    => $ssc_url( '', $filters['rating'] ),
+				'count'  => $ssc_totals['total'],
+				'active' => '' === $filters['source'],
+				'hue'    => 'indigo',
+			),
+		);
+		foreach ( $ssc_sources as $ssc_key => $ssc_src ) {
+			$ssc_chips[] = array(
+				'label'  => $ssc_src[0],
+				'url'    => $ssc_url( $ssc_key, $filters['rating'] ),
+				'count'  => isset( $ssc_totals['sources'][ $ssc_key ] ) ? $ssc_totals['sources'][ $ssc_key ] : 0,
+				'active' => $ssc_key === $filters['source'],
+				'hue'    => $ssc_src[1],
+			);
+		}
+		SSC_Admin_UI::chips( $ssc_chips, __( 'Answer source', 'nexachat-ai' ) );
+		SSC_Admin_UI::chips(
+			array(
+				array(
+					'label'  => __( 'Any rating', 'nexachat-ai' ),
+					'url'    => $ssc_url( $filters['source'], '' ),
+					'count'  => null,
+					'active' => '' === $filters['rating'],
+					'hue'    => 'slate',
+				),
+				array(
+					'label'  => '👍', // phpcs:ignore WordPress.Security.EscapeOutput.EmojiNotSupported -- admin UI.
+					'url'    => $ssc_url( $filters['source'], '1' ),
+					'count'  => null,
+					'active' => '1' === $filters['rating'],
+					'hue'    => 'green',
+				),
+				array(
+					'label'  => '👎', // phpcs:ignore WordPress.Security.EscapeOutput.EmojiNotSupported -- admin UI.
+					'url'    => $ssc_url( $filters['source'], '-1' ),
+					'count'  => null,
+					'active' => '-1' === $filters['rating'],
+					'hue'    => 'red',
+				),
+			),
+			__( 'Rating', 'nexachat-ai' )
+		);
+		?>
+	<?php endif; ?>
 
 	<?php if ( empty( $result['items'] ) ) : ?>
-		<div class="ssc-empty"><p><?php esc_html_e( 'No conversations stored yet.', 'nexachat-ai' ); ?></p></div>
+		<?php
+		if ( $ssc_filtered ) {
+			SSC_Admin_UI::empty_state( 'search', 'slate', __( 'Nothing matches these filters', 'nexachat-ai' ), __( 'Try another source or rating.', 'nexachat-ai' ), __( 'Show all conversations', 'nexachat-ai' ), add_query_arg( 'page', 'ssc-conversations', admin_url( 'admin.php' ) ) );
+		} else {
+			SSC_Admin_UI::empty_state( 'chat', 'cyan', __( 'No conversations stored yet', 'nexachat-ai' ), __( 'Once visitors chat with the assistant, every exchange is listed here for you to review.', 'nexachat-ai' ) );
+		}
+		?>
 	<?php else : ?>
 		<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--wide">
 			<thead>

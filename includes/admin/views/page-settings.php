@@ -34,26 +34,60 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 	<?php endif; ?>
 
 	<?php
-	$ssc_tabs = array(
-		'privacy'    => __( 'Privacy', 'nexachat-ai' ),
-		'display'    => __( 'Display & hours', 'nexachat-ai' ),
-		'protection' => __( 'Protection', 'nexachat-ai' ),
-		'modules'    => __( 'Modules', 'nexachat-ai' ),
-		'data'       => __( 'Data tools', 'nexachat-ai' ),
+	$ssc_levels_txt = array(
+		'ip'        => __( 'Anonymize visitor IP addresses', 'nexachat-ai' ),
+		'policy'    => __( 'Add a link to your privacy policy', 'nexachat-ai' ),
+		'consent'   => __( 'Require consent before storing contact data', 'nexachat-ai' ),
+		'retention' => __( 'Limit how long conversations are kept', 'nexachat-ai' ),
+		'ratelimit' => __( 'Turn rate limiting back on', 'nexachat-ai' ),
+		'proxy'     => __( 'Set the trusted proxy header: your site is behind a proxy', 'nexachat-ai' ),
+		'https'     => __( 'Serve your site over HTTPS', 'nexachat-ai' ),
+		'crypto'    => __( 'Fix server encryption (OpenSSL and AUTH_KEY)', 'nexachat-ai' ),
 	);
+	$ssc_has_mod_settings = $mod_count > 0;
 	?>
-	<nav class="ssc-tabs" role="tablist" aria-label="<?php esc_attr_e( 'Settings sections', 'nexachat-ai' ); ?>" hidden>
-		<?php foreach ( $ssc_tabs as $ssc_tab_id => $ssc_tab_label ) : ?>
-			<button type="button" role="tab" class="ssc-tabs__tab" id="ssc-tab-<?php echo esc_attr( $ssc_tab_id ); ?>" data-tab="<?php echo esc_attr( $ssc_tab_id ); ?>" aria-selected="false"><?php echo esc_html( $ssc_tab_label ); ?></button>
-		<?php endforeach; ?>
+	<div class="ssc-hub-wrap" data-ssc-hub="settings" data-initial="privacy">
+	<section class="ssc-card ssc-hhero ssc-hhero--compact">
+		<div class="ssc-hhero__ring">
+			<?php echo SSC_Icons::ring( $health['percent'], 'ssc-ring--lg' . ( $health['percent'] >= 100 ? ' is-ok' : '' ), __( 'Privacy and protection health', 'nexachat-ai' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?>
+		</div>
+		<div class="ssc-hhero__main">
+			<p class="ssc-hhero__level"><span><?php esc_html_e( 'Privacy & protection', 'nexachat-ai' ); ?></span></p>
+			<h2><?php echo esc_html( $health['percent'] >= 100 ? __( 'Everything recommended is in place.', 'nexachat-ai' ) : __( 'A few settings are worth a look.', 'nexachat-ai' ) ); ?></h2>
+			<p class="ssc-hhero__sub"><?php esc_html_e( 'Security and privacy controls are always active. This only checks the choices that are yours.', 'nexachat-ai' ); ?></p>
+		</div>
+		<?php if ( $health['steps'] ) : ?>
+			<div class="ssc-hhero__steps">
+				<h3><?php esc_html_e( 'Worth a look', 'nexachat-ai' ); ?></h3>
+				<ul>
+					<?php foreach ( $health['steps'] as $ssc_step ) : ?>
+						<li><a href="#<?php echo esc_attr( $ssc_step['panel'] ); ?>" data-ssc-hubgo="<?php echo esc_attr( $ssc_step['panel'] ); ?>"><span class="ssc-hhero__stepico"><?php echo SSC_Icons::get( 'privacy' === $ssc_step['panel'] ? 'shield' : 'lock' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span><span><?php echo esc_html( $ssc_levels_txt[ $ssc_step['id'] ] ); ?></span></a></li>
+					<?php endforeach; ?>
+				</ul>
+			</div>
+		<?php endif; ?>
+	</section>
+
+	<nav class="<?php echo esc_attr( SSC_Admin_UI::tiles_class( $ssc_has_mod_settings ? 5 : 4 ) ); ?>" role="tablist" aria-label="<?php esc_attr_e( 'Settings sections', 'nexachat-ai' ); ?>" hidden>
+		<?php
+		SSC_Admin_UI::tile( array( 'id' => 'privacy', 'hue' => 'blue', 'icon' => 'shield', 'title' => __( 'Privacy', 'nexachat-ai' ), 'status' => $tiles['privacy'] ) );
+		SSC_Admin_UI::tile( array( 'id' => 'display', 'hue' => 'green', 'icon' => 'eye', 'title' => __( 'Display & hours', 'nexachat-ai' ), 'status' => $tiles['display'] ) );
+		SSC_Admin_UI::tile( array( 'id' => 'protection', 'hue' => 'red', 'icon' => 'lock', 'title' => __( 'Protection', 'nexachat-ai' ), 'status' => $tiles['protection'] ) );
+		if ( $ssc_has_mod_settings ) {
+			SSC_Admin_UI::tile( array( 'id' => 'modules', 'hue' => 'violet', 'icon' => 'puzzle', 'title' => __( 'Modules', 'nexachat-ai' ), 'status' => $tiles['modules'] ) );
+		}
+		SSC_Admin_UI::tile( array( 'id' => 'data', 'hue' => 'slate', 'icon' => 'database', 'title' => __( 'Data tools', 'nexachat-ai' ), 'status' => $tiles['data'] ) );
+		?>
 	</nav>
 
-	<form method="post" class="ssc-form">
+	<div class="ssc-hpanels">
+	<form method="post" class="ssc-form" id="ssc-sform" data-ssc-hubform>
 		<?php wp_nonce_field( 'ssc_settings' ); ?>
 		<input type="hidden" name="ssc_settings_save" value="1" />
 
+		<?php SSC_Admin_UI::panel_open( 'privacy', 'blue', 'shield', __( 'Privacy', 'nexachat-ai' ), __( 'What is stored about visitors, for how long, and what they are told.', 'nexachat-ai' ) ); ?>
 		<?php if ( SSC_Modules::is_active( 'pharma' ) ) : ?>
-		<section data-ssc-tab="privacy" class="ssc-card">
+		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Pharmaceutical answer policy', 'nexachat-ai' ); ?></h2>
 			<div class="ssc-field">
 				<label for="pharma_answer_mode"><?php esc_html_e( 'Allowed information sources', 'nexachat-ai' ); ?></label>
@@ -66,7 +100,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 		</section>
 		<?php endif; ?>
 
-		<section data-ssc-tab="privacy" class="ssc-card">
+		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Privacy & consent', 'nexachat-ai' ); ?></h2>
 			<p class="ssc-card__sub"><?php esc_html_e( 'Applies to every form. Conversations are logged for quality review while the History module is on (the widget says so); browser transcripts and shared answer caching are disabled in pharmaceutical mode. Submitted forms are stored independently of chat history.', 'nexachat-ai' ); ?></p>
 			<label class="ssc-check"><input type="checkbox" name="consent_enabled" value="yes" <?php checked( 'yes', $s['consent_enabled'] ); ?> /> <span><?php esc_html_e( 'Require explicit consent before storing contact data', 'nexachat-ai' ); ?></span></label>
@@ -105,7 +139,10 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			<label class="ssc-check"><input type="checkbox" name="chat_threads" value="yes" <?php checked( 'yes', $s['chat_threads'] ); ?> /> <span><?php esc_html_e( 'Signed-in users can reopen their previous conversations on any device', 'nexachat-ai' ); ?></span></label>
 		</section>
 
-		<section data-ssc-tab="display" class="ssc-card">
+		<?php SSC_Admin_UI::panel_close(); ?>
+
+		<?php SSC_Admin_UI::panel_open( 'display', 'green', 'eye', __( 'Display & hours', 'nexachat-ai' ), __( 'Where and when the assistant appears, and how it behaves.', 'nexachat-ai' ) ); ?>
+		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Where the widget appears', 'nexachat-ai' ); ?></h2>
 			<p class="ssc-card__sub"><?php esc_html_e( 'Pages that fail these rules never load the chatbot CSS or JS — better performance and cleaner analytics.', 'nexachat-ai' ); ?></p>
 			<div class="ssc-grid ssc-grid--2">
@@ -140,7 +177,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			</div>
 		</section>
 
-		<section data-ssc-tab="display" class="ssc-card">
+		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Business hours', 'nexachat-ai' ); ?></h2>
 			<p class="ssc-card__sub"><?php esc_html_e( 'Outside these hours the widget shows an offline notice. Forms still work so visitors can leave a message.', 'nexachat-ai' ); ?></p>
 			<label class="ssc-check"><input type="checkbox" name="business_hours_enabled" value="yes" <?php checked( 'yes', $s['business_hours_enabled'] ); ?> /> <span><?php esc_html_e( 'Limit availability to business hours', 'nexachat-ai' ); ?></span></label>
@@ -168,13 +205,16 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			</div>
 		</section>
 
-		<section data-ssc-tab="display" class="ssc-card">
+		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Widget behaviour', 'nexachat-ai' ); ?></h2>
 			<label class="ssc-check"><input type="checkbox" name="streaming_enabled" value="yes" <?php checked( 'yes', $s['streaming_enabled'] ); ?> /> <span><?php esc_html_e( 'Stream AI answers as they are generated (faster first word; OpenAI, Claude, Gemini and compatible providers)', 'nexachat-ai' ); ?></span></label>
 			<label class="ssc-check"><input type="checkbox" name="sound_enabled" value="yes" <?php checked( 'yes', $s['sound_enabled'] ); ?> /> <span><?php esc_html_e( 'Play a soft ping when a reply arrives while the chat is closed', 'nexachat-ai' ); ?></span></label>
 		</section>
 
-		<section data-ssc-tab="protection" class="ssc-card">
+		<?php SSC_Admin_UI::panel_close(); ?>
+
+		<?php SSC_Admin_UI::panel_open( 'protection', 'red', 'lock', __( 'Protection', 'nexachat-ai' ), __( 'Limits that keep bots and heavy use from costing you money.', 'nexachat-ai' ) ); ?>
+		<section class="ssc-card">
 			<h2><?php esc_html_e( 'Protection & limits', 'nexachat-ai' ); ?></h2>
 			<div class="ssc-grid ssc-grid--2">
 				<div class="ssc-field">
@@ -214,13 +254,16 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			</div>
 		</section>
 
+		<?php SSC_Admin_UI::panel_close(); ?>
+
+		<?php if ( $ssc_has_mod_settings ) : ?>
+		<?php SSC_Admin_UI::panel_open( 'modules', 'violet', 'puzzle', __( 'Modules', 'nexachat-ai' ), __( 'The options of the modules you switched on. Open one to change it.', 'nexachat-ai' ) ); ?>
 		<?php if ( SSC_Modules::is_active( 'pharma' ) ) : ?>
 			<?php
 			$adr_config  = SSC_Module_Pharma::form_config();
 			$adr_presets = SSC_Module_Pharma::presets();
 			?>
-			<section data-ssc-tab="modules" class="ssc-card" id="ssc-adr-form">
-				<h2><?php esc_html_e( 'Side-effect report form', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-pharma', SSC_Modules::get( 'pharma' )->icon(), __( 'Side-effect report form', 'nexachat-ai' ), 'rose' ); ?>
 				<p class="ssc-card__sub"><?php esc_html_e( 'Choose how long the form visitors fill in is. Reporter name, contact phone, product and the reaction description are always asked: without them a report is not a valid safety case.', 'nexachat-ai' ); ?></p>
 				<div class="ssc-grid ssc-grid--2">
 					<div class="ssc-field">
@@ -307,49 +350,44 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 					<?php endforeach; ?>
 				</div>
 				<button type="button" class="ssc-btn ssc-btn--ghost ssc-field__add" data-target="#ssc-adr-custom"><?php esc_html_e( '+ Add question', 'nexachat-ai' ); ?></button>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'voice' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card">
-				<h2><?php esc_html_e( 'Voice module', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-voice', SSC_Modules::get( 'voice' )->icon(), __( 'Voice module', 'nexachat-ai' ), 'blue' ); ?>
 				<label class="ssc-check"><input type="checkbox" name="voice_input" value="yes" <?php checked( 'yes', $s['voice_input'] ); ?> /> <span><?php esc_html_e( 'Microphone input', 'nexachat-ai' ); ?></span></label>
 				<label class="ssc-check"><input type="checkbox" name="voice_output" value="yes" <?php checked( 'yes', $s['voice_output'] ); ?> /> <span><?php esc_html_e( 'Read answers aloud', 'nexachat-ai' ); ?></span></label>
 				<div class="ssc-field">
 					<label for="voice_language"><?php esc_html_e( 'Recognition language (or "auto")', 'nexachat-ai' ); ?></label>
 					<input id="voice_language" name="voice_language" type="text" dir="ltr" value="<?php echo esc_attr( (string) $s['voice_language'] ); ?>" placeholder="auto / fa-IR / en-US" />
 				</div>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'history' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card">
-				<h2><?php esc_html_e( 'Conversation history module', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-history', SSC_Modules::get( 'history' )->icon(), __( 'Conversation history module', 'nexachat-ai' ), 'amber' ); ?>
 				<label class="ssc-check"><input type="checkbox" name="chatlog_enabled" value="yes" <?php checked( 'yes', $s['chatlog_enabled'] ); ?> /> <span><?php esc_html_e( 'Store conversations (needed for feedback, unanswered radar and quality review)', 'nexachat-ai' ); ?></span></label>
 				<label class="ssc-check"><input type="checkbox" name="chatlog_notice" value="yes" <?php checked( 'yes', $s['chatlog_notice'] ); ?> /> <span><?php esc_html_e( 'Tell visitors in the chat window that conversations are saved', 'nexachat-ai' ); ?></span></label>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'csat' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card">
-				<h2><?php esc_html_e( 'Satisfaction survey module', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-csat', SSC_Modules::get( 'csat' )->icon(), __( 'Satisfaction survey module', 'nexachat-ai' ), 'amber' ); ?>
 				<label class="ssc-check"><input type="checkbox" name="csat_enabled" value="yes" <?php checked( 'yes', $s['csat_enabled'] ); ?> /> <span><?php esc_html_e( 'Show the end-of-conversation survey', 'nexachat-ai' ); ?></span></label>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'handoff' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card">
-				<h2><?php esc_html_e( 'Human handoff module', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-handoff', SSC_Modules::get( 'handoff' )->icon(), __( 'Human handoff module', 'nexachat-ai' ), 'violet' ); ?>
 				<div class="ssc-field">
 					<label for="handoff_text"><?php esc_html_e( 'Handoff message', 'nexachat-ai' ); ?></label>
 					<textarea id="handoff_text" name="handoff_text" rows="2"><?php echo esc_textarea( (string) $s['handoff_text'] ); ?></textarea>
 				</div>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'proactive' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card">
-				<h2><?php esc_html_e( 'Proactive invitation module', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-proactive', SSC_Modules::get( 'proactive' )->icon(), __( 'Proactive invitation module', 'nexachat-ai' ), 'blue' ); ?>
 				<div class="ssc-grid ssc-grid--2">
 					<div class="ssc-field">
 						<label for="proactive_delay"><?php esc_html_e( 'Delay before showing (seconds)', 'nexachat-ai' ); ?></label>
@@ -377,12 +415,11 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 					<textarea id="proactive_rules" name="proactive_rules" rows="3" dir="auto" placeholder="/pricing* | Questions about plans? Ask me!&#10;/product/* | Need help choosing?"><?php echo esc_textarea( (string) $s['proactive_rules'] ); ?></textarea>
 					<p class="ssc-field__hint"><?php esc_html_e( 'The first matching path wins; * matches anything. Pages without a match use the invitation text above. Use "-" as the message to show no invitation on those pages.', 'nexachat-ai' ); ?></p>
 				</div>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'leads' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card">
-				<h2><?php esc_html_e( 'Request form module', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-leads', SSC_Modules::get( 'leads' )->icon(), __( 'Request form module', 'nexachat-ai' ), 'green' ); ?>
 				<p class="ssc-card__sub"><?php esc_html_e( 'Custom fields for the consultation form. Server-side validation is generated from this definition.', 'nexachat-ai' ); ?></p>
 				<div id="ssc-fields-list" class="ssc-fields">
 					<?php $fields = SSC_Settings::form_fields(); ?>
@@ -404,13 +441,12 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 					<?php endforeach; ?>
 				</div>
 				<button type="button" class="ssc-btn ssc-btn--ghost ssc-field__add" data-target="#ssc-fields-list"><?php esc_html_e( '+ Add field', 'nexachat-ai' ); ?></button>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'notifications' ) || SSC_Modules::is_active( 'live' ) || SSC_Modules::is_active( 'messenger' ) ) : ?>
 			<?php $ssc_bot_status = get_transient( 'ssc_messenger_status' ); ?>
-			<section data-ssc-tab="modules" class="ssc-card" id="ssc-bot">
-				<h2><?php esc_html_e( 'Bale / Telegram bot', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-bot', SSC_Modules::get( 'notifications' )->icon(), __( 'Bale / Telegram bot', 'nexachat-ai' ), 'violet' ); ?>
 				<p class="ssc-card__sub"><?php esc_html_e( 'One bot serves alerts, operator replies and customer chats. Create it with @BotFather (Telegram) or @botfather in Bale, then paste its token here. On servers inside Iran use Bale: Telegram is not reachable from there.', 'nexachat-ai' ); ?></p>
 				<div class="ssc-grid ssc-grid--2">
 					<div class="ssc-field">
@@ -442,12 +478,11 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 					<?php endif; ?>
 					<button type="submit" name="ssc_messenger_connect" value="1" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Save and connect the bot', 'nexachat-ai' ); ?></button>
 				<?php endif; ?>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'live' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card" id="ssc-live-settings">
-				<h2><?php esc_html_e( 'Live chat module', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-live', SSC_Modules::get( 'live' )->icon(), __( 'Live chat module', 'nexachat-ai' ), 'violet' ); ?>
 				<p class="ssc-card__sub"><?php esc_html_e( 'Administrators can always answer. Choose other team members who may answer chats, too; each operator can connect their own Bale/Telegram account on the Live chat screen.', 'nexachat-ai' ); ?></p>
 				<?php
 				$ssc_candidates = get_users(
@@ -498,12 +533,11 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 					<label for="live_canned"><?php esc_html_e( 'Saved replies (one per line)', 'nexachat-ai' ); ?></label>
 					<textarea id="live_canned" name="live_canned" rows="4" dir="auto"><?php echo esc_textarea( (string) $s['live_canned'] ); ?></textarea>
 				</div>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'woocommerce' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card" id="ssc-woo-settings">
-				<h2><?php esc_html_e( 'WooCommerce sales assistant', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-woocommerce', SSC_Modules::get( 'woocommerce' )->icon(), __( 'WooCommerce sales assistant', 'nexachat-ai' ), 'green' ); ?>
 				<?php if ( ! SSC_Module_Woo::wc() ) : ?>
 					<p class="ssc-notice ssc-notice--warn"><?php esc_html_e( 'WooCommerce is not active on this site, so this module has nothing to do yet.', 'nexachat-ai' ); ?></p>
 				<?php endif; ?>
@@ -574,13 +608,12 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 					<label for="woo_abandoned_text"><?php esc_html_e( 'Reminder text ({site}, {items}, {total}, {cart_url})', 'nexachat-ai' ); ?></label>
 					<textarea id="woo_abandoned_text" name="woo_abandoned_text" rows="2" dir="auto" placeholder="<?php echo esc_attr( SSC_Module_Woo::reminder_text( array( 'cart' => '[]', 'total' => '' ) ) ); ?>"><?php echo esc_textarea( (string) $s['woo_abandoned_text'] ); ?></textarea>
 				</div>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'sms' ) ) : ?>
 			<?php $ssc_sms_status = get_transient( 'ssc_sms_status' ); ?>
-			<section data-ssc-tab="modules" class="ssc-card" id="ssc-sms-settings">
-				<h2><?php esc_html_e( 'SMS module', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-sms', SSC_Modules::get( 'sms' )->icon(), __( 'SMS module', 'nexachat-ai' ), 'violet' ); ?>
 				<div class="ssc-grid ssc-grid--2">
 					<div class="ssc-field">
 						<label for="sms_provider"><?php esc_html_e( 'SMS panel', 'nexachat-ai' ); ?></label>
@@ -618,12 +651,11 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 					<p class="ssc-notice <?php echo empty( $ssc_sms_status['ok'] ) ? 'ssc-notice--error' : 'ssc-notice--success'; ?>" dir="auto"><?php echo esc_html( (string) $ssc_sms_status['text'] ); ?></p>
 				<?php endif; ?>
 				<button type="submit" name="ssc_sms_test" value="1" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Save and send a test SMS', 'nexachat-ai' ); ?></button>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'messenger' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card" id="ssc-messenger-settings">
-				<h2><?php esc_html_e( 'Messenger bot module', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-messenger', SSC_Modules::get( 'messenger' )->icon(), __( 'Messenger bot module', 'nexachat-ai' ), 'violet' ); ?>
 				<p class="ssc-card__sub"><?php esc_html_e( 'Customers open your bot and chat with the assistant: same knowledge, same rules and limits as the website chat. Share the bot link on your site, Instagram bio and invoices.', 'nexachat-ai' ); ?></p>
 				<?php $ssc_me = SSC_Messenger::ready() ? SSC_Messenger::bot_info() : array(); ?>
 				<?php if ( ! empty( $ssc_me['username'] ) ) : ?>
@@ -639,12 +671,11 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 				<?php if ( SSC_Modules::is_active( 'live' ) ) : ?>
 					<p class="ssc-field__hint"><?php esc_html_e( 'With Live chat on, these chats appear in the Live chat inbox and customers can ask for a person with the button or /human.', 'nexachat-ai' ); ?></p>
 				<?php endif; ?>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( SSC_Modules::is_active( 'notifications' ) ) : ?>
-			<section data-ssc-tab="modules" class="ssc-card">
-				<h2><?php esc_html_e( 'Notifications module', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::acc_open( 'mod-notifications', SSC_Modules::get( 'notifications' )->icon(), __( 'Notifications module', 'nexachat-ai' ), 'violet' ); ?>
 				<div class="ssc-field">
 					<label for="notify_chat_id"><?php esc_html_e( 'Chat / channel ID for alerts', 'nexachat-ai' ); ?></label>
 					<input id="notify_chat_id" name="notify_chat_id" type="text" dir="ltr" value="<?php echo esc_attr( (string) $s['notify_chat_id'] ); ?>" />
@@ -655,16 +686,16 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 					<label for="notify_email_to"><?php esc_html_e( 'Email recipient (empty = site admin)', 'nexachat-ai' ); ?></label>
 					<input id="notify_email_to" name="notify_email_to" type="email" dir="ltr" value="<?php echo esc_attr( (string) $s['notify_email_to'] ); ?>" />
 				</div>
-			</section>
+			<?php SSC_Admin_UI::acc_close(); ?>
+		<?php endif; ?>
+		<?php SSC_Admin_UI::panel_close(); ?>
 		<?php endif; ?>
 
-		<div class="ssc-form__actions">
-			<button type="submit" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Save settings', 'nexachat-ai' ); ?></button>
-		</div>
+		<?php SSC_Admin_UI::save_bar( __( 'Save settings', 'nexachat-ai' ) ); ?>
 	</form>
 
-	<section data-ssc-tab="data" class="ssc-card ssc-mt">
-		<h2><?php esc_html_e( 'Data tools', 'nexachat-ai' ); ?></h2>
+	<?php SSC_Admin_UI::panel_open( 'data', 'slate', 'database', __( 'Data tools', 'nexachat-ai' ), __( 'Clear caches and decide what happens to your data when the plugin is deleted.', 'nexachat-ai' ), false ); ?>
+	<section class="ssc-card">
 		<p class="ssc-card__sub"><?php esc_html_e( 'To back up everything you set up, or to move it to another website, use Export & Import.', 'nexachat-ai' ); ?> <a href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-transfer' ) ); ?>"><?php esc_html_e( 'Open Export & Import', 'nexachat-ai' ); ?></a></p>
 		<form method="post">
 			<?php wp_nonce_field( 'ssc_tools' ); ?>
@@ -680,4 +711,7 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 			<button type="submit" class="ssc-btn ssc-btn--ghost ssc-btn--danger"><?php esc_html_e( 'Save data policy', 'nexachat-ai' ); ?></button>
 		</form>
 	</section>
+	<?php SSC_Admin_UI::panel_close(); ?>
+	</div>
+	</div>
 </div>

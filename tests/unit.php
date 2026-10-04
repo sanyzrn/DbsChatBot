@@ -16,6 +16,7 @@ foreach ( array( 'input', 'availability', 'http', 'provider', 'embeddings', 'dat
     require __DIR__ . '/../includes/core/class-ssc-' . $file . '.php';
 }
 require __DIR__ . '/../includes/admin/class-ssc-knowledge-score.php';
+require __DIR__ . '/../includes/admin/class-ssc-settings-health.php';
 foreach ( array( 'openai-compat', 'openai', 'claude', 'gemini' ) as $file ) {
     require __DIR__ . '/../includes/core/providers/class-ssc-provider-' . $file . '.php';
 }
@@ -222,5 +223,20 @@ $synced = SSC_Knowledge_Score::compute( array( 'business' => array(), 'items' =>
 check( ! $synced['panels']['website']['locked'] && 100 === $synced['weights'] && 3 === $synced['panels']['website']['filled'], 'With the website module on its pages count towards the score' );
 check( 'start' === SSC_Knowledge_Score::level_for( 24 ) && 'basic' === SSC_Knowledge_Score::level_for( 25 ) && 'good' === SSC_Knowledge_Score::level_for( 50 ) && 'great' === SSC_Knowledge_Score::level_for( 100 ), 'Level boundaries' );
 check( 5 === array_sum( array_map( function ( $p ) { return $p['weight']; }, array( array( 'weight' => 2 ), array( 'weight' => 3 ) ) ) ) && 100 === array_sum( array_column( SSC_Knowledge_Score::panels(), 'weight' ) ), 'Section weights add up to 100' );
+
+// Settings health: the ring at the top of the Settings screen.
+$safe_env = array( 'https' => true, 'crypto' => true, 'behind_proxy' => false, 'forms' => true, 'history' => true );
+$safe     = SSC_Settings_Health::compute( array( 'ip_storage' => 'anonymize', 'consent_link' => 'https://a.ir/privacy', 'consent_enabled' => 'yes', 'chatlog_retention_days' => 30, 'rate_limit_mode' => 'ip', 'trusted_proxy_header' => '' ), $safe_env );
+check( 100 === $safe['percent'] && array() === $safe['steps'], 'Everything protected scores 100 and has nothing to fix' );
+$open = SSC_Settings_Health::compute( array( 'ip_storage' => 'full', 'consent_link' => '', 'consent_enabled' => 'no', 'chatlog_retention_days' => 0, 'rate_limit_mode' => 'off', 'trusted_proxy_header' => '' ), array( 'https' => false, 'crypto' => false, 'behind_proxy' => false, 'forms' => true, 'history' => true ) );
+check( 0 === $open['percent'] && 3 === count( $open['steps'] ), 'Nothing protected scores 0 and lists at most three fixes' );
+check( 'ip' === $open['steps'][0]['id'] && 'privacy' === $open['steps'][0]['panel'], 'Fixes are listed in order and point at the section to open' );
+$not_applicable = SSC_Settings_Health::compute( array( 'ip_storage' => 'anonymize', 'consent_link' => 'https://a.ir/p', 'consent_enabled' => 'no', 'chatlog_retention_days' => 0, 'rate_limit_mode' => 'ip', 'trusted_proxy_header' => '' ), array( 'https' => true, 'crypto' => true, 'behind_proxy' => true, 'forms' => false, 'history' => false ) );
+$by_id = array();
+foreach ( $not_applicable['checks'] as $row ) { $by_id[ $row['id'] ] = $row; }
+check( ! $by_id['consent']['applicable'] && ! $by_id['retention']['applicable'] && $by_id['proxy']['applicable'] && ! $by_id['proxy']['ok'], 'Consent and retention only count when forms or history are on; the proxy check only behind a proxy' );
+check( 6 === count( array_filter( $not_applicable['checks'], function ( $row ) { return $row['applicable']; } ) ), 'Checks that do not apply are left out of the total' );
+check( 83 === $not_applicable['percent'] && 'proxy' === $not_applicable['steps'][0]['id'], 'A missed proxy header lowers the score and is the one thing to fix' );
+check( 80 === SSC_Settings_Health::compute( array(), array( 'https' => true, 'crypto' => true ) )['percent'], 'Missing settings fall back to the defaults (anonymised IPs, rate limit on) and only the privacy link is missing' );
 
 echo "$count unit checks passed.\n";

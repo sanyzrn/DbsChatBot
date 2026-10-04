@@ -238,12 +238,42 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 					<h2><?php esc_html_e( 'What should the assistant know?', 'nexachat-ai' ); ?></h2>
 					<p class="ssc-form__lede"><?php esc_html_e( 'Add the facts visitors usually ask about. No AI jargon needed — just type what you would tell a new employee.', 'nexachat-ai' ); ?></p>
 
+					<?php
+					$existing = (array) SSC_Settings::get( 'knowledge_items', array() );
+					$rows     = $existing ? $existing : array(
+						array( 'type' => 'general', 'title' => '', 'content' => '' ),
+					);
+					$ssc_filled = 0;
+					foreach ( $rows as $ssc_row ) {
+						if ( ! empty( $ssc_row['content'] ) && '' !== trim( (string) $ssc_row['content'] ) ) {
+							++$ssc_filled;
+						}
+					}
+					$ssc_goal    = 3;
+					$ssc_percent = (int) min( 100, round( 100 * $ssc_filled / $ssc_goal ) );
+					$ssc_starts  = array(
+						array( 'clock', 'general', __( 'Opening hours', 'nexachat-ai' ) ),
+						array( 'tag', 'product', __( 'Prices', 'nexachat-ai' ) ),
+						array( 'undo', 'policy', __( 'Return policy', 'nexachat-ai' ) ),
+						array( 'box', 'policy', __( 'Shipping & delivery', 'nexachat-ai' ) ),
+						array( 'phone', 'support', __( 'How to contact us', 'nexachat-ai' ) ),
+					);
+					?>
+					<div class="ssc-wk" data-ssc-wk data-goal="<?php echo esc_attr( (string) $ssc_goal ); ?>">
+						<div class="ssc-wk__progress">
+							<?php echo SSC_Icons::ring( $ssc_percent, 'ssc-ring--md' . ( $ssc_percent >= 100 ? ' is-ok' : '' ), __( 'Entries added', 'nexachat-ai' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?>
+							<p><strong data-ssc-wkcount><?php echo esc_html( sprintf( /* translators: 1: entries added, 2: entries suggested. */ __( '%1$d of %2$d entries added', 'nexachat-ai' ), min( $ssc_filled, $ssc_goal ), $ssc_goal ) ); ?></strong><span><?php esc_html_e( 'Three short entries are enough to start. You can add more any time in Business Knowledge.', 'nexachat-ai' ); ?></span></p>
+						</div>
+						<div class="ssc-wk__starters" role="group" aria-label="<?php esc_attr_e( 'Quick start: tap a topic to add it', 'nexachat-ai' ); ?>" hidden>
+							<span class="ssc-wk__startlabel"><?php esc_html_e( 'Quick start: tap a topic to add it', 'nexachat-ai' ); ?></span>
+							<?php foreach ( $ssc_starts as $ssc_start ) : ?>
+								<button type="button" class="ssc-chip ssc-wk__start" data-ssc-wkstart data-type="<?php echo esc_attr( $ssc_start[1] ); ?>" data-title="<?php echo esc_attr( $ssc_start[2] ); ?>" aria-pressed="false"><?php echo SSC_Icons::get( $ssc_start[0] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?><span><?php echo esc_html( $ssc_start[2] ); ?></span></button>
+							<?php endforeach; ?>
+						</div>
+					</div>
+
 					<div id="ssc-ki-list" class="ssc-ki-list">
 						<?php
-						$existing = (array) SSC_Settings::get( 'knowledge_items', array() );
-						$rows     = $existing ? $existing : array(
-							array( 'type' => 'general', 'title' => '', 'content' => '' ),
-						);
 						foreach ( $rows as $i => $item ) :
 							?>
 							<div class="ssc-ki">

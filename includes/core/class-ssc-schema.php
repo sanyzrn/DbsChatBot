@@ -957,6 +957,35 @@ class SSC_Schema {
 	}
 
 	/**
+	 * How many exchanges there are, by answer source and by rating (for the
+	 * summary and filter chips of the Conversations screen).
+	 *
+	 * @return array total, sources (source => n), up, down.
+	 */
+	public static function chatlog_counts() {
+		global $wpdb;
+		$table = self::chatlog_table_name();
+		$out   = array(
+			'total'   => 0,
+			'sources' => array(),
+			'up'      => 0,
+			'down'    => 0,
+		);
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- aggregates on the plugin's own table; no user input.
+		$rows = $wpdb->get_results( "SELECT source, COUNT(*) AS n FROM {$table} GROUP BY source", ARRAY_A );
+		if ( is_array( $rows ) ) {
+			foreach ( $rows as $row ) {
+				$out['sources'][ (string) $row['source'] ] = (int) $row['n'];
+				$out['total']                             += (int) $row['n'];
+			}
+		}
+		$out['up']   = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE rating > 0" );
+		$out['down'] = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE rating < 0" );
+		// phpcs:enable
+		return $out;
+	}
+
+	/**
 	 * Delete a chatlog row.
 	 *
 	 * @param int $id Row id.

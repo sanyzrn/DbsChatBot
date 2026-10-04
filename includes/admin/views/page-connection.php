@@ -1,6 +1,7 @@
 <?php
 /**
- * AI Connection view.
+ * AI Connection view: a status hero, four sections (engine, answers, web
+ * search, advanced) and one save bar.
  *
  * @package SmartSupportChatbot
  * @var array            $s            Settings.
@@ -14,11 +15,51 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$saved = isset( $_GET['saved'] ) ? (int) $_GET['saved'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+$saved        = isset( $_GET['saved'] ) ? (int) $_GET['saved'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
 $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
-$sel  = (string) $s['ai_provider'];
+$sel          = (string) $s['ai_provider'];
+$ssc_pharma   = SSC_Modules::is_active( 'pharma' );
+
+/* How far the connection is: an engine, its key, a passing test. "No engine" is a complete offline setup. */
+$ssc_needs_key = isset( $providers[ $sel ] ) && $providers[ $sel ]->needs_key();
+$ssc_has_key   = ! $ssc_needs_key || SSC_Settings::has_secret( $sel . '_api_key' );
+if ( 'none' === $sel ) {
+	$ssc_percent = 100;
+} else {
+	$ssc_percent = (int) round( 100 * ( 1 + ( $ssc_has_key ? 1 : 0 ) + ( $verified ? 1 : 0 ) ) / 3 );
+}
+$ssc_label = isset( $labels[ $sel ] ) ? $labels[ $sel ] : $sel;
+$ssc_model = 'none' !== $sel ? (string) SSC_Settings::get( $sel . '_model', '' ) : '';
+
+$ssc_provider_meta = array(
+	'none'       => array( 'shield', __( 'Answers from your knowledge only. Nothing leaves your server.', 'nexachat-ai' ) ),
+	'openai'     => array( 'cpu', __( 'GPT models. Your own API key.', 'nexachat-ai' ) ),
+	'gemini'     => array( 'sparkles', __( 'Google Gemini. Your own API key.', 'nexachat-ai' ) ),
+	'claude'     => array( 'chat', __( 'Anthropic Claude. Your own API key.', 'nexachat-ai' ) ),
+	'openrouter' => array( 'layers', __( 'Many models through one key.', 'nexachat-ai' ) ),
+	'custom'     => array( 'code', __( 'Any OpenAI-compatible endpoint, such as a local gateway.', 'nexachat-ai' ) ),
+	'webhook'    => array( 'link', __( 'Your own service, called with a signed request.', 'nexachat-ai' ) ),
+);
+$ssc_scope_labels = array(
+	'knowledge' => __( 'Only from my knowledge', 'nexachat-ai' ),
+	'business'  => __( 'My business and its field', 'nexachat-ai' ),
+	'open'      => __( 'Any question', 'nexachat-ai' ),
+);
+$ssc_domains = count( array_filter( preg_split( '/\s+/', (string) $s['web_search_domains'] ) ) );
+$ssc_qa      = array(
+	'ai_first'   => __( 'AI first', 'nexachat-ai' ),
+	'bank_first' => __( 'FAQ bank first', 'nexachat-ai' ),
+	'bank_only'  => __( 'FAQ bank only', 'nexachat-ai' ),
+);
+$ssc_steps = array();
+if ( 'none' !== $sel && ! $ssc_has_key ) {
+	$ssc_steps[] = array( 'engine', __( 'Paste your API key', 'nexachat-ai' ), 'key' );
+}
+if ( 'none' !== $sel && ! $verified ) {
+	$ssc_steps[] = array( 'engine', __( 'Run a connection test', 'nexachat-ai' ), 'zap' );
+}
 ?>
-<div class="ssc-page">
+<div class="ssc-page ssc-conn">
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php esc_html_e( 'AI Connection', 'nexachat-ai' ); ?></h1>
@@ -33,29 +74,75 @@ $sel  = (string) $s['ai_provider'];
 		<div class="ssc-notice ssc-notice--error" role="alert"><?php esc_html_e( 'The API key could not be encrypted (OpenSSL unavailable or AUTH_KEY missing). It was NOT saved in plaintext. Fix the server crypto setup and try again.', 'nexachat-ai' ); ?></div>
 	<?php endif; ?>
 
-	<div class="ssc-verifybar <?php echo $verified ? 'is-ok' : 'is-warn'; ?>">
-		<span class="dashicons <?php echo $verified ? 'dashicons-yes-alt' : 'dashicons-warning'; ?>" aria-hidden="true"></span>
-		<div>
-			<strong><?php $verified ? esc_html_e( 'Connection verified', 'nexachat-ai' ) : esc_html_e( 'Connection not verified', 'nexachat-ai' ); ?></strong>
-			<span>
+	<div class="ssc-hub-wrap" data-ssc-hub="connection" data-initial="engine">
+	<section class="ssc-card ssc-hhero ssc-hhero--compact">
+		<div class="ssc-hhero__ring">
+			<?php echo SSC_Icons::ring( $ssc_percent, 'ssc-ring--lg' . ( $ssc_percent >= 100 ? ' is-ok' : '' ), __( 'How far the connection is set up', 'nexachat-ai' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?>
+		</div>
+		<div class="ssc-hhero__main">
+			<p class="ssc-hhero__level"><span><?php echo esc_html( $ssc_label . ( '' !== $ssc_model ? ' · ' . $ssc_model : '' ) ); ?></span></p>
+			<h2>
 				<?php
-				if ( $verified ) {
-					echo esc_html( sprintf( __( 'Verified %s ago for the current provider, key, model and endpoint.', 'nexachat-ai' ), human_time_diff( (int) $verify_state['at'] ) ) );
+				if ( 'none' === $sel ) {
+					esc_html_e( 'Running without an AI engine', 'nexachat-ai' );
+				} elseif ( $verified ) {
+					esc_html_e( 'Connected and verified', 'nexachat-ai' );
+				} else {
+					esc_html_e( 'Almost there: verify the connection', 'nexachat-ai' );
+				}
+				?>
+			</h2>
+			<p class="ssc-hhero__sub">
+				<?php
+				if ( 'none' === $sel ) {
+					esc_html_e( 'Answers come from your FAQ bank and knowledge. You can connect an AI engine whenever you like.', 'nexachat-ai' );
+				} elseif ( $verified ) {
+					echo esc_html( sprintf( /* translators: %s: time span such as "3 hours". */ __( 'Verified %s ago for the current provider, key, model and endpoint.', 'nexachat-ai' ), human_time_diff( (int) $verify_state['at'] ) ) );
 				} else {
 					esc_html_e( 'Changing the provider, key, model or endpoint invalidates previous verification. Run a test after every change.', 'nexachat-ai' );
 				}
 				?>
-			</span>
+			</p>
 		</div>
-	</div>
+		<?php if ( $ssc_steps ) : ?>
+			<div class="ssc-hhero__steps">
+				<h3><?php esc_html_e( 'Next', 'nexachat-ai' ); ?></h3>
+				<ul>
+					<?php foreach ( $ssc_steps as $ssc_step ) : ?>
+						<li><a href="#<?php echo esc_attr( $ssc_step[0] ); ?>" data-ssc-hubgo="<?php echo esc_attr( $ssc_step[0] ); ?>"><span class="ssc-hhero__stepico"><?php echo SSC_Icons::get( $ssc_step[2] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span><span><?php echo esc_html( $ssc_step[1] ); ?></span></a></li>
+					<?php endforeach; ?>
+				</ul>
+			</div>
+		<?php endif; ?>
+	</section>
 
-	<form method="post" class="ssc-form" id="ssc-connection-form">
+	<nav class="<?php echo esc_attr( SSC_Admin_UI::tiles_class( 4 ) ); ?>" role="tablist" aria-label="<?php esc_attr_e( 'Connection sections', 'nexachat-ai' ); ?>" hidden>
+		<?php
+		SSC_Admin_UI::tile( array( 'id' => 'engine', 'hue' => 'blue', 'icon' => 'cpu', 'title' => __( 'AI engine', 'nexachat-ai' ), 'status' => $ssc_label . ( '' !== $ssc_model ? ' · ' . $ssc_model : '' ) ) );
+		SSC_Admin_UI::tile( array( 'id' => 'answers', 'hue' => 'violet', 'icon' => 'chat', 'title' => __( 'What it may answer', 'nexachat-ai' ), 'status' => $ssc_pharma ? __( 'Set by the pharmaceutical policy', 'nexachat-ai' ) : ( isset( $ssc_scope_labels[ $s['answer_scope'] ] ) ? $ssc_scope_labels[ $s['answer_scope'] ] : '' ) ) );
+		SSC_Admin_UI::tile( array( 'id' => 'web', 'hue' => 'teal', 'icon' => 'globe', 'title' => __( 'Web search', 'nexachat-ai' ), 'status' => ( 'yes' === $s['web_search'] && ! $ssc_pharma ) ? ( $ssc_domains ? sprintf( /* translators: %d: number of sites. */ _n( 'On · %d site', 'On · %d sites', $ssc_domains, 'nexachat-ai' ), $ssc_domains ) : __( 'On', 'nexachat-ai' ) ) : __( 'Off', 'nexachat-ai' ) ) );
+		SSC_Admin_UI::tile( array( 'id' => 'advanced', 'hue' => 'slate', 'icon' => 'sliders', 'title' => __( 'Advanced', 'nexachat-ai' ), 'status' => isset( $ssc_qa[ $s['qa_mode'] ] ) ? $ssc_qa[ $s['qa_mode'] ] : '' ) );
+		?>
+	</nav>
+
+	<div class="ssc-hpanels">
+	<form method="post" class="ssc-form" id="ssc-connection-form" data-ssc-hubform>
 		<?php wp_nonce_field( 'ssc_connection' ); ?>
 		<input type="hidden" name="ssc_connection_save" value="1" />
 
+		<?php SSC_Admin_UI::panel_open( 'engine', 'blue', 'cpu', __( 'AI engine', 'nexachat-ai' ), __( 'Who writes the answers. Pick an engine, add its key, then test it.', 'nexachat-ai' ) ); ?>
 		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Provider', 'nexachat-ai' ); ?></h2>
-			<div class="ssc-field">
+			<div class="ssc-provider-cards" role="radiogroup" aria-label="<?php esc_attr_e( 'AI engine', 'nexachat-ai' ); ?>" hidden>
+				<?php foreach ( $labels as $pid => $plabel ) : ?>
+					<?php $ssc_meta = isset( $ssc_provider_meta[ $pid ] ) ? $ssc_provider_meta[ $pid ] : array( 'cpu', '' ); ?>
+					<button type="button" role="radio" class="ssc-pcard<?php echo $sel === $pid ? ' is-on' : ''; ?>" data-ssc-provider="<?php echo esc_attr( $pid ); ?>" aria-checked="<?php echo $sel === $pid ? 'true' : 'false'; ?>">
+						<span class="ssc-pcard__ico"><?php echo SSC_Icons::get( $ssc_meta[0] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+						<span class="ssc-pcard__txt"><strong><?php echo esc_html( $plabel ); ?></strong><small><?php echo esc_html( $ssc_meta[1] ); ?></small></span>
+						<span class="ssc-pcard__tick"><?php echo SSC_Icons::get( 'check' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					</button>
+				<?php endforeach; ?>
+			</div>
+			<div class="ssc-field ssc-provider-select">
 				<label for="ai_provider"><?php esc_html_e( 'AI engine', 'nexachat-ai' ); ?></label>
 				<select id="ai_provider" name="ai_provider">
 					<?php foreach ( $labels as $pid => $plabel ) : ?>
@@ -122,31 +209,32 @@ $sel  = (string) $s['ai_provider'];
 			<?php endforeach; ?>
 
 			<div class="ssc-conn-test">
-				<button type="button" class="ssc-btn ssc-btn--secondary" id="ssc-test-connection"><?php esc_html_e( 'Test connection', 'nexachat-ai' ); ?></button>
+				<button type="button" class="ssc-btn ssc-btn--secondary" id="ssc-test-connection"><?php echo SSC_Icons::get( 'zap' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <?php esc_html_e( 'Test connection', 'nexachat-ai' ); ?></button>
 				<span id="ssc-test-result" class="ssc-conn-test__result" role="status" aria-live="polite"></span>
 			</div>
 		</section>
+		<?php SSC_Admin_UI::panel_close(); ?>
 
-		<?php $ssc_pharma = SSC_Modules::is_active( 'pharma' ); ?>
-		<section class="ssc-card" id="ssc-scope-card">
-			<h2><?php esc_html_e( 'What the assistant may answer', 'nexachat-ai' ); ?></h2>
-			<p class="ssc-card__sub"><?php esc_html_e( 'In every mode, facts about your organization (prices, policies, specifications) come only from your knowledge — the assistant never invents them.', 'nexachat-ai' ); ?></p>
+		<div id="ssc-scope-card">
+		<?php SSC_Admin_UI::panel_open( 'answers', 'violet', 'chat', __( 'What the assistant may answer', 'nexachat-ai' ), __( 'In every mode, facts about your organization (prices, policies, specifications) come only from your knowledge. The assistant never invents them.', 'nexachat-ai' ) ); ?>
+		<section class="ssc-card">
 			<?php if ( $ssc_pharma ) : ?>
 				<div class="ssc-notice ssc-notice--info" role="status"><?php esc_html_e( 'The pharmaceutical module is active: its answer policy (Settings → Privacy) decides the scope, unrelated topics are always declined, and web search is off.', 'nexachat-ai' ); ?></div>
 			<?php endif; ?>
-			<fieldset class="ssc-choices" <?php disabled( $ssc_pharma ); ?>>
+			<fieldset class="ssc-choices ssc-choices--cards" <?php disabled( $ssc_pharma ); ?>>
 				<legend class="screen-reader-text"><?php esc_html_e( 'Answer scope', 'nexachat-ai' ); ?></legend>
 				<?php
 				$ssc_scopes = array(
-					'knowledge' => array( __( 'Only from my knowledge', 'nexachat-ai' ), __( 'Answers strictly from the business profile, knowledge entries and documents. Anything else gets "I don\'t have that information" and your contact details. Safest; best for regulated content.', 'nexachat-ai' ) ),
-					'business'  => array( __( 'My business and its field (recommended)', 'nexachat-ai' ), __( 'Helps with your products, services, orders and support, and can explain general concepts of your industry. Politely declines unrelated requests such as trivia, homework, coding or news.', 'nexachat-ai' ) ),
-					'open'      => array( __( 'Any question', 'nexachat-ai' ), __( 'Also answers general questions unrelated to your business, like a general-purpose assistant. Every such answer is billed by your AI provider.', 'nexachat-ai' ) ),
+					'knowledge' => array( 'shield', __( 'Only from my knowledge', 'nexachat-ai' ), __( 'Answers strictly from the business profile, knowledge entries and documents. Anything else gets "I don\'t have that information" and your contact details. Safest; best for regulated content.', 'nexachat-ai' ) ),
+					'business'  => array( 'building', __( 'My business and its field (recommended)', 'nexachat-ai' ), __( 'Helps with your products, services, orders and support, and can explain general concepts of your industry. Politely declines unrelated requests such as trivia, homework, coding or news.', 'nexachat-ai' ) ),
+					'open'      => array( 'globe', __( 'Any question', 'nexachat-ai' ), __( 'Also answers general questions unrelated to your business, like a general-purpose assistant. Every such answer is billed by your AI provider.', 'nexachat-ai' ) ),
 				);
 				foreach ( $ssc_scopes as $ssc_value => $ssc_scope ) :
 					?>
-					<label class="ssc-choice">
+					<label class="ssc-choice ssc-choice--card">
 						<input type="radio" name="answer_scope" value="<?php echo esc_attr( $ssc_value ); ?>" <?php checked( $s['answer_scope'], $ssc_value ); ?> />
-						<span><strong><?php echo esc_html( $ssc_scope[0] ); ?></strong><span class="ssc-choice__desc"><?php echo esc_html( $ssc_scope[1] ); ?></span></span>
+						<span class="ssc-choice__ico"><?php echo SSC_Icons::get( $ssc_scope[0] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+						<span><strong><?php echo esc_html( $ssc_scope[1] ); ?></strong><span class="ssc-choice__desc"><?php echo esc_html( $ssc_scope[2] ); ?></span></span>
 					</label>
 				<?php endforeach; ?>
 			</fieldset>
@@ -155,8 +243,11 @@ $sel  = (string) $s['ai_provider'];
 				<textarea id="off_topic_message" name="off_topic_message" rows="2" dir="auto" placeholder="<?php esc_attr_e( 'e.g. I can only help with questions about our products and services. For anything else, please contact us.', 'nexachat-ai' ); ?>"><?php echo esc_textarea( (string) $s['off_topic_message'] ); ?></textarea>
 				<p class="ssc-field__hint"><?php esc_html_e( 'Used when a question is outside the chosen scope. Empty = a short, friendly reply written by the assistant in the visitor\'s language.', 'nexachat-ai' ); ?></p>
 			</div>
+		</section>
+		<?php SSC_Admin_UI::panel_close(); ?>
 
-			<h3 class="ssc-subhead"><?php esc_html_e( 'Web search', 'nexachat-ai' ); ?></h3>
+		<?php SSC_Admin_UI::panel_open( 'web', 'teal', 'globe', __( 'Web search', 'nexachat-ai' ), __( 'Let the assistant look up current, public information when your knowledge is not enough.', 'nexachat-ai' ) ); ?>
+		<section class="ssc-card">
 			<label class="ssc-check"><input type="checkbox" id="web_search" name="web_search" value="yes" <?php checked( 'yes', $s['web_search'] ); ?> <?php disabled( $ssc_pharma ); ?> /> <span><?php esc_html_e( 'Let the assistant search the internet for current, public information', 'nexachat-ai' ); ?></span></label>
 			<p class="ssc-field__hint"><?php esc_html_e( 'Uses your provider\'s built-in search (OpenAI, Claude, Gemini, OpenRouter; not available for custom endpoints or webhooks). The provider bills searches separately. Searched answers are not streamed or cached, and the pages used are listed under the answer. Your own knowledge always wins over web results. Not used in "Only from my knowledge" mode.', 'nexachat-ai' ); ?></p>
 			<p class="ssc-field__hint ssc-web-unsupported" hidden><?php esc_html_e( 'The selected provider has no web search tool, so this option has no effect.', 'nexachat-ai' ); ?></p>
@@ -166,9 +257,11 @@ $sel  = (string) $s['ai_provider'];
 				<p class="ssc-field__hint"><?php esc_html_e( 'For example your own website, to answer from pages you have not imported. Honoured by OpenAI and Claude; Gemini and OpenRouter search the whole web.', 'nexachat-ai' ); ?></p>
 			</div>
 		</section>
+		<?php SSC_Admin_UI::panel_close(); ?>
+		</div>
 
-		<details class="ssc-card ssc-details">
-			<summary><?php esc_html_e( 'Advanced engine options', 'nexachat-ai' ); ?></summary>
+		<?php SSC_Admin_UI::panel_open( 'advanced', 'slate', 'sliders', __( 'Advanced engine options', 'nexachat-ai' ), __( 'Fine tuning. The defaults suit most sites.', 'nexachat-ai' ) ); ?>
+		<section class="ssc-card">
 			<div class="ssc-grid ssc-grid--2">
 				<div class="ssc-field">
 					<label for="qa_mode"><?php esc_html_e( 'Answer priority', 'nexachat-ai' ); ?></label>
@@ -209,10 +302,11 @@ $sel  = (string) $s['ai_provider'];
 				<label for="ai_fallback_msg"><?php esc_html_e( 'Offline message (when nothing can answer)', 'nexachat-ai' ); ?></label>
 				<textarea id="ai_fallback_msg" name="ai_fallback_msg" rows="2"><?php echo esc_textarea( (string) $s['ai_fallback_msg'] ); ?></textarea>
 			</div>
-		</details>
+		</section>
+		<?php SSC_Admin_UI::panel_close(); ?>
 
-		<div class="ssc-form__actions">
-			<button type="submit" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Save connection', 'nexachat-ai' ); ?></button>
-		</div>
+		<?php SSC_Admin_UI::save_bar( __( 'Save connection', 'nexachat-ai' ) ); ?>
 	</form>
+	</div>
+	</div>
 </div>

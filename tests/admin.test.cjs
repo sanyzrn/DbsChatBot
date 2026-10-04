@@ -98,3 +98,34 @@ test('A typed model id is materialized as a real option before submit', () => {
   submitHandlers[0]();
   assert.equal(select.children.length, 1, 'resubmitting reuses the synthetic option');
 });
+
+test('Every hook the views mark with a data attribute is handled by the admin script', () => {
+  // A renamed attribute in a view would silently switch a feature off (the filter
+  // chips stay hidden, the hub tiles do nothing), so the two sides are pinned together.
+  const views = fs.readdirSync(path.join(__dirname, '../includes/admin/views'))
+    .map((f) => fs.readFileSync(path.join(__dirname, '../includes/admin/views', f), 'utf8'))
+    .join('\n') + fs.readFileSync(path.join(__dirname, '../includes/admin/class-ssc-admin-ui.php'), 'utf8');
+  const hooks = [
+    'data-ssc-hub', 'data-ssc-hubtab', 'data-ssc-hubpanel', 'data-ssc-hubsave', 'data-ssc-hubdirty', 'data-ssc-hubgo',
+    'data-ssc-hubform', 'data-ssc-modfilter', 'data-ssc-modshow', 'data-ssc-modstatus', 'data-ssc-modcat', 'data-ssc-modempty',
+    'data-ssc-wk', 'data-ssc-wkstart', 'data-ssc-wkcount', 'data-ssc-abrand',
+  ];
+  for (const hook of hooks) {
+    assert.ok(views.includes(hook), `${hook} is used by a view`);
+    assert.ok(source.includes(hook), `${hook} is handled by admin.js`);
+  }
+});
+
+test('The hub script copes with a page that has no tiles or sections', () => {
+  // Appearance uses the hub only for its save bar and the unsaved-changes note.
+  const hub = source.slice(source.indexOf('	function bindHub('), source.indexOf("	$$('[data-ssc-hub]').forEach(bindHub);"));
+  assert.ok(hub.includes('if (!target) { return; }'), 'show() returns early when there are no sections');
+  assert.ok(hub.includes('if (nav) { nav.hidden = false; }'), 'the tile row is optional');
+});
+
+test('A field that fails validation inside a hidden section opens that section', () => {
+  // Without this the browser cannot focus the field and refuses to save without a word.
+  const hub = source.slice(source.indexOf('	function bindHub('), source.indexOf("	$$('[data-ssc-hub]').forEach(bindHub);"));
+  assert.ok(/addEventListener\('invalid'[\s\S]*?\}, true\);/.test(hub), 'an invalid listener is registered in the capture phase (the event does not bubble)');
+  assert.ok(hub.includes("panel.hidden") && hub.includes("fold.open = true"), 'it reveals the hidden section and unfolds closed cards');
+});

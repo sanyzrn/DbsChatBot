@@ -67,7 +67,7 @@ Back up first and clear page/CDN caches after upgrading.
 | **Targeting** | Page path, device and login rules; business hours with a live (cache-safe) online/offline status. |
 | **Backup & transfer** | One JSON file with the profile, settings, modules, products, knowledge, FAQ, documents and (password-encrypted) API keys. Import shows what the file holds first, can add/update or replace, never publishes, and can be undone. Visitor data is never exported. |
 | **Button placement** | Distance from the edge for phones and desktop, with drawings of the result, and automatic lift above a fixed bottom menu on phones. |
-| **Admin** | Complete Persian translation with RTL layout and Solar Hijri dates; the Business Knowledge screen shows progress rings and the next best step; the Appearance preview is the real widget; an About page with a system check and a support report. |
+| **Admin** | Complete Persian translation with RTL layout and Solar Hijri dates; every screen shares one design: progress rings, icon tiles, sections that open one at a time and a sticky save bar; the Business Knowledge screen shows progress rings and the next best step; the Appearance preview is the real widget; an About page with a system check and a support report. |
 
 ### Optional modules
 

@@ -435,4 +435,5 @@ require __DIR__ . '/sitesync.php';
 require __DIR__ . '/memory.php';
 require __DIR__ . '/notification-queue.php';
 require __DIR__ . '/transfer.php';
+require __DIR__ . '/screens.php';
 echo "\n$checks integration checks passed.\n";

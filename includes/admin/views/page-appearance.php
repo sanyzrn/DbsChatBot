@@ -1,6 +1,7 @@
 <?php
 /**
- * Appearance view — controls + live dark/light preview.
+ * Appearance view: a brand strip, five collapsible sections of controls and
+ * a sticky live dark/light preview, with one save bar.
  *
  * @package SmartSupportChatbot
  * @var array $s        Settings.
@@ -22,8 +23,19 @@ $disclaimer = $s['disclaimer'] ? $s['disclaimer'] : __( 'AI can make mistakes.',
 $dir        = in_array( $s['direction'], array( 'rtl', 'ltr' ), true ) ? $s['direction'] : 'rtl';
 $theme_mode = in_array( $s['theme_mode'], array( 'light', 'dark', 'auto' ), true ) ? $s['theme_mode'] : 'light';
 $pos        = 'left' === $s['position'] ? 'left' : 'right';
+
+$ssc_theme_labels = array(
+	'light' => __( 'Light', 'nexachat-ai' ),
+	'dark'  => __( 'Dark', 'nexachat-ai' ),
+	'auto'  => __( 'Match visitor device', 'nexachat-ai' ),
+);
+$ssc_dir_labels   = array(
+	'rtl'  => __( 'RTL (Persian/Arabic)', 'nexachat-ai' ),
+	'ltr'  => __( 'LTR (Latin)', 'nexachat-ai' ),
+	'auto' => __( 'Auto (follow site language)', 'nexachat-ai' ),
+);
 ?>
-<div class="ssc-page" dir="ltr">
+<div class="ssc-page ssc-appearance" dir="ltr">
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php esc_html_e( 'Appearance', 'nexachat-ai' ); ?></h1>
@@ -35,14 +47,27 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 		<div class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Appearance saved.', 'nexachat-ai' ); ?></div>
 	<?php endif; ?>
 
-	<form method="post" class="ssc-form">
+	<div class="ssc-hub-wrap" data-ssc-hub="appearance">
+	<form method="post" class="ssc-form" data-ssc-hubform>
 		<?php wp_nonce_field( 'ssc_appearance' ); ?>
 		<input type="hidden" name="ssc_appearance_save" value="1" />
 
+		<section class="ssc-card ssc-abrand" id="ssc-abrand" style="--brand: <?php echo esc_attr( $primary ); ?>">
+			<span class="ssc-abrand__orb" aria-hidden="true"><?php echo SSC_Icons::get( 'chat' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+			<div class="ssc-abrand__who">
+				<strong data-ssc-abrand="name"><?php echo esc_html( $asst_name ); ?></strong>
+				<span><?php echo esc_html( $org_name ); ?></span>
+			</div>
+			<ul class="ssc-abrand__chips">
+				<li data-ssc-hue="rose"><?php echo SSC_Icons::get( 'sparkles' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?><span><?php echo esc_html( $ssc_theme_labels[ $theme_mode ] ); ?></span></li>
+				<li data-ssc-hue="teal"><?php echo SSC_Icons::get( 'globe' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?><span><?php echo esc_html( $ssc_dir_labels[ in_array( $s['direction'], array( 'rtl', 'ltr', 'auto' ), true ) ? $s['direction'] : 'rtl' ] ); ?></span></li>
+				<li data-ssc-hue="amber"><?php echo SSC_Icons::get( 'pin' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?><span><?php echo 'left' === $pos ? esc_html__( 'Bottom left', 'nexachat-ai' ) : esc_html__( 'Bottom right', 'nexachat-ai' ); ?></span></li>
+			</ul>
+		</section>
+
 		<div class="ssc-appear">
 			<div class="ssc-appear__controls">
-				<section class="ssc-card">
-					<h2><?php esc_html_e( 'Essentials', 'nexachat-ai' ); ?></h2>
+				<?php SSC_Admin_UI::acc_open( 'ssc-colors', 'sparkles', __( 'Colours & style', 'nexachat-ai' ), 'rose', true, '', __( 'The brand colour, the theme and how the button looks.', 'nexachat-ai' ) ); ?>
 					<div class="ssc-grid ssc-grid--2">
 						<div class="ssc-field">
 							<label for="primary_color"><?php esc_html_e( 'Primary brand color', 'nexachat-ai' ); ?></label>
@@ -57,13 +82,6 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 							</select>
 						</div>
 						<div class="ssc-field">
-							<label for="position"><?php esc_html_e( 'Floating button position', 'nexachat-ai' ); ?></label>
-							<select id="position" name="position">
-								<option value="right" <?php selected( $pos, 'right' ); ?>><?php esc_html_e( 'Bottom right', 'nexachat-ai' ); ?></option>
-								<option value="left" <?php selected( $pos, 'left' ); ?>><?php esc_html_e( 'Bottom left', 'nexachat-ai' ); ?></option>
-							</select>
-						</div>
-						<div class="ssc-field">
 							<label for="launcher_style"><?php esc_html_e( 'Assistant look', 'nexachat-ai' ); ?></label>
 							<select id="launcher_style" name="launcher_style">
 								<option value="mascot" <?php selected( $s['launcher_style'], 'mascot' ); ?>><?php esc_html_e( 'Animated character (brand colour)', 'nexachat-ai' ); ?></option>
@@ -71,25 +89,10 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 							</select>
 							<p class="ssc-field__hint"><?php esc_html_e( 'The character breathes, blinks, follows the pointer and looks up while it thinks. A custom button image or avatar below always wins.', 'nexachat-ai' ); ?></p>
 						</div>
-						<div class="ssc-field">
-							<label for="direction"><?php esc_html_e( 'Chat text direction', 'nexachat-ai' ); ?></label>
-							<select id="direction" name="direction">
-								<option value="rtl" <?php selected( $dir, 'rtl' ); ?>><?php esc_html_e( 'RTL (Persian/Arabic)', 'nexachat-ai' ); ?></option>
-								<option value="ltr" <?php selected( $dir, 'ltr' ); ?>><?php esc_html_e( 'LTR (Latin)', 'nexachat-ai' ); ?></option>
-								<option value="auto" <?php selected( $s['direction'], 'auto' ); ?>><?php esc_html_e( 'Auto (follow site language)', 'nexachat-ai' ); ?></option>
-							</select>
-						</div>
-						<div class="ssc-field">
-							<label for="widget_language"><?php esc_html_e( 'Chat widget language', 'nexachat-ai' ); ?></label>
-							<select id="widget_language" name="widget_language" aria-describedby="widget_language_hint">
-								<?php $wl = isset( $s['widget_language'] ) ? $s['widget_language'] : 'auto'; ?>
-								<option value="auto" <?php selected( $wl, 'auto' ); ?>><?php esc_html_e( 'Automatic (answer language, else site language)', 'nexachat-ai' ); ?></option>
-								<option value="fa_IR" <?php selected( $wl, 'fa_IR' ); ?>>فارسی (Persian)</option>
-								<option value="en_US" <?php selected( $wl, 'en_US' ); ?>>English</option>
-							</select>
-							<p class="ssc-field__hint" id="widget_language_hint"><?php esc_html_e( 'Buttons, forms and messages visitors see in the chat, independent of the WordPress language. Saved changes apply to the preview after reload.', 'nexachat-ai' ); ?></p>
-						</div>
 					</div>
+				<?php SSC_Admin_UI::acc_close(); ?>
+
+				<?php SSC_Admin_UI::acc_open( 'ssc-words', 'chat', __( 'Name & messages', 'nexachat-ai' ), 'blue', true, '', __( 'What the assistant is called and what visitors read first.', 'nexachat-ai' ) ); ?>
 					<div class="ssc-field">
 						<label for="assistant_display_name"><?php esc_html_e( 'Assistant display name', 'nexachat-ai' ); ?></label>
 						<input id="assistant_display_name" name="assistant_display_name" type="text" value="<?php echo esc_attr( $s['assistant_display_name'] ); ?>" placeholder="<?php echo esc_attr( $asst_name ); ?>" />
@@ -110,158 +113,187 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 						<label for="disclaimer"><?php esc_html_e( 'Disclaimer (shown under the chat)', 'nexachat-ai' ); ?></label>
 						<input id="disclaimer" name="disclaimer" type="text" value="<?php echo esc_attr( $s['disclaimer'] ); ?>" placeholder="<?php echo esc_attr( $disclaimer ); ?>" />
 					</div>
-				</section>
+				<?php SSC_Admin_UI::acc_close(); ?>
 
-				<section class="ssc-card ssc-posbox" id="ssc-posbox">
-					<h2><?php esc_html_e( 'Button position & spacing', 'nexachat-ai' ); ?></h2>
-					<p class="ssc-card__sub"><?php esc_html_e( 'Move the floating button so it never covers your menu, for example a bottom navigation bar on phones. The drawings on the right show where it will sit.', 'nexachat-ai' ); ?></p>
-					<div class="ssc-posbox__grid">
-						<div class="ssc-posbox__fields">
-							<fieldset class="ssc-posbox__set">
-								<legend><span class="dashicons dashicons-smartphone" aria-hidden="true"></span> <?php esc_html_e( 'Phones', 'nexachat-ai' ); ?></legend>
-								<div class="ssc-grid ssc-grid--2">
-									<div class="ssc-field">
-										<label for="launcher_offset_y_mobile"><?php esc_html_e( 'Distance from the bottom (px)', 'nexachat-ai' ); ?></label>
-										<input id="launcher_offset_y_mobile" name="launcher_offset_y_mobile" type="number" min="0" max="300" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_y_mobile'] ); ?>" />
-									</div>
-									<div class="ssc-field">
-										<label for="launcher_offset_x_mobile"><?php esc_html_e( 'Distance from the side (px)', 'nexachat-ai' ); ?></label>
-										<input id="launcher_offset_x_mobile" name="launcher_offset_x_mobile" type="number" min="0" max="120" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_x_mobile'] ); ?>" />
-									</div>
-								</div>
-								<div class="ssc-posbox__presets" role="group" aria-label="<?php esc_attr_e( 'Quick choices for phones', 'nexachat-ai' ); ?>">
-									<button type="button" class="ssc-chip" data-ssc-pos-preset="18"><?php esc_html_e( 'Corner (default)', 'nexachat-ai' ); ?></button>
-									<button type="button" class="ssc-chip" data-ssc-pos-preset="84"><?php esc_html_e( 'Above a bottom menu', 'nexachat-ai' ); ?></button>
-								</div>
-								<label class="ssc-check ssc-check--tight"><input type="checkbox" id="launcher_avoid_bars" name="launcher_avoid_bars" value="yes" <?php checked( 'yes', $s['launcher_avoid_bars'] ); ?> /> <span><?php esc_html_e( 'Lift the button automatically above a fixed bar at the bottom of the page (menu, cookie notice)', 'nexachat-ai' ); ?></span></label>
-							</fieldset>
-							<fieldset class="ssc-posbox__set">
-								<legend><span class="dashicons dashicons-desktop" aria-hidden="true"></span> <?php esc_html_e( 'Desktop & tablet', 'nexachat-ai' ); ?></legend>
-								<div class="ssc-grid ssc-grid--2">
-									<div class="ssc-field">
-										<label for="launcher_offset_y"><?php esc_html_e( 'Distance from the bottom (px)', 'nexachat-ai' ); ?></label>
-										<input id="launcher_offset_y" name="launcher_offset_y" type="number" min="0" max="300" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_y'] ); ?>" />
-									</div>
-									<div class="ssc-field">
-										<label for="launcher_offset_x"><?php esc_html_e( 'Distance from the side (px)', 'nexachat-ai' ); ?></label>
-										<input id="launcher_offset_x" name="launcher_offset_x" type="number" min="0" max="200" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_x'] ); ?>" />
-									</div>
-								</div>
-							</fieldset>
-						</div>
-						<div class="ssc-posbox__mocks" aria-hidden="true">
-							<figure class="ssc-posmock ssc-posmock--phone" data-ssc-posmock="phone" data-vw="390" data-vh="760">
-								<div class="ssc-posmock__screen">
-									<div class="ssc-posmock__bar"><i></i><i></i><i></i></div>
-									<span class="ssc-posmock__dot"></span>
-								</div>
-								<figcaption><?php esc_html_e( 'Phone', 'nexachat-ai' ); ?></figcaption>
-							</figure>
-							<figure class="ssc-posmock ssc-posmock--desktop" data-ssc-posmock="desktop" data-vw="1280" data-vh="720">
-								<div class="ssc-posmock__screen">
-									<span class="ssc-posmock__dot"></span>
-								</div>
-								<figcaption><?php esc_html_e( 'Desktop', 'nexachat-ai' ); ?></figcaption>
-							</figure>
-						</div>
-					</div>
-				</section>
-
-				<details class="ssc-card ssc-details">
-					<summary><?php esc_html_e( 'Advanced styling', 'nexachat-ai' ); ?></summary>
+				<?php SSC_Admin_UI::acc_open( 'ssc-lang', 'globe', __( 'Language & direction', 'nexachat-ai' ), 'teal', false, '', __( 'Which way the chat reads and which language its buttons use.', 'nexachat-ai' ) ); ?>
 					<div class="ssc-grid ssc-grid--2">
 						<div class="ssc-field">
-							<label for="font_family"><?php esc_html_e( 'Font', 'nexachat-ai' ); ?></label>
-							<select id="font_family" name="font_family">
-								<option value="vazirmatn" <?php selected( $s['font_family'], 'vazirmatn' ); ?>><?php esc_html_e( 'Vazirmatn (Persian)', 'nexachat-ai' ); ?></option>
-								<option value="inter" <?php selected( $s['font_family'], 'inter' ); ?>>Inter</option>
-								<option value="roboto" <?php selected( $s['font_family'], 'roboto' ); ?>>Roboto</option>
-								<option value="system" <?php selected( $s['font_family'], 'system' ); ?>><?php esc_html_e( 'System default', 'nexachat-ai' ); ?></option>
-								<option value="custom" <?php selected( $s['font_family'], 'custom' ); ?>><?php esc_html_e( 'Custom…', 'nexachat-ai' ); ?></option>
+							<label for="direction"><?php esc_html_e( 'Chat text direction', 'nexachat-ai' ); ?></label>
+							<select id="direction" name="direction">
+								<option value="rtl" <?php selected( $dir, 'rtl' ); ?>><?php esc_html_e( 'RTL (Persian/Arabic)', 'nexachat-ai' ); ?></option>
+								<option value="ltr" <?php selected( $dir, 'ltr' ); ?>><?php esc_html_e( 'LTR (Latin)', 'nexachat-ai' ); ?></option>
+								<option value="auto" <?php selected( $s['direction'], 'auto' ); ?>><?php esc_html_e( 'Auto (follow site language)', 'nexachat-ai' ); ?></option>
 							</select>
 						</div>
 						<div class="ssc-field">
-							<label for="font_size"><?php esc_html_e( 'Base font size (px)', 'nexachat-ai' ); ?></label>
-							<input id="font_size" name="font_size" type="number" min="12" max="20" value="<?php echo esc_attr( (string) $s['font_size'] ); ?>" />
-						</div>
-						<div class="ssc-field" data-show-when="font_family=custom">
-							<label for="font_name"><?php esc_html_e( 'Custom font name', 'nexachat-ai' ); ?></label>
-							<input id="font_name" name="font_name" type="text" dir="ltr" value="<?php echo esc_attr( $s['font_name'] ); ?>" />
-						</div>
-						<div class="ssc-field" data-show-when="font_family=custom">
-							<label for="font_url"><?php esc_html_e( 'Custom font stylesheet URL', 'nexachat-ai' ); ?></label>
-							<input id="font_url" name="font_url" type="url" dir="ltr" value="<?php echo esc_attr( $s['font_url'] ); ?>" />
-						</div>
-						<div class="ssc-field">
-							<label for="window_width"><?php esc_html_e( 'Chat window width (px)', 'nexachat-ai' ); ?></label>
-							<input id="window_width" name="window_width" type="number" min="320" max="520" value="<?php echo esc_attr( (string) $s['window_width'] ); ?>" />
-						</div>
-						<div class="ssc-field">
-							<label for="window_radius"><?php esc_html_e( 'Window corner radius (px)', 'nexachat-ai' ); ?></label>
-							<input id="window_radius" name="window_radius" type="number" min="0" max="32" value="<?php echo esc_attr( (string) $s['window_radius'] ); ?>" />
-						</div>
-						<div class="ssc-field">
-							<label for="bubble_radius"><?php esc_html_e( 'Message bubble radius (px)', 'nexachat-ai' ); ?></label>
-							<input id="bubble_radius" name="bubble_radius" type="number" min="0" max="24" value="<?php echo esc_attr( (string) $s['bubble_radius'] ); ?>" />
-						</div>
-						<div class="ssc-field">
-							<label for="user_bubble_color"><?php esc_html_e( 'Visitor bubble color', 'nexachat-ai' ); ?></label>
-							<input id="user_bubble_color" name="user_bubble_color" type="color" value="<?php echo esc_attr( $s['user_bubble_color'] ? $s['user_bubble_color'] : $primary ); ?>" class="ssc-color" />
-						</div>
-						<div class="ssc-field">
-							<label for="bot_bubble_color"><?php esc_html_e( 'Assistant bubble color', 'nexachat-ai' ); ?></label>
-							<input id="bot_bubble_color" name="bot_bubble_color" type="color" value="<?php echo esc_attr( $s['bot_bubble_color'] ? $s['bot_bubble_color'] : '#ffffff' ); ?>" class="ssc-color" />
-						</div>
-						<div class="ssc-field">
-							<label for="launcher_size"><?php esc_html_e( 'Floating button size (px)', 'nexachat-ai' ); ?></label>
-							<input id="launcher_size" name="launcher_size" type="number" min="48" max="72" value="<?php echo esc_attr( (string) $s['launcher_size'] ); ?>" />
-						</div>
-						<div class="ssc-field">
-							<label for="launcher_icon_url"><?php esc_html_e( 'Floating button custom image (optional)', 'nexachat-ai' ); ?></label>
-							<input id="launcher_icon_url" name="launcher_icon_url" type="url" dir="ltr" value="<?php echo esc_attr( $s['launcher_icon_url'] ); ?>" />
+							<label for="widget_language"><?php esc_html_e( 'Chat widget language', 'nexachat-ai' ); ?></label>
+							<select id="widget_language" name="widget_language" aria-describedby="widget_language_hint">
+								<?php $wl = isset( $s['widget_language'] ) ? $s['widget_language'] : 'auto'; ?>
+								<option value="auto" <?php selected( $wl, 'auto' ); ?>><?php esc_html_e( 'Automatic (answer language, else site language)', 'nexachat-ai' ); ?></option>
+								<option value="fa_IR" <?php selected( $wl, 'fa_IR' ); ?>>فارسی (Persian)</option>
+								<option value="en_US" <?php selected( $wl, 'en_US' ); ?>>English</option>
+							</select>
+							<p class="ssc-field__hint" id="widget_language_hint"><?php esc_html_e( 'Buttons, forms and messages visitors see in the chat, independent of the WordPress language. Saved changes apply to the preview after reload.', 'nexachat-ai' ); ?></p>
 						</div>
 					</div>
-				</details>
+				<?php SSC_Admin_UI::acc_close(); ?>
+
+				<?php SSC_Admin_UI::acc_open( 'ssc-posbox', 'pin', __( 'Button position & spacing', 'nexachat-ai' ), 'amber', false, '', __( 'Keep the button clear of your menu, such as a bottom bar on phones.', 'nexachat-ai' ) ); ?>
+					<div class="ssc-grid ssc-grid--2">
+						<div class="ssc-field">
+							<label for="position"><?php esc_html_e( 'Floating button position', 'nexachat-ai' ); ?></label>
+							<select id="position" name="position">
+								<option value="right" <?php selected( $pos, 'right' ); ?>><?php esc_html_e( 'Bottom right', 'nexachat-ai' ); ?></option>
+								<option value="left" <?php selected( $pos, 'left' ); ?>><?php esc_html_e( 'Bottom left', 'nexachat-ai' ); ?></option>
+							</select>
+						</div>
+					</div>
+					<p class="ssc-card__sub"><?php esc_html_e( 'Move the floating button so it never covers your menu, for example a bottom navigation bar on phones. The drawings on the right show where it will sit.', 'nexachat-ai' ); ?></p>
+										<div class="ssc-posbox__grid">
+											<div class="ssc-posbox__fields">
+												<fieldset class="ssc-posbox__set">
+													<legend><span class="dashicons dashicons-smartphone" aria-hidden="true"></span> <?php esc_html_e( 'Phones', 'nexachat-ai' ); ?></legend>
+													<div class="ssc-grid ssc-grid--2">
+														<div class="ssc-field">
+															<label for="launcher_offset_y_mobile"><?php esc_html_e( 'Distance from the bottom (px)', 'nexachat-ai' ); ?></label>
+															<input id="launcher_offset_y_mobile" name="launcher_offset_y_mobile" type="number" min="0" max="300" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_y_mobile'] ); ?>" />
+														</div>
+														<div class="ssc-field">
+															<label for="launcher_offset_x_mobile"><?php esc_html_e( 'Distance from the side (px)', 'nexachat-ai' ); ?></label>
+															<input id="launcher_offset_x_mobile" name="launcher_offset_x_mobile" type="number" min="0" max="120" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_x_mobile'] ); ?>" />
+														</div>
+													</div>
+													<div class="ssc-posbox__presets" role="group" aria-label="<?php esc_attr_e( 'Quick choices for phones', 'nexachat-ai' ); ?>">
+														<button type="button" class="ssc-chip" data-ssc-pos-preset="18"><?php esc_html_e( 'Corner (default)', 'nexachat-ai' ); ?></button>
+														<button type="button" class="ssc-chip" data-ssc-pos-preset="84"><?php esc_html_e( 'Above a bottom menu', 'nexachat-ai' ); ?></button>
+													</div>
+													<label class="ssc-check ssc-check--tight"><input type="checkbox" id="launcher_avoid_bars" name="launcher_avoid_bars" value="yes" <?php checked( 'yes', $s['launcher_avoid_bars'] ); ?> /> <span><?php esc_html_e( 'Lift the button automatically above a fixed bar at the bottom of the page (menu, cookie notice)', 'nexachat-ai' ); ?></span></label>
+												</fieldset>
+												<fieldset class="ssc-posbox__set">
+													<legend><span class="dashicons dashicons-desktop" aria-hidden="true"></span> <?php esc_html_e( 'Desktop & tablet', 'nexachat-ai' ); ?></legend>
+													<div class="ssc-grid ssc-grid--2">
+														<div class="ssc-field">
+															<label for="launcher_offset_y"><?php esc_html_e( 'Distance from the bottom (px)', 'nexachat-ai' ); ?></label>
+															<input id="launcher_offset_y" name="launcher_offset_y" type="number" min="0" max="300" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_y'] ); ?>" />
+														</div>
+														<div class="ssc-field">
+															<label for="launcher_offset_x"><?php esc_html_e( 'Distance from the side (px)', 'nexachat-ai' ); ?></label>
+															<input id="launcher_offset_x" name="launcher_offset_x" type="number" min="0" max="200" step="2" value="<?php echo esc_attr( (string) $s['launcher_offset_x'] ); ?>" />
+														</div>
+													</div>
+												</fieldset>
+											</div>
+											<div class="ssc-posbox__mocks" aria-hidden="true">
+												<figure class="ssc-posmock ssc-posmock--phone" data-ssc-posmock="phone" data-vw="390" data-vh="760">
+													<div class="ssc-posmock__screen">
+														<div class="ssc-posmock__bar"><i></i><i></i><i></i></div>
+														<span class="ssc-posmock__dot"></span>
+													</div>
+													<figcaption><?php esc_html_e( 'Phone', 'nexachat-ai' ); ?></figcaption>
+												</figure>
+												<figure class="ssc-posmock ssc-posmock--desktop" data-ssc-posmock="desktop" data-vw="1280" data-vh="720">
+													<div class="ssc-posmock__screen">
+														<span class="ssc-posmock__dot"></span>
+													</div>
+													<figcaption><?php esc_html_e( 'Desktop', 'nexachat-ai' ); ?></figcaption>
+												</figure>
+											</div>
+										</div>
+				<?php SSC_Admin_UI::acc_close(); ?>
+
+				<?php SSC_Admin_UI::acc_open( 'ssc-advstyle', 'sliders', __( 'Advanced styling', 'nexachat-ai' ), 'slate', false, '', __( 'Fonts, sizes and corner radii. The defaults suit most sites.', 'nexachat-ai' ) ); ?>
+					<div class="ssc-grid ssc-grid--2">
+											<div class="ssc-field">
+												<label for="font_family"><?php esc_html_e( 'Font', 'nexachat-ai' ); ?></label>
+												<select id="font_family" name="font_family">
+													<option value="vazirmatn" <?php selected( $s['font_family'], 'vazirmatn' ); ?>><?php esc_html_e( 'Vazirmatn (Persian)', 'nexachat-ai' ); ?></option>
+													<option value="inter" <?php selected( $s['font_family'], 'inter' ); ?>>Inter</option>
+													<option value="roboto" <?php selected( $s['font_family'], 'roboto' ); ?>>Roboto</option>
+													<option value="system" <?php selected( $s['font_family'], 'system' ); ?>><?php esc_html_e( 'System default', 'nexachat-ai' ); ?></option>
+													<option value="custom" <?php selected( $s['font_family'], 'custom' ); ?>><?php esc_html_e( 'Custom…', 'nexachat-ai' ); ?></option>
+												</select>
+											</div>
+											<div class="ssc-field">
+												<label for="font_size"><?php esc_html_e( 'Base font size (px)', 'nexachat-ai' ); ?></label>
+												<input id="font_size" name="font_size" type="number" min="12" max="20" value="<?php echo esc_attr( (string) $s['font_size'] ); ?>" />
+											</div>
+											<div class="ssc-field" data-show-when="font_family=custom">
+												<label for="font_name"><?php esc_html_e( 'Custom font name', 'nexachat-ai' ); ?></label>
+												<input id="font_name" name="font_name" type="text" dir="ltr" value="<?php echo esc_attr( $s['font_name'] ); ?>" />
+											</div>
+											<div class="ssc-field" data-show-when="font_family=custom">
+												<label for="font_url"><?php esc_html_e( 'Custom font stylesheet URL', 'nexachat-ai' ); ?></label>
+												<input id="font_url" name="font_url" type="url" dir="ltr" value="<?php echo esc_attr( $s['font_url'] ); ?>" />
+											</div>
+											<div class="ssc-field">
+												<label for="window_width"><?php esc_html_e( 'Chat window width (px)', 'nexachat-ai' ); ?></label>
+												<input id="window_width" name="window_width" type="number" min="320" max="520" value="<?php echo esc_attr( (string) $s['window_width'] ); ?>" />
+											</div>
+											<div class="ssc-field">
+												<label for="window_radius"><?php esc_html_e( 'Window corner radius (px)', 'nexachat-ai' ); ?></label>
+												<input id="window_radius" name="window_radius" type="number" min="0" max="32" value="<?php echo esc_attr( (string) $s['window_radius'] ); ?>" />
+											</div>
+											<div class="ssc-field">
+												<label for="bubble_radius"><?php esc_html_e( 'Message bubble radius (px)', 'nexachat-ai' ); ?></label>
+												<input id="bubble_radius" name="bubble_radius" type="number" min="0" max="24" value="<?php echo esc_attr( (string) $s['bubble_radius'] ); ?>" />
+											</div>
+											<div class="ssc-field">
+												<label for="user_bubble_color"><?php esc_html_e( 'Visitor bubble color', 'nexachat-ai' ); ?></label>
+												<input id="user_bubble_color" name="user_bubble_color" type="color" value="<?php echo esc_attr( $s['user_bubble_color'] ? $s['user_bubble_color'] : $primary ); ?>" class="ssc-color" />
+											</div>
+											<div class="ssc-field">
+												<label for="bot_bubble_color"><?php esc_html_e( 'Assistant bubble color', 'nexachat-ai' ); ?></label>
+												<input id="bot_bubble_color" name="bot_bubble_color" type="color" value="<?php echo esc_attr( $s['bot_bubble_color'] ? $s['bot_bubble_color'] : '#ffffff' ); ?>" class="ssc-color" />
+											</div>
+											<div class="ssc-field">
+												<label for="launcher_size"><?php esc_html_e( 'Floating button size (px)', 'nexachat-ai' ); ?></label>
+												<input id="launcher_size" name="launcher_size" type="number" min="48" max="72" value="<?php echo esc_attr( (string) $s['launcher_size'] ); ?>" />
+											</div>
+											<div class="ssc-field">
+												<label for="launcher_icon_url"><?php esc_html_e( 'Floating button custom image (optional)', 'nexachat-ai' ); ?></label>
+												<input id="launcher_icon_url" name="launcher_icon_url" type="url" dir="ltr" value="<?php echo esc_attr( $s['launcher_icon_url'] ); ?>" />
+											</div>
+										</div>
+				<?php SSC_Admin_UI::acc_close(); ?>
 			</div>
 
 			<aside class="ssc-preview-panel" id="ssc-preview-panel"
-				data-primary="<?php echo esc_attr( $primary ); ?>"
-				data-theme-mode="<?php echo esc_attr( $theme_mode ); ?>"
-				data-dir="<?php echo esc_attr( $dir ); ?>"
-				data-dir-auto="<?php echo esc_attr( is_rtl() || in_array( substr( get_locale(), 0, 2 ), array( 'fa', 'ar', 'he', 'ur' ), true ) ? 'rtl' : 'ltr' ); ?>"
-				data-pos="<?php echo esc_attr( $pos ); ?>"
-				data-asst-name="<?php echo esc_attr( $asst_name ); ?>"
-				data-org-name="<?php echo esc_attr( $org_name ); ?>"
-				data-w-title="<?php echo esc_attr( $w_title ); ?>"
-				data-w-text="<?php echo esc_attr( $w_text ); ?>"
-				data-disclaimer="<?php echo esc_attr( $disclaimer ); ?>"
-				data-avatar="<?php echo esc_attr( $s['avatar_url'] ); ?>"
-				data-font-size="<?php echo esc_attr( (string) $s['font_size'] ); ?>"
-				data-win-radius="<?php echo esc_attr( (string) $s['window_radius'] ); ?>"
-				data-bubble-radius="<?php echo esc_attr( (string) $s['bubble_radius'] ); ?>"
-				data-user-bubble="<?php echo esc_attr( $s['user_bubble_color'] ); ?>"
-				data-bot-bubble="<?php echo esc_attr( $s['bot_bubble_color'] ); ?>"
-				data-launcher-size="<?php echo esc_attr( (string) $s['launcher_size'] ); ?>"
-			>
-				<div class="ssc-preview-panel__bar">
-					<strong><?php esc_html_e( 'Live preview', 'nexachat-ai' ); ?></strong>
-					<div class="ssc-preview-toggle" role="group" aria-label="<?php esc_attr_e( 'Preview theme', 'nexachat-ai' ); ?>">
-						<button type="button" data-pv-theme="light" class="is-on"><?php esc_html_e( 'Light', 'nexachat-ai' ); ?></button>
-						<button type="button" data-pv-theme="dark"><?php esc_html_e( 'Dark', 'nexachat-ai' ); ?></button>
-					</div>
-				</div>
+							data-primary="<?php echo esc_attr( $primary ); ?>"
+							data-theme-mode="<?php echo esc_attr( $theme_mode ); ?>"
+							data-dir="<?php echo esc_attr( $dir ); ?>"
+							data-dir-auto="<?php echo esc_attr( is_rtl() || in_array( substr( get_locale(), 0, 2 ), array( 'fa', 'ar', 'he', 'ur' ), true ) ? 'rtl' : 'ltr' ); ?>"
+							data-pos="<?php echo esc_attr( $pos ); ?>"
+							data-asst-name="<?php echo esc_attr( $asst_name ); ?>"
+							data-org-name="<?php echo esc_attr( $org_name ); ?>"
+							data-w-title="<?php echo esc_attr( $w_title ); ?>"
+							data-w-text="<?php echo esc_attr( $w_text ); ?>"
+							data-disclaimer="<?php echo esc_attr( $disclaimer ); ?>"
+							data-avatar="<?php echo esc_attr( $s['avatar_url'] ); ?>"
+							data-font-size="<?php echo esc_attr( (string) $s['font_size'] ); ?>"
+							data-win-radius="<?php echo esc_attr( (string) $s['window_radius'] ); ?>"
+							data-bubble-radius="<?php echo esc_attr( (string) $s['bubble_radius'] ); ?>"
+							data-user-bubble="<?php echo esc_attr( $s['user_bubble_color'] ); ?>"
+							data-bot-bubble="<?php echo esc_attr( $s['bot_bubble_color'] ); ?>"
+							data-launcher-size="<?php echo esc_attr( (string) $s['launcher_size'] ); ?>"
+						>
+							<div class="ssc-preview-panel__bar">
+								<strong><?php esc_html_e( 'Live preview', 'nexachat-ai' ); ?></strong>
+								<div class="ssc-preview-toggle" role="group" aria-label="<?php esc_attr_e( 'Preview theme', 'nexachat-ai' ); ?>">
+									<button type="button" data-pv-theme="light" class="is-on"><?php esc_html_e( 'Light', 'nexachat-ai' ); ?></button>
+									<button type="button" data-pv-theme="dark"><?php esc_html_e( 'Dark', 'nexachat-ai' ); ?></button>
+								</div>
+							</div>
 
-				<div class="ssc-preview-stage" id="ssc-preview-stage">
-					<?php // The real widget mounts here (chatbot.js preview mode, admin-only preview endpoint). ?>
-					<div id="ssc-live-preview"></div>
-				</div>
+							<div class="ssc-preview-stage" id="ssc-preview-stage">
+								<?php // The real widget mounts here (chatbot.js preview mode, admin-only preview endpoint). ?>
+								<div id="ssc-live-preview"></div>
+							</div>
 
-				<p class="ssc-preview-panel__hint"><?php esc_html_e( 'This is the real assistant: changes apply instantly and you can chat with it (answers use the saved AI connection). Save when you are happy.', 'nexachat-ai' ); ?></p>
-			</aside>
+							<p class="ssc-preview-panel__hint"><?php esc_html_e( 'This is the real assistant: changes apply instantly and you can chat with it (answers use the saved AI connection). Save when you are happy.', 'nexachat-ai' ); ?></p>
+						</aside>
 		</div>
 
-		<div class="ssc-form__actions">
-			<button type="submit" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Save appearance', 'nexachat-ai' ); ?></button>
-		</div>
+		<?php SSC_Admin_UI::save_bar( __( 'Save appearance', 'nexachat-ai' ) ); ?>
 	</form>
+	</div>
 </div>

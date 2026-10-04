@@ -30,6 +30,44 @@
 		syncProviderFields();
 	}
 
+	/* ---------- Provider cards (the <select> stays the source of truth) ---------- */
+
+	(function () {
+		var group = $('.ssc-provider-cards');
+		var wrap = $('.ssc-provider-select');
+		if (!group || !providerSelect) { return; }
+		var cards = $$('[data-ssc-provider]', group);
+		function paint() {
+			cards.forEach(function (card) {
+				var on = card.getAttribute('data-ssc-provider') === providerSelect.value;
+				card.classList.toggle('is-on', on);
+				card.setAttribute('aria-checked', on ? 'true' : 'false');
+				card.tabIndex = on ? 0 : -1;
+			});
+		}
+		function choose(card) {
+			providerSelect.value = card.getAttribute('data-ssc-provider');
+			providerSelect.dispatchEvent(new Event('change', { bubbles: true }));
+			paint();
+		}
+		cards.forEach(function (card, i) {
+			card.addEventListener('click', function () { choose(card); });
+			card.addEventListener('keydown', function (e) {
+				var step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+				if (!step) { return; }
+				if ('rtl' === window.getComputedStyle(group).direction && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { step = -step; }
+				e.preventDefault();
+				var next = cards[(i + step + cards.length) % cards.length];
+				next.focus();
+				choose(next);
+			});
+		});
+		providerSelect.addEventListener('change', paint);
+		group.hidden = false;
+		if (wrap) { wrap.classList.add('is-enhanced'); }
+		paint();
+	})();
+
 	/* ---------- Manual model entry ---------- */
 
 	/** The manual input that belongs to ONE select (every provider block has its own). */
@@ -452,48 +490,48 @@
 
 	bindPositionMocks();
 
-	/* ---------- Business Knowledge: sections, live progress, examples ---------- */
+	/* ---------- Hubs: tiles that open one section at a time ---------- */
 
 	/*
-	 * The page is a hero (overall progress), a row of tiles that work as tabs,
-	 * and one section at a time. Progress rings follow what is typed. The
-	 * rules mirror SSC_Knowledge_Score (PHP), which draws the first paint.
+	 * A hub is a row of tiles (role=tab) and sections (role=tabpanel). Used by
+	 * Business Knowledge, Settings, AI Connection and more. Without script
+	 * every section stays visible (the tile row is hidden until we start).
+	 *   root          [data-ssc-hub="name"] (+ data-initial)
+	 *   tile          [data-ssc-hubtab="id"]
+	 *   section       [data-ssc-hubpanel="id"]; data-ssc-form marks sections
+	 *                 inside the page's main form (the save bar shows for them)
+	 *   save bar      [data-ssc-hubsave]; hidden input [data-ssc-hubfield] carries
+	 *                 the open section through a save
+	 *   jump link     [data-ssc-hubgo="id"]
+	 *   unsaved note  [data-ssc-hubdirty]
 	 */
-	function bindKnowledgeHub() {
-		var root = $('#ssc-kh');
-		if (!root) { return; }
-		var nav = $('.ssc-ktiles', root);
-		var tabs = $$('[data-ssc-ktab]', root);
-		var panels = $$('[data-ssc-kpanel]', root);
-		var form = $('#ssc-kform');
-		var saveBar = $('[data-ssc-ksave]', root);
-		var panelField = $('[data-ssc-kpanelfield]', root);
-		var dirtyNote = $('[data-ssc-kdirty]', root);
-		var fmt = {};
-		var levels = [];
-		var weights = {};
-		try { fmt = JSON.parse(root.getAttribute('data-fmt') || '{}'); } catch (e1) { fmt = {}; }
-		try { levels = JSON.parse(root.getAttribute('data-levels') || '[]'); } catch (e2) { levels = []; }
-		try { weights = JSON.parse(root.getAttribute('data-weights') || '{}'); } catch (e3) { weights = {}; }
-		var extraKnowledge = '1' === root.getAttribute('data-extra');
+	function bindHub(root) {
+		var nav = $('.ssc-htiles', root);
+		var tabs = $$('[data-ssc-hubtab]', root);
+		var panels = $$('[data-ssc-hubpanel]', root);
+		var saveBar = $('[data-ssc-hubsave]', root);
+		var panelField = $('[data-ssc-hubfield]', root);
+		var dirtyNote = $('[data-ssc-hubdirty]', root);
+		var key = 'ssc_hub_' + (root.getAttribute('data-ssc-hub') || 'page');
 		var dirty = false;
 
 		function panelById(id) {
-			return panels.filter(function (p) { return p.getAttribute('data-ssc-kpanel') === id; })[0] || null;
+			return panels.filter(function (p) { return p.getAttribute('data-ssc-hubpanel') === id; })[0] || null;
 		}
 
-		function text(template, a, b) {
-			return String(template || '').replace('%1$d', a).replace('%2$d', b).replace('%d', a);
-		}
-
-		/* ----- tabs ----- */
+		// A tile without a section (e.g. a module that is off) is dropped.
+		tabs = tabs.filter(function (tab) {
+			if (panelById(tab.getAttribute('data-ssc-hubtab'))) { return true; }
+			if (tab.parentElement) { tab.parentElement.removeChild(tab); }
+			return false;
+		});
 
 		function show(id) {
-			var target = panelById(id) || panelById('identity');
+			var target = panelById(id) || panels[0];
 			if (!target) { return; }
-			id = target.getAttribute('data-ssc-kpanel');
+			id = target.getAttribute('data-ssc-hubpanel');
 			tabs.forEach(function (tab) {
-				var on = tab.getAttribute('data-ssc-ktab') === id;
+				var on = tab.getAttribute('data-ssc-hubtab') === id;
 				tab.setAttribute('aria-selected', on ? 'true' : 'false');
 				tab.tabIndex = on ? 0 : -1;
 				tab.classList.toggle('is-active', on);
@@ -501,12 +539,14 @@
 			panels.forEach(function (panel) { panel.hidden = panel !== target; });
 			if (panelField) { panelField.value = id; }
 			if (saveBar) { saveBar.hidden = !target.hasAttribute('data-ssc-form'); }
+			try { window.sessionStorage.setItem(key, id); } catch (e0) { /* storage may be blocked */ }
 			try { window.history.replaceState(null, '', '#' + id); } catch (e) { /* the hash is a convenience only */ }
+			root.dispatchEvent(new CustomEvent('ssc-hub-show', { detail: { id: id } }));
 		}
 
 		if (nav) { nav.hidden = false; }
 		tabs.forEach(function (tab) {
-			tab.addEventListener('click', function () { show(tab.getAttribute('data-ssc-ktab')); });
+			tab.addEventListener('click', function () { show(tab.getAttribute('data-ssc-hubtab')); });
 			tab.addEventListener('keydown', function (e) {
 				var keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
 				var step = keys[e.key];
@@ -516,23 +556,242 @@
 				var next = 'Home' === e.key ? 0 : 'End' === e.key ? tabs.length - 1 : (at + step + tabs.length) % tabs.length;
 				e.preventDefault();
 				tabs[next].focus();
-				show(tabs[next].getAttribute('data-ssc-ktab'));
+				show(tabs[next].getAttribute('data-ssc-hubtab'));
 			});
 		});
-		$$('[data-ssc-kgo]', root).forEach(function (link) {
+		$$('[data-ssc-hubgo]', root).forEach(function (link) {
 			link.addEventListener('click', function (e) {
 				e.preventDefault();
-				show(link.getAttribute('data-ssc-kgo'));
+				show(link.getAttribute('data-ssc-hubgo'));
 				if (nav && nav.scrollIntoView) { nav.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 			});
 		});
+
+		function markDirty() {
+			if (dirty) { return; }
+			dirty = true;
+			if (dirtyNote) { dirtyNote.hidden = false; }
+		}
+
+		// Unsaved edits in the page's main form(s): a note, and a prompt before leaving.
+		$$('form[data-ssc-hubform], #ssc-kform', root).forEach(function (form) {
+			form.addEventListener('input', markDirty);
+			form.addEventListener('change', markDirty);
+			form.addEventListener('submit', function () { dirty = false; });
+		});
+		// A field that fails validation inside a hidden section or a folded card cannot be focused, so the
+		// browser would refuse to save without saying why: open whatever holds it. ("invalid" does not bubble.)
+		root.addEventListener('invalid', function (e) {
+			var field = e.target;
+			if (!field || !field.closest) { return; }
+			var panel = field.closest('[data-ssc-hubpanel]');
+			if (panel && panel.hidden) { show(panel.getAttribute('data-ssc-hubpanel')); }
+			var fold = field.parentElement;
+			while (fold && fold !== root) {
+				if ('DETAILS' === fold.tagName) { fold.open = true; }
+				fold = fold.parentElement;
+			}
+		}, true);
+		window.addEventListener('beforeunload', function (e) {
+			if (!dirty) { return undefined; }
+			e.preventDefault();
+			e.returnValue = '';
+			return '';
+		});
+
+		/** A link to something inside a section (e.g. #mod-voice): open the section, unfold the card, scroll to it. */
+		function openAnchor(id) {
+			var node = id ? document.getElementById(id) : null;
+			var panel = node && node.closest ? node.closest('[data-ssc-hubpanel]') : null;
+			if (!panel || !root.contains(panel)) { return false; }
+			show(panel.getAttribute('data-ssc-hubpanel'));
+			var fold = node;
+			while (fold && fold !== root) {
+				if ('DETAILS' === fold.tagName) { fold.open = true; }
+				fold = fold.parentElement;
+			}
+			window.setTimeout(function () { if (node.scrollIntoView) { node.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 60);
+			return true;
+		}
+
+		var wanted = (window.location.hash || '').replace('#', '');
+		if (!panelById(wanted)) { openAnchor(wanted); }
+		if (!panelById(wanted)) {
+			wanted = '';
+			try { wanted = window.sessionStorage.getItem(key) || ''; } catch (e2) { wanted = ''; }
+			// A remembered tab only wins when the server did not ask for a particular one.
+			if (root.getAttribute('data-initial-forced') === '1' || !panelById(wanted)) { wanted = root.getAttribute('data-initial') || ''; }
+		}
+		if (!root.querySelector('.is-active[data-ssc-hubtab]')) {
+			show(panelById(wanted) ? wanted : (root.getAttribute('data-initial') || ''));
+		}
+		window.addEventListener('hashchange', function () {
+			var id = (window.location.hash || '').replace('#', '');
+			if (panelById(id)) { show(id); } else { openAnchor(id); }
+		});
+
+		var api = { show: show, panelById: panelById, markDirty: markDirty, tabs: tabs, panels: panels };
+		root.__sscHub = api;
+		return api;
+	}
+
+	/* Wizard, knowledge step: quick-start topics and a progress ring that follows what is typed. */
+	(function bindWizardKnowledge() {
+		var root = $('[data-ssc-wk]');
+		var list = $('#ssc-ki-list');
+		var addBtn = $('.ssc-ki__add[data-target="#ssc-ki-list"]');
+		if (!root || !list || !addBtn) { return; }
+		var goal = parseInt(root.getAttribute('data-goal'), 10) || 3;
+		var ring = $('.ssc-ring', root);
+		var ringVal = ring ? $('.ssc-ring__val', ring) : null;
+		var count = $('[data-ssc-wkcount]', root);
+		var starters = $('.ssc-wk__starters', root);
+		var template = count ? count.textContent : '';
+		var counts = template.match(/\d+/g) || [];
+
+		function rows() { return $$('.ssc-ki', list); }
+		function filled() {
+			return rows().filter(function (row) {
+				var area = $('textarea', row);
+				return area && area.value.trim() !== '';
+			}).length;
+		}
+		function paint() {
+			var n = filled();
+			var pct = Math.min(100, Math.round(100 * n / goal));
+			if (ring) {
+				ring.style.setProperty('--p', String(pct));
+				ring.classList.toggle('is-ok', pct >= 100);
+				ring.setAttribute('aria-label', pct + '%');
+			}
+			if (ringVal) { ringVal.textContent = pct + '%'; }
+			// Reuse the server-rendered sentence: it holds "N of M" as its first two numbers.
+			if (count && counts.length >= 2) {
+				var seen = 0;
+				count.textContent = template.replace(/\d+/g, function () {
+					seen += 1;
+					return String(1 === seen ? Math.min(n, goal) : goal);
+				});
+			}
+			$$('[data-ssc-wkstart]', root).forEach(function (btn) {
+				var used = rows().some(function (row) {
+					var title = $('input[type="text"]', row);
+					return title && title.value.trim() === btn.getAttribute('data-title');
+				});
+				btn.classList.toggle('is-on', used);
+				btn.setAttribute('aria-pressed', used ? 'true' : 'false');
+			});
+		}
+
+		if (starters) {
+			starters.hidden = false;
+			$$('[data-ssc-wkstart]', starters).forEach(function (btn) {
+				btn.addEventListener('click', function () {
+					var existing = rows().filter(function (row) {
+						var title = $('input[type="text"]', row);
+						return title && title.value.trim() === btn.getAttribute('data-title');
+					})[0];
+					var row = existing || rows().filter(function (r) {
+						var title = $('input[type="text"]', r);
+						var area = $('textarea', r);
+						return title && area && title.value.trim() === '' && area.value.trim() === '';
+					})[0] || addRow(addBtn);
+					if (!row) { return; }
+					var type = $('select', row);
+					var title = $('input[type="text"]', row);
+					if (type) { type.value = btn.getAttribute('data-type'); }
+					if (title && !existing) { title.value = btn.getAttribute('data-title'); }
+					var area = $('textarea', row);
+					if (area) { area.focus(); }
+					if (row.scrollIntoView) { row.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+					paint();
+				});
+			});
+		}
+		list.addEventListener('input', paint);
+		list.addEventListener('change', paint);
+		list.addEventListener('ssc-rows-changed', paint);
+		list.addEventListener('click', function (e) {
+			if (e.target && e.target.closest && e.target.closest('.ssc-ki__remove')) { window.setTimeout(paint, 0); }
+		});
+		paint();
+	})();
+
+	/* Modules: filter the cards by status (the chips stay hidden without script). */
+	(function bindModuleFilter() {
+		var bar = $('[data-ssc-modfilter]');
+		if (!bar) { return; }
+		var cards = $$('[data-ssc-modstatus]');
+		var groups = $$('[data-ssc-modcat]');
+		var none = $('[data-ssc-modempty]');
+		bar.hidden = false;
+		function apply(which) {
+			cards.forEach(function (card) {
+				card.hidden = 'all' !== which && card.getAttribute('data-ssc-modstatus') !== which;
+			});
+			var shown = 0;
+			groups.forEach(function (group) {
+				var any = $$('[data-ssc-modstatus]', group).some(function (card) { return !card.hidden; });
+				group.hidden = !any;
+				if (any) { shown += 1; }
+			});
+			if (none) { none.hidden = shown > 0 || !groups.length; }
+		}
+		$$('[data-ssc-modshow]', bar).forEach(function (chip) {
+			chip.addEventListener('click', function () {
+				$$('[data-ssc-modshow]', bar).forEach(function (c) { c.classList.toggle('is-on', c === chip); c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'); });
+				apply(chip.getAttribute('data-ssc-modshow'));
+			});
+		});
+	})();
+
+	/* The brand strip on the Appearance screen follows the colour and the name as they are typed. */
+	(function bindBrandStrip() {
+		var strip = $('#ssc-abrand');
+		var color = $('#primary_color');
+		var name = $('#assistant_display_name');
+		if (!strip) { return; }
+		var label = $('[data-ssc-abrand="name"]', strip);
+		var fallback = label ? label.textContent : '';
+		if (color) { color.addEventListener('input', function () { strip.style.setProperty('--brand', color.value); }); }
+		if (name && label) { name.addEventListener('input', function () { label.textContent = name.value.trim() || fallback; }); }
+	})();
+
+	$$('[data-ssc-hub]').forEach(bindHub);
+
+	/* ---------- Business Knowledge: live progress, examples ---------- */
+
+	/*
+	 * Progress rings follow what is typed. The rules mirror SSC_Knowledge_Score
+	 * (PHP), which draws the first paint.
+	 */
+	function bindKnowledgeHub() {
+		var root = $('#ssc-kh');
+		if (!root || !root.__sscHub) { return; }
+		var hub = root.__sscHub;
+		var tabs = hub.tabs;
+		var panels = hub.panels;
+		var form = $('#ssc-kform');
+		var fmt = {};
+		var levels = [];
+		var weights = {};
+		try { fmt = JSON.parse(root.getAttribute('data-fmt') || '{}'); } catch (e1) { fmt = {}; }
+		try { levels = JSON.parse(root.getAttribute('data-levels') || '[]'); } catch (e2) { levels = []; }
+		try { weights = JSON.parse(root.getAttribute('data-weights') || '{}'); } catch (e3) { weights = {}; }
+		var extraKnowledge = '1' === root.getAttribute('data-extra');
+		var panelById = hub.panelById;
+		var markDirty = hub.markDirty;
+
+		function text(template, a, b) {
+			return String(template || '').replace('%1$d', a).replace('%2$d', b).replace('%d', a);
+		}
 
 		/* ----- progress ----- */
 
 		var ratios = {};
 		// Sections that are not edited here keep the ratio the server drew.
 		tabs.forEach(function (tab) {
-			var id = tab.getAttribute('data-ssc-ktab');
+			var id = tab.getAttribute('data-ssc-hubtab');
 			var ring = $('[data-ssc-kring="' + id + '"] .ssc-ring', root);
 			ratios[id] = ring ? (parseFloat(ring.style.getPropertyValue('--p')) || 0) / 100 : 0;
 		});
@@ -586,7 +845,7 @@
 			var orgFilled = false;
 			panels.forEach(function (panel) {
 				if (!panel.hasAttribute('data-ssc-form')) { return; }
-				var id = panel.getAttribute('data-ssc-kpanel');
+				var id = panel.getAttribute('data-ssc-hubpanel');
 				var m = measure(panel);
 				ratios[id] = m.ratio;
 				setRing($('[data-ssc-kring="' + id + '"]', root), Math.round(100 * m.ratio));
@@ -643,12 +902,6 @@
 			badge.textContent = 1 === n ? (badge.getAttribute('data-one') || '') : text(badge.getAttribute('data-many'), n);
 		}
 
-		function markDirty() {
-			if (dirty) { return; }
-			dirty = true;
-			if (dirtyNote) { dirtyNote.hidden = false; }
-		}
-
 		if (form) {
 			form.addEventListener('input', function (e) {
 				var t = e.target;
@@ -657,7 +910,6 @@
 				if (t.hasAttribute && t.hasAttribute('data-ssc-kname')) { mirror(card, 'name', t.value.trim(), true); }
 				if (t.hasAttribute && t.hasAttribute('data-ssc-kcontent')) { mirror(card, 'content', t.value.trim().replace(/\s+/g, ' ').slice(0, 90), false); }
 				if (card && t.closest && t.closest('.ssc-product__attrs')) { specCount(card); }
-				markDirty();
 				paint();
 			});
 			form.addEventListener('change', function (e) {
@@ -666,23 +918,15 @@
 					var card = cardOf(t);
 					if (card) { card.setAttribute('data-type', t.value); }
 				}
-				markDirty();
 			});
-			form.addEventListener('submit', function () { dirty = false; });
 		}
 		root.addEventListener('ssc-rows-changed', function () { markDirty(); paint(); });
-		window.addEventListener('beforeunload', function (e) {
-			if (!dirty) { return undefined; }
-			e.preventDefault();
-			e.returnValue = '';
-			return '';
-		});
 
 		/* ----- examples ----- */
 
 		$$('[data-ssc-kstarter]', root).forEach(function (chip) {
 			chip.addEventListener('click', function () {
-				var add = $('#ssc-kpanel-facts .ssc-ki__add');
+				var add = $('#ssc-hpanel-facts .ssc-ki__add');
 				var row = add ? addRow(add) : null;
 				if (!row) { return; }
 				var title = $('[data-ssc-ktitle]', row);
@@ -703,12 +947,6 @@
 
 		/* ----- start ----- */
 
-		var wanted = (window.location.hash || '').replace('#', '');
-		show(panelById(wanted) ? wanted : (root.getAttribute('data-initial') || 'identity'));
-		window.addEventListener('hashchange', function () {
-			var id = (window.location.hash || '').replace('#', '');
-			if (panelById(id)) { show(id); }
-		});
 		paint();
 	}
 
@@ -909,62 +1147,6 @@
 			if (form) { form.submit(); }
 		});
 	});
-})();
-
-/* ---------- Settings tabs (progressive: without JS every card stays visible) ---------- */
-(function () {
-	'use strict';
-	var nav = document.querySelector('.ssc-tabs');
-	if (!nav) { return; }
-	var sections = Array.prototype.slice.call(document.querySelectorAll('[data-ssc-tab]'));
-	var tabs = Array.prototype.slice.call(nav.querySelectorAll('.ssc-tabs__tab'));
-	var actions = document.querySelector('.ssc-form__actions');
-	var KEY = 'ssc_settings_tab';
-
-	// Hide tabs that have no content (e.g. no module is active).
-	tabs = tabs.filter(function (tab) {
-		var has = sections.some(function (sec) { return sec.getAttribute('data-ssc-tab') === tab.getAttribute('data-tab'); });
-		if (!has) { tab.parentElement.removeChild(tab); }
-		return has;
-	});
-	if (tabs.length < 2) { return; }
-
-	function select(id, focus) {
-		var found = tabs.some(function (tab) { return tab.getAttribute('data-tab') === id; });
-		if (!found) { id = tabs[0].getAttribute('data-tab'); }
-		tabs.forEach(function (tab) {
-			var on = tab.getAttribute('data-tab') === id;
-			tab.setAttribute('aria-selected', on ? 'true' : 'false');
-			tab.tabIndex = on ? 0 : -1;
-			if (on && focus) { tab.focus(); }
-		});
-		sections.forEach(function (sec) {
-			sec.hidden = sec.getAttribute('data-ssc-tab') !== id;
-			sec.setAttribute('role', 'tabpanel');
-			sec.setAttribute('aria-labelledby', 'ssc-tab-' + sec.getAttribute('data-ssc-tab'));
-		});
-		// Data tools have their own buttons; the main save belongs to form tabs.
-		if (actions) { actions.hidden = 'data' === id; }
-		try { sessionStorage.setItem(KEY, id); } catch (e) { /* storage unavailable */ }
-		if (window.history && window.history.replaceState) { window.history.replaceState(null, '', '#' + id); }
-	}
-
-	tabs.forEach(function (tab, i) {
-		tab.addEventListener('click', function () { select(tab.getAttribute('data-tab'), false); });
-		tab.addEventListener('keydown', function (e) {
-			var dir = (e.key === 'ArrowRight') ? 1 : (e.key === 'ArrowLeft') ? -1 : 0;
-			if (document.dir === 'rtl') { dir = -dir; }
-			if (!dir) { return; }
-			e.preventDefault();
-			var next = tabs[(i + dir + tabs.length) % tabs.length];
-			select(next.getAttribute('data-tab'), true);
-		});
-	});
-
-	var initial = (window.location.hash || '').replace('#', '');
-	if (!initial) { try { initial = sessionStorage.getItem(KEY) || ''; } catch (e) { initial = ''; } }
-	nav.hidden = false;
-	select(initial, false);
 })();
 
 /* ---------- Answer scope & web search (AI Connection) ---------- */
