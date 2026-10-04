@@ -170,6 +170,11 @@ class SSC_Frontend {
 			'launcherSize'     => (int) $s['launcher_size'],
 			'launcherIconUrl'  => $s['launcher_icon_url'],
 			'launcherStyle'    => $s['launcher_style'],
+			'offsetX'          => (int) $s['launcher_offset_x'],
+			'offsetY'          => (int) $s['launcher_offset_y'],
+			'offsetXMobile'    => (int) $s['launcher_offset_x_mobile'],
+			'offsetYMobile'    => (int) $s['launcher_offset_y_mobile'],
+			'avoidBars'        => 'yes' === $s['launcher_avoid_bars'],
 			'supportPhone'     => $business['support_phone'] ? $business['support_phone'] : $business['phone'],
 
 			// Catalog.

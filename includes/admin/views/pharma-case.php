@@ -17,11 +17,11 @@ $serious   = SSC_Module_Pharma::is_serious_row( $case );
 $criteria  = SSC_Module_Pharma::seriousness_criteria( $case );
 $statuses  = SSC_Module_Pharma::case_statuses();
 ?>
-<div class="ssc-page">
+<div class="ssc-page ssc-adr-case">
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php echo esc_html( sprintf( __( 'ADR case #%d', 'nexachat-ai' ), (int) $case['id'] ) ); ?></h1>
-			<p class="ssc-page__sub"><?php echo esc_html( SSC_Date::display( $case['created_at'] ) ); ?></p>
+			<p class="ssc-page__sub"><?php echo esc_html( SSC_Date::display( $case['created_at'] ) ); ?> · <span class="ssc-pill" data-ssc-hue="<?php echo esc_attr( $serious ? 'red' : 'blue' ); ?>"><?php echo esc_html( isset( $statuses[ $case['status'] ] ) ? $statuses[ $case['status'] ] : $case['status'] ); ?></span></p>
 		</div>
 		<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-pharma' ) ); ?>"><span class="ssc-dir-arrow" aria-hidden="true">←</span> <?php esc_html_e( 'All cases', 'nexachat-ai' ); ?></a>
 	</header>
@@ -32,7 +32,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 
 	<div class="ssc-grid ssc-grid--2">
 		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Reporter', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::card_title( 'user', 'blue', __( 'Reporter', 'nexachat-ai' ) ); ?>
 			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--kv">
 				<tbody>
 					<tr><th><?php esc_html_e( 'Name', 'nexachat-ai' ); ?></th><td><?php echo esc_html( $case['name'] ); ?></td></tr>
@@ -49,7 +49,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 		</section>
 
 		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Suspected product', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::card_title( 'box', 'violet', __( 'Suspected product', 'nexachat-ai' ) ); ?>
 			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--kv">
 				<tbody>
 					<tr><th><?php esc_html_e( 'Product', 'nexachat-ai' ); ?></th><td><?php echo esc_html( $case['product'] ); ?></td></tr>
@@ -65,7 +65,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 		</section>
 
 		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Reaction', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::card_title( 'heart', 'rose', __( 'Reaction', 'nexachat-ai' ) ); ?>
 			<blockquote class="ssc-quote"><?php echo esc_html( (string) $case['description'] ); ?></blockquote>
 			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--kv">
 				<tbody>
@@ -82,7 +82,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 		<?php foreach ( SSC_Module_Pharma::custom_answers( $extra ) as $ssc_answer_group ) : ?>
 			<?php if ( $ssc_answer_group ) : ?>
 				<section class="ssc-card">
-					<h2><?php esc_html_e( 'Additional questions', 'nexachat-ai' ); ?></h2>
+					<?php SSC_Admin_UI::card_title( 'list', 'slate', __( 'Additional questions', 'nexachat-ai' ) ); ?>
 					<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--kv">
 						<tbody>
 							<?php foreach ( $ssc_answer_group as $ssc_question => $ssc_answer ) : ?>
@@ -95,7 +95,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 		<?php endforeach; ?>
 
 		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Case workflow', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::card_title( 'scale', 'green', __( 'Case workflow', 'nexachat-ai' ) ); ?>
 			<form method="post" class="ssc-form">
 				<?php wp_nonce_field( 'ssc_case_' . (int) $case['id'] ); ?>
 				<input type="hidden" name="case_id" value="<?php echo esc_attr( (string) $case['id'] ); ?>" />
@@ -116,7 +116,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 		</section>
 
 		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Privacy actions (per record)', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::card_title( 'lock', 'amber', __( 'Privacy actions (per record)', 'nexachat-ai' ) ); ?>
 			<p class="ssc-card__sub"><?php esc_html_e( 'Export this case, remove direct identifiers, or permanently delete the record. Removing identifiers does not anonymize free-text narratives or audit notes; review those separately under your retention policy.', 'nexachat-ai' ); ?></p>
 			<form method="post" class="ssc-form" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
 				<?php wp_nonce_field( 'ssc_case_privacy_' . (int) $case['id'] ); ?>
@@ -133,7 +133,7 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 	</div>
 
 	<section class="ssc-card ssc-mt">
-		<h2><?php esc_html_e( 'Audit trail', 'nexachat-ai' ); ?></h2>
+		<?php SSC_Admin_UI::card_title( 'clock', 'slate', __( 'Audit trail', 'nexachat-ai' ) ); ?>
 		<?php if ( $audit ) : ?>
 			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table">
 				<thead><tr><th><?php esc_html_e( 'Time', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Action', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'From → To', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'By', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Note', 'nexachat-ai' ); ?></th></tr></thead>

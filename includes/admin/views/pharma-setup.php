@@ -27,7 +27,7 @@ $configured = isset( $_GET['configured'] ) ? (int) $_GET['configured'] : 0; // p
 		<input type="hidden" name="ssc_pharma_setup_save" value="1" />
 
 		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Before you go live', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::card_title( 'shield', 'rose', __( 'Before you go live', 'nexachat-ai' ), __( 'One contact address, and a short read of how cases are handled.', 'nexachat-ai' ) ); ?>
 			<div class="ssc-field">
 				<label for="pv_contact"><?php esc_html_e( 'Pharmacovigilance contact email (for internal alerts and case routing)', 'nexachat-ai' ); ?></label>
 				<input id="pv_contact" name="pv_contact" type="email" dir="ltr" value="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>" />

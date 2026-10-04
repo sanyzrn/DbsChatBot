@@ -1,6 +1,7 @@
 <?php
 /**
- * ADR cases list view (pharma module).
+ * ADR cases list (pharma module): summary tiles by triage state, status
+ * chips, and the cases with a colour accent per state.
  *
  * @package SmartSupportChatbot
  * @var array $result  Rows.
@@ -13,14 +14,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $updated = isset( $_GET['updated'] ) ? (int) $_GET['updated'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
 $counts  = SSC_Schema::counts();
-$serious = 0;
-if ( isset( $counts['pharma_adr'] ) ) {
-	foreach ( $counts['pharma_adr'] as $status => $n ) {
-		$serious += (int) $n;
-	}
-}
+$ssc_by  = isset( $counts['pharma_adr'] ) ? $counts['pharma_adr'] : array();
+$ssc_all = array_sum( array_map( 'intval', $ssc_by ) );
+$ssc_hue = array(
+	'new'         => 'red',
+	'in_progress' => 'amber',
+	'follow_up'   => 'violet',
+	'done'        => 'green',
+	'archived'    => 'slate',
+);
+$ssc_n   = function ( $status ) use ( $ssc_by ) {
+	return isset( $ssc_by[ $status ] ) ? (int) $ssc_by[ $status ] : 0;
+};
+$ssc_filtered = '' !== $filters['status'] || '' !== $filters['search'];
+$ssc_link     = function ( $status ) use ( $filters ) {
+	return add_query_arg(
+		array(
+			'page'   => 'ssc-pharma',
+			'status' => $status,
+			's'      => $filters['search'],
+		),
+		admin_url( 'admin.php' )
+	);
+};
 ?>
-<div class="ssc-page">
+<div class="ssc-page ssc-adr">
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php esc_html_e( 'ADR Cases', 'nexachat-ai' ); ?></h1>
@@ -36,20 +54,55 @@ if ( isset( $counts['pharma_adr'] ) ) {
 		<div class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Case updated.', 'nexachat-ai' ); ?></div>
 	<?php endif; ?>
 
+	<section class="ssc-hstats">
+		<?php
+		SSC_Admin_UI::stat( 'heart', 'rose', number_format_i18n( $ssc_all ), __( 'All cases', 'nexachat-ai' ), $ssc_link( '' ) );
+		SSC_Admin_UI::stat( 'alert', 'red', number_format_i18n( $ssc_n( 'new' ) ), __( 'Awaiting triage', 'nexachat-ai' ), $ssc_link( 'new' ) );
+		SSC_Admin_UI::stat( 'clock', 'amber', number_format_i18n( $ssc_n( 'in_progress' ) + $ssc_n( 'follow_up' ) ), __( 'Being assessed', 'nexachat-ai' ) );
+		SSC_Admin_UI::stat( 'check', 'green', number_format_i18n( $ssc_n( 'done' ) ), __( 'Closed', 'nexachat-ai' ), $ssc_link( 'done' ) );
+		?>
+	</section>
+
+	<?php
+	$ssc_chips = array(
+		array(
+			'label'  => __( 'All statuses', 'nexachat-ai' ),
+			'url'    => $ssc_link( '' ),
+			'count'  => $ssc_all,
+			'active' => '' === $filters['status'],
+			'hue'    => 'indigo',
+		),
+	);
+	foreach ( SSC_Module_Pharma::case_statuses() as $st => $st_label ) {
+		$ssc_chips[] = array(
+			'label'  => $st_label,
+			'url'    => $ssc_link( $st ),
+			'count'  => $ssc_n( $st ),
+			'active' => $st === $filters['status'],
+			'hue'    => isset( $ssc_hue[ $st ] ) ? $ssc_hue[ $st ] : 'slate',
+		);
+	}
+	SSC_Admin_UI::chips( $ssc_chips, __( 'Status', 'nexachat-ai' ) );
+	?>
+
 	<form method="get" class="ssc-filterbar">
 		<input type="hidden" name="page" value="ssc-pharma" />
-		<select name="status" aria-label="<?php esc_attr_e( 'Status', 'nexachat-ai' ); ?>">
-			<option value=""><?php esc_html_e( 'All statuses', 'nexachat-ai' ); ?></option>
-			<?php foreach ( SSC_Module_Pharma::case_statuses() as $st => $st_label ) : ?>
-				<option value="<?php echo esc_attr( $st ); ?>" <?php selected( $filters['status'], $st ); ?>><?php echo esc_html( $st_label ); ?></option>
-			<?php endforeach; ?>
-		</select>
+		<input type="hidden" name="status" value="<?php echo esc_attr( $filters['status'] ); ?>" />
 		<input type="search" name="s" value="<?php echo esc_attr( $filters['search'] ); ?>" placeholder="<?php esc_attr_e( 'Search…', 'nexachat-ai' ); ?>" />
 		<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Filter', 'nexachat-ai' ); ?></button>
+		<?php if ( $ssc_filtered ) : ?>
+			<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( add_query_arg( 'page', 'ssc-pharma', admin_url( 'admin.php' ) ) ); ?>"><?php esc_html_e( 'Clear filters', 'nexachat-ai' ); ?></a>
+		<?php endif; ?>
 	</form>
 
 	<?php if ( empty( $result['items'] ) ) : ?>
-		<div class="ssc-empty"><p><?php esc_html_e( 'No ADR cases yet. When someone files a report through the chat, it appears here for triage.', 'nexachat-ai' ); ?></p></div>
+		<?php
+		if ( $ssc_filtered ) {
+			SSC_Admin_UI::empty_state( 'search', 'slate', __( 'Nothing matches these filters', 'nexachat-ai' ), __( 'Try another status or a shorter search.', 'nexachat-ai' ), __( 'Clear filters', 'nexachat-ai' ), add_query_arg( 'page', 'ssc-pharma', admin_url( 'admin.php' ) ) );
+		} else {
+			SSC_Admin_UI::empty_state( 'heart', 'rose', __( 'No ADR cases yet', 'nexachat-ai' ), __( 'No ADR cases yet. When someone files a report through the chat, it appears here for triage.', 'nexachat-ai' ) );
+		}
+		?>
 	<?php else : ?>
 		<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table">
 			<thead>
@@ -65,13 +118,13 @@ if ( isset( $counts['pharma_adr'] ) ) {
 			<tbody>
 				<?php foreach ( $result['items'] as $row ) : ?>
 					<?php $is_serious = SSC_Module_Pharma::is_serious_row( $row ); ?>
-					<tr class="<?php echo $is_serious ? 'is-serious' : ''; ?>">
+					<tr class="ssc-row<?php echo $is_serious ? ' is-serious' : ''; ?>" data-ssc-hue="<?php echo esc_attr( isset( $ssc_hue[ $row['status'] ] ) ? $ssc_hue[ $row['status'] ] : 'slate' ); ?>">
 						<td><a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ssc-pharma', 'view' => $row['id'] ), admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html( SSC_Date::display( $row['created_at'] ) ); ?></a></td>
 						<td><?php echo esc_html( $row['product'] . ( $row['batch_number'] ? ' / ' . $row['batch_number'] : '' ) ); ?></td>
 						<td><?php echo esc_html( $row['name'] ); ?></td>
 						<td><?php echo esc_html( SSC_Module_Pharma::option_label( 'severity', (string) $row['severity'] ) ); ?></td>
 						<td><?php echo $is_serious ? '<span class="ssc-badge ssc-badge--danger">' . esc_html__( 'SERIOUS', 'nexachat-ai' ) . '</span>' : '—'; ?></td>
-						<td><?php echo esc_html( SSC_Module_Pharma::case_statuses()[ $row['status'] ] ?? $row['status'] ); ?></td>
+						<td><span class="ssc-pill" data-ssc-hue="<?php echo esc_attr( isset( $ssc_hue[ $row['status'] ] ) ? $ssc_hue[ $row['status'] ] : 'slate' ); ?>"><?php echo esc_html( SSC_Module_Pharma::case_statuses()[ $row['status'] ] ?? $row['status'] ); ?></span></td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>

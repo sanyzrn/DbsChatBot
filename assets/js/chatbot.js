@@ -447,6 +447,12 @@
                 }).catch(function () { /* keep the rendered status */ });
         }
 
+        /** A distance setting as CSS px; zero is a real value, only junk falls back. */
+        function distance(value, fallback) {
+                var n = parseInt(value, 10);
+                return (isNaN(n) || n < 0 ? fallback : n) + 'px';
+        }
+
         function cssVars() {
                 var vars = {
                         '--ssc-primary': cfg.primaryColor || '#16203a',
@@ -454,7 +460,11 @@
                         '--ssc-win-width': (cfg.windowWidth || 384) + 'px',
                         '--ssc-win-radius': (cfg.windowRadius || 24) + 'px',
                         '--ssc-bubble-radius': (cfg.bubbleRadius || 16) + 'px',
-                        '--ssc-launcher-size': (cfg.launcherSize || 60) + 'px'
+                        '--ssc-launcher-size': (cfg.launcherSize || 60) + 'px',
+                        '--ssc-off-x-d': distance(cfg.offsetX, 22),
+                        '--ssc-off-y-d': distance(cfg.offsetY, 22),
+                        '--ssc-off-x-m': distance(cfg.offsetXMobile, 18),
+                        '--ssc-off-y-m': distance(cfg.offsetYMobile, 18)
                 };
                 if (cfg.fontStack) { vars['--ssc-font'] = cfg.fontStack; }
                 // Text on a coloured surface is picked by contrast, so a light brand
@@ -1261,7 +1271,8 @@
                         return;
                 }
                 if (data.handoff && cfg.features && (cfg.features.handoff || cfg.features.live)) {
-                        addItem('bot', cfg.handoffText || '', { history: false });
+                        // The text is optional: an empty one used to leave a blank bubble above the button.
+                        if (String(cfg.handoffText || '').trim()) { addItem('bot', cfg.handoffText, { history: false }); }
                         addChips([{ label: cfg.features.live ? liveText('talkToPerson', 'Talk to a person') : (i18n.handoffBtn || 'Talk to a human'), onClick: cfg.features.live ? requestHuman : showLeadForm }]);
                         return;
                 }
@@ -2434,6 +2445,62 @@
         }, true);
 
         /* ------------------------------------------------------------------ *
+         * Staying clear of a bottom bar
+         *
+         * Many mobile sites pin a menu or a notice to the bottom edge, exactly
+         * where the launcher lives. A few hit tests just above the edge find
+         * such a bar (fixed or sticky, most of the screen wide, a plausible
+         * height) and the launcher rides above it. Debounced, narrow screens
+         * only, and the configured distance still applies when it is larger.
+         * ------------------------------------------------------------------ */
+
+        var lift = 0;
+
+        function bottomBarLift() {
+                var vw = window.innerWidth;
+                var vh = window.innerHeight;
+                if (!cfg.avoidBars || cfg.preview || previewMount || vw > 768 || !document.elementsFromPoint || !window.getComputedStyle) { return 0; }
+                var top = vh;
+                [0.5, 0.15, 0.85].forEach(function (share) {
+                        [6, 24, 44].forEach(function (up) {
+                                var stack = document.elementsFromPoint(Math.round(vw * share), vh - up) || [];
+                                stack.forEach(function (node) {
+                                        if (!node || node === document.documentElement || node === document.body || root.contains(node)) { return; }
+                                        var style = window.getComputedStyle(node);
+                                        if (('fixed' !== style.position && 'sticky' !== style.position) || parseFloat(style.opacity) < 0.1) { return; }
+                                        var box = node.getBoundingClientRect();
+                                        // A bar: wide, shortish, resting on the bottom edge (floating bars keep a small gap).
+                                        if (box.width < vw * 0.6 || box.height < 24 || box.height > 160 || box.bottom < vh - 48 || box.bottom > vh + 2) { return; }
+                                        top = Math.min(top, box.top);
+                                });
+                        });
+                });
+                return top < vh ? Math.ceil(vh - top) + 12 : 0;
+        }
+
+        function applyLift() {
+                var next = bottomBarLift();
+                if (next === lift) { return; }
+                lift = next;
+                root.style.setProperty('--ssc-lift', lift + 'px');
+        }
+
+        function setupBarAvoidance() {
+                if (!cfg.avoidBars || cfg.preview || previewMount) { return; }
+                var timer = 0;
+                function later(delay) {
+                        window.clearTimeout(timer);
+                        timer = window.setTimeout(applyLift, delay);
+                }
+                // Menus are often drawn after load, and some hide while scrolling.
+                later(400);
+                window.addEventListener('load', function () { later(900); });
+                window.addEventListener('resize', function () { later(200); });
+                window.addEventListener('orientationchange', function () { later(400); });
+                window.addEventListener('scroll', function () { later(250); }, { passive: true });
+        }
+
+        /* ------------------------------------------------------------------ *
          * Boot
          * ------------------------------------------------------------------ */
 
@@ -2460,6 +2527,7 @@
                 setupProactive();
                 setupWooOffer();
                 refreshStatus();
+                setupBarAvoidance();
 
                 window.addEventListener('beforeunload', function () {
                         if (window.speechSynthesis) { window.speechSynthesis.cancel(); }

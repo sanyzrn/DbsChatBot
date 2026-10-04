@@ -32,7 +32,10 @@ defined( 'ABSPATH' ) || exit;
 				<ul class="ssc-live__threads" id="ssc-live-threads" aria-live="polite"></ul>
 			</aside>
 			<section class="ssc-live__chat" id="ssc-live-chat" aria-live="polite">
-				<p class="ssc-live__empty"><?php esc_html_e( 'Choose a conversation on the left.', 'nexachat-ai' ); ?></p>
+				<div class="ssc-live__empty" data-ssc-hue="violet">
+					<span class="ssc-live__emptyico"><?php echo SSC_Icons::get( 'chat' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
+					<p><?php esc_html_e( 'Choose a conversation on the left.', 'nexachat-ai' ); ?></p>
+				</div>
 			</section>
 		</div>
 </div>

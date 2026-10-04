@@ -263,8 +263,50 @@ class SSC_Admin_Settings {
 	 * Render.
 	 */
 	public function render() {
-		$s        = SSC_Settings::all();
-		$modules  = SSC_Modules::statuses();
+		$s       = SSC_Settings::all();
+		$modules = SSC_Modules::statuses();
+
+		$health = SSC_Settings_Health::compute(
+			$s,
+			array(
+				'https'        => 0 === strpos( home_url(), 'https://' ),
+				'crypto'       => function_exists( 'openssl_encrypt' ) && defined( 'AUTH_KEY' ) && '' !== AUTH_KEY,
+				'behind_proxy' => ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) || ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) || ! empty( $_SERVER['HTTP_X_REAL_IP'] ),
+				'forms'        => SSC_Modules::is_active( 'leads' ) || SSC_Modules::is_active( 'pharma' ),
+				'history'      => SSC_Modules::is_active( 'history' ),
+			)
+		);
+
+		// Modules that have options on this screen.
+		$mod_count = count( array_intersect( SSC_Modules::active_ids(), array( 'pharma', 'voice', 'history', 'csat', 'handoff', 'proactive', 'leads', 'notifications', 'live', 'messenger', 'woocommerce', 'sms' ) ) );
+
+		// One line under each tile.
+		$rate  = array(
+			'ip'      => __( 'Rate limit by IP', 'nexachat-ai' ),
+			'session' => __( 'Rate limit by session', 'nexachat-ai' ),
+			'both'    => __( 'Rate limit by IP and session', 'nexachat-ai' ),
+			'off'     => __( 'Rate limit off', 'nexachat-ai' ),
+		);
+		$tiles = array(
+			'privacy'    => implode(
+				' · ',
+				array(
+					'yes' === $s['consent_enabled'] ? __( 'Consent required', 'nexachat-ai' ) : __( 'Consent optional', 'nexachat-ai' ),
+					'full' === $s['ip_storage'] ? __( 'Full IPs stored', 'nexachat-ai' ) : ( 'none' === $s['ip_storage'] ? __( 'IPs not stored', 'nexachat-ai' ) : __( 'IPs anonymized', 'nexachat-ai' ) ),
+				)
+			),
+			'display'    => implode(
+				' · ',
+				array(
+					'all' === $s['display_mode'] ? __( 'All pages', 'nexachat-ai' ) : __( 'Selected pages', 'nexachat-ai' ),
+					'yes' === $s['business_hours_enabled'] ? __( 'Business hours on', 'nexachat-ai' ) : __( 'Always available', 'nexachat-ai' ),
+				)
+			),
+			'protection' => isset( $rate[ $s['rate_limit_mode'] ] ) ? $rate[ $s['rate_limit_mode'] ] : $rate['ip'],
+			/* translators: %d: number of modules. */
+			'modules'    => sprintf( _n( '%d module with options', '%d modules with options', $mod_count, 'nexachat-ai' ), $mod_count ),
+			'data'       => 'yes' === get_option( 'ssc_chatbot_delete_on_uninstall', 'no' ) ? __( 'Data is erased on delete', 'nexachat-ai' ) : __( 'Data is kept on delete', 'nexachat-ai' ),
+		);
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-settings.php';
 	}
 }

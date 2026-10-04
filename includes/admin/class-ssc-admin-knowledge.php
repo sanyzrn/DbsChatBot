@@ -52,9 +52,11 @@ class SSC_Admin_Knowledge {
 					if ( '' === trim( $title ) && '' === trim( $body ) ) {
 						continue;
 					}
-					$type   = isset( $item['type'] ) ? sanitize_key( $item['type'] ) : 'general';
+					$type    = isset( $item['type'] ) ? sanitize_key( $item['type'] ) : 'general';
+					$item_id = isset( $item['id'] ) ? sanitize_key( $item['id'] ) : '';
 					$items[] = array(
-						'id'      => isset( $item['id'] ) ? sanitize_key( $item['id'] ) : 'ki-' . uniqid(),
+						// New rows arrive without an id: give them a stable one (export and import match entries by it).
+						'id'      => '' !== $item_id ? $item_id : 'ki-' . uniqid(),
 						'type'    => $type,
 						'title'   => $title,
 						'content' => $body,
@@ -114,7 +116,12 @@ class SSC_Admin_Knowledge {
 					'products'        => $products,
 				)
 			);
-			self::prg( array( 'saved' => 1 ) );
+			self::prg(
+				array(
+					'saved' => 1,
+					'panel' => self::posted_panel(),
+				)
+			);
 		}
 
 		// Document import (URL).
@@ -233,6 +240,48 @@ class SSC_Admin_Knowledge {
 	}
 
 	/**
+	 * Sections the page is divided into.
+	 *
+	 * @return string[]
+	 */
+	public static function panel_ids() {
+		return array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'ai' ) );
+	}
+
+	/**
+	 * The section that was open when a form was sent.
+	 *
+	 * @return string
+	 */
+	protected static function posted_panel() {
+		$panel = isset( $_POST['ssc_panel'] ) ? sanitize_key( wp_unslash( $_POST['ssc_panel'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- read after the caller verified the nonce.
+		return in_array( $panel, self::panel_ids(), true ) ? $panel : '';
+	}
+
+	/**
+	 * Which section to open after a redirect.
+	 *
+	 * @param string $kb Result state from the query string.
+	 * @return string
+	 */
+	protected static function initial_panel( $kb ) {
+		$panel = isset( $_GET['panel'] ) ? sanitize_key( wp_unslash( $_GET['panel'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+		if ( in_array( $panel, self::panel_ids(), true ) ) {
+			return $panel;
+		}
+		if ( 0 === strpos( $kb, 'sitesync' ) ) {
+			return 'website';
+		}
+		if ( 0 === strpos( $kb, 'suggest' ) ) {
+			return 'ai';
+		}
+		if ( '' !== $kb ) {
+			return 'documents';
+		}
+		return 'identity';
+	}
+
+	/**
 	 * Import a URL into the KB (admin-initiated, SSRF-guarded).
 	 *
 	 * @param string $url URL.
@@ -327,6 +376,29 @@ class SSC_Admin_Knowledge {
 		$products = (array) SSC_Settings::get( 'products', array() );
 		$kb_docs  = SSC_Schema::kb_documents();
 		$kb_count = SSC_Schema::kb_count();
+
+		// Pages mirrored from the website are tracked by the sync module, not counted as documents.
+		$site_docs = array_filter(
+			$kb_docs,
+			function ( $doc ) {
+				return 0 === strpos( (string) $doc['doc_id'], 'wp-' );
+			}
+		);
+		$own_docs  = array_diff_key( $kb_docs, $site_docs );
+
+		$score = SSC_Knowledge_Score::compute(
+			array(
+				'business'    => $business,
+				'items'       => $items,
+				'products'    => $products,
+				'documents'   => count( $own_docs ),
+				'site_pages'  => count( $site_docs ),
+				'site_active' => SSC_Modules::is_active( 'sitesync' ),
+				'knowledge'   => SSC_Setup::knowledge_ready(),
+			)
+		);
+		$kb_state = isset( $_GET['kb'] ) ? sanitize_key( wp_unslash( $_GET['kb'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+		$initial  = self::initial_panel( $kb_state );
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-knowledge.php';
 	}
 }

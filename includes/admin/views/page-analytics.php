@@ -1,6 +1,7 @@
 <?php
 /**
- * Analytics view (analytics module). Insights, not decoration.
+ * Analytics view (analytics module). Insights, not decoration: four summary
+ * tiles (two with rings), the daily volume, and two short lists.
  *
  * @package SmartSupportChatbot
  * @var array $data Insights.
@@ -9,8 +10,16 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+$ssc_unanswered_total = 0;
+foreach ( $data['unanswered'] as $ssc_row ) {
+	$ssc_unanswered_total += (int) $ssc_row['n'];
+}
+$ssc_history  = SSC_Modules::is_active( 'history' );
+$ssc_answered = ( $ssc_history && $data['total14'] > 0 ) ? max( 0, min( 100, (int) round( 100 * ( $data['total14'] - $ssc_unanswered_total ) / $data['total14'] ) ) ) : -1;
+$ssc_faq_url  = SSC_Modules::is_active( 'faq' ) ? admin_url( 'admin.php?page=ssc-faq' ) : admin_url( 'admin.php?page=ssc-knowledge' );
 ?>
-<div class="ssc-page">
+<div class="ssc-page ssc-analytics">
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php esc_html_e( 'Analytics', 'nexachat-ai' ); ?></h1>
@@ -18,25 +27,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</header>
 
-	<section class="ssc-tiles">
-		<div class="ssc-tile">
-			<strong class="ssc-tile__num"><?php echo esc_html( number_format_i18n( $data['total14'] ) ); ?></strong>
-			<span><?php esc_html_e( 'Conversations (14 days)', 'nexachat-ai' ); ?></span>
-		</div>
-		<?php if ( $data['csat'] ) : ?>
-			<div class="ssc-tile">
-				<strong class="ssc-tile__num"><?php echo esc_html( number_format_i18n( $data['csat']['avg'], 2 ) ); ?> / 5</strong>
-				<span><?php echo esc_html( sprintf( _n( '%d rating', '%d ratings', $data['csat']['count'], 'nexachat-ai' ), $data['csat']['count'] ) ); ?></span>
-			</div>
-		<?php endif; ?>
-		<div class="ssc-tile">
-			<strong class="ssc-tile__num"><?php echo esc_html( number_format_i18n( count( $data['unanswered'] ) ) ); ?></strong>
-			<span><?php esc_html_e( 'Unanswered questions (14 days)', 'nexachat-ai' ); ?></span>
-		</div>
+	<section class="ssc-hstats">
+		<?php
+		SSC_Admin_UI::stat( 'chat', 'cyan', number_format_i18n( $data['total14'] ), __( 'Conversations (14 days)', 'nexachat-ai' ) );
+		if ( $data['csat'] && $data['csat']['count'] > 0 ) {
+			SSC_Admin_UI::stat( 'star', 'amber', number_format_i18n( $data['csat']['avg'], 2 ) . ' / 5', sprintf( /* translators: %d: number of ratings. */ _n( '%d rating', '%d ratings', $data['csat']['count'], 'nexachat-ai' ), $data['csat']['count'] ), '', (int) round( 20 * (float) $data['csat']['avg'] ) );
+		} elseif ( $data['csat'] ) {
+			SSC_Admin_UI::stat( 'star', 'amber', '—', __( 'No ratings yet', 'nexachat-ai' ) );
+		}
+		if ( $ssc_answered >= 0 ) {
+			SSC_Admin_UI::stat( 'check', 'violet', $ssc_answered . '%', __( 'Answered', 'nexachat-ai' ), '', $ssc_answered );
+		}
+		SSC_Admin_UI::stat( 'search', count( $data['unanswered'] ) > 0 ? 'rose' : 'green', number_format_i18n( count( $data['unanswered'] ) ), __( 'Unanswered questions (14 days)', 'nexachat-ai' ) );
+		?>
 	</section>
 
-	<section class="ssc-card">
-		<h2><?php esc_html_e( 'Conversation volume', 'nexachat-ai' ); ?></h2>
+	<section class="ssc-card ssc-barscard" data-ssc-hue="cyan">
+		<?php SSC_Admin_UI::card_title( 'chat', 'cyan', __( 'Conversation volume', 'nexachat-ai' ) ); ?>
 		<div class="ssc-bars" role="img" aria-label="<?php esc_attr_e( 'Daily conversations over the last 14 days', 'nexachat-ai' ); ?>">
 			<?php
 			$max = max( 1, max( $data['series14'] ) );
@@ -54,31 +61,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div class="ssc-grid ssc-grid--2">
 		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Most-discussed products', 'nexachat-ai' ); ?></h2>
+			<?php SSC_Admin_UI::card_title( 'box', 'violet', __( 'Most-discussed products', 'nexachat-ai' ) ); ?>
 			<?php if ( $data['top_products'] ) : ?>
-				<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table">
-					<tbody>
-						<?php foreach ( $data['top_products'] as $row ) : ?>
-							<tr><td><?php echo esc_html( $row['name'] ); ?></td><td><?php echo esc_html( number_format_i18n( $row['count'] ) ); ?></td></tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table></div>
+				<?php $ssc_top = max( 1, (int) $data['top_products'][0]['count'] ); ?>
+				<ul class="ssc-mini" data-ssc-hue="violet">
+					<?php foreach ( $data['top_products'] as $row ) : ?>
+						<li>
+							<span class="ssc-mini__name"><?php echo esc_html( $row['name'] ); ?></span>
+							<span class="ssc-pill"><?php echo esc_html( number_format_i18n( $row['count'] ) ); ?></span>
+							<span class="ssc-mini__bar"><i style="width:<?php echo esc_attr( max( 3, (int) round( 100 * $row['count'] / $ssc_top ) ) ); ?>%"></i></span>
+						</li>
+					<?php endforeach; ?>
+				</ul>
 			<?php else : ?>
 				<p class="ssc-card__sub"><?php esc_html_e( 'No product conversations recorded yet.', 'nexachat-ai' ); ?></p>
 			<?php endif; ?>
 		</section>
 
 		<section class="ssc-card">
-			<h2><?php esc_html_e( 'Unanswered questions', 'nexachat-ai' ); ?></h2>
-			<p class="ssc-card__sub"><?php esc_html_e( 'Knowledge gaps — answer these in the FAQ bank or knowledge page.', 'nexachat-ai' ); ?></p>
+			<?php SSC_Admin_UI::card_title( 'search', 'rose', __( 'Unanswered questions', 'nexachat-ai' ), __( 'Knowledge gaps — answer these in the FAQ bank or knowledge page.', 'nexachat-ai' ) ); ?>
 			<?php if ( $data['unanswered'] ) : ?>
-				<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table">
-					<tbody>
-						<?php foreach ( $data['unanswered'] as $row ) : ?>
-							<tr><td class="ssc-td-truncate"><?php echo esc_html( mb_substr( (string) $row['question'], 0, 100 ) ); ?></td><td>×<?php echo esc_html( number_format_i18n( (int) $row['n'] ) ); ?></td></tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table></div>
+				<ul class="ssc-mini" data-ssc-hue="rose">
+					<?php foreach ( $data['unanswered'] as $row ) : ?>
+						<li>
+							<span class="ssc-mini__name"><?php echo esc_html( mb_substr( (string) $row['question'], 0, 100 ) ); ?></span>
+							<span class="ssc-pill">×<?php echo esc_html( number_format_i18n( (int) $row['n'] ) ); ?></span>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+				<p class="ssc-card__actions"><a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( $ssc_faq_url ); ?>"><?php esc_html_e( 'Answer them', 'nexachat-ai' ); ?></a></p>
 			<?php else : ?>
 				<p class="ssc-card__sub"><?php esc_html_e( 'Every question got an answer. 👏', 'nexachat-ai' ); ?></p>
 			<?php endif; ?>

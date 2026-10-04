@@ -42,11 +42,12 @@ class SSC_Admin_Appearance {
 				$patch[ $key ] = '';
 			}
 		}
-		foreach ( array( 'launcher_size', 'font_size', 'window_width', 'window_radius', 'bubble_radius' ) as $key ) {
+		foreach ( array( 'launcher_size', 'font_size', 'window_width', 'window_radius', 'bubble_radius', 'launcher_offset_x', 'launcher_offset_y', 'launcher_offset_x_mobile', 'launcher_offset_y_mobile' ) as $key ) {
 			if ( isset( $_POST[ $key ] ) ) {
 				$patch[ $key ] = SSC_Settings::clamp_int( $key, wp_unslash( $_POST[ $key ] ) );
 			}
 		}
+		$patch['launcher_avoid_bars'] = isset( $_POST['launcher_avoid_bars'] ) ? 'yes' : 'no';
 		SSC_Settings::update( $patch );
 		self::prg( array( 'saved' => 1 ) );
 	}

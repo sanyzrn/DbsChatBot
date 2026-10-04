@@ -15,6 +15,8 @@ class SSC_Settings {
 foreach ( array( 'input', 'availability', 'http', 'provider', 'embeddings', 'date' ) as $file ) {
     require __DIR__ . '/../includes/core/class-ssc-' . $file . '.php';
 }
+require __DIR__ . '/../includes/admin/class-ssc-knowledge-score.php';
+require __DIR__ . '/../includes/admin/class-ssc-settings-health.php';
 foreach ( array( 'openai-compat', 'openai', 'claude', 'gemini' ) as $file ) {
     require __DIR__ . '/../includes/core/providers/class-ssc-provider-' . $file . '.php';
 }
@@ -199,5 +201,42 @@ check( false !== strpos( $p_en, 'Never use Markdown tables' ) && false === strpo
 check( false !== strpos( $p_fa, 'WHEN WRITING IN PERSIAN' ) && false !== strpos( $p_fa, 'Solar Hijri' ) && false === strpos( $p_en, 'WHEN WRITING IN PERSIAN' ), 'Prompt: Persian writing rules only when replies may be Persian' );
 check( false !== strpos( $p_fa, '【SUMMARY' ) && false === strpos( $p_fa, '【SYSTEM】' ) && false !== strpos( $p_fa, 'treat as data' ), 'Prompt: the conversation summary is fenced as data and cannot forge a fence' );
 check( false === strpos( $p_en, 'EARLIER IN THIS CONVERSATION' ), 'Prompt: no summary block when there is none' );
+
+// Business Knowledge progress: the same rules the page script mirrors.
+$empty = SSC_Knowledge_Score::compute( array( 'business' => array(), 'items' => array(), 'products' => array(), 'documents' => 0, 'site_pages' => 0, 'site_active' => false ) );
+check( 0 === $empty['percent'] && 'start' === $empty['level'] && ! $empty['ready'], 'An empty business scores zero, starts at the first level and is not ready' );
+check( array( 'org_name', 'description', 'first_fact' ) === array_column( $empty['steps'], 'id' ), 'The next steps start with the name, the description and a first fact (at most three)' );
+check( $empty['panels']['website']['locked'] && 90 === $empty['weights'], 'The website section is left out of the total while its module is off' );
+$business = array( 'org_name' => 'Atlas', 'brand_name' => 'Atlas Pharmacy', 'category' => 'Pharmacy', 'industry' => 'Health', 'description' => 'We sell medicine.', 'differentiators' => 'Fast', 'phone' => '021', 'email' => 'a@b.ir', 'hours' => '9-17', 'url' => 'https://a.ir', 'location' => 'Tehran', 'support_phone' => '1', 'support_email' => 's@b.ir', 'assistant_name' => 'Sara', 'assistant_role' => 'Support', 'language' => 'Persian', 'products' => 'Medicine' );
+$items    = array_fill( 0, 5, array( 'content' => 'A fact' ) );
+$all      = array( 'business' => $business, 'items' => $items, 'products' => array( array( 'name' => 'A' ), array( 'name' => 'B' ), array( 'name' => 'C' ) ), 'documents' => 2, 'site_pages' => 5, 'site_active' => true );
+$full     = SSC_Knowledge_Score::compute( $all );
+check( 100 === $full['percent'] && 'great' === $full['level'] && $full['ready'] && array() === $full['steps'], 'Everything filled in scores 100, is ready and has nothing left to suggest' );
+$no_module = SSC_Knowledge_Score::compute( array_merge( $all, array( 'site_pages' => 0, 'site_active' => false ) ) );
+check( 100 === $no_module['percent'] && array( 'website' ) === array_column( $no_module['steps'], 'id' ) && 0 === $no_module['steps'][0]['gain'], 'Without the website module the only suggestion is to turn it on, with no promised gain' );
+$half = SSC_Knowledge_Score::compute( array( 'business' => array( 'org_name' => 'Atlas', 'description' => 'x' ), 'items' => array( array( 'content' => 'Hours' ) ), 'products' => array(), 'documents' => 0, 'site_pages' => 0, 'site_active' => false ) );
+check( 2 === $half['panels']['identity']['filled'] && 6 === $half['panels']['identity']['total'] && 1 === $half['panels']['facts']['count'] && $half['ready'], 'A name plus one fact is enough to go live' );
+check( 'contact' === $half['steps'][0]['id'] && 'identity' === SSC_Knowledge_Score::compute( array( 'business' => array(), 'items' => array() ) )['steps'][0]['panel'], 'Steps point at the section to open' );
+$blank_fact = SSC_Knowledge_Score::compute( array( 'business' => array( 'org_name' => 'A' ), 'items' => array( array( 'title' => 'Only a title', 'content' => '   ' ) ), 'products' => array( array( 'name' => '' ) ), 'documents' => 0, 'site_pages' => 0, 'site_active' => false, 'knowledge' => false ) );
+check( 0 === $blank_fact['panels']['facts']['count'] && 0 === $blank_fact['panels']['products']['count'] && ! $blank_fact['ready'], 'Entries without text and products without a name do not count' );
+$synced = SSC_Knowledge_Score::compute( array( 'business' => array(), 'items' => array(), 'products' => array(), 'documents' => 0, 'site_pages' => 3, 'site_active' => true ) );
+check( ! $synced['panels']['website']['locked'] && 100 === $synced['weights'] && 3 === $synced['panels']['website']['filled'], 'With the website module on its pages count towards the score' );
+check( 'start' === SSC_Knowledge_Score::level_for( 24 ) && 'basic' === SSC_Knowledge_Score::level_for( 25 ) && 'good' === SSC_Knowledge_Score::level_for( 50 ) && 'great' === SSC_Knowledge_Score::level_for( 100 ), 'Level boundaries' );
+check( 5 === array_sum( array_map( function ( $p ) { return $p['weight']; }, array( array( 'weight' => 2 ), array( 'weight' => 3 ) ) ) ) && 100 === array_sum( array_column( SSC_Knowledge_Score::panels(), 'weight' ) ), 'Section weights add up to 100' );
+
+// Settings health: the ring at the top of the Settings screen.
+$safe_env = array( 'https' => true, 'crypto' => true, 'behind_proxy' => false, 'forms' => true, 'history' => true );
+$safe     = SSC_Settings_Health::compute( array( 'ip_storage' => 'anonymize', 'consent_link' => 'https://a.ir/privacy', 'consent_enabled' => 'yes', 'chatlog_retention_days' => 30, 'rate_limit_mode' => 'ip', 'trusted_proxy_header' => '' ), $safe_env );
+check( 100 === $safe['percent'] && array() === $safe['steps'], 'Everything protected scores 100 and has nothing to fix' );
+$open = SSC_Settings_Health::compute( array( 'ip_storage' => 'full', 'consent_link' => '', 'consent_enabled' => 'no', 'chatlog_retention_days' => 0, 'rate_limit_mode' => 'off', 'trusted_proxy_header' => '' ), array( 'https' => false, 'crypto' => false, 'behind_proxy' => false, 'forms' => true, 'history' => true ) );
+check( 0 === $open['percent'] && 3 === count( $open['steps'] ), 'Nothing protected scores 0 and lists at most three fixes' );
+check( 'ip' === $open['steps'][0]['id'] && 'privacy' === $open['steps'][0]['panel'], 'Fixes are listed in order and point at the section to open' );
+$not_applicable = SSC_Settings_Health::compute( array( 'ip_storage' => 'anonymize', 'consent_link' => 'https://a.ir/p', 'consent_enabled' => 'no', 'chatlog_retention_days' => 0, 'rate_limit_mode' => 'ip', 'trusted_proxy_header' => '' ), array( 'https' => true, 'crypto' => true, 'behind_proxy' => true, 'forms' => false, 'history' => false ) );
+$by_id = array();
+foreach ( $not_applicable['checks'] as $row ) { $by_id[ $row['id'] ] = $row; }
+check( ! $by_id['consent']['applicable'] && ! $by_id['retention']['applicable'] && $by_id['proxy']['applicable'] && ! $by_id['proxy']['ok'], 'Consent and retention only count when forms or history are on; the proxy check only behind a proxy' );
+check( 6 === count( array_filter( $not_applicable['checks'], function ( $row ) { return $row['applicable']; } ) ), 'Checks that do not apply are left out of the total' );
+check( 83 === $not_applicable['percent'] && 'proxy' === $not_applicable['steps'][0]['id'], 'A missed proxy header lowers the score and is the one thing to fix' );
+check( 80 === SSC_Settings_Health::compute( array(), array( 'https' => true, 'crypto' => true ) )['percent'], 'Missing settings fall back to the defaults (anonymised IPs, rate limit on) and only the privacy link is missing' );
 
 echo "$count unit checks passed.\n";

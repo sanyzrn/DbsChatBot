@@ -58,14 +58,16 @@ Back up first and clear page/CDN caches after upgrading.
 | **Multi-provider AI** | OpenAI, Gemini, Claude, OpenRouter, any OpenAI-compatible endpoint, or a signed webhook. Real connection tests map failures to clear causes. |
 | **Answer scope** | *Only from my knowledge*, *my business and its field* (default), or *any question*, plus an optional reply for unrelated questions. Organization facts always come only from your knowledge. |
 | **Web search** | Optional, through the provider's own tool (OpenAI Responses, Claude, Gemini Google Search, OpenRouter), with a domain allow-list and cited pages under the answer. |
-| **Business knowledge** | Profile, knowledge entries, product catalog and document import (URL, `.txt`, `.md`, `.csv`, `.json`). Keyword retrieval plus optional semantic retrieval (embeddings), with source citations under answers. |
+| **Business knowledge** | Profile, knowledge entries, product catalog and document import (URL, PDF, Word, `.txt`, `.md`, `.csv`, `.json`), organised in sections with progress rings. Keyword retrieval plus optional semantic retrieval (embeddings), with source citations under answers. |
 | **Streaming replies** | Server-Sent Events for OpenAI, Claude, Gemini and compatible providers; an interrupted stream keeps what was already shown. |
 | **Conversation memory** | Kept server-side under a random conversation id — the browser never supplies the model's context. |
 | **Widget** | Multi-line composer, safe Markdown answers, per-message text direction, copy / feedback, tap-to-call, main menu, full-screen on phones, light/dark themes. |
 | **Security** | API keys encrypted at rest (AES-256-CBC, encrypt-then-MAC), SSRF-guarded requests, rate limits (object-cache aware), honeypot, payload caps. |
 | **Privacy** | Server transcripts opt-in, configurable retention, visitor IPs anonymized by default, suggested privacy-policy text. |
 | **Targeting** | Page path, device and login rules; business hours with a live (cache-safe) online/offline status. |
-| **Admin** | Complete Persian translation with RTL layout and Solar Hijri dates; tabbed settings; the Appearance preview is the real widget. |
+| **Backup & transfer** | One JSON file with the profile, settings, modules, products, knowledge, FAQ, documents and (password-encrypted) API keys. Import shows what the file holds first, can add/update or replace, never publishes, and can be undone. Visitor data is never exported. |
+| **Button placement** | Distance from the edge for phones and desktop, with drawings of the result, and automatic lift above a fixed bottom menu on phones. |
+| **Admin** | Complete Persian translation with RTL layout and Solar Hijri dates; every screen shares one design: progress rings, icon tiles, sections that open one at a time and a sticky save bar; the Business Knowledge screen shows progress rings and the next best step; the Appearance preview is the real widget; an About page with a system check and a support report. |
 
 ### Optional modules
 
@@ -281,7 +283,14 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
   به‌صورت پیش‌فرض و مدت نگهداری قابل تنظیم.
 - **هدف‌گیری نمایش:** مسیر صفحه، دستگاه، وضعیت ورود کاربر و ساعات کاری با وضعیت زنده.
 - **پنل مدیریت فارسی:** ترجمهٔ کامل، راست‌چین، تاریخ شمسی، تنظیمات تب‌بندی‌شده و
-  پیش‌نمایش ظاهر با همان ویجت واقعی.
+  پیش‌نمایش ظاهر با همان ویجت واقعی. صفحهٔ «دانش شرکت» با حلقه‌های پیشرفت، بهترین
+  قدم بعدی و بخش‌های جداگانه، و صفحهٔ «دربارهٔ افزونه» با بررسی سیستم و گزارش پشتیبانی.
+- **محل دکمه:** فاصله از لبهٔ صفحه جداگانه برای موبایل و دسکتاپ (با نقشهٔ زنده)، و
+  بالا رفتن خودکار دکمه روی نوار یا منوی ثابتِ پایین صفحه در موبایل.
+- **برون‌بری و درون‌ریزی:** همهٔ مشخصات کسب‌وکار، تنظیمات، ماژول‌ها، محصولات و
+  مشخصاتشان، موارد دانش، پرسش‌وپاسخ، اسناد و (با گذرواژه) کلیدهای API در یک فایل.
+  پیش از درون‌ریزی محتوای فایل نمایش داده می‌شود، انتشار خودکار انجام نمی‌شود و
+  می‌توان آن را واگرد کرد. اطلاعات بازدیدکنندگان هرگز برون‌بری نمی‌شود.
 
 ### ماژول‌های اختیاری
 

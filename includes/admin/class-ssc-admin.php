@@ -26,6 +26,8 @@ class SSC_Admin {
 		add_action( 'admin_init', array( $this, 'prepare_page' ), 0 );
 		// Priority 1: register BEFORE anything that might inspect the menu.
 		add_action( 'admin_menu', array( $this, 'register_menu' ), 1 );
+		// After the module pages, which register between 25 and 70.
+		add_action( 'admin_menu', array( $this, 'register_tail_menu' ), 99 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 		add_action( 'admin_head', array( $this, 'hide_wizard_menu_css' ) );
 		add_action( 'admin_footer-plugins.php', array( $this, 'uninstall_confirm_script' ) );
@@ -49,6 +51,7 @@ class SSC_Admin {
 			'ssc-knowledge' => 'SSC_Admin_Knowledge', 'ssc-connection' => 'SSC_Admin_Connection',
 			'ssc-appearance' => 'SSC_Admin_Appearance', 'ssc-modules' => 'SSC_Admin_Modules',
 			'ssc-settings' => 'SSC_Admin_Settings', 'ssc-wizard' => 'SSC_Wizard',
+			'ssc-transfer' => 'SSC_Admin_Transfer', 'ssc-about' => 'SSC_Admin_About',
 		);
 		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
 		if ( isset( $pages[ $page ] ) ) { $this->controller( $pages[ $page ] ); }
@@ -93,6 +96,14 @@ class SSC_Admin {
 			'ssc-wizard',
 			array( $this, 'render_wizard' )
 		);
+	}
+
+	/**
+	 * Closing entries: backup/transfer and the About page.
+	 */
+	public function register_tail_menu() {
+		add_submenu_page( 'ssc-dashboard', __( 'Export & Import', 'nexachat-ai' ), __( 'Export & Import', 'nexachat-ai' ), 'manage_options', 'ssc-transfer', array( $this, 'render_transfer' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'About', 'nexachat-ai' ), __( 'About', 'nexachat-ai' ), 'manage_options', 'ssc-about', array( $this, 'render_about' ) );
 	}
 
 	/**
@@ -265,6 +276,20 @@ class SSC_Admin {
 	 */
 	public function render_settings() {
 		$this->controller( 'SSC_Admin_Settings' )->render();
+	}
+
+	/**
+	 * Render the export & import page.
+	 */
+	public function render_transfer() {
+		$this->controller( 'SSC_Admin_Transfer' )->render();
+	}
+
+	/**
+	 * Render the about page.
+	 */
+	public function render_about() {
+		$this->controller( 'SSC_Admin_About' )->render();
 	}
 
 	/**

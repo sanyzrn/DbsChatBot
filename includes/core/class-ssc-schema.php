@@ -957,6 +957,35 @@ class SSC_Schema {
 	}
 
 	/**
+	 * How many exchanges there are, by answer source and by rating (for the
+	 * summary and filter chips of the Conversations screen).
+	 *
+	 * @return array total, sources (source => n), up, down.
+	 */
+	public static function chatlog_counts() {
+		global $wpdb;
+		$table = self::chatlog_table_name();
+		$out   = array(
+			'total'   => 0,
+			'sources' => array(),
+			'up'      => 0,
+			'down'    => 0,
+		);
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- aggregates on the plugin's own table; no user input.
+		$rows = $wpdb->get_results( "SELECT source, COUNT(*) AS n FROM {$table} GROUP BY source", ARRAY_A );
+		if ( is_array( $rows ) ) {
+			foreach ( $rows as $row ) {
+				$out['sources'][ (string) $row['source'] ] = (int) $row['n'];
+				$out['total']                             += (int) $row['n'];
+			}
+		}
+		$out['up']   = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE rating > 0" );
+		$out['down'] = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE rating < 0" );
+		// phpcs:enable
+		return $out;
+	}
+
+	/**
 	 * Delete a chatlog row.
 	 *
 	 * @param int $id Row id.
@@ -1085,6 +1114,20 @@ class SSC_Schema {
 	}
 
 	/**
+	 * Every QA row, oldest first (export and backup).
+	 *
+	 * @param int $limit Safety cap.
+	 * @return array question, keywords, answer, product_id, usage_count, created_at.
+	 */
+	public static function qa_all( $limit = 5000 ) {
+		global $wpdb;
+		$table = self::qa_table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- export read.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT question, keywords, answer, product_id, usage_count, created_at FROM {$table} ORDER BY id ASC LIMIT %d", (int) $limit ), ARRAY_A );
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
 	 * Import QA rows in bulk (replace = truncate first).
 	 *
 	 * @param array $rows   List of row arrays.
@@ -1150,6 +1193,77 @@ class SSC_Schema {
 			SSC_Embeddings::schedule();
 		}
 		return $n;
+	}
+
+	/**
+	 * Insert a document that is already split into chunks (restore/import:
+	 * the original split is kept instead of chunking the text again).
+	 *
+	 * @param string   $doc_id  Stable document id.
+	 * @param string   $title   Source title.
+	 * @param string[] $chunks  Chunk texts, in reading order.
+	 * @param string   $product Product scope.
+	 * @param string   $url     Source URL for citations.
+	 * @return int Chunks inserted.
+	 */
+	public static function kb_insert_chunks( $doc_id, $title, $chunks, $product = 'general', $url = '' ) {
+		global $wpdb;
+		$n = 0;
+		foreach ( (array) $chunks as $chunk ) {
+			$chunk = (string) $chunk;
+			if ( '' === trim( $chunk ) ) {
+				continue;
+			}
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- custom table insert.
+			$inserted = $wpdb->insert(
+				self::kb_table_name(),
+				array(
+					'doc_id'       => substr( sanitize_key( $doc_id ), 0, 40 ),
+					'product_id'   => sanitize_text_field( $product ),
+					'source_title' => mb_substr( sanitize_text_field( $title ), 0, 191 ),
+					'source_url'   => esc_url_raw( (string) $url ),
+					'chunk'        => $chunk,
+					'search_text'  => SSC_Knowledge::normalize( $chunk ),
+					'created_at'   => current_time( 'mysql' ),
+				),
+				array( '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
+			);
+			if ( false !== $inserted ) {
+				++$n;
+			}
+		}
+		if ( $n > 0 && class_exists( 'SSC_Embeddings' ) ) {
+			SSC_Embeddings::schedule();
+		}
+		return $n;
+	}
+
+	/**
+	 * Documents with their chunks, for export. Pages mirrored from the website
+	 * (ids starting "wp-") are left out: the sync module rebuilds them.
+	 *
+	 * @return array[] doc_id, title, url, product_id, chunks[].
+	 */
+	public static function kb_export_documents() {
+		global $wpdb;
+		$table = self::kb_table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- export read.
+		$rows = $wpdb->get_results( "SELECT doc_id, product_id, source_title, source_url, chunk FROM {$table} WHERE doc_id NOT LIKE 'wp-%' ORDER BY doc_id ASC, id ASC", ARRAY_A );
+		$docs = array();
+		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+			$id = (string) $row['doc_id'];
+			if ( ! isset( $docs[ $id ] ) ) {
+				$docs[ $id ] = array(
+					'doc_id'     => $id,
+					'title'      => (string) $row['source_title'],
+					'url'        => (string) $row['source_url'],
+					'product_id' => (string) $row['product_id'],
+					'chunks'     => array(),
+				);
+			}
+			$docs[ $id ]['chunks'][] = (string) $row['chunk'];
+		}
+		return array_values( $docs );
 	}
 
 	/**
