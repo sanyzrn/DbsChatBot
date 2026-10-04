@@ -232,6 +232,7 @@ class SSC_Frontend {
 
 			// Leads form (module-gated).
 			'formFields'       => ( SSC_Modules::is_active( 'leads' ) ) ? SSC_Settings::form_fields() : array(),
+			'consultEmail'     => SSC_Modules::is_active( 'leads' ) && SSC_Module_Leads::email_enabled(),
 			'consent'          => array(
 				'enabled' => 'yes' === $s['consent_enabled'],
 				'text'    => SSC_Input::consent_text( SSC_Modules::is_active( 'pharma' ) ),
@@ -301,6 +302,7 @@ class SSC_Frontend {
 			'productsDesc'    => __( 'Product information', 'nexachat-ai' ),
 			'chooseProduct'   => __( 'Which one?', 'nexachat-ai' ),
 			'requestForm'     => __( 'Consultation request', 'nexachat-ai' ),
+			'formEmail'       => __( 'Email (optional)', 'nexachat-ai' ),
 			'reportAdr'       => __( 'Report a side effect', 'nexachat-ai' ),
 			'moreDetails'     => __( 'More details (optional)', 'nexachat-ai' ),
 			'brochure'        => __( 'View brochure', 'nexachat-ai' ),

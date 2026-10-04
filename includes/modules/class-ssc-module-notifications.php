@@ -244,6 +244,11 @@ class SSC_Module_Notifications extends SSC_Module {
 			/* translators: %s: phone. */
 			$lines[] = sprintf( __( 'Phone: %s', 'nexachat-ai' ), $row['phone'] );
 		}
+		$email = SSC_Module_Leads::email_of( $row );
+		if ( '' !== $email ) {
+			/* translators: %s: email address. */
+			$lines[] = sprintf( __( 'Email: %s', 'nexachat-ai' ), $email );
+		}
 		if ( ! empty( $row['product'] ) ) {
 			/* translators: %s: product. */
 			$lines[] = sprintf( __( 'Product: %s', 'nexachat-ai' ), $row['product'] );

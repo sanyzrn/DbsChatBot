@@ -91,6 +91,7 @@ class SSC_Admin_Settings {
 					$patch[ $key ] = SSC_Settings::sanitize_value( $key, wp_unslash( $_POST[ $key ] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize_value().
 				}
 			}
+			$patch['consult_email'] = isset( $_POST['consult_email'] ) ? SSC_Settings::sanitize_value( 'consult_email', wp_unslash( $_POST['consult_email'] ) ) : 'optional'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize_value().
 			// Sanitized (and given stable keys) at save time, not only on read.
 			$patch['form_fields'] = SSC_Settings::sanitize_value( 'form_fields', isset( $_POST['form_fields'] ) ? (array) wp_unslash( $_POST['form_fields'] ) : array() ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by sanitize_value().
 			$patch['notify_platform'] = isset( $_POST['notify_platform'] ) ? SSC_Settings::sanitize_value( 'notify_platform', wp_unslash( $_POST['notify_platform'] ) ) : 'bale';
@@ -226,7 +227,7 @@ class SSC_Admin_Settings {
 			'csat' => array( 'csat_enabled' ),
 			'handoff' => array( 'handoff_text' ),
 			'proactive' => array( 'proactive_delay', 'proactive_text', 'proactive_trigger', 'proactive_scroll', 'proactive_rules' ),
-			'leads' => array( 'form_fields' ),
+			'leads' => array( 'form_fields', 'consult_email' ),
 			'notifications' => array( 'notify_chat_id', 'notify_email_enabled', 'notify_email_to' ),
 			'live' => array( 'live_operators', 'live_assign', 'live_canned', 'live_join_text', 'live_offline_text', 'live_wait_minutes', 'live_retention_days' ),
 			'messenger' => array( 'messenger_welcome' ),

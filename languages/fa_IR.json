@@ -724,7 +724,7 @@
   "Conversation History": "تاریخچهٔ گفتگو",
   "Stores conversations so you can review quality, capture answers into the FAQ bank and spot unanswered questions.": "گفتگوها را ذخیره می‌کند تا کیفیت را بررسی کنید، پاسخ‌ها را به بانک پرسش‌وپاسخ ببرید و پرسش‌های بی‌پاسخ را ببینید.",
   "Improve answer quality with real conversation evidence, with configurable retention.": "بهبود کیفیت پاسخ با شواهد واقعی گفتگو، همراه با مدت نگهداری قابل تنظیم.",
-  "Consultation & Lead Collection": "مشاوره و جذب مشتری",
+  "Consultation & Lead Collection": "ثبت درخواست مشاوره",
   "Structured request forms inside the chat with custom fields, consent capture and a request inbox.": "فرم‌های درخواست ساختاریافته درون گفتگو با فیلدهای سفارشی، ثبت رضایت و صندوق درخواست‌ها.",
   "Turn conversations into actionable requests with clean, validated contact data.": "گفتگوها را به درخواست‌های قابل پیگیری با اطلاعات تماس معتبر تبدیل کنید.",
   "Invalid submission type.": "نوع ارسال نامعتبر است.",
@@ -1634,5 +1634,13 @@
   "Warehouse": "انبار",
   "Other place": "مکان دیگر",
   "This file cannot be imported: %1$s, row %2$d has an invalid value in the field “%3$s”. Nothing was changed.": "این فایل وارد نمی‌شود: %1$s، ردیف %2$d در فیلد «%3$s» مقدار نامعتبر دارد. چیزی تغییر نکرد.",
-  "Policies, prices and other facts.": "قوانین، قیمت‌ها و اطلاعات دیگر."
+  "Policies, prices and other facts.": "قوانین، قیمت‌ها و اطلاعات دیگر.",
+  "The consultation form asks for a name, a phone number and a short description. Choose whether it also offers an email field, and add any custom fields you need. Server-side validation is generated from these definitions.": "فرم مشاوره نام، شمارهٔ تماس و یک توضیح کوتاه می‌پرسد. انتخاب کنید فیلد ایمیل هم باشد یا نه و در صورت نیاز فیلدهای دلخواه اضافه کنید. اعتبارسنجی سمت سرور از روی همین تعریف‌ها ساخته می‌شود.",
+  "Email field": "فیلد ایمیل",
+  "Ask for an email address (optional for the visitor)": "نشانی ایمیل پرسیده شود (برای بازدیدکننده اختیاری است)",
+  "Do not ask for an email address": "نشانی ایمیل پرسیده نشود",
+  "Email (optional)": "ایمیل (اختیاری)",
+  "Of course. Tap the button below, leave your name and phone number with a short description of what you need, and our team will contact you.": "حتماً. دکمهٔ زیر را بزنید، نام و شمارهٔ تماس خود را همراه با توضیح کوتاهی دربارهٔ نیازتان بنویسید تا همکارانمان با شما تماس بگیرند.",
+  "Please enter a valid email address, or leave it empty.": "لطفاً یک نشانی ایمیل معتبر وارد کنید یا آن را خالی بگذارید.",
+  "Email: %s": "ایمیل: %s"
 }

@@ -625,6 +625,9 @@ msgstr "بایگانی‌شده"
 msgid "Ask"
 msgstr "پرسیده شود"
 
+msgid "Ask for an email address (optional for the visitor)"
+msgstr "نشانی ایمیل پرسیده شود (برای بازدیدکننده اختیاری است)"
+
 msgid "Ask for budget, area and size when they are missing. Quote prices and availability only from the knowledge provided and offer a viewing request for serious interest."
 msgstr "اگر بودجه، منطقه و متراژ گفته نشده، بپرس. قیمت و موجودی را فقط از دانش ارائه‌شده بگو و برای مشتریان جدی درخواست بازدید پیشنهاد بده."
 
@@ -1088,7 +1091,7 @@ msgid "Consultation"
 msgstr "مشاوره"
 
 msgid "Consultation & Lead Collection"
-msgstr "مشاوره و جذب مشتری"
+msgstr "ثبت درخواست مشاوره"
 
 msgid "Consultation request"
 msgstr "درخواست مشاوره"
@@ -1312,6 +1315,9 @@ msgstr "فاصله از پایین (پیکسل)"
 msgid "Distance from the side (px)"
 msgstr "فاصله از کنار (پیکسل)"
 
+msgid "Do not ask for an email address"
+msgstr "نشانی ایمیل پرسیده نشود"
+
 msgid "Do not store"
 msgstr "ذخیره نشود"
 
@@ -1371,11 +1377,20 @@ msgstr "آموزش"
 msgid "Email"
 msgstr "ایمیل"
 
+msgid "Email (optional)"
+msgstr "ایمیل (اختیاری)"
+
 msgid "Email addresses belong in Contact & hours."
 msgstr "نشانی‌های ایمیل به «تماس و ساعات کاری» تعلق دارند."
 
+msgid "Email field"
+msgstr "فیلد ایمیل"
+
 msgid "Email recipient (empty = site admin)"
 msgstr "گیرندهٔ ایمیل (خالی = مدیر سایت)"
+
+msgid "Email: %s"
+msgstr "ایمیل: %s"
 
 msgid "Enable exactly what your business needs. Everything is free, included, and safely reversible — data is preserved when you switch a module off."
 msgstr "دقیقاً آنچه کسب‌وکارتان لازم دارد فعال کنید. همه‌چیز رایگان، همراه افزونه و قابل بازگشت است — با غیرفعال کردن ماژول، داده‌هایش حفظ می‌شود."
@@ -2481,6 +2496,9 @@ msgstr "پرستار"
 msgid "OK = delete plugin + data"
 msgstr "تأیید = حذف افزونه و داده‌ها"
 
+msgid "Of course. Tap the button below, leave your name and phone number with a short description of what you need, and our team will contact you."
+msgstr "حتماً. دکمهٔ زیر را بزنید، نام و شمارهٔ تماس خود را همراه با توضیح کوتاهی دربارهٔ نیازتان بنویسید تا همکارانمان با شما تماس بگیرند."
+
 msgid "Off"
 msgstr "خاموش"
 
@@ -2793,6 +2811,9 @@ msgstr "درخواست خود را شرح دهید (۱۰ تا ۱۰۰۰ نویس�
 
 msgid "Please enter a valid contact phone."
 msgstr "شمارهٔ تماس معتبر وارد کنید."
+
+msgid "Please enter a valid email address, or leave it empty."
+msgstr "لطفاً یک نشانی ایمیل معتبر وارد کنید یا آن را خالی بگذارید."
 
 msgid "Please enter a valid mobile number (09…)."
 msgstr "لطفاً شمارهٔ موبایل معتبر وارد کنید (۰۹…)."
@@ -3878,6 +3899,9 @@ msgstr "کد فقط وقتی ساخته می‌شود که بازدیدکنند�
 
 msgid "The connected AI provider does not offer embeddings."
 msgstr "ارائه‌دهندهٔ هوش مصنوعی متصل، API امبدینگ ندارد."
+
+msgid "The consultation form asks for a name, a phone number and a short description. Choose whether it also offers an email field, and add any custom fields you need. Server-side validation is generated from these definitions."
+msgstr "فرم مشاوره نام، شمارهٔ تماس و یک توضیح کوتاه می‌پرسد. انتخاب کنید فیلد ایمیل هم باشد یا نه و در صورت نیاز فیلدهای دلخواه اضافه کنید. اعتبارسنجی سمت سرور از روی همین تعریف‌ها ساخته می‌شود."
 
 msgid "The current state is saved first, so you can undo this import afterwards."
 msgstr "ابتدا وضعیت فعلی ذخیره می‌شود تا بعداً بتوانید این درون‌ریزی را واگرد کنید."

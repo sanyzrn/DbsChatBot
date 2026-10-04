@@ -205,6 +205,7 @@ class SSC_Settings {
 
 			// Leads module.
 			'form_fields'                => array(),
+			'consult_email'              => 'optional', // optional | off: the built-in email field of the consultation form.
 
 			// CSAT module.
 			'csat_enabled'               => 'yes',
@@ -627,6 +628,8 @@ class SSC_Settings {
 		switch ( $key ) {
 			case 'pharma_answer_mode':
 				return in_array( $value, array( 'approved_only', 'general_education' ), true ) ? $value : 'approved_only';
+			case 'consult_email':
+				return in_array( $value, array( 'optional', 'off' ), true ) ? $value : 'optional';
 			case 'enabled':
 			case 'ai_strict_knowledge':
 			case 'ai_cache_enabled':
