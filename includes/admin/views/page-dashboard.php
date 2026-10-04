@@ -11,6 +11,7 @@
  * @var array   $business Business profile.
  * @var SSC_Provider|null $provider Active provider.
  * @var bool    $conn_ok Connection verified.
+ * @var array   $conn_info SSC_Setup::connection_status().
  * @var array   $modules  Module statuses.
  * @var int     $chats_14 Total chats.
  * @var int     $requests Open requests.
@@ -158,7 +159,17 @@ $ssc_active_modules = count(
 			<span class="ssc-dstatus__ico"><?php echo SSC_Icons::get( 'cpu' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
 			<div>
 				<strong><?php echo esc_html( $provider ? $provider->label() : __( 'No AI engine', 'nexachat-ai' ) ); ?></strong>
-				<span><?php $conn_ok ? esc_html_e( 'Connection verified', 'nexachat-ai' ) : esc_html_e( 'Not verified', 'nexachat-ai' ); ?></span>
+				<span>
+					<?php
+					if ( $conn_ok ) {
+						esc_html_e( 'Connection verified', 'nexachat-ai' );
+					} elseif ( ! empty( $conn_info['attempt'] ) && empty( $conn_info['attempt']['ok'] ) ) {
+						echo esc_html( sprintf( /* translators: %s: time span such as "3 hours". */ __( 'The last test failed %s ago', 'nexachat-ai' ), human_time_diff( (int) $conn_info['attempt']['at'] ) ) );
+					} else {
+						esc_html_e( 'Not verified', 'nexachat-ai' );
+					}
+					?>
+				</span>
 			</div>
 			<a class="ssc-dstatus__link" href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-connection' ) ); ?>"><?php esc_html_e( 'Manage', 'nexachat-ai' ); ?></a>
 		</div>

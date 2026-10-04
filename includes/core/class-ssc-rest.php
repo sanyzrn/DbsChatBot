@@ -657,23 +657,28 @@ class SSC_REST {
 		// provider just validated. When the wizard saves those same values the
 		// saved-state fingerprint matches and step 3 completes; changing any
 		// credential afterwards invalidates it until re-tested.
+		$saved      = $provider->saved_credentials();
+		$tested     = SSC_Setup::connection_fingerprint(
+			$provider_id,
+			isset( $overrides['api_key'] ) ? $overrides['api_key'] : $saved['api_key'],
+			isset( $overrides['model'] ) ? $overrides['model'] : $saved['model'],
+			isset( $overrides['endpoint'] ) ? $overrides['endpoint'] : $saved['endpoint']
+		);
+		$request_id = isset( $result['error']['request_id'] ) ? (string) $result['error']['request_id'] : '';
 		if ( $result['ok'] ) {
-			$saved  = $provider->saved_credentials();
-			$tested = SSC_Setup::connection_fingerprint(
-				$provider_id,
-				isset( $overrides['api_key'] ) ? $overrides['api_key'] : $saved['api_key'],
-				isset( $overrides['model'] ) ? $overrides['model'] : $saved['model'],
-				isset( $overrides['endpoint'] ) ? $overrides['endpoint'] : $saved['endpoint']
-			);
 			SSC_Setup::mark_verified( 'connection', '', $tested );
+		} else {
+			// The failure is recorded as the latest attempt: an older success must not keep showing as the current state.
+			SSC_Setup::mark_failed( $tested, isset( $result['error']['code'] ) ? (string) $result['error']['code'] : 'network', $request_id );
 		}
 
 		return rest_ensure_response(
 			array(
-				'ok'      => $result['ok'],
-				'reply'   => isset( $result['text'] ) ? $result['text'] : '',
-				'code'    => isset( $result['error']['code'] ) ? $result['error']['code'] : '',
-				'message' => $result['ok'] ? __( 'Connection verified — the model replied successfully.', 'nexachat-ai' ) : ( isset( $result['error']['friendly'] ) ? $result['error']['friendly'] : '' ),
+				'ok'         => $result['ok'],
+				'reply'      => isset( $result['text'] ) ? $result['text'] : '',
+				'code'       => isset( $result['error']['code'] ) ? $result['error']['code'] : '',
+				'request_id' => $request_id,
+				'message'    => $result['ok'] ? __( 'Connection verified — the model replied successfully.', 'nexachat-ai' ) : ( isset( $result['error']['friendly'] ) ? $result['error']['friendly'] : '' ),
 			)
 		);
 	}

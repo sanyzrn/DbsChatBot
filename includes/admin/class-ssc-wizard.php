@@ -116,6 +116,13 @@ class SSC_Wizard {
 		}
 		$business['url'] = isset( $_POST['business']['url'] ) ? esc_url_raw( wp_unslash( $_POST['business']['url'] ) ) : '';
 		// phpcs:enable
+		// Places are edited in Business Knowledge: this step must not wipe a saved list, and its single
+		// address field is not shown while a list exists.
+		$existing = SSC_Settings::business();
+		if ( ! empty( $existing['locations'] ) ) {
+			$business['locations'] = $existing['locations'];
+			$business['location']  = isset( $existing['location'] ) ? $existing['location'] : '';
+		}
 		return $business;
 	}
 

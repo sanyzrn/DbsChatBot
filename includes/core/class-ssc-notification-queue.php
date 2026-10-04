@@ -106,7 +106,7 @@ class SSC_Notification_Queue {
 		if ( 'missing-row' === $error ) {
 			$status = 'cancelled';
 		}
-		$allowed_errors = array( 'auth', 'model', 'credits', 'rate_limit', 'region', 'network', 'timeout', 'endpoint', 'malformed', 'missing-row', 'delivery-exception', 'mail-rejected', 'messenger-rejected' );
+		$allowed_errors = array( 'auth', 'permission', 'policy', 'forbidden', 'model', 'credits', 'rate_limit', 'region', 'network', 'timeout', 'endpoint', 'malformed', 'missing-row', 'delivery-exception', 'mail-rejected', 'messenger-rejected' );
 		$safe_error     = in_array( $error, $allowed_errors, true ) ? $error : 'delivery-failed';
 		return $wpdb->update(
 			self::table(),

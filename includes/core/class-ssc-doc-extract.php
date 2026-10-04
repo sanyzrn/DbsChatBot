@@ -20,6 +20,88 @@ defined( 'ABSPATH' ) || exit;
 class SSC_Doc_Extract {
 
 	/**
+	 * Most bytes one stream or the Word text may unpack to. A small file can
+	 * hold a stream that unpacks to gigabytes (a "zip bomb"), so every unpacking
+	 * is capped and refused beyond it, before it uses the server's memory.
+	 */
+	const MAX_STREAM_BYTES = 16777216;
+
+	/**
+	 * Most bytes all the streams of one PDF may unpack to together.
+	 */
+	const MAX_TOTAL_BYTES = 50331648;
+
+	/**
+	 * Most characters of text one document may give. The knowledge base keeps
+	 * every chunk, so a longer document is refused (split it) rather than cut.
+	 */
+	const MAX_TEXT_CHARS = 400000;
+
+	/**
+	 * Most objects a PDF may hold.
+	 */
+	const MAX_OBJECTS = 100000;
+
+	/**
+	 * Most seconds reading one document may take.
+	 */
+	const MAX_SECONDS = 20;
+
+	/**
+	 * Bytes unpacked so far for the document being read.
+	 *
+	 * @var int
+	 */
+	protected static $unpacked = 0;
+
+	/**
+	 * Why reading was stopped ('' = it was not): size | objects | time.
+	 *
+	 * @var string
+	 */
+	protected static $stopped = '';
+
+	/**
+	 * When reading must stop.
+	 *
+	 * @var float
+	 */
+	protected static $deadline = 0.0;
+
+	/**
+	 * A limit, filterable so that tests (and sites with big documents) can change it.
+	 *
+	 * @param string $name  stream | total | text | objects | seconds.
+	 * @param int    $value Default.
+	 * @return int
+	 */
+	protected static function limit( $name, $value ) {
+		/**
+		 * Limits for reading uploaded documents.
+		 *
+		 * @param int    $value Default value.
+		 * @param string $name  stream | total | text | objects | seconds.
+		 */
+		return max( 1, (int) apply_filters( 'ssc_doc_limit', $value, $name ) );
+	}
+
+	/**
+	 * The message for a document that hit a limit.
+	 *
+	 * @param string $why size | objects | time | text.
+	 * @return WP_Error
+	 */
+	protected static function too_big( $why ) {
+		if ( 'time' === $why ) {
+			return new WP_Error( 'ssc_doc_big', __( 'Reading this document took too long and was stopped. Split it into smaller documents and upload them one by one.', 'nexachat-ai' ) );
+		}
+		if ( 'text' === $why ) {
+			return new WP_Error( 'ssc_doc_big', __( 'This document has too much text to learn in one piece. Split it into smaller documents and upload them one by one. Nothing was added.', 'nexachat-ai' ) );
+		}
+		return new WP_Error( 'ssc_doc_big', __( 'This document unpacks to far more data than its file size suggests, so it was refused to protect the server. Nothing was added. If it is genuine, save it again as a plain PDF or Word file.', 'nexachat-ai' ) );
+	}
+
+	/**
 	 * Extract text from a file by extension.
 	 *
 	 * @param string $path File path.
@@ -27,7 +109,10 @@ class SSC_Doc_Extract {
 	 * @return string|WP_Error
 	 */
 	public static function file( $path, $ext ) {
-		$ext = strtolower( (string) $ext );
+		$ext            = strtolower( (string) $ext );
+		self::$unpacked = 0;
+		self::$stopped  = '';
+		self::$deadline = microtime( true ) + self::limit( 'seconds', self::MAX_SECONDS );
 		if ( 'docx' === $ext ) {
 			$text = self::docx( $path );
 		} elseif ( 'pdf' === $ext ) {
@@ -35,10 +120,16 @@ class SSC_Doc_Extract {
 		} else {
 			return new WP_Error( 'ssc_doc_type', __( 'Unsupported document type.', 'nexachat-ai' ) );
 		}
+		if ( '' !== self::$stopped ) {
+			return self::too_big( self::$stopped );
+		}
 		if ( is_wp_error( $text ) ) {
 			return $text;
 		}
 		$text = self::tidy( $text );
+		if ( mb_strlen( $text ) > self::limit( 'text', self::MAX_TEXT_CHARS ) ) {
+			return self::too_big( 'text' );
+		}
 		// Real text has letters; a scanned PDF yields nothing (or noise).
 		if ( preg_match_all( '/\p{L}/u', $text ) < 20 ) {
 			return new WP_Error( 'ssc_doc_empty', __( 'No readable text was found. If this is a scanned document, upload a text version (Word, or a PDF saved from a text editor).', 'nexachat-ai' ) );
@@ -92,8 +183,20 @@ class SSC_Doc_Extract {
 		if ( true !== $zip->open( $path ) ) {
 			return new WP_Error( 'ssc_doc_read', __( 'The file could not be opened. Is it a valid .docx document?', 'nexachat-ai' ) );
 		}
-		$xml = $zip->getFromName( 'word/document.xml' );
+		$cap  = self::limit( 'stream', self::MAX_STREAM_BYTES );
+		$stat = $zip->statName( 'word/document.xml' );
+		if ( is_array( $stat ) && isset( $stat['size'] ) && (int) $stat['size'] > $cap ) {
+			$zip->close();
+			self::$stopped = 'size';
+			return '';
+		}
+		// Read at most one byte past the cap, whatever the archive claims.
+		$xml = $zip->getFromName( 'word/document.xml', $cap + 1 );
 		$zip->close();
+		if ( is_string( $xml ) && strlen( $xml ) > $cap ) {
+			self::$stopped = 'size';
+			return '';
+		}
 		if ( false === $xml || '' === $xml ) {
 			return new WP_Error( 'ssc_doc_read', __( 'The file could not be opened. Is it a valid .docx document?', 'nexachat-ai' ) );
 		}
@@ -124,6 +227,9 @@ class SSC_Doc_Extract {
 			return new WP_Error( 'ssc_doc_encrypted', __( 'This PDF is password-protected or encrypted. Remove the protection and upload it again.', 'nexachat-ai' ) );
 		}
 		$objects = self::pdf_objects( $data );
+		if ( '' !== self::$stopped ) {
+			return '';
+		}
 		if ( ! $objects ) {
 			return new WP_Error( 'ssc_doc_read', __( 'The PDF could not be read.', 'nexachat-ai' ) );
 		}
@@ -131,6 +237,13 @@ class SSC_Doc_Extract {
 		$out   = array();
 		$pages = self::pdf_pages( $objects );
 		foreach ( $pages as $page ) {
+			if ( '' !== self::$stopped ) {
+				return '';
+			}
+			if ( microtime( true ) > self::$deadline ) {
+				self::$stopped = 'time';
+				return '';
+			}
 			$fonts   = self::pdf_page_fonts( $objects, $page );
 			$content = '';
 			foreach ( self::pdf_refs( self::dict_value( $page['dict'], 'Contents' ) ) as $ref ) {
@@ -154,6 +267,10 @@ class SSC_Doc_Extract {
 		if ( ! preg_match_all( '/(?<![0-9])(\d+)\s+(\d+)\s+obj\b(.*?)\bendobj\b/s', $data, $matches, PREG_SET_ORDER ) ) {
 			return $objects;
 		}
+		if ( count( $matches ) > self::limit( 'objects', self::MAX_OBJECTS ) ) {
+			self::$stopped = 'objects';
+			return array();
+		}
 		foreach ( $matches as $m ) {
 			$body   = $m[3];
 			$stream = '';
@@ -172,8 +289,11 @@ class SSC_Doc_Extract {
 				continue;
 			}
 			$decoded = self::pdf_stream( $obj );
-			$count   = (int) self::dict_value( $obj['dict'], 'N' );
-			$first   = (int) self::dict_value( $obj['dict'], 'First' );
+			if ( '' !== self::$stopped ) {
+				return array();
+			}
+			$count = (int) self::dict_value( $obj['dict'], 'N' );
+			$first = (int) self::dict_value( $obj['dict'], 'First' );
 			if ( ! $count || '' === $decoded ) {
 				continue;
 			}
@@ -215,10 +335,7 @@ class SSC_Doc_Extract {
 		}
 		foreach ( $filters as $filter ) {
 			if ( 'FlateDecode' === $filter ) {
-				$out = @gzuncompress( $data ); // phpcs:ignore WordPress.PHP.NoSilencedErrors -- corrupt streams are skipped.
-				if ( false === $out ) {
-					$out = @gzinflate( substr( $data, 2 ) ); // phpcs:ignore WordPress.PHP.NoSilencedErrors -- raw deflate fallback.
-				}
+				$out = self::inflate( $data );
 				if ( false === $out ) {
 					return '';
 				}
@@ -230,6 +347,63 @@ class SSC_Doc_Extract {
 			}
 		}
 		return $data;
+	}
+
+	/**
+	 * Unpack deflate data without ever holding more than the limits allow: the
+	 * data is fed in small slices and unpacking stops (and the document is
+	 * refused) the moment the output passes the per-stream or the whole-document
+	 * limit. A corrupt stream gives false, as before.
+	 *
+	 * @param string $data Compressed bytes (with a zlib header, or raw).
+	 * @return string|false
+	 */
+	protected static function inflate( $data ) {
+		if ( '' !== self::$stopped ) {
+			return false;
+		}
+		if ( microtime( true ) > self::$deadline ) {
+			self::$stopped = 'time';
+			return false;
+		}
+		$max = min( self::limit( 'stream', self::MAX_STREAM_BYTES ), self::limit( 'total', self::MAX_TOTAL_BYTES ) - self::$unpacked );
+		if ( $max <= 0 ) {
+			self::$stopped = 'size';
+			return false;
+		}
+		foreach ( array( array( ZLIB_ENCODING_DEFLATE, $data ), array( ZLIB_ENCODING_RAW, substr( $data, 2 ) ) ) as $attempt ) {
+			$ctx = @inflate_init( $attempt[0] ); // phpcs:ignore WordPress.PHP.NoSilencedErrors -- a bad stream is skipped.
+			if ( false === $ctx ) {
+				continue;
+			}
+			$out    = '';
+			$failed = false;
+			foreach ( str_split( $attempt[1], 4096 ) as $slice ) {
+				$piece = @inflate_add( $ctx, $slice, ZLIB_NO_FLUSH ); // phpcs:ignore WordPress.PHP.NoSilencedErrors -- a bad stream is skipped.
+				if ( false === $piece ) {
+					$failed = true;
+					break;
+				}
+				$out .= $piece;
+				if ( strlen( $out ) > $max ) {
+					self::$stopped = 'size';
+					return false;
+				}
+			}
+			if ( ! $failed ) {
+				$rest = @inflate_add( $ctx, '', ZLIB_FINISH ); // phpcs:ignore WordPress.PHP.NoSilencedErrors -- a bad stream is skipped.
+				if ( false !== $rest ) {
+					$out .= $rest;
+					if ( strlen( $out ) > $max ) {
+						self::$stopped = 'size';
+						return false;
+					}
+					self::$unpacked += strlen( $out );
+					return $out;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

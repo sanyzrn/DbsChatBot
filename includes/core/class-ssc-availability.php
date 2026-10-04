@@ -181,6 +181,78 @@ class SSC_Availability {
 	}
 
 	/**
+	 * The schedule in words, as a visitor would read it: "Sat–Wed, 09:00–18:00".
+	 * Empty while the schedule is off. Days use the site language's names, and
+	 * a run of days is written as a range even across the weekend.
+	 *
+	 * @return string
+	 */
+	public static function describe_schedule() {
+		if ( 'yes' !== SSC_Settings::get( 'business_hours_enabled', 'no' ) ) {
+			return '';
+		}
+		$start = self::parse_hhmm( (string) SSC_Settings::get( 'business_hours_start', '09:00' ), 9 * 60 );
+		$end   = self::parse_hhmm( (string) SSC_Settings::get( 'business_hours_end', '18:00' ), 18 * 60 );
+		$days  = self::day_ranges( self::allowed_days() );
+		$time  = $start === $end ? __( 'all day', 'nexachat-ai' ) : sprintf( '%02d:%02d–%02d:%02d', intdiv( $start, 60 ), $start % 60, intdiv( $end, 60 ), $end % 60 );
+		$tz    = trim( (string) SSC_Settings::get( 'business_timezone', '' ) );
+		return $days . ', ' . $time . ( '' !== $tz ? ' (' . $tz . ')' : '' );
+	}
+
+	/**
+	 * Weekdays (1 = Monday … 7 = Sunday) as text: runs become ranges, the week
+	 * wraps around (Sat–Wed), and a full week is "every day".
+	 *
+	 * @param int[] $days Weekday numbers.
+	 * @return string
+	 */
+	public static function day_ranges( $days ) {
+		$set = array_fill( 1, 7, false );
+		foreach ( $days as $d ) {
+			if ( $d >= 1 && $d <= 7 ) {
+				$set[ (int) $d ] = true;
+			}
+		}
+		if ( 7 === count( array_filter( $set ) ) ) {
+			return __( 'every day', 'nexachat-ai' );
+		}
+		$name  = function ( $n ) {
+			global $wp_locale;
+			if ( $wp_locale ) {
+				return $wp_locale->get_weekday_abbrev( $wp_locale->get_weekday( $n % 7 ) );
+			}
+			$fallback = array(
+				1 => 'Mon',
+				2 => 'Tue',
+				3 => 'Wed',
+				4 => 'Thu',
+				5 => 'Fri',
+				6 => 'Sat',
+				7 => 'Sun',
+			);
+			return $fallback[ $n ];
+		};
+		$prev  = function ( $n ) {
+			return 1 === $n ? 7 : $n - 1;
+		};
+		$next  = function ( $n ) {
+			return 7 === $n ? 1 : $n + 1;
+		};
+		$parts = array();
+		for ( $n = 1; $n <= 7; $n++ ) {
+			if ( ! $set[ $n ] || $set[ $prev( $n ) ] ) {
+				continue; // Not the first day of a run.
+			}
+			$last = $n;
+			while ( $set[ $next( $last ) ] && $next( $last ) !== $n ) {
+				$last = $next( $last );
+			}
+			$parts[] = $last === $n ? $name( $n ) : ( $next( $n ) === $last ? $name( $n ) . ', ' . $name( $last ) : $name( $n ) . '–' . $name( $last ) );
+		}
+		return implode( ', ', $parts );
+	}
+
+	/**
 	 * Allowed weekdays (1–7, Monday-first).
 	 *
 	 * @return int[]

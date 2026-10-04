@@ -204,6 +204,21 @@ class SSC_Knowledge {
 	}
 
 	/**
+	 * How many words (or their synonyms) a question and a stored text share.
+	 *
+	 * @param string[] $user_tokens    Tokenized user question.
+	 * @param string   $reference_text Normalized reference text.
+	 * @return int
+	 */
+	public static function shared_count( $user_tokens, $reference_text ) {
+		$ref_tokens = self::tokenize( $reference_text );
+		if ( empty( $user_tokens ) || empty( $ref_tokens ) ) {
+			return 0;
+		}
+		return count( array_intersect( self::expand_synonyms( $user_tokens ), self::expand_synonyms( $ref_tokens ) ) );
+	}
+
+	/**
 	 * Split a long text into retrievable chunks.
 	 *
 	 * @param string $text      Full text.
@@ -211,7 +226,7 @@ class SSC_Knowledge {
 	 * @param int    $max_chunks Safety cap.
 	 * @return string[]
 	 */
-	public static function chunk_text( $text, $size = 900, $max_chunks = 200 ) {
+	public static function chunk_text( $text, $size = 900, $max_chunks = 600 ) {
 		$text = trim( (string) $text );
 		if ( '' === $text ) {
 			return array();
@@ -254,7 +269,56 @@ class SSC_Knowledge {
 		if ( '' !== trim( $current ) ) {
 			$chunks[] = $current;
 		}
-		return array_slice( $chunks, 0, $max_chunks );
+
+		// A hard ceiling: a long sentence, or text with no punctuation at all, is cut at word boundaries.
+		$hard  = (int) max( $size, round( $size * 1.35 ) );
+		$final = array();
+		foreach ( $chunks as $chunk ) {
+			if ( mb_strlen( $chunk ) > $hard ) {
+				foreach ( self::split_long( $chunk, $size, $hard ) as $piece ) {
+					$final[] = $piece;
+				}
+			} else {
+				$final[] = $chunk;
+			}
+		}
+		return array_slice( $final, 0, $max_chunks );
+	}
+
+	/**
+	 * Cut a long text into pieces of about $size characters at word boundaries.
+	 * Nothing is dropped; a single "word" longer than $hard (a URL, a blob) is
+	 * cut at $hard characters, never inside a character.
+	 *
+	 * @param string $text Text.
+	 * @param int    $size Target characters.
+	 * @param int    $hard Most characters in a piece.
+	 * @return string[]
+	 */
+	protected static function split_long( $text, $size, $hard ) {
+		$out   = array();
+		$buf   = '';
+		$words = preg_split( '/\s+/u', trim( (string) $text ), -1, PREG_SPLIT_NO_EMPTY );
+		foreach ( (array) $words as $word ) {
+			while ( mb_strlen( $word ) > $hard ) {
+				if ( '' !== $buf ) {
+					$out[] = $buf;
+					$buf   = '';
+				}
+				$out[] = mb_substr( $word, 0, $hard );
+				$word  = mb_substr( $word, $hard );
+			}
+			if ( '' !== $buf && mb_strlen( $buf ) + 1 + mb_strlen( $word ) > $size ) {
+				$out[] = $buf;
+				$buf   = $word;
+			} else {
+				$buf = '' === $buf ? $word : $buf . ' ' . $word;
+			}
+		}
+		if ( '' !== $buf ) {
+			$out[] = $buf;
+		}
+		return $out;
 	}
 
 	/*
@@ -272,12 +336,12 @@ class SSC_Knowledge {
 	 * @return array[] rows: title, chunk, score.
 	 */
 	public static function retrieve_chunks( $product_id, $question, $max = 3 ) {
-		$semantic   = class_exists( 'SSC_Embeddings' ) && SSC_Embeddings::enabled();
-		$candidates = SSC_Schema::kb_candidates( $product_id, $semantic );
+		$semantic    = class_exists( 'SSC_Embeddings' ) && SSC_Embeddings::enabled();
+		$user_tokens = self::tokenize( self::normalize( $question ) );
+		$candidates  = SSC_Schema::kb_candidates( $product_id, $semantic, $user_tokens );
 		if ( empty( $candidates ) ) {
 			return array();
 		}
-		$user_tokens = self::tokenize( self::normalize( $question ) );
 
 		// Semantic signal (only chunks embedded with the current model count).
 		$query_vector = array();
@@ -330,6 +394,18 @@ class SSC_Knowledge {
 	}
 
 	/**
+	 * Is the FAQ answer bank in use? Switching the FAQ module off stops the bank
+	 * everywhere it speaks (answers, the fallback after an AI failure, the
+	 * suggestions); the saved answers are kept and work again when it is
+	 * switched back on.
+	 *
+	 * @return bool
+	 */
+	public static function bank_enabled() {
+		return SSC_Modules::is_active( 'faq' );
+	}
+
+	/**
 	 * Best QA bank answer for a question.
 	 *
 	 * @param string $product_id Product scope.
@@ -337,12 +413,15 @@ class SSC_Knowledge {
 	 * @return array|null row: id, answer, score.
 	 */
 	public static function bank_answer( $product_id, $question ) {
-		$candidates = SSC_Schema::qa_candidates( $product_id );
-		if ( empty( $candidates ) ) {
+		if ( ! self::bank_enabled() ) {
 			return null;
 		}
 		$user_tokens = self::tokenize( self::normalize( $question ) );
 		if ( empty( $user_tokens ) ) {
+			return null;
+		}
+		$candidates = SSC_Schema::qa_candidates( $product_id, $user_tokens );
+		if ( empty( $candidates ) ) {
 			return null;
 		}
 
@@ -360,6 +439,14 @@ class SSC_Knowledge {
 				}
 			}
 			if ( $score >= $threshold && ( null === $best || $score > $best['score'] ) ) {
+				// One shared word is not a match for a question of several words ("continue the medicine?" must not get the answer of "is this medicine allowed?").
+				if ( count( $user_tokens ) >= 3 && self::shared_count( $user_tokens, $reference ) < 2 ) {
+					continue;
+				}
+				// Words alone cannot tell "allowed" from "not allowed": a stored answer is never given to the opposite question.
+				if ( '' !== SSC_Knowledge_Polarity::conflict( $question, (string) $row['question'] ) ) {
+					continue;
+				}
 				$best = array(
 					'id'     => (int) $row['id'],
 					'answer' => $row['answer'],
@@ -379,13 +466,19 @@ class SSC_Knowledge {
 	 * @return array[] id, question.
 	 */
 	public static function related_questions( $product_id, $term, $limit = 5 ) {
-		$candidates = SSC_Schema::qa_candidates( $product_id );
-		$term_norm  = self::normalize( $term );
-		if ( '' === $term_norm || empty( $candidates ) ) {
+		if ( ! self::bank_enabled() ) {
+			return array();
+		}
+		$term_norm = self::normalize( $term );
+		if ( '' === $term_norm ) {
 			return array();
 		}
 		$term_tokens = self::tokenize( $term_norm );
-		$scored      = array();
+		$candidates  = SSC_Schema::qa_candidates( $product_id, $term_tokens );
+		if ( empty( $candidates ) ) {
+			return array();
+		}
+		$scored = array();
 		foreach ( $candidates as $row ) {
 			$score = self::overlap_score( $term_tokens, self::normalize( $row['question'] ) );
 			if ( $score > 0.15 ) {
@@ -410,6 +503,75 @@ class SSC_Knowledge {
 	 * Business knowledge compilation (for the prompt builder).
 	 * --------------------------------------------------------------
 	 */
+
+	/**
+	 * Most characters of curated entry text the assistant is given with every
+	 * answer. Documents and website pages are not counted: they are searched and
+	 * only the relevant parts are used.
+	 */
+	const KNOWLEDGE_BUDGET = 4000;
+
+	/**
+	 * Which entries fit in the budget. The entries are used from the top down;
+	 * the one that crosses the limit is cut, and every entry after it is left out
+	 * of the answers. The admin screen shows this plan and the prompt uses it, so
+	 * what is shown is what happens.
+	 *
+	 * @param array    $items  Knowledge entries (title, content), in saved order.
+	 * @param int|null $budget Limit in characters (default: KNOWLEDGE_BUDGET).
+	 * @return array limit, used, rows (same keys as $items => chars, kept, state: full | cut | out | empty), cut, out.
+	 */
+	public static function plan_knowledge( $items, $budget = null ) {
+		$limit = null === $budget ? self::KNOWLEDGE_BUDGET : max( 0, (int) $budget );
+		$used  = 0;
+		$rows  = array();
+		$cut   = 0;
+		$out   = 0;
+		foreach ( (array) $items as $index => $item ) {
+			$body  = ( is_array( $item ) && isset( $item['content'] ) && is_scalar( $item['content'] ) ) ? trim( (string) $item['content'] ) : '';
+			$chars = mb_strlen( $body );
+			if ( '' === $body ) {
+				$rows[ $index ] = array(
+					'chars' => 0,
+					'kept'  => 0,
+					'state' => 'empty',
+				);
+				continue;
+			}
+			if ( $used >= $limit ) {
+				$rows[ $index ] = array(
+					'chars' => $chars,
+					'kept'  => 0,
+					'state' => 'out',
+				);
+				++$out;
+				continue;
+			}
+			if ( $used + $chars > $limit ) {
+				$rows[ $index ] = array(
+					'chars' => $chars,
+					'kept'  => $limit - $used,
+					'state' => 'cut',
+				);
+				$used           = $limit;
+				++$cut;
+				continue;
+			}
+			$used          += $chars;
+			$rows[ $index ] = array(
+				'chars' => $chars,
+				'kept'  => $chars,
+				'state' => 'full',
+			);
+		}
+		return array(
+			'limit' => $limit,
+			'used'  => $used,
+			'rows'  => $rows,
+			'cut'   => $cut,
+			'out'   => $out,
+		);
+	}
 
 	/**
 	 * Compact "always included" business context (identity + curated items).
@@ -441,23 +603,18 @@ class SSC_Knowledge {
 		}
 
 		// Curated knowledge items (wizard step 2) - compact, token-budgeted.
-		$items  = (array) SSC_Settings::get( 'knowledge_items', array() );
-		$budget = 4000; // chars of curated knowledge max.
-		$used   = 0;
-		foreach ( $items as $item ) {
-			$body = isset( $item['content'] ) ? trim( (string) $item['content'] ) : '';
-			if ( '' === $body ) {
+		$items = (array) SSC_Settings::get( 'knowledge_items', array() );
+		$plan  = self::plan_knowledge( $items );
+		foreach ( $items as $index => $item ) {
+			if ( empty( $plan['rows'][ $index ] ) || ! in_array( $plan['rows'][ $index ]['state'], array( 'full', 'cut' ), true ) ) {
 				continue;
 			}
-			if ( $used + mb_strlen( $body ) > $budget ) {
-				$body = mb_substr( $body, 0, max( 0, $budget - $used ) ) . '…';
+			$body = trim( (string) $item['content'] );
+			if ( 'cut' === $plan['rows'][ $index ]['state'] ) {
+				$body = mb_substr( $body, 0, $plan['rows'][ $index ]['kept'] ) . '…';
 			}
-			$used   += mb_strlen( $body );
 			$title   = ! empty( $item['title'] ) ? $item['title'] : __( 'Reference', 'nexachat-ai' );
 			$parts[] = SSC_Prompt_Builder::fence( 'KNOWLEDGE', $title, $body );
-			if ( $used >= $budget ) {
-				break;
-			}
 		}
 
 		return implode( "\n\n", $parts );

@@ -339,4 +339,14 @@ abstract class SSC_Provider {
 	public function needs_key() {
 		return true;
 	}
+
+	/**
+	 * Can an API key be entered for this provider? True even when the key is
+	 * optional (a custom endpoint), so the field is always there to fill in.
+	 *
+	 * @return bool
+	 */
+	public function accepts_key() {
+		return true;
+	}
 }

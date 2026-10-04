@@ -64,6 +64,7 @@ class SSC_Settings {
 				'differentiators' => '',
 				'url'             => '',
 				'location'        => '',
+				'locations'       => array(),
 				'phone'           => '',
 				'email'           => '',
 				'support_phone'   => '',
@@ -172,6 +173,7 @@ class SSC_Settings {
 			// Required behind Cloudflare / nginx / load balancers so rate limits
 			// are per-visitor instead of per-proxy.
 			'trusted_proxy_header'       => '',
+			'trusted_proxies'            => '',
 
 			// Display targeting (server-gated; pages filtered before assets load).
 			'display_mode'               => 'all', // all | include | exclude.
@@ -687,9 +689,13 @@ class SSC_Settings {
 				return in_array( $value, array( 'ip', 'session', 'both', 'off' ), true ) ? $value : 'ip';
 
 			case 'trusted_proxy_header':
-				$allowed = array( '', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'HTTP_CF_CONNECTING_IP', 'HTTP_TRUE_CLIENT_IP', 'HTTP_X_CLIENT_IP', 'HTTP_FASTLY_CLIENT_IP' );
+				$allowed = array_merge( array( '' ), SSC_Client_IP::headers() );
 				$allowed = apply_filters( 'ssc_trusted_proxy_headers', $allowed );
 				return in_array( $value, $allowed, true ) ? $value : '';
+
+			case 'trusted_proxies':
+				// Addresses and CIDR blocks of the proxies whose header is believed, one per line.
+				return implode( "\n", SSC_Client_IP::parse_list( is_array( $value ) ? '' : (string) $value ) );
 
 			case 'display_mode':
 				return in_array( $value, array( 'all', 'include', 'exclude' ), true ) ? $value : 'all';
@@ -952,20 +958,20 @@ class SSC_Settings {
 					if ( ! is_array( $p ) ) {
 						continue;
 					}
-					$name = isset( $p['name'] ) ? sanitize_text_field( $p['name'] ) : '';
+					$name = isset( $p['name'] ) ? sanitize_text_field( SSC_Input::scalar( $p['name'] ) ) : '';
 					if ( '' === $name ) {
 						continue;
 					}
-					$id = self::make_unique_id( isset( $p['id'] ) ? $p['id'] : '', $name, $taken );
+					$id = self::make_unique_id( isset( $p['id'] ) ? SSC_Input::scalar( $p['id'] ) : '', $name, $taken );
 					if ( '' === $id ) {
 						continue;
 					}
 					$item = array(
 						'id'       => $id,
 						'name'     => $name,
-						'summary'  => isset( $p['summary'] ) ? wp_kses_post( $p['summary'] ) : '',
-						'brochure' => isset( $p['brochure'] ) ? esc_url_raw( $p['brochure'] ) : '',
-						'image'    => isset( $p['image'] ) ? esc_url_raw( $p['image'] ) : '',
+						'summary'  => isset( $p['summary'] ) ? wp_kses_post( SSC_Input::scalar( $p['summary'] ) ) : '',
+						'brochure' => isset( $p['brochure'] ) ? esc_url_raw( SSC_Input::scalar( $p['brochure'] ) ) : '',
+						'image'    => isset( $p['image'] ) ? esc_url_raw( SSC_Input::scalar( $p['image'] ) ) : '',
 					);
 					// Flexible attributes: any key => sanitized text (no pharma-only schema).
 					$attrs = array();
@@ -973,7 +979,7 @@ class SSC_Settings {
 						foreach ( $p['attributes'] as $ak => $av ) {
 							// sanitize_text_field, not sanitize_key: Persian names must survive.
 							$ak = sanitize_text_field( (string) $ak );
-							$av = sanitize_text_field( (string) $av );
+							$av = sanitize_text_field( SSC_Input::scalar( $av ) );
 							if ( '' !== $ak && '' !== $av ) {
 								$attrs[ $ak ] = $av;
 							}
@@ -989,17 +995,17 @@ class SSC_Settings {
 					if ( ! is_array( $item ) ) {
 						continue;
 					}
-					$title = isset( $item['title'] ) ? sanitize_text_field( $item['title'] ) : '';
-					$body  = isset( $item['content'] ) ? wp_kses_post( (string) $item['content'] ) : '';
+					$title = isset( $item['title'] ) ? sanitize_text_field( SSC_Input::scalar( $item['title'] ) ) : '';
+					$body  = isset( $item['content'] ) ? wp_kses_post( SSC_Input::scalar( $item['content'] ) ) : '';
 					if ( '' === $title && '' === $body ) {
 						continue;
 					}
-					$type = isset( $item['type'] ) ? sanitize_key( $item['type'] ) : 'general';
+					$type = isset( $item['type'] ) ? sanitize_key( SSC_Input::scalar( $item['type'] ) ) : 'general';
 					if ( ! in_array( $type, array( 'general', 'product', 'service', 'faq', 'policy', 'support', 'custom' ), true ) ) {
 						$type = 'general';
 					}
 					$out[] = array(
-						'id'      => isset( $item['id'] ) ? sanitize_key( $item['id'] ) : ( 'ki-' . uniqid() ),
+						'id'      => isset( $item['id'] ) ? sanitize_key( SSC_Input::scalar( $item['id'] ) ) : ( 'ki-' . uniqid() ),
 						'type'    => $type,
 						'title'   => $title,
 						'content' => $body,
@@ -1082,12 +1088,17 @@ class SSC_Settings {
 		$out   = array();
 		$plain = array( 'org_name', 'brand_name', 'category', 'industry', 'url', 'location', 'phone', 'email', 'support_phone', 'support_email', 'hours', 'language', 'assistant_name', 'assistant_role' );
 		foreach ( $plain as $k ) {
-			$out[ $k ] = isset( $value[ $k ] ) ? sanitize_text_field( (string) $value[ $k ] ) : '';
+			$out[ $k ] = isset( $value[ $k ] ) ? sanitize_text_field( SSC_Input::scalar( $value[ $k ] ) ) : '';
 		}
-		$out['description']     = isset( $value['description'] ) ? wp_kses_post( (string) $value['description'] ) : '';
-		$out['products']        = isset( $value['products'] ) ? wp_kses_post( (string) $value['products'] ) : '';
-		$out['differentiators'] = isset( $value['differentiators'] ) ? wp_kses_post( (string) $value['differentiators'] ) : '';
-		$out['tone']            = ( isset( $value['tone'] ) && in_array( $value['tone'], array( 'professional', 'friendly', 'formal', 'casual' ), true ) ) ? $value['tone'] : 'professional';
+		$out['description']     = isset( $value['description'] ) ? wp_kses_post( SSC_Input::scalar( $value['description'] ) ) : '';
+		$out['products']        = isset( $value['products'] ) ? wp_kses_post( SSC_Input::scalar( $value['products'] ) ) : '';
+		$out['differentiators'] = isset( $value['differentiators'] ) ? wp_kses_post( SSC_Input::scalar( $value['differentiators'] ) ) : '';
+		$out['tone']            = ( isset( $value['tone'] ) && is_string( $value['tone'] ) && in_array( $value['tone'], array( 'professional', 'friendly', 'formal', 'casual' ), true ) ) ? $value['tone'] : 'professional';
+		// The list of places; the single "location" text mirrors the first one so older readers still work.
+		$out['locations'] = SSC_Locations::sanitize( isset( $value['locations'] ) ? $value['locations'] : array() );
+		if ( $out['locations'] ) {
+			$out['location'] = SSC_Locations::primary_text( $out['locations'] );
+		}
 		// URLs & emails validated properly.
 		foreach ( array( 'url' ) as $k ) {
 			if ( '' !== $out[ $k ] ) {

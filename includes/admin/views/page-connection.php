@@ -8,6 +8,7 @@
  * @var SSC_Provider[]   $providers    Provider objects.
  * @var array            $labels       Provider labels.
  * @var bool             $verified     Current verification validity.
+ * @var array            $conn_status  SSC_Setup::connection_status().
  * @var array            $verify_state Verification state.
  */
 
@@ -79,7 +80,7 @@ if ( 'none' !== $sel && ! $verified ) {
 		<div class="ssc-hhero__ring">
 			<?php echo SSC_Icons::ring( $ssc_percent, 'ssc-ring--lg' . ( $ssc_percent >= 100 ? ' is-ok' : '' ), __( 'How far the connection is set up', 'nexachat-ai' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?>
 		</div>
-		<div class="ssc-hhero__main">
+		<div class="ssc-hhero__main" data-ssc-connhero data-ok-title="<?php esc_attr_e( 'Connected and verified', 'nexachat-ai' ); ?>" data-ok-sub="<?php esc_attr_e( 'Verified just now for the current provider, key, model and endpoint.', 'nexachat-ai' ); ?>" data-fail-title="<?php esc_attr_e( 'The last connection test failed', 'nexachat-ai' ); ?>">
 			<p class="ssc-hhero__level"><span><?php echo esc_html( $ssc_label . ( '' !== $ssc_model ? ' · ' . $ssc_model : '' ) ); ?></span></p>
 			<h2>
 				<?php
@@ -87,6 +88,8 @@ if ( 'none' !== $sel && ! $verified ) {
 					esc_html_e( 'Running without an AI engine', 'nexachat-ai' );
 				} elseif ( $verified ) {
 					esc_html_e( 'Connected and verified', 'nexachat-ai' );
+				} elseif ( ! empty( $conn_status['attempt'] ) && empty( $conn_status['attempt']['ok'] ) ) {
+					esc_html_e( 'The last connection test failed', 'nexachat-ai' );
 				} else {
 					esc_html_e( 'Almost there: verify the connection', 'nexachat-ai' );
 				}
@@ -98,6 +101,15 @@ if ( 'none' !== $sel && ! $verified ) {
 					esc_html_e( 'Answers come from your FAQ bank and knowledge. You can connect an AI engine whenever you like.', 'nexachat-ai' );
 				} elseif ( $verified ) {
 					echo esc_html( sprintf( /* translators: %s: time span such as "3 hours". */ __( 'Verified %s ago for the current provider, key, model and endpoint.', 'nexachat-ai' ), human_time_diff( (int) $verify_state['at'] ) ) );
+				} elseif ( ! empty( $conn_status['attempt'] ) && empty( $conn_status['attempt']['ok'] ) ) {
+					$ssc_attempt = $conn_status['attempt'];
+					echo esc_html( sprintf( /* translators: 1: time span such as "3 hours", 2: the reason. */ __( 'Failed %1$s ago: %2$s', 'nexachat-ai' ), human_time_diff( (int) $ssc_attempt['at'] ), SSC_HTTP::friendly_error( (string) $ssc_attempt['code'] ) ) );
+					if ( ! empty( $conn_status['verified_at'] ) ) {
+						echo ' ' . esc_html( sprintf( /* translators: %s: time span such as "3 hours". */ __( 'It last worked %s ago.', 'nexachat-ai' ), human_time_diff( (int) $conn_status['verified_at'] ) ) );
+					}
+					if ( ! empty( $ssc_attempt['request_id'] ) ) {
+						echo ' ' . esc_html( sprintf( /* translators: %s: the provider's request id. */ __( 'Request id: %s', 'nexachat-ai' ), $ssc_attempt['request_id'] ) );
+					}
 				} else {
 					esc_html_e( 'Changing the provider, key, model or endpoint invalidates previous verification. Run a test after every change.', 'nexachat-ai' );
 				}
@@ -156,12 +168,15 @@ if ( 'none' !== $sel && ! $verified ) {
 				<div class="ssc-provider-fields" data-provider="<?php echo esc_attr( $pid ); ?>" <?php echo ( $sel === $pid ) ? '' : 'hidden'; ?>>
 					<?php if ( 'webhook' !== $pid ) : ?>
 						<div class="ssc-grid ssc-grid--2">
-							<?php if ( $provider->needs_key() ) : ?>
+							<?php if ( $provider->accepts_key() ) : ?>
 								<div class="ssc-field">
-									<label for="<?php echo esc_attr( $pid ); ?>_api_key"><?php esc_html_e( 'API key', 'nexachat-ai' ); ?></label>
+									<label for="<?php echo esc_attr( $pid ); ?>_api_key"><?php echo $provider->needs_key() ? esc_html__( 'API key', 'nexachat-ai' ) : esc_html__( 'API key (optional)', 'nexachat-ai' ); ?></label>
 									<input id="<?php echo esc_attr( $pid ); ?>_api_key" name="<?php echo esc_attr( $pid ); ?>_api_key" type="password" autocomplete="off" dir="ltr" value="" placeholder="<?php echo SSC_Settings::has_secret( $pid . '_api_key' ) ? esc_attr__( 'A key is stored — type to replace', 'nexachat-ai' ) : esc_attr__( 'Paste your API key', 'nexachat-ai' ); ?>" />
 									<?php if ( SSC_Settings::has_secret( $pid . '_api_key' ) ) : ?>
 										<label class="ssc-check ssc-check--tight"><input type="checkbox" name="<?php echo esc_attr( $pid ); ?>_api_key_clear" value="1" /> <span><?php esc_html_e( 'Remove the stored key', 'nexachat-ai' ); ?></span></label>
+									<?php endif; ?>
+									<?php if ( ! $provider->needs_key() ) : ?>
+										<p class="ssc-field__hint"><?php esc_html_e( 'Most hosted services need a key; it is sent as a Bearer token. Leave it empty for a local gateway that needs none.', 'nexachat-ai' ); ?></p>
 									<?php endif; ?>
 								</div>
 							<?php endif; ?>

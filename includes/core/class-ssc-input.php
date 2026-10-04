@@ -34,6 +34,53 @@ class SSC_Input {
 	}
 
 	/**
+	 * A value as a plain string: text and numbers as they are, anything else
+	 * (array, object, null) as ''. Used before the sanitizers that only accept
+	 * strings, so a malformed form or file cannot raise a fatal error.
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string
+	 */
+	public static function scalar( $value ) {
+		return is_scalar( $value ) ? (string) $value : '';
+	}
+
+	/**
+	 * The first field of a posted or imported row that is not plain text or a
+	 * number (an array, an object, null), or '' when the row is well formed.
+	 *
+	 * @param mixed    $row    The row.
+	 * @param string[] $arrays Fields that must hold a list of plain values (e.g. product attributes).
+	 * @param string[] $skip   Fields checked elsewhere.
+	 * @return string
+	 */
+	public static function bad_field( $row, $arrays = array(), $skip = array() ) {
+		if ( ! is_array( $row ) ) {
+			return '*';
+		}
+		foreach ( $row as $key => $value ) {
+			if ( in_array( $key, $skip, true ) ) {
+				continue;
+			}
+			if ( in_array( $key, $arrays, true ) ) {
+				if ( ! is_array( $value ) ) {
+					return (string) $key;
+				}
+				foreach ( $value as $leaf ) {
+					if ( ! is_scalar( $leaf ) ) {
+						return (string) $key;
+					}
+				}
+				continue;
+			}
+			if ( ! is_scalar( $value ) ) {
+				return (string) $key;
+			}
+		}
+		return '';
+	}
+
+	/**
 	 * Chat message text: keeps what the visitor actually typed.
 	 *
 	 * WordPress sanitize_textarea_field() strips anything that looks like a tag, so a
@@ -132,6 +179,35 @@ class SSC_Input {
 				str_split( '01234567890123456789' )
 			)
 		);
+	}
+
+	/**
+	 * A number as visitors type it, in ASCII: Persian and Arabic digits become
+	 * 0-9, the Arabic decimal point becomes ".", the Arabic thousands mark is
+	 * dropped. Returns '' for anything that is then not a plain decimal number
+	 * (letters, exponents, several dots, a list, infinity).
+	 *
+	 * @param mixed $value Raw input.
+	 * @return string
+	 */
+	public static function ascii_number( $value ) {
+		if ( ! is_scalar( $value ) ) {
+			return '';
+		}
+		$text = strtr(
+			trim( (string) $value ),
+			array_merge(
+				array_combine(
+					preg_split( '//u', '۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩', -1, PREG_SPLIT_NO_EMPTY ),
+					str_split( '01234567890123456789' )
+				),
+				array(
+					'٫' => '.',
+					'٬' => '',
+				)
+			)
+		);
+		return preg_match( '/^-?\d{1,9}(?:\.\d{1,6})?$/', $text ) ? $text : '';
 	}
 
 	/**

@@ -44,6 +44,24 @@ class SSC_Frontend {
 	}
 
 	/**
+	 * The name shown in the chat header: the one set on the Appearance screen,
+	 * else the assistant's name from Business Knowledge (so the header and the
+	 * way the assistant introduces itself agree), else "Nexa".
+	 *
+	 * @param array $s Settings.
+	 * @return string
+	 */
+	public static function display_name( $s ) {
+		$set = trim( (string) $s['assistant_display_name'] );
+		if ( '' !== $set ) {
+			return $set;
+		}
+		$business = isset( $s['business'] ) && is_array( $s['business'] ) ? $s['business'] : array();
+		$persona  = isset( $business['assistant_name'] ) ? trim( (string) $business['assistant_name'] ) : '';
+		return '' !== $persona ? $persona : __( 'Nexa', 'nexachat-ai' );
+	}
+
+	/**
 	 * Register (not enqueue) styles and scripts.
 	 */
 	public function register_assets() {
@@ -135,7 +153,7 @@ class SSC_Frontend {
 			);
 		}
 
-		$display_name = '' !== trim( (string) $s['assistant_display_name'] ) ? $s['assistant_display_name'] : __( 'Nexa', 'nexachat-ai' );
+		$display_name = self::display_name( $s );
 		$direction    = $this->resolve_direction( $s['direction'] );
 
 		$config = array(

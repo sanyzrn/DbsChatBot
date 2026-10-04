@@ -61,6 +61,15 @@ class SSC_Provider_Webhook extends SSC_Provider {
 	}
 
 	/**
+	 * The webhook is signed with a shared secret, not an API key.
+	 *
+	 * @return bool
+	 */
+	public function accepts_key() {
+		return false;
+	}
+
+	/**
 	 * HTTPS only when a secret is configured (signature must not be sniffable).
 	 *
 	 * @return bool

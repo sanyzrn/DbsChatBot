@@ -26,10 +26,97 @@ class SSC_Admin_Knowledge {
 	}
 
 	/**
+	 * Where the posted form holds something other than plain text or numbers
+	 * (a list in a text field), as "section:row:field"; '' when it is well formed.
+	 *
+	 * @return string
+	 */
+	protected static function malformed_post() {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified by the caller; only the shape is read here.
+		if ( isset( $_POST['business'] ) ) {
+			$field = is_array( $_POST['business'] ) ? SSC_Input::bad_field( $_POST['business'], array(), array( 'locations' ) ) : '*'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- only inspected.
+			if ( '' !== $field ) {
+				return 'business::' . $field;
+			}
+		}
+		foreach ( array( 'ki' => array(), 'products' => array(), 'product_attributes' => array( '*' ) ) as $section => $unused ) {
+			if ( ! isset( $_POST[ $section ] ) ) {
+				continue;
+			}
+			if ( ! is_array( $_POST[ $section ] ) ) {
+				return $section . '::*';
+			}
+			foreach ( $_POST[ $section ] as $row => $fields ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- only inspected.
+				if ( 'product_attributes' === $section ) {
+					// A flat list of names and values, or key/value pairs.
+					if ( ! is_array( $fields ) ) {
+						return $section . ':' . $row . ':*';
+					}
+					foreach ( $fields as $entry ) {
+						if ( is_array( $entry ) ? '' !== SSC_Input::bad_field( $entry ) : ! is_scalar( $entry ) ) {
+							return $section . ':' . $row . ':value';
+						}
+					}
+					continue;
+				}
+				$field = SSC_Input::bad_field( $fields, array( 'attributes' ) );
+				if ( '' !== $field ) {
+					return $section . ':' . $row . ':' . $field;
+				}
+			}
+		}
+		// phpcs:enable
+		return '';
+	}
+
+	/**
+	 * Where a save that clashed with a newer change is kept while the person decides.
+	 *
+	 * @return string
+	 */
+	public static function conflict_key() {
+		return 'ssc_kn_conflict_' . get_current_user_id();
+	}
+
+	/**
+	 * Save the Knowledge form on top of what is stored now.
+	 *
+	 * @param array      $mine   business, ki, products as the form posted them (cleaned).
+	 * @param array|null $base   Snapshot the form was built from (null for an old form).
+	 * @param bool       $prefer On a clash take the form's value (otherwise the stored one).
+	 * @param bool       $force  Save even when there are clashes (the person has decided).
+	 * @return array Clashes (section => fields or ids) when nothing was saved, else empty.
+	 */
+	protected static function save_form( $mine, $base, $prefer, $force = false ) {
+		$current = array(
+			'business' => SSC_Settings::sanitize_business( (array) SSC_Settings::get( 'business', array() ) ),
+			'ki'       => (array) SSC_Settings::get( 'knowledge_items', array() ),
+			'products' => (array) SSC_Settings::get( 'products', array() ),
+		);
+		$merged  = SSC_Merge::knowledge( $base, $mine, $current, $prefer );
+		if ( $merged['conflicts'] && ! $force ) {
+			return $merged['conflicts'];
+		}
+		SSC_Settings::update(
+			array(
+				'business'        => SSC_Settings::sanitize_business( $merged['business'] ),
+				'knowledge_items' => $merged['ki'],
+				'products'        => $merged['products'],
+			)
+		);
+		return array();
+	}
+
+	/**
 	 * Form actions (all PRG).
 	 */
 	public function handle_actions() {
 		if ( isset( $_POST['ssc_knowledge_save'] ) && check_admin_referer( 'ssc_knowledge' ) ) {
+			// A form with a list where a single value belongs is refused whole: nothing is saved, and the place is named.
+			$malformed = self::malformed_post();
+			if ( '' !== $malformed ) {
+				self::prg( array( 'malformed' => $malformed ) );
+			}
 			// Business profile block.
 			$business = array();
 			foreach ( array( 'org_name', 'brand_name', 'category', 'industry', 'location', 'phone', 'email', 'support_phone', 'support_email', 'hours', 'assistant_name', 'assistant_role', 'tone', 'language' ) as $f ) {
@@ -39,6 +126,8 @@ class SSC_Admin_Knowledge {
 				$business[ $f ] = isset( $_POST['business'][ $f ] ) ? wp_kses_post( wp_unslash( $_POST['business'][ $f ] ) ) : '';
 			}
 			$business['url'] = isset( $_POST['business']['url'] ) ? esc_url_raw( wp_unslash( $_POST['business']['url'] ) ) : '';
+			// The places list (empty when every row was removed; the old single address then falls away with it).
+			$business['locations'] = SSC_Locations::sanitize( isset( $_POST['business']['locations'] ) ? wp_unslash( $_POST['business']['locations'] ) : array() ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- SSC_Locations::sanitize() cleans every field.
 
 			// Knowledge entries.
 			$items = array();
@@ -109,19 +198,58 @@ class SSC_Admin_Knowledge {
 				}
 			}
 
-			SSC_Settings::update(
-				array(
-					'business'        => SSC_Settings::sanitize_business( $business ),
-					'knowledge_items' => $items,
-					'products'        => $products,
-				)
+			// What this form changed is applied onto what is stored now; if another tab or person changed the same thing, nothing is saved until the person decides.
+			$mine      = array(
+				'business' => SSC_Settings::sanitize_business( $business ),
+				'ki'       => $items,
+				'products' => $products,
 			);
+			$base      = SSC_Merge::parse_snapshot( isset( $_POST['ssc_base'] ) && is_string( $_POST['ssc_base'] ) ? wp_unslash( $_POST['ssc_base'] ) : '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- parsed and validated hash by hash.
+			$conflicts = self::save_form( $mine, $base, false );
+			if ( $conflicts ) {
+				set_transient(
+					self::conflict_key(),
+					array(
+						'mine'      => $mine,
+						'base'      => $base,
+						'conflicts' => $conflicts,
+						'panel'     => self::posted_panel(),
+					),
+					15 * MINUTE_IN_SECONDS
+				);
+				self::prg(
+					array(
+						'conflict' => 1,
+						'panel'    => self::posted_panel(),
+					)
+				);
+			}
+			delete_transient( self::conflict_key() );
 			self::prg(
 				array(
 					'saved' => 1,
 					'panel' => self::posted_panel(),
 				)
 			);
+		}
+
+		// The person's decision about a save that clashed with a newer change.
+		if ( isset( $_POST['ssc_knowledge_resolve'] ) && check_admin_referer( 'ssc_knowledge_resolve' ) ) {
+			$stash = get_transient( self::conflict_key() );
+			delete_transient( self::conflict_key() );
+			$panel = is_array( $stash ) && ! empty( $stash['panel'] ) ? (string) $stash['panel'] : '';
+			$choice = sanitize_key( wp_unslash( $_POST['ssc_knowledge_resolve'] ) );
+			if ( is_array( $stash ) && isset( $stash['mine'], $stash['base'] ) && in_array( $choice, array( 'mine', 'latest' ), true ) ) {
+				// Everything that did not clash is saved either way; only the clashing values follow the choice.
+				self::save_form( $stash['mine'], $stash['base'], 'mine' === $choice, true );
+				self::prg(
+					array(
+						'saved' => 1,
+						'panel' => $panel,
+					)
+				);
+			}
+			self::prg( array( 'panel' => $panel ) );
 		}
 
 		// Document import (URL).
@@ -306,8 +434,8 @@ class SSC_Admin_Knowledge {
 			return 0;
 		}
 		$doc_id = 'url-' . substr( md5( $url ), 0, 12 );
-		SSC_Schema::kb_delete_document( $doc_id );
-		return (int) SSC_Schema::kb_insert_document( $doc_id, '' !== $title ? $title : $url, $text, 'general', $url );
+		// Importing the same address again replaces its document; if the new version cannot be built the old one stays.
+		return (int) SSC_Schema::kb_replace_document( $doc_id, '' !== $title ? $title : $url, $text, 'general', $url );
 	}
 
 	/**

@@ -292,7 +292,7 @@ class SSC_Prompt_Builder {
 	 * @return string[]
 	 */
 	protected static function profile_lines( $business ) {
-		$map = array(
+		$map    = array(
 			'org_name'        => 'Official organization name',
 			'brand_name'      => 'Brand / trading name',
 			'category'        => 'Business category',
@@ -308,14 +308,19 @@ class SSC_Prompt_Builder {
 			'support_email'   => 'Support email',
 			'hours'           => 'Working hours',
 		);
-		$out = array();
+		$places = SSC_Locations::prompt_lines( $business );
+		$out    = array();
 		foreach ( $map as $key => $label ) {
+			// The places list says everything the single address did.
+			if ( 'location' === $key && $places ) {
+				continue;
+			}
 			$value = isset( $business[ $key ] ) ? trim( wp_strip_all_tags( (string) $business[ $key ] ) ) : '';
 			if ( '' !== $value ) {
 				$out[] = '- ' . $label . ': ' . $value;
 			}
 		}
-		return $out;
+		return array_merge( $out, $places );
 	}
 
 	/**
@@ -329,6 +334,15 @@ class SSC_Prompt_Builder {
 	 */
 	public static function build_for_chat( $message, $product_id = 'general', $summary = '', $channel = 'web' ) {
 		$business = SSC_Settings::business();
+
+		// One place per fact: no hours typed in the profile means the chat schedule is what the assistant says,
+		// and a name set only on the Appearance screen is the name it introduces itself with.
+		if ( '' === trim( (string) $business['hours'] ) ) {
+			$business['hours'] = SSC_Availability::describe_schedule();
+		}
+		if ( '' === trim( (string) $business['assistant_name'] ) ) {
+			$business['assistant_name'] = trim( (string) SSC_Settings::get( 'assistant_display_name', '' ) );
+		}
 
 		// Retrieval-augmented chunks when the question needs them.
 		$chunks        = SSC_Knowledge::retrieve_chunks( $product_id, $message, (int) SSC_Settings::get( 'kb_max_chunks', 3 ) );

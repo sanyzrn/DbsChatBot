@@ -169,33 +169,55 @@ class SSC_Module_Pharma extends SSC_Module {
 		}
 		$normalized = ' ' . SSC_Knowledge::normalize( $message ) . ' ';
 		$triggers   = array( ' عارضه ', ' عوارض ', ' side effect ', ' side effects ', ' adr ', ' adverse ', ' واکنش دارویی ' );
+		$wants_adr  = false;
 		foreach ( $triggers as $t ) {
 			if ( false !== stripos( $normalized, $t ) ) {
+				$wants_adr = true;
+				break;
+			}
+		}
+		$offer = __( 'If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?', 'nexachat-ai' );
+
+		/*
+		 * Emergency guidance comes FIRST and on its own: it does not wait for
+		 * the word "side effect", for the report form, for the AI connection
+		 * or for a model answer. This interception runs before the model and
+		 * the knowledge base, so the pharmacovigilance prompt rule that tells
+		 * the model to urge immediate medical attention never applies here.
+		 * The notice is emitted in both languages because the reply otherwise
+		 * follows the SITE locale, which may not be the language the visitor
+		 * just wrote in.
+		 */
+		if ( self::looks_like_emergency( $normalized, (string) $message ) ) {
+			if ( $engine ) {
+				$engine->flags['emergency'] = true;
+			}
+			if ( $wants_adr || self::mentions_medicine( $normalized ) ) {
 				if ( $engine ) {
 					$engine->flags['adr_offer'] = true;
 				}
-				$offer = __( 'If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?', 'nexachat-ai' );
-
-				/*
-				 * This interception runs BEFORE the model and the knowledge
-				 * base, so the pharmacovigilance prompt rule that tells the
-				 * model to urge immediate medical attention never applies
-				 * here. Without this branch, a message describing a
-				 * life-threatening reaction received only the form offer.
-				 * The notice is emitted in both languages because the reply
-				 * otherwise follows the SITE locale, which may not be the
-				 * language the visitor just wrote in.
-				 */
-				if ( self::looks_like_emergency( $normalized ) ) {
-					if ( $engine ) {
-						$engine->flags['emergency'] = true;
-					}
-					return self::emergency_notice() . "\n\n" . $offer;
-				}
-				return $offer;
+				return self::emergency_notice() . "\n\n" . $offer;
 			}
+			return self::emergency_notice();
+		}
+		if ( $wants_adr ) {
+			if ( $engine ) {
+				$engine->flags['adr_offer'] = true;
+			}
+			return $offer;
 		}
 		return null;
+	}
+
+	/**
+	 * Does a message talk about taking a medicine? (An emergency that follows a
+	 * medicine is worth a safety report once the person is safe.)
+	 *
+	 * @param string $normalized Normalized, space-padded message.
+	 * @return bool
+	 */
+	protected static function mentions_medicine( $normalized ) {
+		return (bool) preg_match( '/(?:^|\s)(?:medicine|medication|drug|pill|pills|tablet|tablets|capsule|capsules|inhaler|spray|dose|دارو|داروی|قرص|کپسول|اسپری|دوز|مصرف|خوردم|زدم)(?:\s|$)/u', $normalized );
 	}
 
 	/**
@@ -219,89 +241,298 @@ class SSC_Module_Pharma extends SSC_Module {
 	}
 
 	/**
-	 * Heuristic screen for descriptions that may be life-threatening.
+	 * Terms that mean an emergency whenever they appear (unless negated):
+	 * the person cannot breathe, is unconscious, is thinking of suicide…
+	 * Normalized spelling: Persian letters folded, half-spaces and
+	 * punctuation turned into spaces, apostrophes dropped.
 	 *
-	 * Deliberately broad: a false positive costs one extra safety sentence,
-	 * a false negative costs a visitor their emergency guidance. This is
-	 * harm reduction, NOT clinical triage, and it does not replace the
-	 * medical judgement of the pharmacovigilance team.
-	 *
-	 * @param string $normalized Normalized, space-padded message.
-	 * @return bool
+	 * @return string[]
 	 */
-	public static function looks_like_emergency( $normalized ) {
-		$terms = array(
+	protected static function emergency_always_terms() {
+		return array(
 			// English.
 			'unconscious',
 			'not breathing',
 			'cant breathe',
+			'can t breathe',
 			'can not breathe',
 			'cannot breathe',
-			'difficulty breathing',
-			'trouble breathing',
 			'stopped breathing',
-			'choking',
-			'anaphyla',
-			'seizure',
-			'convulsion',
-			'collapsed',
-			'chest pain',
-			'heart attack',
-			'stroke',
-			'severe bleeding',
-			'bleeding heavily',
-			'coma',
-			'overdose',
-			'poisoning',
-			'suicide',
-			'swelling of the throat',
-			'throat swelling',
-			'blue lips',
+			'stop breathing',
 			'no pulse',
-			'life threatening',
-			'emergency',
-			'dying',
-			'died',
-			'death',
+			'choking',
+			'passed out',
+			'suicide',
+			'suicidal',
+			'kill myself',
+			'want to die',
+			'end my life',
+			'overdosed',
+			'took too many',
+			'i am dying',
 			// Persian.
 			'بیهوش',
 			'نفس نمی',
-			'نفس نمیکشد',
+			'نفسم نمی',
+			'نفسم بند',
 			'تنفس ندارد',
+			'تنفس نداره',
 			'قطع تنفس',
-			'خفگی',
-			'تشنج',
-			'حمله قلبی',
-			'درد قفسه سینه',
-			'سکته',
-			'خونریزی شدید',
-			'کما',
-			'مسمومیت',
-			'اوردوز',
+			'ایست قلبی',
+			'ایست تنفسی',
+			'نبض ندارد',
+			'نبض نداره',
 			'خودکشی',
+			'خودم را بکشم',
+			'می خواهم بمیرم',
+			'میخواهم بمیرم',
+			'می خوام بمیرم',
+			'میخوام بمیرم',
+			'اوردوز کرد',
+			'از هوش رفت',
+			'از حال رفت',
+			'غش کرد',
+			'خفه می',
+			'در حال مرگ',
+		);
+	}
+
+	/**
+	 * Symptom phrases: an emergency when they describe a person who has them
+	 * (not negated, and not a general question about the medicine).
+	 *
+	 * @return string[]
+	 */
+	protected static function emergency_symptom_terms() {
+		return array(
+			// English.
+			'difficulty breathing',
+			'trouble breathing',
+			'shortness of breath',
+			'short of breath',
+			'hard to breathe',
+			'wheezing',
+			'chest pain',
+			'chest tightness',
+			'tight chest',
+			'swelling of the throat',
+			'throat swelling',
+			'swollen throat',
+			'swollen tongue',
+			'swollen lips',
+			'swollen face',
+			'blue lips',
+			'severe bleeding',
+			'bleeding heavily',
+			'seizure',
+			'convulsion',
+			'collapsed',
+			'fainted',
+			'anaphyla',
+			'heart attack',
+			'stroke',
+			'severe allergic',
+			'life threatening',
+			'overdose',
+			'poisoning',
+			'coma',
+			// Persian.
+			'تنگی نفس',
+			'نفس تنگی',
+			'نفستنگی',
+			'مشکل تنفسی',
+			'مشکل در تنفس',
+			'سختی نفس',
+			'نفس کشیدن سخت',
+			'خس خس',
+			'درد قفسه',
+			'درد سینه',
+			'فشار روی سینه',
+			'تشنج',
+			'غش',
+			'خونریزی شدید',
 			'تورم گلو',
 			'ورم گلو',
-			'نبض ندارد',
+			'تورم زبان',
+			'ورم زبان',
+			'ورم لب',
+			'تورم لب',
+			'ورم صورت',
+			'تورم صورت',
+			'کبودی لب',
+			'لب کبود',
 			'حساسیت شدید',
 			'انافیلاکسی',
-			'اورژانس',
-			'در حال مرگ',
-			'فوت کرد',
-			'مرگ',
+			'حمله قلبی',
+			'سکته',
+			'مسمومیت',
+			'اوردوز',
+			'کما',
+			'تهدید کننده حیات',
 		);
-		/**
-		 * Terms that mark a message as a possible emergency.
-		 *
-		 * @param string[] $terms      Default term list.
-		 * @param string   $normalized Normalized message.
-		 */
-		$terms = (array) apply_filters( 'ssc_emergency_terms', $terms, $normalized );
-		foreach ( $terms as $term ) {
-			if ( '' !== $term && false !== mb_stripos( $normalized, $term ) ) {
+	}
+
+	/**
+	 * Broad words that only count when somebody is described (my father died,
+	 * we called the emergency room), never in a general question.
+	 *
+	 * @return string[]
+	 */
+	protected static function emergency_context_terms() {
+		return array( 'emergency', 'died', 'death', 'dead', 'اورژانس', 'مرگ', 'فوت' );
+	}
+
+	/**
+	 * Does the text describe a person (me, my father, the patient…) rather
+	 * than ask in general?
+	 *
+	 * @param string $normalized Normalized, space-padded message.
+	 * @return bool
+	 */
+	protected static function describes_a_person( $normalized ) {
+		if ( preg_match( '/(?:^|\s)(?:i|im|i m|my|me|mine|we|our|he|she|his|her|him|they|their|patient|son|daughter|baby|child|kid|toddler|mother|father|mom|dad|wife|husband|brother|sister|friend|grandmother|grandfather|someone|somebody|after taking|after i|after he|after she)(?:\s|$)/u', $normalized ) ) {
+			return true;
+		}
+		if ( preg_match( '/(?:^|\s)(?:من|ما|دارم|داریم|داره|دارد|داشت|داشتم|شده|شد|شدم|کرد|کردم|کرده|میکنم|میکند|میکنه|می کنم|می کند|بچه|بیمار|مریض|بعد از)(?:\s|$)/u', $normalized ) ) {
+			return true;
+		}
+		// A Persian word ending in the first-person possessive (قلبم، مادرم، نفسم).
+		return (bool) preg_match( '/(?:^|\s)\S{2,}م(?:\s|$)/u', $normalized );
+	}
+
+	/**
+	 * A general question about a medicine or a condition (not about a person).
+	 *
+	 * @param string $normalized Normalized, space-padded message.
+	 * @param string $raw        The message as written (its question mark).
+	 * @return bool
+	 */
+	protected static function is_general_question( $normalized, $raw ) {
+		if ( '' !== $raw && preg_match( '/[?؟]\s*$/u', trim( $raw ) ) ) {
+			return true;
+		}
+		return (bool) preg_match( '/^\s*(?:what|how|why|can|could|does|do|is|are|will|should|which|when|who|tell me|explain|ایا|چه|چرا|چگونه|چطور)(?:\s|$)|(?:^|\s)(?:چیست|چیه|چی هست)(?:\s|$)/u', $normalized );
+	}
+
+	/**
+	 * Is the match at $pos negated ("no chest pain", "تنگی نفس ندارم")?
+	 *
+	 * @param string $text Normalized, space-padded message.
+	 * @param int    $pos  Where the term starts (characters).
+	 * @param int    $len  Term length (characters).
+	 * @return bool
+	 */
+	protected static function is_negated_at( $text, $pos, $len ) {
+		$before = mb_substr( $text, max( 0, $pos - 36 ), min( $pos, 36 ) );
+		$after  = mb_substr( $text, $pos + $len, 36 );
+		$tails  = array(
+			'/(?:^|\s)(?:no|not|never|without|denies|denied|nor|zero)\s+(?:any\s+|a\s+|the\s+|signs?\s+of\s+|history\s+of\s+)?$/u',
+			'/(?:^|\s)(?:do|does|did|dont|doesnt|didnt|don t|doesn t|didn t)(?:\s+not)?\s+(?:have|had|get|feel)\s+(?:any\s+)?$/u',
+			'/(?:^|\s)(?:have|has|had)\s+no\s+$/u',
+			'/(?:^|\s)(?:بدون|هیچ|بی)\s+(?:گونه\s+)?$/u',
+		);
+		foreach ( $tails as $re ) {
+			if ( preg_match( $re, $before ) ) {
+				return true;
+			}
+		}
+		$heads = array(
+			'/^\s*(?:\S+\s+)?(?:ندارم|ندارد|نداره|ندارند|ندارید|نداریم|نداشت|نداشتم|نداشته|نیست|نبود|نشد|نشده|وجود ندارد)(?:\s|$)/u',
+			'/^\s*(?:is\s+|was\s+|are\s+)?(?:absent|ruled out|resolved)(?:\s|$)/u',
+		);
+		foreach ( $heads as $re ) {
+			if ( preg_match( $re, $after ) ) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Is any of the terms in the text, outside a negation?
+	 *
+	 * @param string   $text  Normalized, space-padded message.
+	 * @param string[] $terms Terms (normalized spelling).
+	 * @return bool
+	 */
+	protected static function has_term( $text, $terms ) {
+		foreach ( $terms as $term ) {
+			$term = trim( (string) $term );
+			if ( '' === $term ) {
+				continue;
+			}
+			$len    = mb_strlen( $term );
+			$offset = 0;
+			while ( false !== ( $pos = mb_stripos( $text, $term, $offset ) ) ) { // phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition -- a search loop.
+				$offset = $pos + $len;
+				// A term starts a word (not "کمال" for "کما"), and a short one is a whole word (not "فوتبال" for "فوت").
+				if ( $pos > 0 && ' ' !== mb_substr( $text, $pos - 1, 1 ) ) {
+					continue;
+				}
+				if ( $len <= 4 && ' ' !== mb_substr( $text, $pos + $len, 1 ) ) {
+					continue;
+				}
+				if ( ! self::is_negated_at( $text, $pos, $len ) ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Screen for a message that may describe a life-threatening situation.
+	 *
+	 * Deliberately broad: a false positive costs one extra safety sentence,
+	 * a false negative costs a visitor their emergency guidance. This is
+	 * harm reduction, NOT clinical triage, and it does not replace the
+	 * medical judgement of the pharmacovigilance team. It reads Persian and
+	 * Arabic spellings, half-spaces and common phrasings ("نمی‌توانم نفس
+	 * بکشم", "تنگی نفس دارم", "I cannot breathe") and it stays quiet for
+	 * negated sentences ("no chest pain", "تنگی نفس ندارم") and for general
+	 * questions that do not describe a person ("Can this cause chest pain?").
+	 *
+	 * @param string $normalized Normalized, space-padded message.
+	 * @param string $raw        The message as written (optional; its question mark helps).
+	 * @return bool
+	 */
+	public static function looks_like_emergency( $normalized, $raw = '' ) {
+		$text = ' ' . trim( SSC_Knowledge::normalize( $normalized ) ) . ' ';
+
+		/**
+		 * Terms that mark a message as a possible emergency wherever they appear.
+		 *
+		 * @param string[] $terms      Default term list.
+		 * @param string   $normalized Normalized message.
+		 */
+		$always = (array) apply_filters( 'ssc_emergency_terms', self::emergency_always_terms(), $text );
+		if ( self::has_term( $text, $always ) ) {
+			return true;
+		}
+		// "I am not able to breathe" style phrases, in Persian and English.
+		if ( preg_match( '/نمی\s?(?:تونم|توانم|تونه|تواند|تونی|توانی|توانیم|تونیم|توانند)\s+(?:درست\s+|راحت\s+)?نفس|نفس\S*\s+(?:بالا\s+)?نمی\s?(?:اد|اید|یاد)|(?:unable|not able)\s+to\s+breathe/u', $text ) ) {
+			return true;
+		}
+
+		// The rest need a person (or at least not a general question).
+		$person   = self::describes_a_person( $text );
+		$question = self::is_general_question( $text, (string) $raw );
+		if ( $question && ! $person ) {
+			return false;
+		}
+
+		/**
+		 * Symptom phrases that mark an emergency when they describe somebody.
+		 *
+		 * @param string[] $terms Default term list.
+		 * @param string   $text  Normalized message.
+		 */
+		$symptoms = (array) apply_filters( 'ssc_emergency_symptom_terms', self::emergency_symptom_terms(), $text );
+		if ( self::has_term( $text, $symptoms ) ) {
+			return true;
+		}
+		// Broad words need a described person and no question.
+		return $person && ! $question && self::has_term( $text, self::emergency_context_terms() );
 	}
 
 	/**
@@ -923,17 +1154,24 @@ class SSC_Module_Pharma extends SSC_Module {
 						$extra['product_id'] = $valid;
 					break;
 				case 'number':
-					$raw = is_scalar( $raw ) ? trim( (string) $raw ) : '';
-					if ( 'patient_age' === $key && '' !== $raw && ( ! is_numeric( $raw ) || (float) $raw < 0 || (float) $raw > 130 ) ) {
+					// Typed on a Persian keyboard as ۲۵ or with ٫ as the decimal point: read as the number it is.
+					// A list, an object or text that is not a number is refused, not treated as empty.
+					$typed = is_scalar( $raw ) ? trim( (string) $raw ) : ( null === $raw ? '' : '*' );
+					$raw   = '' === $typed ? '' : SSC_Input::ascii_number( $typed );
+					if ( '' !== $typed && '' === $raw ) {
+						if ( 'patient_age' === $key ) {
+							$errors[] = __( 'Patient age must be between 0 and 130 years.', 'nexachat-ai' );
+						} else {
+							/* translators: %s: field label. */
+							$errors[] = sprintf( __( 'The field "%s" must be a number.', 'nexachat-ai' ), $field['label'] );
+						}
+					} elseif ( 'patient_age' === $key && '' !== $raw && ( (float) $raw < 0 || (float) $raw > 130 ) ) {
 						$errors[] = __( 'Patient age must be between 0 and 130 years.', 'nexachat-ai' );
-					} elseif ( '' !== $raw && ! is_numeric( $raw ) ) {
-						/* translators: %s: field label. */
-						$errors[] = sprintf( __( 'The field "%s" must be a number.', 'nexachat-ai' ), $field['label'] );
 					}
-					if ( ! empty( $field['required'] ) && '' === $raw ) {
+					if ( ! empty( $field['required'] ) && '' === $typed ) {
 						$errors[] = $required_message;
 					}
-					$extra[ $key ] = is_numeric( $raw ) ? (float) $raw : '';
+					$extra[ $key ] = '' !== $raw ? (float) $raw : '';
 					break;
 				case 'textarea':
 					$extra[ $key ] = SSC_Input::text( $raw, 4000, true );

@@ -1646,3 +1646,47 @@ a.ssc-hstat:focus-visible { outline: 2px solid var(--k, #475569); outline-offset
 .ssc-wk__start.is-on { border-color: var(--ssc-ok); background: var(--ssc-ok-soft); color: var(--ssc-ok); }
 .ssc-wizard .ssc-ki { border-inline-start: 3px solid var(--ssc-accent); background: #fff; }
 [dir="rtl"] .ssc-table tr.ssc-row td:first-child { box-shadow: inset -3px 0 0 var(--k, transparent); }
+
+/* ------------------------------------------------------------------ *
+ * Business Knowledge: places, and the note on an entry that repeats the profile.
+ * ------------------------------------------------------------------ */
+.ssc-hplaces { margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--ssc-line); }
+.ssc-hplaces__head { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+.ssc-hplaces__ico { display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 10px; background: var(--ks, #ecfdf3); color: var(--k, #059669); }
+.ssc-hplaces__ico .ssc-ico { width: 18px; height: 18px; vertical-align: 0; }
+.ssc-hplaces__head h3 { margin: 0; font-size: 14px; }
+.ssc-hplaces__head p { margin: 2px 0 0; color: var(--ssc-muted); font-size: 12.5px; line-height: 1.55; }
+.ssc-loc { border-inline-start: 3px solid var(--k, #059669); background: #fff; }
+.ssc-loc__row { grid-template-columns: 150px minmax(0, 1fr) 32px; }
+.ssc-loc > textarea { margin-bottom: 8px; }
+.ssc-loc-list:empty { display: none; }
+.ssc-koverlap { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 10px; padding: 9px 12px; border-radius: 10px; background: #fffaeb; border: 1px solid #f5dcc0; color: #92400e; font-size: 12.5px; line-height: 1.55; }
+.ssc-koverlap__ico { flex: none; display: grid; place-items: center; width: 22px; height: 22px; }
+.ssc-koverlap__ico .ssc-ico { width: 17px; height: 17px; vertical-align: 0; }
+.ssc-koverlap a { white-space: nowrap; font-weight: 600; }
+.ssc-kcard.has-overlap > .ssc-kcard__sum .ssc-kcard__ico { background: #fffaeb; color: #d97706; }
+.ssc-hoursnote a { white-space: nowrap; font-weight: 600; }
+@media (max-width: 600px) {
+        .ssc-loc__row { grid-template-columns: minmax(0, 1fr) 32px; }
+        .ssc-loc__row select { grid-column: 1 / -1; }
+}
+
+/* Knowledge entries: reading budget meter and the "not used" badge. */
+.ssc-kbudget { margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--ssc-line-soft); border-radius: 12px; background: #fafbfc; }
+.ssc-kbudget__bar { height: 8px; border-radius: 999px; background: #e6eaf0; overflow: hidden; }
+.ssc-kbudget__bar span { display: block; height: 100%; border-radius: 999px; background: var(--ssc-accent, #4f46e5); transition: width 0.25s ease; }
+.ssc-kbudget.is-over .ssc-kbudget__bar span { background: #d97706; }
+.ssc-kbudget__text { margin: 8px 0 2px; font-weight: 650; }
+.ssc-kbudget__hint { margin: 0; color: var(--ssc-muted); font-size: 12.5px; line-height: 1.6; }
+.ssc-kbudget__warn { display: flex; gap: 8px; align-items: flex-start; margin: 10px 0 0; padding: 8px 10px; border-radius: 8px; background: #fff7ed; color: #9a3412; font-size: 12.5px; line-height: 1.6; }
+.ssc-kbudget__warn[hidden] { display: none; }
+.ssc-kcard__badge--warn { background: #fff1e0; color: #9a3412; }
+.ssc-ki.is-unseen { opacity: 0.8; border-style: dashed; }
+
+/* Knowledge: a save that clashed with a newer change. */
+.ssc-kconflict p { margin: 0 0 8px; }
+.ssc-kconflict ul { margin: 0 0 10px; padding-inline-start: 20px; list-style: disc; }
+.ssc-kconflict__actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
+.ssc-text-warn { color: #9a3412; }
+.ssc-notice.ssc-kconflict { display: block; }
+.ssc-kconflict__actions { margin-top: 4px; }

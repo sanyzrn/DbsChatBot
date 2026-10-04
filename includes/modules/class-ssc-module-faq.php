@@ -249,8 +249,8 @@ class SSC_Module_Faq extends SSC_Module {
 		$out = fopen( 'php://output', 'w' );
 		fwrite( $out, "\xEF\xBB\xBF" );
 		SSC_Input::write_csv( $out, array( 'question', 'keywords', 'answer', 'usage_count' ) );
-		$candidates = SSC_Schema::qa_candidates( 'general' );
-		foreach ( $candidates as $row ) {
+		// Every answer, not just the newest few hundred.
+		foreach ( SSC_Schema::qa_all( 1000000 ) as $row ) {
 			SSC_Input::write_csv( $out, array( $row['question'], $row['keywords'], $row['answer'], '' ) );
 		}
 		fclose( $out );
@@ -267,9 +267,9 @@ class SSC_Module_Faq extends SSC_Module {
 		// Batched listing (no giant single form - 4.x fragility removed).
 		$page  = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
 		$per   = 30;
-		$all   = SSC_Schema::qa_candidates( 'general' );
-		$total = count( $all );
-		$rows  = array_slice( array_reverse( $all ), ( $page - 1 ) * $per, $per );
+		$list  = SSC_Schema::qa_page( $page, $per );
+		$total = $list['total'];
+		$rows  = $list['rows'];
 		$pages = (int) ceil( $total / $per );
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-faq.php';
 	}

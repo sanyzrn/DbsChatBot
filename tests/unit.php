@@ -6,6 +6,8 @@ function sanitize_text_field( $text ) { return trim( strip_tags( $text ) ); }
 function wp_strip_all_tags( $text ) { return trim( strip_tags( (string) $text ) ); }
 if ( ! function_exists( 'wp_parse_args' ) ) { function wp_parse_args( $args, $defaults = array() ) { return array_merge( $defaults, (array) $args ); } }
 function sanitize_textarea_field( $text ) { return trim( strip_tags( $text ) ); }
+if ( ! function_exists( 'sanitize_key' ) ) { function sanitize_key( $key ) { return preg_replace( '/[^a-z0-9_\-]/', '', strtolower( (string) $key ) ); } }
+if ( ! function_exists( 'esc_url_raw' ) ) { function esc_url_raw( $url, $protocols = null ) { return preg_match( '#^https?://[^\s<>"\']+$#i', (string) $url ) ? (string) $url : ''; } }
 function apply_filters( $hook, $value ) { return $value; }
 if ( ! function_exists( 'wp_parse_url' ) ) { function wp_parse_url( $url, $component = -1 ) { return parse_url( $url, $component ); } }
 class SSC_Settings {
@@ -17,6 +19,9 @@ foreach ( array( 'input', 'availability', 'http', 'provider', 'embeddings', 'dat
 }
 require __DIR__ . '/../includes/admin/class-ssc-knowledge-score.php';
 require __DIR__ . '/../includes/admin/class-ssc-settings-health.php';
+require __DIR__ . '/../includes/admin/class-ssc-knowledge-overlap.php';
+require __DIR__ . '/../includes/core/class-ssc-locations.php';
+require __DIR__ . '/../includes/core/class-ssc-client-ip.php';
 foreach ( array( 'openai-compat', 'openai', 'claude', 'gemini' ) as $file ) {
     require __DIR__ . '/../includes/core/providers/class-ssc-provider-' . $file . '.php';
 }
@@ -107,11 +112,13 @@ check( false === mb_strpos( SSC_Prompt_Builder::fence( 'DOC', 'T', '<script>aler
  * a life-threatening reaction used to receive only the form offer.
  */
 require __DIR__ . '/../includes/core/class-ssc-knowledge.php';
+require __DIR__ . '/../includes/core/class-ssc-knowledge-polarity.php';
+require __DIR__ . '/../includes/core/class-ssc-merge.php';
 require __DIR__ . '/../includes/core/class-ssc-module.php';
 require __DIR__ . '/../includes/modules/class-ssc-module-pharma.php';
 
 $screen = static function ( $message ) {
-	return SSC_Module_Pharma::looks_like_emergency( ' ' . SSC_Knowledge::normalize( $message ) . ' ' );
+	return SSC_Module_Pharma::looks_like_emergency( ' ' . SSC_Knowledge::normalize( $message ) . ' ', $message );
 };
 foreach ( array(
 	'my father is unconscious and not breathing after the side effect',
@@ -123,6 +130,37 @@ foreach ( array(
 	'عارضه دارو و خونریزی شدید',
 ) as $message ) {
 	check( $screen( $message ), 'life-threatening description is screened as an emergency' );
+}
+// F01: the emergency check runs on its own, with no "side effect" word, in Persian and English spellings.
+foreach ( array(
+	'بعد از دارو عوارض شدید و تنگی نفس دارم',
+	'نمی‌توانم نفس بکشم',
+	'نميتونم نفس بكشم',
+	'I cannot breathe',
+	"I can't breathe",
+	'نفس‌تنگی دارم بعد از مصرف اسپری',
+	'بچه‌ام ورم صورت کرده',
+	'مادرم بعد از قرص فوت کرد',
+	'میخوام خودکشی کنم',
+	'what should I do if I have chest pain after the capsule?',
+) as $message ) {
+	check( $screen( $message ), 'an urgent description is screened as an emergency without any side-effect word: ' . $message );
+}
+// F01: a general question, a negated sentence or a look-alike word must not raise the alarm.
+foreach ( array(
+	'Can this medicine cause chest pain?',
+	'آنافیلاکسی چیست؟',
+	'آیا این دارو می‌تواند باعث تنگی نفس شود؟',
+	'no chest pain and no difficulty breathing',
+	'تنگی نفس ندارم',
+	'بدون تنگی نفس',
+	'I do not have any shortness of breath',
+	'what is the death rate of this disease?',
+	'کمال و کمانچه فوتبال',
+	'is it safe for people who had a stroke?',
+	'where is your office?',
+) as $message ) {
+	check( ! $screen( $message ), 'a question, a negation or a look-alike word is not an emergency: ' . $message );
 }
 foreach ( array(
 	'I had a mild headache as a side effect',
@@ -238,5 +276,210 @@ check( ! $by_id['consent']['applicable'] && ! $by_id['retention']['applicable'] 
 check( 6 === count( array_filter( $not_applicable['checks'], function ( $row ) { return $row['applicable']; } ) ), 'Checks that do not apply are left out of the total' );
 check( 83 === $not_applicable['percent'] && 'proxy' === $not_applicable['steps'][0]['id'], 'A missed proxy header lowers the score and is the one thing to fix' );
 check( 80 === SSC_Settings_Health::compute( array(), array( 'https' => true, 'crypto' => true ) )['percent'], 'Missing settings fall back to the defaults (anonymised IPs, rate limit on) and only the privacy link is missing' );
+
+// Hours, phone, email and addresses: an entry that repeats or contradicts the profile is spotted.
+$profile = array( 'phone' => '021-92001520', 'support_phone' => '', 'email' => 'info@nafaspharmed.com', 'support_email' => '', 'hours' => 'شنبه تا چهارشنبه ۹ تا ۱۷', 'location' => 'تهران', 'locations' => array() );
+$found   = SSC_Knowledge_Overlap::check( array( 'title' => 'ساعات کاری', 'content' => 'شنبه تا پنجشنبه 9 تا 18' ), $profile );
+check( 'hours' === $found['kind'] && 'repeats' === $found['state'], 'An entry about working hours repeats the profile when the profile has them' );
+$found = SSC_Knowledge_Overlap::check( array( 'title' => 'Opening hours', 'content' => '9 to 5' ), array( 'hours' => '' ) );
+check( 'hours' === $found['kind'] && 'belongs' === $found['state'], 'The same entry belongs in the profile when the profile has no hours yet' );
+$found = SSC_Knowledge_Overlap::check( array( 'title' => 'تماس', 'content' => 'تلفن: ۰۲۱۹۲۰۰۱۵۲۰' ), $profile );
+check( 'phone' === $found['kind'] && 'repeats' === $found['state'], 'The same phone number written with Persian digits is recognised as the profile one' );
+$found = SSC_Knowledge_Overlap::check( array( 'title' => 'سفارش', 'content' => 'شماره 09123456789' ), $profile );
+check( 'phone' === $found['kind'] && 'differs' === $found['state'] && '09123456789' === $found['found'], 'A phone number that is not the profile one is reported with the number' );
+check( SSC_Knowledge_Overlap::phone_key( '+98 912 345 6789' ) === SSC_Knowledge_Overlap::phone_key( '09123456789' ) && SSC_Knowledge_Overlap::phone_key( '0098-912-3456789' ) === SSC_Knowledge_Overlap::phone_key( '09123456789' ), 'Phone numbers match across +98, 0098 and 0' );
+check( '' === SSC_Knowledge_Overlap::phone_key( '12345' ), 'A short digit string is not a phone number' );
+$found = SSC_Knowledge_Overlap::check( array( 'title' => 'ایمیل', 'content' => 'sales@nafaspharmed.com' ), $profile );
+check( 'email' === $found['kind'] && 'differs' === $found['state'] && 'sales@nafaspharmed.com' === $found['found'], 'An email that is not the profile one is reported' );
+$found = SSC_Knowledge_Overlap::check( array( 'title' => 'ایمیل', 'content' => 'INFO@nafaspharmed.com' ), $profile );
+check( 'repeats' === $found['state'], 'Email comparison ignores case' );
+$found = SSC_Knowledge_Overlap::check( array( 'title' => 'آدرس کارخانه', 'content' => 'قزوین' ), $profile );
+check( 'address' === $found['kind'] && 'repeats' === $found['state'], 'An address entry repeats the profile address' );
+check( null === SSC_Knowledge_Overlap::check( array( 'title' => 'Return policy', 'content' => 'Within 7 days. Price 12000000 toman.' ), $profile ), 'Policies and prices are left alone (a long number without a leading 0 is not a phone)' );
+check( null === SSC_Knowledge_Overlap::check( array( 'title' => '', 'content' => '' ), $profile ) && null === SSC_Knowledge_Overlap::check( array( 'title' => 'Shipping', 'content' => 'Delivery in 2 to 5 days' ), $profile ), 'Empty and ordinary entries are fine' );
+
+// Places: several, each with a map link.
+$business = array( 'location' => '', 'locations' => array( array( 'type' => 'hq', 'name' => '', 'address' => 'Tehran, Valiasr 12', 'phone' => '021-1', 'map' => 'https://maps.app.goo.gl/x' ), array( 'type' => 'factory', 'name' => 'Qazvin plant', 'address' => '', 'phone' => '', 'map' => '' ) ) );
+check( 2 === count( SSC_Locations::effective( $business ) ), 'Both places are kept' );
+check( 'Head office' === SSC_Locations::label( $business['locations'][0] ) && 'Qazvin plant' === SSC_Locations::label( $business['locations'][1] ), 'A place is called by its name, else by its kind' );
+check( 'Tehran, Valiasr 12' === SSC_Locations::primary_text( $business['locations'] ), 'The first address is mirrored into the old single location field' );
+$lines = SSC_Locations::prompt_lines( $business );
+check( 3 === count( $lines ) && false !== strpos( $lines[1], 'map: https://maps.app.goo.gl/x' ) && false !== strpos( $lines[1], 'phone: 021-1' ) && false !== strpos( $lines[2], 'Qazvin plant' ), 'The assistant gets one line per place with its address, phone and map link' );
+$legacy = SSC_Locations::effective( array( 'location' => 'Shiraz, Zand St', 'locations' => array() ) );
+check( 1 === count( $legacy ) && 'Shiraz, Zand St' === $legacy[0]['address'] && 'hq' === $legacy[0]['type'], 'An old single address still counts as one place' );
+check( array() === SSC_Locations::effective( array() ) && array() === SSC_Locations::prompt_lines( array() ), 'No places means nothing is said about places' );
+$clean = SSC_Locations::sanitize( array( array( 'type' => 'spaceship', 'name' => 'X', 'address' => '<b>Addr</b>', 'phone' => '+98 (21) 123-4567 ext!!', 'map' => 'javascript:alert(1)' ), 'not a row', array( 'type' => 'hq' ), array( 'type' => 'store', 'map' => 'https://www.google.com/maps/place/A' ) ) );
+check( 2 === count( $clean ) && 'other' === $clean[0]['type'] && 'Addr' === $clean[0]['address'] && '' === $clean[0]['map'] && '+98 (21) 123-4567' === $clean[0]['phone'] && 'https://www.google.com/maps/place/A' === $clean[1]['map'], 'Places are cleaned: unknown kind, markup, script links and stray characters are dropped, empty rows ignored' );
+check( SSC_Locations::MAX === count( SSC_Locations::sanitize( array_fill( 0, 40, array( 'address' => 'x' ) ) ) ), 'No more than the maximum number of places is kept' );
+
+// The chat schedule in words.
+check( 'Mon–Fri' === SSC_Availability::day_ranges( array( 1, 2, 3, 4, 5 ) ) && 'Sat–Wed' === SSC_Availability::day_ranges( array( 6, 7, 1, 2, 3 ) ), 'Weekday runs become ranges, also across the weekend' );
+check( 'every day' === SSC_Availability::day_ranges( array( 1, 2, 3, 4, 5, 6, 7 ) ) && 'Mon, Wed, Fri' === SSC_Availability::day_ranges( array( 5, 3, 1, 1 ) ), 'A full week is every day; separate days are listed' );
+
+// F02: the visitor's address comes from a proxy header only when the connection is from a listed proxy.
+$direct = array( 'REMOTE_ADDR' => '203.0.113.44', 'HTTP_X_FORWARDED_FOR' => '198.51.100.99' );
+check( '203.0.113.44' === SSC_Client_IP::resolve( $direct, 'HTTP_X_FORWARDED_FOR', array() ), 'F02: a visitor who connects directly cannot choose his address with a header' );
+check( '203.0.113.44' === SSC_Client_IP::resolve( $direct, 'HTTP_X_FORWARDED_FOR', array( '192.0.2.0/24' ) ), 'F02: a header from an unlisted address is ignored' );
+check( '198.51.100.99' === SSC_Client_IP::resolve( $direct, 'HTTP_X_FORWARDED_FOR', array( '203.0.113.0/24' ) ), 'F02: a listed proxy is believed (CIDR)' );
+check( '198.51.100.99' === SSC_Client_IP::resolve( $direct, 'HTTP_X_FORWARDED_FOR', array( '203.0.113.44' ) ), 'F02: a listed proxy is believed (single address)' );
+check( '198.51.100.99' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '127.0.0.1', 'HTTP_X_FORWARDED_FOR' => '198.51.100.99' ), 'HTTP_X_FORWARDED_FOR', array() ), 'F02: a proxy on the same machine needs no listing' );
+check( '10.0.0.5' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '10.0.0.5', 'HTTP_X_FORWARDED_FOR' => '198.51.100.99' ), 'HTTP_X_FORWARDED_FOR', array(), false ), 'F02: private proxies can be switched off' );
+check( '198.51.100.7' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '203.0.113.44', 'HTTP_X_FORWARDED_FOR' => '6.6.6.6, 198.51.100.7, 203.0.113.9' ), 'HTTP_X_FORWARDED_FOR', array( '203.0.113.0/24' ) ), 'F02: a forwarded chain is read from the proxy side, so the left-most (forgeable) entry is not believed');
+check( '203.0.113.44' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '203.0.113.44', 'HTTP_X_FORWARDED_FOR' => 'not-an-ip' ), 'HTTP_X_FORWARDED_FOR', array( '203.0.113.0/24' ) ), 'F02: an invalid header value falls back to the connecting address' );
+check( '203.0.113.44' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '203.0.113.44', 'HTTP_X_FORWARDED_FOR' => '1.2.3.4, garbage' ), 'HTTP_X_FORWARDED_FOR', array( '203.0.113.0/24' ) ), 'F02: a malformed entry in the chain is not guessed around' );
+check( '2001:4860::7' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '2001:db8::1', 'HTTP_CF_CONNECTING_IP' => '2001:4860::7' ), 'HTTP_CF_CONNECTING_IP', array( '2001:db8::/32' ) ), 'F02: IPv6 proxies and visitors work');
+check( '198.51.100.99' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '203.0.113.44', 'HTTP_X_FORWARDED_FOR' => '198.51.100.99:5555' ), 'HTTP_X_FORWARDED_FOR', array( '203.0.113.0/24' ) ), 'F02: a port after an IPv4 address is dropped' );
+check( '203.0.113.44' === SSC_Client_IP::resolve( $direct, 'HTTP_X_EVIL', array( '203.0.113.0/24' ) ) && '203.0.113.44' === SSC_Client_IP::resolve( $direct, '', array( '203.0.113.0/24' ) ), 'F02: only the known header names are used, and none by default' );
+check( SSC_Client_IP::in_range( '203.0.113.200', '203.0.113.128/25' ) && ! SSC_Client_IP::in_range( '203.0.113.20', '203.0.113.128/25' ) && SSC_Client_IP::in_range( '::ffff:203.0.113.5', '203.0.113.0/24' ) && ! SSC_Client_IP::in_range( '203.0.113.5', '2001:db8::/32' ), 'F02: CIDR matching covers partial bytes, mapped IPv6 and mixed families' );
+check( array( '203.0.113.0/24', '2001:db8::/32', '10.1.1.1' ) === SSC_Client_IP::parse_list( "203.0.113.0/24, bad\n2001:db8::/32 999.1.1.1/8 10.1.1.1/40 10.1.1.1 203.0.113.0/24" ), 'F02: the typed list keeps valid addresses and blocks, once each' );
+check( in_array( '173.245.48.0/20', SSC_Client_IP::cloudflare_ranges(), true ) && SSC_Client_IP::is_trusted( '104.16.1.1', SSC_Client_IP::cloudflare_ranges(), false ), 'F02: the Cloudflare preset covers its edge addresses' );
+$proxy_env = array( 'https' => true, 'crypto' => true, 'behind_proxy' => true, 'forms' => false, 'history' => false );
+$setting   = array( 'ip_storage' => 'anonymize', 'consent_link' => 'x', 'rate_limit_mode' => 'ip' );
+$health_ok = SSC_Settings_Health::compute( array_merge( $setting, array( 'trusted_proxy_header' => 'HTTP_CF_CONNECTING_IP' ) ), array_merge( $proxy_env, array( 'proxy_trusted' => true ) ) );
+$health_no = SSC_Settings_Health::compute( array_merge( $setting, array( 'trusted_proxy_header' => 'HTTP_CF_CONNECTING_IP' ) ), array_merge( $proxy_env, array( 'proxy_trusted' => false ) ) );
+check( 100 === $health_ok['percent'] && $health_no['percent'] < 100 && 'proxy' === $health_no['steps'][0]['id'], 'F02: the health ring needs the header AND a proxy this request really came from' );
+
+// F05: text is cut at a hard ceiling at word boundaries; nothing is lost and no word is broken.
+$long_text = trim( str_repeat( 'واژه ', 2000 ) );
+$pieces    = SSC_Knowledge::chunk_text( $long_text );
+$ceiling   = (int) round( 900 * 1.35 );
+$too_big   = array_filter( $pieces, function ( $piece ) use ( $ceiling ) { return mb_strlen( $piece ) > $ceiling; } );
+check( count( $pieces ) >= 8 && array() === $too_big, 'F05: ten thousand characters without punctuation become several pieces under the ceiling' );
+check( 2000 === count( preg_split( '/\s+/u', implode( ' ', $pieces ) ) ) && array( 'واژه' ) === array_values( array_unique( preg_split( '/\s+/u', implode( ' ', $pieces ) ) ) ), 'F05: no word is lost or broken in the middle (Persian text stays whole)' );
+$blob   = str_repeat( 'a', 5000 );
+$pieces = SSC_Knowledge::chunk_text( $blob );
+check( $blob === implode( '', $pieces ) && max( array_map( 'mb_strlen', $pieces ) ) <= $ceiling, 'F05: a single unbreakable string is cut at the ceiling without losing a character' );
+$persian_blob = str_repeat( 'ب', 3000 );
+$pieces       = SSC_Knowledge::chunk_text( $persian_blob );
+check( $persian_blob === implode( '', $pieces ) && array_sum( array_map( function ( $piece ) { return preg_match( '//u', $piece ) ? 1 : 0; }, $pieces ) ) === count( $pieces ), 'F05: cutting a long unspaced Persian string never splits inside a character' );
+$normal = "اولین بند کوتاه است.\n\nدومین بند هم کوتاه است.";
+check( array( "اولین بند کوتاه است.\n\nدومین بند هم کوتاه است." ) === SSC_Knowledge::chunk_text( $normal ), 'F05: ordinary short paragraphs stay together as before' );
+
+// F12: numbers typed on a Persian keyboard are read as the numbers they are; junk is refused.
+check( '25' === SSC_Input::ascii_number( '۲۵' ) && '25' === SSC_Input::ascii_number( '٢٥' ) && '25' === SSC_Input::ascii_number( '25' ) && '2.5' === SSC_Input::ascii_number( '۲٫۵' ), 'F12: Persian, Arabic and ASCII digits give the same number, with ٫ as the decimal point' );
+check( '-1' === SSC_Input::ascii_number( '-1' ) && '131' === SSC_Input::ascii_number( '۱۳۱' ), 'F12: negative and over-range numbers are still numbers (the range is checked afterwards)' );
+foreach ( array( 'abc', '1e999', '0x1F', '1.2.3', '', '  ', 'NaN', 'INF', '12abc', array( '25' ), new stdClass(), null, '١٢٣٤٥٦٧٨٩٠١٢٣' ) as $junk ) {
+	check( '' === SSC_Input::ascii_number( $junk ), 'F12: not a plain number is refused: ' . ( is_scalar( $junk ) ? var_export( $junk, true ) : gettype( $junk ) ) );
+}
+check( '' === SSC_Input::bad_field( array( 'name' => 'x', 'n' => 3, 'attributes' => array( 'a' => 'b' ) ), array( 'attributes' ) ) && 'summary' === SSC_Input::bad_field( array( 'name' => 'x', 'summary' => array( 'u' ) ) ) && 'attributes' === SSC_Input::bad_field( array( 'attributes' => 'text' ), array( 'attributes' ) ) && 'attributes' === SSC_Input::bad_field( array( 'attributes' => array( 'a' => array( 'deep' ) ) ), array( 'attributes' ) ) && 'x' === SSC_Input::bad_field( array( 'x' => null ) ) && '*' === SSC_Input::bad_field( 'not a row' ), 'F11: a row holding a list, an object or null where text belongs is spotted by field name' );
+check( '' === SSC_Input::scalar( array( 'x' ) ) && '' === SSC_Input::scalar( null ) && '5' === SSC_Input::scalar( 5 ) && 'a' === SSC_Input::scalar( 'a' ), 'F11: scalar() turns anything but text and numbers into an empty string' );
+
+// F04: a stored answer is never given to the opposite question, whatever the word overlap says.
+$conflicts = array(
+	array( 'مصرف دارو در بارداری ممنوع است؟', 'مصرف دارو در بارداری ممنوع نیست؟' ),
+	array( 'این دارو مجاز است؟', 'این دارو غیرمجاز است؟' ),
+	array( 'این دارو مجاز است؟', 'این دارو غیر مجاز است؟' ),
+	array( 'این دارو مجاز است؟', 'این دارو ممنوع است؟' ),
+	array( 'این قرص در داروخانه موجود هست؟', 'این قرص در داروخانه موجود نیست؟' ),
+	array( 'آیا دارو را قطع کنم؟', 'آیا دارو را قطع نکنم؟' ),
+	array( 'آیا دارو را قطع کنم؟', 'آیا دارو را ادامه دهم؟' ),
+	array( 'قبل از غذا مصرف کنم؟', 'بعد از غذا مصرف کنم؟' ),
+	array( 'برای کودکان مناسب است؟', 'برای بزرگسالان مناسب است؟' ),
+	array( 'در دوران بارداری مصرف شود؟', 'در دوران شیردهی مصرف شود؟' ),
+	array( 'روزی ۲ بار مصرف کنم؟', 'روزی ۳ بار مصرف کنم؟' ),
+	array( 'این دارو غیرمجاز است؟', 'مصرف دارو در بارداری ممنوع است؟' ),
+	array( 'در بارداری می‌توانم این دارو را مصرف کنم؟', 'آیا می‌توانم این دارو را مصرف کنم؟' ),
+	array( 'Is it safe for my child?', 'Is it safe?' ),
+	array( 'آیا سفارش من رسیده است؟', 'آیا سفارش من نرسیده است؟' ),
+	array( 'Can I take it during pregnancy?', "Can't I take it during pregnancy?" ),
+	array( 'Is this medicine safe?', 'Is this medicine unsafe?' ),
+	array( 'Take it with food', 'Take it without food' ),
+	array( 'Should I stop the medicine?', 'Should I continue the medicine?' ),
+);
+foreach ( $conflicts as $pair ) {
+	check( '' !== SSC_Knowledge_Polarity::conflict( $pair[0], $pair[1] ) && '' !== SSC_Knowledge_Polarity::conflict( $pair[1], $pair[0] ), 'F04: opposite questions are told apart (both ways): ' . $pair[0] . ' / ' . $pair[1] );
+}
+// The report's own pair really did score far above the threshold on words alone, so the check above is what stops it.
+check( SSC_Knowledge::overlap_score( SSC_Knowledge::tokenize( SSC_Knowledge::normalize( 'مصرف دارو در بارداری ممنوع نیست؟' ) ), SSC_Knowledge::normalize( 'مصرف دارو در بارداری ممنوع است؟' ) ) > 0.32, 'F04: the words alone match the opposite question (the problem)' );
+$agree = array(
+	array( 'ساعت کاری شما چیست؟', 'ساعت کاری ما چند است؟' ),
+	array( 'آیا مصرف در بارداری ممنوع است؟', 'مصرف دارو در بارداری ممنوع است؟' ),
+	array( 'این دارو مجاز است؟', 'آیا این دارو مجاز است' ),
+	array( 'آیا دارو را قطع نکنم؟', 'دارو را قطع نکنم؟' ),
+	array( 'اثر نمی‌کند چرا؟', 'چرا اثر نمیکند' ),
+	array( 'قیمت این محصول چقدر است؟', 'قیمت محصول چنده؟' ),
+	array( 'روزی ۲ بار مصرف کنم؟', 'چند بار در روز، روزی 2 بار؟' ),
+	array( 'ارسال به شهرستان دارید؟', 'آیا ارسال به سراسر کشور دارید؟' ),
+	array( 'Do you ship to Tehran?', 'Do you ship to Tehran city?' ),
+	array( 'مصرف قبل از غذا', 'آیا قبل از غذا مصرف کنم؟' ),
+);
+foreach ( $agree as $pair ) {
+	check( '' === SSC_Knowledge_Polarity::conflict( $pair[0], $pair[1] ), 'F04: the same question in other words is not blocked: ' . $pair[0] . ' / ' . $pair[1] );
+}
+check( 2 === SSC_Knowledge_Polarity::negations( SSC_Knowledge::normalize( 'ممنوع نیست؟' ) ) && 0 === SSC_Knowledge_Polarity::negations( SSC_Knowledge::normalize( 'نشان نام نان' ) ), 'F04: words that merely start with a negating letter are not negations' );
+
+// F10: the reading budget is planned in one place: entries fit from the top down, one is cut, the rest are left out.
+$plan = SSC_Knowledge::plan_knowledge( array(
+	array( 'title' => 'a', 'content' => str_repeat( 'x', 1500 ) ),
+	array( 'title' => 'b', 'content' => '' ),
+	array( 'title' => 'c', 'content' => str_repeat( 'y', 2000 ) ),
+	array( 'title' => 'd', 'content' => str_repeat( 'z', 1000 ) ),
+	array( 'title' => 'e', 'content' => str_repeat( 'w', 10 ) ),
+) );
+check( 4000 === $plan['limit'] && 4000 === $plan['used'], 'F10: the limit is 4000 characters of entry text and it is fully used here' );
+check( array( 'full', 'empty', 'full', 'cut', 'out' ) === array_column( $plan['rows'], 'state' ), 'F10: entries fit from the top, the one that crosses the limit is cut, the rest are left out' );
+check( 500 === $plan['rows'][3]['kept'] && 1000 === $plan['rows'][3]['chars'] && 1 === $plan['cut'] && 1 === $plan['out'], 'F10: the cut entry keeps what still fits and the counts are reported' );
+$plan = SSC_Knowledge::plan_knowledge( array( array( 'title' => 'a', 'content' => 'short' ), array( 'title' => 'b', 'content' => 'text' ) ) );
+check( 9 === $plan['used'] && 0 === $plan['cut'] && 0 === $plan['out'] && array( 'full', 'full' ) === array_column( $plan['rows'], 'state' ), 'F10: a small knowledge base is fully used and nothing is flagged' );
+$plan = SSC_Knowledge::plan_knowledge( array( array( 'content' => str_repeat( 'ب', 4000 ) ), array( 'content' => 'x' ) ) );
+check( 4000 === $plan['used'] && 'full' === $plan['rows'][0]['state'] && 'out' === $plan['rows'][1]['state'], 'F10: characters are counted, not bytes (Persian text)' );
+$plan = SSC_Knowledge::plan_knowledge( array( array( 'content' => array( 'bad' ) ), 'not a row', array( 'content' => 'ok' ) ) );
+check( array( 'empty', 'empty', 'full' ) === array_column( $plan['rows'], 'state' ), 'F10: malformed entries are skipped, not fatal' );
+
+// F06: a form opened earlier is applied onto what is stored now; only a real clash stops the save.
+$biz   = array( 'org_name' => 'Atlas', 'phone' => '021-1', 'email' => 'a@x.ir', 'hours' => '9-17' );
+$kitems = array( array( 'id' => 'k1', 'type' => 'policy', 'title' => 'Returns', 'content' => '7 days' ), array( 'id' => 'k2', 'type' => 'general', 'title' => 'Prices', 'content' => 'Toman' ) );
+$prods  = array( array( 'id' => 'p1', 'name' => 'Alpha', 'summary' => 'first', 'attributes' => array( 'Form' => 'tablet' ) ) );
+$base   = SSC_Merge::snapshot( $biz, $kitems, $prods );
+// Tab 1 adds a product and saves; tab 2 (same snapshot) only changes the phone.
+$now1   = array( 'business' => $biz, 'ki' => $kitems, 'products' => array_merge( $prods, array( array( 'id' => 'p2', 'name' => 'Beta', 'summary' => 'new', 'attributes' => array() ) ) ) );
+$tab2   = array( 'business' => array_merge( $biz, array( 'phone' => '021-2' ) ), 'ki' => $kitems, 'products' => $prods );
+$merged = SSC_Merge::knowledge( $base, $tab2, $now1 );
+check( array() === $merged['conflicts'] && '021-2' === $merged['business']['phone'] && 2 === count( $merged['products'] ) && 'Beta' === $merged['products'][1]['name'], 'F06: the second tab saves its phone change and does not delete the product the first tab added' );
+// Tab 1 changes the phone, tab 2 changes the email: different fields merge.
+$now2   = array( 'business' => array_merge( $biz, array( 'phone' => '021-9' ) ), 'ki' => $kitems, 'products' => $prods );
+$tab2   = array( 'business' => array_merge( $biz, array( 'email' => 'b@x.ir' ) ), 'ki' => $kitems, 'products' => $prods );
+$merged = SSC_Merge::knowledge( $base, $tab2, $now2 );
+check( array() === $merged['conflicts'] && '021-9' === $merged['business']['phone'] && 'b@x.ir' === $merged['business']['email'], 'F06: changes to different fields of the profile both survive' );
+// Both change the phone: a clash, reported, nothing decided silently.
+$tab2   = array( 'business' => array_merge( $biz, array( 'phone' => '021-2' ) ), 'ki' => $kitems, 'products' => $prods );
+$merged = SSC_Merge::knowledge( $base, $tab2, $now2 );
+check( array( 'phone' ) === $merged['conflicts']['business'] && '021-9' === $merged['business']['phone'], 'F06: the same field changed in both tabs is reported as a clash and the stored value is kept by default' );
+$merged = SSC_Merge::knowledge( $base, $tab2, $now2, true );
+check( '021-2' === $merged['business']['phone'], 'F06: the person can choose their own version for a clash' );
+$tab2same = array( 'business' => array_merge( $biz, array( 'phone' => '021-9' ) ), 'ki' => $kitems, 'products' => $prods );
+check( array() === SSC_Merge::knowledge( $base, $tab2same, $now2 )['conflicts'], 'F06: both tabs reaching the same value is not a clash' );
+// Entries: one tab edits an entry, the other deletes another, a third adds one.
+$now3   = array( 'business' => $biz, 'ki' => array( array( 'id' => 'k1', 'type' => 'policy', 'title' => 'Returns', 'content' => '14 days' ), $kitems[1], array( 'id' => 'k3', 'type' => 'faq', 'title' => 'New', 'content' => 'added elsewhere' ) ), 'products' => $prods );
+$tab2   = array( 'business' => $biz, 'ki' => array( $kitems[0] ), 'products' => $prods ); // Removed k2, left k1 alone.
+$merged = SSC_Merge::knowledge( $base, $tab2, $now3 );
+$ids    = array_column( $merged['ki'], 'id' );
+check( array() === $merged['conflicts'] && array( 'k1', 'k3' ) === $ids && '14 days' === $merged['ki'][0]['content'], 'F06: an entry removed here is removed, an entry edited elsewhere keeps its edit, an entry added elsewhere stays' );
+$tab2   = array( 'business' => $biz, 'ki' => array( array( 'id' => 'k1', 'type' => 'policy', 'title' => 'Returns', 'content' => '30 days' ), $kitems[1] ), 'products' => $prods );
+$merged = SSC_Merge::knowledge( $base, $tab2, $now3 );
+check( array( 'k1' ) === $merged['conflicts']['ki'] && '14 days' === $merged['ki'][0]['content'], 'F06: an entry edited in both tabs is a clash' );
+$tab2   = array( 'business' => $biz, 'ki' => array( $kitems[0], $kitems[1], array( 'id' => 'ki-new', 'type' => 'general', 'title' => 'Mine', 'content' => 'new here' ) ), 'products' => $prods );
+$merged = SSC_Merge::knowledge( $base, $tab2, $now3 );
+check( array() === $merged['conflicts'] && array( 'k1', 'k2', 'k3', 'ki-new' ) === array_column( $merged['ki'], 'id' ), 'F06: a new entry is added after the existing ones' );
+// Changed here, deleted elsewhere.
+$now4   = array( 'business' => $biz, 'ki' => array( $kitems[0] ), 'products' => $prods );
+$tab2   = array( 'business' => $biz, 'ki' => array( $kitems[0], array( 'id' => 'k2', 'type' => 'general', 'title' => 'Prices', 'content' => 'Rial' ) ), 'products' => $prods );
+$merged = SSC_Merge::knowledge( $base, $tab2, $now4 );
+check( array( 'k2' ) === $merged['conflicts']['ki'] && array( 'k1' ) === array_column( $merged['ki'], 'id' ), 'F06: an entry edited here but deleted elsewhere is a clash and stays deleted by default' );
+check( array( 'k1', 'k2' ) === array_column( SSC_Merge::knowledge( $base, $tab2, $now4, true )['ki'], 'id' ), 'F06: the person can bring it back' );
+$tab2   = array( 'business' => $biz, 'ki' => array( $kitems[0] ), 'products' => $prods );
+check( array() === SSC_Merge::knowledge( $base, $tab2, $now4 )['conflicts'], 'F06: an entry deleted in both tabs is not a clash' );
+// An old form without a snapshot behaves as before (it replaces the lists).
+$old = SSC_Merge::knowledge( null, $tab2, $now3 );
+check( array( 'k1' ) === array_column( $old['ki'], 'id' ) && array() === $old['conflicts'], 'F06: a form without a snapshot replaces the lists as it always did' );
+// Entries saved before ids existed get the same stable id on every tab.
+$legacy = array( array( 'title' => 'Old', 'content' => 'text', 'type' => 'general' ), array( 'title' => 'Old', 'content' => 'text', 'type' => 'general' ) );
+$ids_a  = array_column( SSC_Merge::with_ids( 'ki', $legacy ), 'id' );
+$ids_b  = array_column( SSC_Merge::with_ids( 'ki', $legacy ), 'id' );
+check( $ids_a === $ids_b && 2 === count( array_unique( $ids_a ) ) && 0 === strpos( $ids_a[0], 'ki-' ), 'F06: entries without an id get a stable, distinct id' );
+// The snapshot survives the form.
+$round = SSC_Merge::parse_snapshot( json_encode( $base ) );
+check( $round === $base && null === SSC_Merge::parse_snapshot( '{"business":[],"ki":"x","products":[]}' ) && null === SSC_Merge::parse_snapshot( '{"business":{"a":"<script>"},"ki":[],"products":[]}' ) && null === SSC_Merge::parse_snapshot( 'not json' ) && null === SSC_Merge::parse_snapshot( '' ), 'F06: the snapshot is checked strictly when it comes back' );
+check( SSC_Merge::hash( array( 'b' => '1', 'a' => 2 ) ) === SSC_Merge::hash( array( 'a' => '2', 'b' => 1 ) ) && SSC_Merge::hash( 'x' ) !== SSC_Merge::hash( 'y' ), 'F06: the fingerprint ignores key order and number/text type' );
 
 echo "$count unit checks passed.\n";

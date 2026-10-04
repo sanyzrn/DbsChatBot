@@ -64,7 +64,7 @@ class SSC_Transfer {
 			),
 			'knowledge' => array(
 				'label' => __( 'Knowledge entries', 'nexachat-ai' ),
-				'hint'  => __( 'Policies, prices, hours and other facts.', 'nexachat-ai' ),
+				'hint'  => __( 'Policies, prices and other facts.', 'nexachat-ai' ),
 				'icon'  => 'book',
 			),
 			'faq'       => array(
@@ -95,7 +95,7 @@ class SSC_Transfer {
 	 */
 	public static function site_bound_settings() {
 		return array_merge(
-			array( 'enabled', 'privacy_acknowledged', 'live_operators', 'sitesync_exclude', 'business' ),
+			array( 'enabled', 'privacy_acknowledged', 'live_operators', 'sitesync_exclude', 'business', 'trusted_proxy_header', 'trusted_proxies' ),
 			array_keys( SSC_Settings::SPLIT_OPTIONS ),
 			SSC_Settings::secret_fields()
 		);
@@ -356,7 +356,64 @@ class SSC_Transfer {
 		if ( ! isset( $bundle['format_version'] ) || (int) $bundle['format_version'] > self::VERSION ) {
 			return new WP_Error( 'ssc_transfer_version', __( 'This file comes from a newer version of NexaChatAI. Update the plugin and try again.', 'nexachat-ai' ) );
 		}
+		$shape = self::shape_problem( $bundle );
+		if ( null !== $shape ) {
+			return new WP_Error(
+				'ssc_transfer_shape',
+				sprintf(
+					/* translators: 1: section name, 2: row number, 3: field name. */
+					__( 'This file cannot be imported: %1$s, row %2$d has an invalid value in the field “%3$s”. Nothing was changed.', 'nexachat-ai' ),
+					$shape['section'],
+					$shape['row'],
+					$shape['field']
+				)
+			);
+		}
 		return $bundle;
+	}
+
+	/**
+	 * A row of the file that holds a list, an object or null where text belongs
+	 * (a hand-edited or damaged file). Such a file is refused whole, with the
+	 * place named, instead of being half imported.
+	 *
+	 * @param array $bundle Parsed bundle.
+	 * @return array|null section, row (from 1), field; null when every row is well formed.
+	 */
+	protected static function shape_problem( $bundle ) {
+		$checks = array(
+			'products'  => array( 'attributes' ),
+			'knowledge' => array(),
+			'faq'       => array(),
+		);
+		foreach ( $checks as $section => $arrays ) {
+			if ( ! isset( $bundle[ $section ] ) || ! is_array( $bundle[ $section ] ) ) {
+				continue;
+			}
+			$row_no = 0;
+			foreach ( $bundle[ $section ] as $row ) {
+				++$row_no;
+				$field = SSC_Input::bad_field( $row, $arrays );
+				if ( '' !== $field ) {
+					return array(
+						'section' => $section,
+						'row'     => $row_no,
+						'field'   => '*' === $field ? '(row)' : preg_replace( '/[^A-Za-z0-9_\-]/', '', $field ),
+					);
+				}
+			}
+		}
+		if ( isset( $bundle['business'] ) && is_array( $bundle['business'] ) ) {
+			$field = SSC_Input::bad_field( $bundle['business'], array(), array( 'locations' ) );
+			if ( '' !== $field ) {
+				return array(
+					'section' => 'business',
+					'row'     => 1,
+					'field'   => preg_replace( '/[^A-Za-z0-9_\-]/', '', $field ),
+				);
+			}
+		}
+		return null;
 	}
 
 	/**

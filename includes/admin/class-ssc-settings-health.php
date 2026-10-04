@@ -24,6 +24,7 @@ class SSC_Settings_Health {
 	 *     @type bool $https        The site uses HTTPS.
 	 *     @type bool $crypto       Keys can be encrypted (OpenSSL and AUTH_KEY).
 	 *     @type bool $behind_proxy A proxy header (e.g. Cloudflare) reached this request.
+	 *     @type bool $proxy_trusted This request came from a proxy the site believes (listed or on a private network).
 	 *     @type bool $forms        A module that collects contact data is on (requests or safety reports).
 	 *     @type bool $history      Conversation history is on.
 	 * }
@@ -47,7 +48,8 @@ class SSC_Settings_Health {
 			array( 'consent', 'privacy', 'yes' === $get( 'consent_enabled', 'no' ), $flag( 'forms' ) ),
 			array( 'retention', 'privacy', (int) $get( 'chatlog_retention_days', 30 ) > 0, $flag( 'history' ) ),
 			array( 'ratelimit', 'protection', 'off' !== $get( 'rate_limit_mode', 'ip' ), true ),
-			array( 'proxy', 'protection', '' !== (string) $get( 'trusted_proxy_header' ), $flag( 'behind_proxy' ) ),
+			// Behind a proxy the header must be chosen AND this request must come from a proxy the site believes.
+			array( 'proxy', 'protection', '' !== (string) $get( 'trusted_proxy_header' ) && $flag( 'proxy_trusted' ), $flag( 'behind_proxy' ) ),
 			array( 'https', 'protection', $flag( 'https' ), true ),
 			array( 'crypto', 'protection', $flag( 'crypto' ), true ),
 		);

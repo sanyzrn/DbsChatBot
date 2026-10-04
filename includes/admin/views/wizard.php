@@ -28,7 +28,7 @@ $site_lang  = get_locale();
 
 $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 ?>
-<div class="ssc-wizard" dir="ltr">
+<div class="ssc-wizard">
 
 	<header class="ssc-wizard__head">
 		<div class="ssc-wizard__brand">
@@ -158,10 +158,17 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 								<label for="b_url"><?php esc_html_e( 'Website', 'nexachat-ai' ); ?></label>
 								<input id="b_url" name="business[url]" type="url" value="<?php echo esc_attr( $business['url'] ? $business['url'] : $site_url ); ?>" />
 							</div>
-							<div class="ssc-field">
-								<label for="b_location"><?php esc_html_e( 'Location', 'nexachat-ai' ); ?></label>
-								<input id="b_location" name="business[location]" type="text" value="<?php echo esc_attr( $business['location'] ); ?>" />
-							</div>
+							<?php if ( ! empty( $business['locations'] ) ) : ?>
+								<div class="ssc-field">
+									<strong><?php esc_html_e( 'Location', 'nexachat-ai' ); ?></strong>
+									<p class="ssc-field__hint"><?php esc_html_e( 'You have several places saved. Edit them in Business Knowledge → Contact & hours.', 'nexachat-ai' ); ?></p>
+								</div>
+							<?php else : ?>
+								<div class="ssc-field">
+									<label for="b_location"><?php esc_html_e( 'Location', 'nexachat-ai' ); ?></label>
+									<input id="b_location" name="business[location]" type="text" value="<?php echo esc_attr( $business['location'] ); ?>" />
+								</div>
+							<?php endif; ?>
 							<div class="ssc-field">
 								<label for="b_phone"><?php esc_html_e( 'Contact phone', 'nexachat-ai' ); ?></label>
 								<input id="b_phone" name="business[phone]" type="text" dir="ltr" value="<?php echo esc_attr( $business['phone'] ); ?>" />
@@ -252,11 +259,11 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 					$ssc_goal    = 3;
 					$ssc_percent = (int) min( 100, round( 100 * $ssc_filled / $ssc_goal ) );
 					$ssc_starts  = array(
-						array( 'clock', 'general', __( 'Opening hours', 'nexachat-ai' ) ),
 						array( 'tag', 'product', __( 'Prices', 'nexachat-ai' ) ),
 						array( 'undo', 'policy', __( 'Return policy', 'nexachat-ai' ) ),
 						array( 'box', 'policy', __( 'Shipping & delivery', 'nexachat-ai' ) ),
-						array( 'phone', 'support', __( 'How to contact us', 'nexachat-ai' ) ),
+						array( 'shield', 'support', __( 'Warranty & after-sales', 'nexachat-ai' ) ),
+						array( 'chat', 'faq', __( 'A common question', 'nexachat-ai' ) ),
 					);
 					?>
 					<div class="ssc-wk" data-ssc-wk data-goal="<?php echo esc_attr( (string) $ssc_goal ); ?>">
@@ -351,10 +358,13 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 						<div class="ssc-provider-fields" data-provider="<?php echo esc_attr( $pid ); ?>" <?php echo ( $sel === $pid ) ? '' : 'hidden'; ?>>
 							<?php if ( 'webhook' !== $pid ) : ?>
 								<div class="ssc-grid ssc-grid--2">
-									<?php if ( $provider->needs_key() ) : ?>
+									<?php if ( $provider->accepts_key() ) : ?>
 										<div class="ssc-field">
-											<label for="<?php echo esc_attr( $pid ); ?>_api_key"><?php esc_html_e( 'API key', 'nexachat-ai' ); ?></label>
+											<label for="<?php echo esc_attr( $pid ); ?>_api_key"><?php echo $provider->needs_key() ? esc_html__( 'API key', 'nexachat-ai' ) : esc_html__( 'API key (optional)', 'nexachat-ai' ); ?></label>
 											<input id="<?php echo esc_attr( $pid ); ?>_api_key" name="<?php echo esc_attr( $pid ); ?>_api_key" type="password" autocomplete="off" dir="ltr" value="" placeholder="<?php echo SSC_Settings::has_secret( $pid . '_api_key' ) ? esc_attr__( 'A key is stored — type to replace', 'nexachat-ai' ) : esc_attr__( 'Paste your API key', 'nexachat-ai' ); ?>" />
+											<?php if ( ! $provider->needs_key() ) : ?>
+												<p class="ssc-field__hint"><?php esc_html_e( 'Most hosted services need a key; it is sent as a Bearer token. Leave it empty for a local gateway that needs none.', 'nexachat-ai' ); ?></p>
+											<?php endif; ?>
 										</div>
 									<?php endif; ?>
 									<div class="ssc-field">
@@ -476,21 +486,11 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 							</div>
 						</div>
 						<div class="ssc-appear__preview">
-							<div class="ssc-preview" id="ssc-preview" data-primary="<?php echo esc_attr( $s['primary_color'] ); ?>">
-								<div class="ssc-preview__win">
-									<div class="ssc-preview__head">
-										<span class="ssc-preview__avatar"></span>
-										<div>
-											<strong id="ssc-preview-name"><?php echo esc_html( $s['assistant_display_name'] ? $s['assistant_display_name'] : __( 'Nexa', 'nexachat-ai' ) ); ?></strong>
-											<em><?php esc_html_e( 'Online', 'nexachat-ai' ); ?></em>
-										</div>
-									</div>
-									<div class="ssc-preview__body">
-										<p class="ssc-preview__bot"><strong id="ssc-preview-wtitle"><?php echo esc_html( $s['welcome_title'] ? $s['welcome_title'] : __( 'Hello! 👋', 'nexachat-ai' ) ); ?></strong><span id="ssc-preview-wtext"><?php echo esc_html( $s['welcome_text'] ? wp_strip_all_tags( $s['welcome_text'] ) : __( 'How can I help you today?', 'nexachat-ai' ) ); ?></span></p>
-										<p class="ssc-preview__user"><?php esc_html_e( 'Hi! Do you ship internationally?', 'nexachat-ai' ); ?></p>
-									</div>
-								</div>
-							</div>
+							<?php
+							// The real widget, as on the Appearance screen.
+							SSC_Plugin::instance()->frontend->enqueue_preview();
+							require SSC_CHATBOT_DIR . 'includes/admin/views/partial-preview-panel.php';
+							?>
 						</div>
 					</div>
 
