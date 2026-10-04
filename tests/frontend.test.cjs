@@ -211,3 +211,26 @@ test('Handoff without a configured text adds no empty bubble', () => {
   vm.runInContext('handleFlags({ handoff: true })', context);
   assert.deepEqual(added, [['bot', 'We will connect you.']], 'a configured text is shown');
 });
+
+test('A consultation offer from the chat shows one button that opens the request form, and only while the module is on', () => {
+  const chips = [];
+  let opened = 0;
+  const context = { cfg: { features: { leads: true }, i18n: { requestForm: 'Consultation request' } }, addItem() {}, addChips: (list) => chips.push(list), showLeadForm: () => { opened++; },
+    showAdrForm() {}, requestHuman() {}, liveText: () => 'live', suggestRelated() {} };
+  load('        function handleFlags(', '        /** Knowledge documents the answer', context);
+  vm.runInContext('handleFlags({ flags: { consult_offer: true } })', context);
+  assert.equal(chips.length, 1);
+  assert.equal(chips[0][0].label, 'Consultation request');
+  chips[0][0].onClick();
+  assert.equal(opened, 1, 'the button opens the form');
+  context.cfg.features.leads = false;
+  vm.runInContext('handleFlags({ flags: { consult_offer: true } })', context);
+  assert.equal(chips.length, 1, 'with the module off nothing is offered');
+});
+
+test('The consultation form asks for an optional email only when the site allows it', () => {
+  const start = source.indexOf('        function showLeadForm(');
+  const body = source.slice(start, source.indexOf('        /* ------------------------------------------------------------------ *\n         * WooCommerce', start));
+  assert.match(body, /if \(cfg\.consultEmail\) \{ field\(i18n\.formEmail \|\| 'Email \(optional\)', 'email', 'email', false\); \}/, 'the email field is optional (not required) and gated by the setting');
+  assert.ok(body.indexOf("'phone', 'tel', true") < body.indexOf("'email', 'email', false"), 'the email comes right after the phone');
+});

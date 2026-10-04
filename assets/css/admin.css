@@ -1690,3 +1690,4 @@ a.ssc-hstat:focus-visible { outline: 2px solid var(--k, #475569); outline-offset
 .ssc-text-warn { color: #9a3412; }
 .ssc-notice.ssc-kconflict { display: block; }
 .ssc-kconflict__actions { margin-top: 4px; }
+.ssc-table a.ssc-muted { color: var(--ssc-muted); font-size: 12px; }

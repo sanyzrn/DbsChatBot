@@ -155,7 +155,12 @@ $ssc_link     = function ( $status ) use ( $base, $filters ) {
 					<tr class="ssc-row" data-ssc-hue="<?php echo esc_attr( isset( $ssc_hues[ $row['status'] ] ) ? $ssc_hues[ $row['status'] ] : 'slate' ); ?>">
 						<td><?php echo esc_html( SSC_Date::display( $row['created_at'] ) ); ?></td>
 						<td><span class="ssc-who"><span class="ssc-who__av" aria-hidden="true"><?php echo esc_html( mb_strtoupper( mb_substr( trim( (string) $row['name'] ) . '?', 0, 1 ) ) ); ?></span><?php echo esc_html( $row['name'] ); ?></span></td>
-						<td dir="ltr"><?php echo esc_html( $row['phone'] ); ?></td>
+						<td dir="ltr"><?php echo esc_html( $row['phone'] ); ?>
+							<?php $ssc_email = SSC_Module_Leads::email_of( $row ); ?>
+							<?php if ( '' !== $ssc_email ) : ?>
+								<br /><a class="ssc-muted" href="<?php echo esc_url( 'mailto:' . $ssc_email ); ?>"><?php echo esc_html( $ssc_email ); ?></a>
+							<?php endif; ?>
+						</td>
 						<td class="ssc-td-truncate"><?php echo esc_html( mb_substr( (string) $row['description'], 0, 90 ) ); ?></td>
 						<td>
 							<form method="get" class="ssc-statusform">

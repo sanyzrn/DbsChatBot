@@ -1,7 +1,9 @@
 <?php
 /**
- * Leads & consultation module: request forms, dynamic fields, validation,
- * consent enforcement, storage and CSV export.
+ * Leads & consultation module: the consultation request form (name, phone,
+ * an optional email and a short description), dynamic fields, validation,
+ * consent enforcement, storage, CSV export, and the chat's offer of the form
+ * when a visitor clearly asks for a consultation.
  *
  * Server-side submission handling: every field is validated against the
  * CONFIGURED form definition (never trusted from the client), submission
@@ -81,6 +83,99 @@ class SSC_Module_Leads extends SSC_Module {
 	 */
 	public function needs_config() {
 		return false;
+	}
+
+	/**
+	 * Runtime hooks: offer the form when a visitor asks for a consultation. It
+	 * runs after the safety checks of the pharmaceutical module (priority 10),
+	 * so an emergency is never answered with a form offer.
+	 */
+	public function register() {
+		add_filter( 'ssc_pre_reply', array( $this, 'route_consult_intent' ), 20, 4 );
+	}
+
+	/**
+	 * Does the built-in email field appear in the form?
+	 *
+	 * @return bool
+	 */
+	public static function email_enabled() {
+		return 'off' !== (string) SSC_Settings::get( 'consult_email', 'optional' );
+	}
+
+	/**
+	 * The email a visitor left with a request ('' when none).
+	 *
+	 * @param array $row Submission row.
+	 * @return string
+	 */
+	public static function email_of( $row ) {
+		$extra = isset( $row['extra_fields'] ) ? json_decode( (string) $row['extra_fields'], true ) : array();
+		return ( is_array( $extra ) && isset( $extra['_email'] ) && is_string( $extra['_email'] ) ) ? $extra['_email'] : '';
+	}
+
+	/**
+	 * Does the message clearly ask for a consultation or a call back? Questions
+	 * about a consultation (its price, whether it is free) and negated sentences
+	 * are left to the assistant. Pure logic.
+	 *
+	 * @param string $message Visitor message.
+	 * @return bool
+	 */
+	public static function wants_consultation( $message ) {
+		$text = ' ' . SSC_Knowledge::normalize( $message ) . ' ';
+		if ( mb_strlen( $text ) > 320 ) {
+			return false; // A long text is a story to answer, not a request to route.
+		}
+		// Asking what a consultation costs or how it works is a knowledge question.
+		if ( preg_match( '/\s(?:هزینه|قیمت|تعرفه|چقدر|چنده|price|prices|cost|costs|fee|fees|how much)\s/u', $text ) ) {
+			return false;
+		}
+		if ( SSC_Knowledge_Polarity::negations( $text ) > 0 ) {
+			return false;
+		}
+		$verbs   = 'می\s?خوام|می\s?خواهم|میخوام|میخواهم|نیاز\s+دارم|لازم\s+دارم|درخواست';
+		$persian = array(
+			'/\s(?:مشاوره|مشاور|کارشناس)\s(?:.*\s)?(?:' . $verbs . '|بگیرم|رزرو|ثبت|بدید|بدهید|بدین)\s/u',
+			'/\s(?:' . $verbs . ')\s(?:.*\s)?(?:مشاوره|مشاور|مشورت)\s/u',
+			'/\s(?:با|به)\s+من\s+(?:تماس|زنگ)\s/u',
+			'/\s(?:تماس|زنگ)\s+(?:بگیرید|بگیرین|بزنید|بزنین)\s+(?:با|به)\s+من\s/u',
+			'/\s(?:با|به)\s+(?:یک\s+)?(?:کارشناس|مشاور)\s+(?:صحبت|حرف|در\s+ارتباط)\s/u',
+			'/\s(?:صحبت|ارتباط)\s+با\s+(?:یک\s+)?(?:کارشناس|مشاور)\s/u',
+		);
+		$english = array(
+			'/\s(?:want|need|would\s+like|like|request|book|schedule|get|require)\s+(?:to\s+(?:book|get|have|schedule|request)\s+)?(?:a|an|some|the|free)?\s*(?:free\s+)?(?:consultation|consultations|consult|consultant|advice)\s/u',
+			'/\s(?:talk|speak)\s+(?:to|with)\s+(?:a|an|your)\s+(?:advisor|adviser|consultant|expert|specialist)\s/u',
+			'/\s(?:call|phone|contact|ring)\s+me\s/u',
+			'/\s(?:can|could|will|would)\s+(?:someone|somebody|anyone|you)\s+(?:please\s+)?(?:call|phone|contact|ring)\s/u',
+			'/\s(?:call\s?back|callback)\s/u',
+		);
+		foreach ( array_merge( $persian, $english ) as $pattern ) {
+			if ( preg_match( $pattern, $text ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Offer the consultation form when the visitor asks for a consultation.
+	 * The widget shows a button that opens the form; the assistant is not called.
+	 *
+	 * @param string|null          $pre     Reply from an earlier responder.
+	 * @param string               $message Visitor message.
+	 * @param string               $product Product scope.
+	 * @param SSC_Chat_Engine|null $engine  Engine (response flags).
+	 * @return string|null
+	 */
+	public function route_consult_intent( $pre, $message, $product, $engine = null ) {
+		if ( null !== $pre || ! SSC_Modules::is_active( 'leads' ) || ! self::wants_consultation( (string) $message ) ) {
+			return $pre;
+		}
+		if ( $engine ) {
+			$engine->flags['consult_offer'] = true;
+		}
+		return __( 'Of course. Tap the button below, leave your name and phone number with a short description of what you need, and our team will contact you.', 'nexachat-ai' );
 	}
 
 	/**
@@ -226,9 +321,25 @@ class SSC_Module_Leads extends SSC_Module {
 		$name  = isset( $params['name'] ) ? SSC_Input::text( $params['name'], 81 ) : '';
 		$phone = isset( $params['phone'] ) ? SSC_Input::phone( $params['phone'] ) : '';
 		$desc  = isset( $params['description'] ) ? SSC_Input::text( $params['description'], 10001, true ) : '';
+		// The email is optional: empty is fine, a wrong one is refused (so it is never stored by mistake).
+		$email     = '';
+		$bad_email = false;
+		if ( self::email_enabled() && isset( $params['email'] ) ) {
+			$typed = SSC_Input::text( $params['email'], 191 );
+			if ( '' !== $typed ) {
+				$email = sanitize_email( $typed );
+				if ( '' === $email || ! is_email( $email ) ) {
+					$email     = '';
+					$bad_email = true;
+				}
+			}
+		}
 
 		// Validation.
 		$errors = array();
+		if ( $bad_email ) {
+			$errors[] = __( 'Please enter a valid email address, or leave it empty.', 'nexachat-ai' );
+		}
 		if ( mb_strlen( $name ) < 2 || mb_strlen( $name ) > 80 ) {
 			$errors[] = __( 'Please enter your name (2-80 characters).', 'nexachat-ai' );
 		}
@@ -274,11 +385,16 @@ class SSC_Module_Leads extends SSC_Module {
 		}
 
 		$extra_json = $extra;
-		if ( '' !== $consent_meta ) {
-			$decoded             = json_decode( $extra, true );
-			$decoded             = is_array( $decoded ) ? $decoded : array();
-			$decoded['_consent'] = json_decode( $consent_meta, true );
-			$extra_json          = wp_json_encode( $decoded );
+		if ( '' !== $consent_meta || '' !== $email ) {
+			$decoded = json_decode( $extra, true );
+			$decoded = is_array( $decoded ) ? $decoded : array();
+			if ( '' !== $consent_meta ) {
+				$decoded['_consent'] = json_decode( $consent_meta, true );
+			}
+			if ( '' !== $email ) {
+				$decoded['_email'] = $email;
+			}
+			$extra_json = wp_json_encode( $decoded );
 		}
 
 		$id = SSC_Schema::insert_submission(
@@ -388,7 +504,7 @@ class SSC_Module_Leads extends SSC_Module {
 
 		// Custom form fields become their own columns (they were silently dropped).
 		$fields = SSC_Settings::form_fields();
-		$header = array( 'id', 'type', 'name', 'phone', 'product', 'description', 'status', 'created_at' );
+		$header = array( 'id', 'type', 'name', 'phone', 'email', 'product', 'description', 'status', 'created_at' );
 		foreach ( $fields as $field ) {
 			$header[] = $field['label'];
 		}
@@ -414,7 +530,7 @@ class SSC_Module_Leads extends SSC_Module {
 			foreach ( $result['items'] as $row ) {
 				$extra = json_decode( (string) $row['extra_fields'], true );
 				$extra = is_array( $extra ) ? $extra : array();
-				$cells = array( $row['id'], $row['type'], $row['name'], $row['phone'], $row['product'], $row['description'], $row['status'], $row['created_at'] );
+				$cells = array( $row['id'], $row['type'], $row['name'], $row['phone'], self::email_of( $row ), $row['product'], $row['description'], $row['status'], $row['created_at'] );
 				foreach ( $fields as $field ) {
 					$cells[] = isset( $extra[ $field['key'] ] ) && is_scalar( $extra[ $field['key'] ] ) ? (string) $extra[ $field['key'] ] : '';
 				}

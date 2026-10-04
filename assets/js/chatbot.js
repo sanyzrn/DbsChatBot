@@ -1284,6 +1284,10 @@
                         addChips([{ label: i18n.reportAdr || 'Report side effect', onClick: showAdrForm }]);
                         return;
                 }
+                if (data.flags && data.flags.consult_offer && cfg.features && cfg.features.leads) {
+                        addChips([{ label: i18n.requestForm || 'Consultation request', onClick: showLeadForm }]);
+                        return;
+                }
                 if (data.handoff && cfg.features && (cfg.features.handoff || cfg.features.live)) {
                         // The text is optional: an empty one used to leave a blank bubble above the button.
                         if (String(cfg.handoffText || '').trim()) { addItem('bot', cfg.handoffText, { history: false }); }
@@ -1418,6 +1422,8 @@
 
                 field(i18n.formName || 'Name', 'name', 'text', true);
                 field(i18n.formPhone || 'Phone', 'phone', 'tel', true);
+                // Optional: the site owner can switch it off in Settings.
+                if (cfg.consultEmail) { field(i18n.formEmail || 'Email (optional)', 'email', 'email', false); }
 
                 // Configured custom fields (validated server-side against definitions).
                 (cfg.formFields || []).forEach(function (f) {

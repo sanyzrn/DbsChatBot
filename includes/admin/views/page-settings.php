@@ -459,7 +459,14 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 
 		<?php if ( SSC_Modules::is_active( 'leads' ) ) : ?>
 			<?php SSC_Admin_UI::acc_open( 'mod-leads', SSC_Modules::get( 'leads' )->icon(), __( 'Request form module', 'nexachat-ai' ), 'green' ); ?>
-				<p class="ssc-card__sub"><?php esc_html_e( 'Custom fields for the consultation form. Server-side validation is generated from this definition.', 'nexachat-ai' ); ?></p>
+				<p class="ssc-card__sub"><?php esc_html_e( 'The consultation form asks for a name, a phone number and a short description. Choose whether it also offers an email field, and add any custom fields you need. Server-side validation is generated from these definitions.', 'nexachat-ai' ); ?></p>
+				<div class="ssc-field">
+					<label for="consult_email"><?php esc_html_e( 'Email field', 'nexachat-ai' ); ?></label>
+					<select id="consult_email" name="consult_email">
+						<option value="optional" <?php selected( $s['consult_email'], 'optional' ); ?>><?php esc_html_e( 'Ask for an email address (optional for the visitor)', 'nexachat-ai' ); ?></option>
+						<option value="off" <?php selected( $s['consult_email'], 'off' ); ?>><?php esc_html_e( 'Do not ask for an email address', 'nexachat-ai' ); ?></option>
+					</select>
+				</div>
 				<div id="ssc-fields-list" class="ssc-fields">
 					<?php $fields = SSC_Settings::form_fields(); ?>
 					<?php $fields = $fields ? $fields : array( array( 'label' => '', 'type' => 'text', 'key' => '', 'required' => false, 'options' => array(), 'placeholder' => '' ) ); ?>
