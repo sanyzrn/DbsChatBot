@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,7 @@ NexaChatAI is a professional AI assistant for WordPress: install it, run the set
 * **Live streaming** answers (SSE) for OpenAI, Claude, Gemini and OpenAI-compatible providers
 * **Server-side conversation memory** (the browser never supplies the model's context)
 * **Answer scope** (knowledge only / your business / any question) and optional **web search** with citations
+* **Export & Import** of all settings, products, knowledge, FAQ, documents and (password-protected) API keys, with review and undo
 * **Persian admin** (complete translation, RTL layout, Solar Hijri dates)
 * **Display rules** by page path, device, and login state
 * **Business hours / offline mode**
@@ -87,6 +88,19 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.4.0 =
+
+* New: move the floating button. Appearance has a new "Button position & spacing" card with the distance from the bottom and from the side, separately for phones and for desktop/tablet, and small drawings that show where it will sit. A "Above a bottom menu" shortcut clears a typical navigation bar.
+* New: the button lifts itself above a fixed bar at the bottom of the page on phones and tablets (an app-style menu, a cookie notice) and drops back when the bar goes away. It can be switched off. The chat window and the invitation bubble follow the button.
+* New: Export & Import. One JSON file holds the business profile, settings and appearance, active modules, products with their specifications, knowledge entries, the FAQ bank, uploaded documents and, optionally, the API keys. Keys are encrypted with a password you choose and are never written in plain text. Importing shows what the file contains first, lets you pick what to import, can add and update or replace, never publishes the assistant and can be undone. Conversations, requests, safety reports and statistics are never exported. Settings that decide where information is sent (the AI endpoint, notification recipients, the SMS alert number) are imported only together with the password-protected keys, so a file that is not yours cannot redirect your data. A file cannot plant pages that "Learn from my website" owns, and every value is sanitized like a normal save.
+* New: Business Knowledge redesigned. A progress ring shows how well the assistant knows your business and suggests the best next steps; sections (your business, contact & hours, persona, knowledge entries, products, documents, your website, AI helper) open one at a time with their own progress; entries and products are collapsible cards with ready-made examples (hours, return policy, shipping…) instead of one long form; the page tells you that a business name and one fact are all you need to go live; unsaved changes are flagged.
+* New: an About page with the maker (DbsStudio, DbsStudio.ir), technical details, a system check and a copyable support report that holds no keys or personal data.
+* Fixed: with the button on the left, the open chat on phones was shifted sideways.
+* Fixed: an empty message bubble appeared under an answer when human handoff was on without a handoff text.
+* Fixed: the "conversations are saved" note touched the line above it when no disclaimer was set.
+* Fixed: new knowledge entries were saved without an id; they now get a stable one.
+* Complete Persian translation of every new screen.
 
 = 1.3.0 =
 
