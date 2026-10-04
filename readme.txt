@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.4.0
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,20 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.5.0 =
+
+* New: the Business Knowledge redesign now runs through the whole plugin. Every screen shares one look: a progress ring, colour-coded icon tiles, sections that open one at a time, collapsible cards and a sticky save bar that tells you when something is unsaved.
+* New: Dashboard with a ring for how much of the setup is done, three status cards, notices as cards with their own action, icon tiles for the numbers, and a readiness list whose Finish button goes straight to the screen where each item is fixed.
+* New: AI Connection in four sections (AI engine, what it may answer, web search, advanced) with a card for each provider and each answer scope, and a ring for how far the connection is set up.
+* New: Settings with a ring for the health of your privacy and protection choices and the next things worth fixing, five sections (privacy, display and hours, protection, modules, data tools), and each module's options in its own collapsible card.
+* New: Appearance with a brand strip that follows the colour and name as you type, and five collapsible sections next to the live preview.
+* New: Modules with a ring for how many are on, a filter by status, colour-coded groups, and Configure links that open the module's own card in Settings.
+* New: Requests, FAQ Bank, Conversations, ADR Cases, Analytics and Live chat with summary tiles (some with rings), filter chips that show counts, a colour accent for each status and friendly empty states that say what to do next.
+* New: the setup wizard's knowledge step shows a progress ring and one-tap starter topics (opening hours, prices, return policy, shipping, how to contact you), so it never opens as an empty form.
+* Fixed: when a field failed the browser's own check inside a hidden section or a folded card, saving did nothing and said nothing. The section now opens and the field is highlighted.
+* Fixed: table headings, badges and dates no longer break in the middle of a word in the Requests and Conversations lists.
+* Complete Persian translation of every new screen, checked in right-to-left on desktop and phone widths.
 
 = 1.4.0 =
 
