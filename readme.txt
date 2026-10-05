@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,13 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.7.0 =
+
+* New: the consultation request form has an optional email field. It appears in the Requests inbox, the CSV export and the notification, and Settings → Request form can switch it off. A wrong address is refused with a clear message; leaving it empty is fine.
+* New: when a visitor clearly asks for a consultation or a call back ("I want a consultation", "call me", "می‌خوام مشاوره بگیرم"), the chat answers with a button that opens the form instead of calling the AI. Questions about what a consultation costs, negated sentences and emergencies in pharmaceutical mode are left alone. Nothing is offered while the module is off.
+* Changed: the Persian name of the module is now «ثبت درخواست مشاوره».
+* Persian translation of the new text.
 
 = 1.6.0 =
 
