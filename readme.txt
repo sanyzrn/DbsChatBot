@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,19 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.7.1 =
+
+* Fixed (security): a proxy on a private network (10.x, 172.16–31.x, 192.168.x) is no longer believed automatically. This server itself and the proxies you list are; private networks are an explicit choice in Settings → Protection, and shared carrier-grade addresses (100.64.x) are never believed unless you list them. A site that had already chosen a header and listed no proxies keeps working as before until you decide otherwise.
+* Fixed: when a model stops because it ran out of answer length, the answer is no longer shown as a finished one. It says it was cut short, is not cached, and a "Continue the answer" button lets the visitor ask for the rest; nothing is requested automatically. A provider stopping an answer under its content policy, or a connection that broke off, is shown as its own case. A model that spends its whole budget before writing anything is reported with that reason instead of "unexpected response".
+* Fixed: the FAQ bank no longer answers a question whose numbers differ (10 users and 5 users, 5 mg and 10 mg) because they share one number.
+* Fixed: a wrong email in the consultation form (or in a custom email field) is refused instead of being quietly repaired into a different address; a list sent where a value belongs is refused too.
+* Fixed: Persian and Arabic digits are accepted in custom number fields, and a value that is not a number is refused with the field named.
+* Fixed: "I have no particular problem but I want a consultation" now offers the request form; a negation only counts inside the part of the sentence it belongs to. "نیاز به مشاوره دارم" is recognised too.
+* Fixed: an import file whose settings hold a value of the wrong kind (a list where text belongs) is refused whole, naming the setting; nothing is applied.
+* Fixed: the Connection screen no longer says that API keys "never leave the server". They are stored encrypted, never shown in the browser, and sent only to the provider you choose when a request is made.
+* Fixed (safety): trouble breathing said in other words, such as "نفس کشیدن برام غیرممکن شده", gets emergency guidance at once in pharmaceutical mode; denials and teaching questions stay quiet.
+* Persian translation of the new text.
 
 = 1.7.0 =
 
