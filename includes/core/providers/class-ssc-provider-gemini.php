@@ -176,7 +176,7 @@ class SSC_Provider_Gemini extends SSC_Provider {
 	 * a finishReason marks the final chunk (SAFETY counts as a failure).
 	 *
 	 * @param array $event Decoded chunk.
-	 * @return array{text:string,done:bool,error:bool}
+	 * @return array{text:string,done:bool,error:bool,finish:string}
 	 */
 	public function parse_stream_event( $event ) {
 		$text = '';
@@ -189,10 +189,21 @@ class SSC_Provider_Gemini extends SSC_Provider {
 		}
 		$finish = isset( $event['candidates'][0]['finishReason'] ) ? (string) $event['candidates'][0]['finishReason'] : '';
 		return array(
-			'text'  => $text,
-			'done'  => '' !== $finish && 'SAFETY' !== $finish,
-			'error' => isset( $event['error'] ) || 'SAFETY' === $finish,
+			'text'   => $text,
+			'done'   => '' !== $finish && 'SAFETY' !== $finish,
+			'error'  => isset( $event['error'] ) || 'SAFETY' === $finish,
+			'finish' => self::normalize_finish( $finish ),
 		);
+	}
+
+	/**
+	 * How the model stopped (PURE): finishReason of the first candidate.
+	 *
+	 * @param array $data Payload.
+	 * @return string
+	 */
+	public function finish_reason( $data ) {
+		return is_array( $data ) && isset( $data['candidates'][0]['finishReason'] ) ? self::normalize_finish( $data['candidates'][0]['finishReason'] ) : '';
 	}
 
 	/**

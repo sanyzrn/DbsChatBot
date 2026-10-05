@@ -97,15 +97,27 @@ abstract class SSC_Provider_OpenAI_Compat extends SSC_Provider {
 	 * One Chat Completions chunk (PURE).
 	 *
 	 * @param array $event Decoded chunk.
-	 * @return array{text:string,done:bool,error:bool}
+	 * @return array{text:string,done:bool,error:bool,finish:string}
 	 */
 	public function parse_stream_event( $event ) {
-		$delta = isset( $event['choices'][0]['delta']['content'] ) ? $event['choices'][0]['delta']['content'] : '';
+		$delta  = isset( $event['choices'][0]['delta']['content'] ) ? $event['choices'][0]['delta']['content'] : '';
+		$finish = isset( $event['choices'][0]['finish_reason'] ) ? $event['choices'][0]['finish_reason'] : '';
 		return array(
-			'text'  => is_string( $delta ) ? $delta : '',
-			'done'  => ! empty( $event['choices'][0]['finish_reason'] ),
-			'error' => isset( $event['error'] ),
+			'text'   => is_string( $delta ) ? $delta : '',
+			'done'   => ! empty( $finish ),
+			'error'  => isset( $event['error'] ),
+			'finish' => self::normalize_finish( $finish ),
 		);
+	}
+
+	/**
+	 * How the model stopped (PURE): finish_reason of the first choice.
+	 *
+	 * @param array $data Payload.
+	 * @return string
+	 */
+	public function finish_reason( $data ) {
+		return is_array( $data ) && isset( $data['choices'][0]['finish_reason'] ) ? self::normalize_finish( $data['choices'][0]['finish_reason'] ) : '';
 	}
 
 	/**

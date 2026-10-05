@@ -174,6 +174,7 @@ class SSC_Settings {
 			// are per-visitor instead of per-proxy.
 			'trusted_proxy_header'       => '',
 			'trusted_proxies'            => '',
+			'trust_private_proxies'      => 'no', // yes: also believe a proxy on a private network (10.x, 172.16-31.x, 192.168.x).
 
 			// Display targeting (server-gated; pages filtered before assets load).
 			'display_mode'               => 'all', // all | include | exclude.
@@ -634,6 +635,7 @@ class SSC_Settings {
 			case 'ai_strict_knowledge':
 			case 'ai_cache_enabled':
 			case 'consent_enabled':
+			case 'trust_private_proxies':
 			case 'privacy_acknowledged':
 			case 'voice_input':
 			case 'voice_output':

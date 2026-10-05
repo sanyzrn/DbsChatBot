@@ -228,6 +228,24 @@ test('A consultation offer from the chat shows one button that opens the request
   assert.equal(chips.length, 1, 'with the module off nothing is offered');
 });
 
+test('An answer that was cut short offers one Continue button the visitor must press; a policy stop offers none', () => {
+  const chips = [];
+  const sent = [];
+  const context = { cfg: { features: {}, i18n: { continueAnswer: 'Continue the answer', continueText: 'Please continue.' } }, addItem() {}, addChips: (list) => chips.push(list),
+    userSend: (text) => sent.push(text), showLeadForm() {}, showAdrForm() {}, requestHuman() {}, liveText: () => 'live', suggestRelated() {} };
+  load('        function handleFlags(', '        /** Knowledge documents the answer', context);
+  vm.runInContext("handleFlags({ flags: { incomplete: 'length' } })", context);
+  assert.equal(chips.length, 1, 'a length stop offers a button');
+  assert.equal(chips[0][0].label, 'Continue the answer');
+  assert.deepEqual(sent, [], 'nothing is sent until the visitor presses it');
+  chips[0][0].onClick();
+  assert.deepEqual(sent, ['Please continue.'], 'pressing it asks the assistant to go on');
+  vm.runInContext("handleFlags({ flags: { incomplete: 'interrupted' } })", context);
+  assert.equal(chips.length, 2, 'a broken connection offers it too');
+  vm.runInContext("handleFlags({ flags: { incomplete: 'filtered' } })", context);
+  assert.equal(chips.length, 2, 'an answer stopped by the provider policy is not offered for continuing');
+});
+
 test('The consultation form asks for an optional email only when the site allows it', () => {
   const start = source.indexOf('        function showLeadForm(');
   const body = source.slice(start, source.indexOf('        /* ------------------------------------------------------------------ *\n         * WooCommerce', start));

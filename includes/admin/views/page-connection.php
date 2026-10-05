@@ -64,7 +64,7 @@ if ( 'none' !== $sel && ! $verified ) {
 	<header class="ssc-page__head">
 		<div>
 			<h1><?php esc_html_e( 'AI Connection', 'nexachat-ai' ); ?></h1>
-			<p class="ssc-page__sub"><?php esc_html_e( 'Keys are encrypted at rest and never leave the server. Connection tests perform a real generation, not just a ping.', 'nexachat-ai' ); ?></p>
+			<p class="ssc-page__sub"><?php esc_html_e( 'Keys are stored encrypted and are never shown in the browser. They are sent only to the provider you choose, when a request is made. Connection tests perform a real generation, not just a ping.', 'nexachat-ai' ); ?></p>
 		</div>
 	</header>
 

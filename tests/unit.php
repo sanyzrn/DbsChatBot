@@ -22,7 +22,7 @@ require __DIR__ . '/../includes/admin/class-ssc-settings-health.php';
 require __DIR__ . '/../includes/admin/class-ssc-knowledge-overlap.php';
 require __DIR__ . '/../includes/core/class-ssc-locations.php';
 require __DIR__ . '/../includes/core/class-ssc-client-ip.php';
-foreach ( array( 'openai-compat', 'openai', 'claude', 'gemini' ) as $file ) {
+foreach ( array( 'openai-compat', 'openai', 'openrouter', 'custom', 'claude', 'gemini' ) as $file ) {
     require __DIR__ . '/../includes/core/providers/class-ssc-provider-' . $file . '.php';
 }
 $count = 0;
@@ -171,6 +171,45 @@ foreach ( array(
 	check( ! $screen( $message ), 'a routine side-effect question is not escalated' );
 }
 
+// F01 (2026-10-05 review): breathing + "cannot / impossible / hard" is an emergency however it is phrased; denials and teaching questions stay quiet.
+foreach ( array(
+	'نفس کشیدن برام غیرممکن شده',
+	'نفس کشیدن برایم ناممکن شده',
+	'نفس‌کشیدن برام کاملا غیر ممکن شده',
+	'نمیشه نفس کشید',
+	'نفس کشیدن برام خیلی سخت شده',
+	'نفسم تنگ شده',
+	'نفسم گرفته بعد از قرص',
+	'هوا بهم نمی‌رسه',
+	'هوا کم میارم و رنگم پریده',
+	'مادرم نفس کشیدن براش سخته',
+	'سخت نفس می‌کشم',
+	'breathing has become impossible',
+	'I am struggling to breathe',
+	'I am gasping for air after the tablet',
+	'I cant get enough air',
+	'my son says breathing is really hard since the injection',
+) as $message ) {
+	check( $screen( $message ), 'F01: trouble breathing in other words is an emergency: ' . $message );
+}
+foreach ( array(
+	'تنگی نفس ندارم',
+	'نفس کشیدن برام سخت نیست',
+	'نفس کشیدن غیرممکن نیست',
+	'بدون مشکل تنفسی',
+	'ایا نفس کشیدن بعد از ورزش سخت می‌شود؟',
+	'چرا در ارتفاع نفس کشیدن دشوار است؟',
+	'آیا این دارو باعث تنگی نفس می‌شود؟',
+	'نفس کشیدن در کوهستان سخت است',
+	'what is the best breathing exercise for relaxation?',
+	'breathing is not difficult for me',
+	'مشکل خاصی ندارم',
+	'قیمت قرص نفس چقدر است؟',
+	'نفس کشیدن عمیق برای خواب خوب است',
+) as $message ) {
+	check( ! $screen( $message ), 'F01: a denial or a teaching question about breathing stays quiet: ' . $message );
+}
+
 // Streaming parsers: realistic event payloads per provider.
 $claude = new SSC_Provider_Claude();
 $ev     = $claude->parse_stream_event( array( 'type' => 'content_block_delta', 'index' => 0, 'delta' => array( 'type' => 'text_delta', 'text' => 'سلام' ) ) );
@@ -189,6 +228,28 @@ check( $gemini->parse_stream_event( array( 'candidates' => array( array( 'finish
 $openai = new SSC_Provider_Openai();
 $ev     = $openai->parse_stream_event( array( 'choices' => array( array( 'delta' => array( 'content' => 'x' ), 'finish_reason' => null ) ) ) );
 check( 'x' === $ev['text'] && ! $ev['done'] && $openai->supports_streaming() && $claude->supports_streaming() && $gemini->supports_streaming(), 'OpenAI-compatible chunk parsing unchanged' );
+
+// N04 (2026-10-05 review): the reason a model stopped is kept, and only a normal stop counts as a finished answer.
+$openrouter = new SSC_Provider_Openrouter();
+$custom     = new SSC_Provider_Custom();
+$chunk      = function ( $reason ) {
+	return array( 'choices' => array( array( 'delta' => array( 'content' => 'x' ), 'finish_reason' => $reason ) ) );
+};
+foreach ( array( 'OpenAI' => $openai, 'OpenRouter' => $openrouter, 'custom endpoint' => $custom ) as $label => $adapter ) {
+	$len  = $adapter->parse_stream_event( $chunk( 'length' ) );
+	$stop = $adapter->parse_stream_event( $chunk( 'stop' ) );
+	$filt = $adapter->parse_stream_event( $chunk( 'content_filter' ) );
+	$none = $adapter->parse_stream_event( $chunk( null ) );
+	check( $len['done'] && ! $len['error'] && 'length' === $len['finish'], 'N04: ' . $label . ' length is the end of the stream and says it was cut short' );
+	check( 'stop' === $stop['finish'] && 'filtered' === $filt['finish'] && '' === $none['finish'], 'N04: ' . $label . ' stop, content_filter and "still going" are told apart' );
+	check( 'length' === $adapter->finish_reason( array( 'choices' => array( array( 'finish_reason' => 'length', 'message' => array( 'content' => 'a' ) ) ) ) ) && 'stop' === $adapter->finish_reason( array( 'choices' => array( array( 'finish_reason' => 'stop' ) ) ) ) && 'filtered' === $adapter->finish_reason( array( 'choices' => array( array( 'finish_reason' => 'content_filter' ) ) ) ), 'N04: ' . $label . ' non-streamed answers report the same three endings' );
+}
+check( 'length' === $claude->parse_stream_event( array( 'type' => 'message_delta', 'delta' => array( 'stop_reason' => 'max_tokens' ) ) )['finish'] && 'stop' === $claude->parse_stream_event( array( 'type' => 'message_delta', 'delta' => array( 'stop_reason' => 'end_turn' ) ) )['finish'] && 'filtered' === $claude->parse_stream_event( array( 'type' => 'message_delta', 'delta' => array( 'stop_reason' => 'refusal' ) ) )['finish'], 'N04: Claude max_tokens is a cut answer, end_turn a finished one, refusal a stopped one' );
+check( 'length' === $claude->finish_reason( array( 'stop_reason' => 'max_tokens' ) ) && 'stop' === $claude->finish_reason( array( 'stop_reason' => 'end_turn' ) ), 'N04: Claude non-streamed stop_reason is read too' );
+check( 'length' === $gemini->parse_stream_event( array( 'candidates' => array( array( 'finishReason' => 'MAX_TOKENS' ) ) ) )['finish'] && 'filtered' === $gemini->parse_stream_event( array( 'candidates' => array( array( 'finishReason' => 'SAFETY' ) ) ) )['finish'] && 'stop' === $gemini->finish_reason( array( 'candidates' => array( array( 'finishReason' => 'STOP' ) ) ) ) && 'length' === $gemini->finish_reason( array( 'candidates' => array( array( 'finishReason' => 'MAX_TOKENS' ) ) ) ), 'N04: Gemini MAX_TOKENS is a cut answer, SAFETY a stopped one' );
+check( 'length' === $openai->finish_reason( array( 'status' => 'incomplete', 'incomplete_details' => array( 'reason' => 'max_output_tokens' ), 'output' => array() ) ) && 'filtered' === $openai->finish_reason( array( 'status' => 'incomplete', 'incomplete_details' => array( 'reason' => 'content_filter' ), 'output' => array() ) ) && 'stop' === $openai->finish_reason( array( 'status' => 'completed', 'output' => array() ) ), 'N04: the OpenAI Responses shape (web search) reports an incomplete answer' );
+check( '' === SSC_Provider::normalize_finish( '' ) && '' === SSC_Provider::normalize_finish( null ) && '' === SSC_Provider::normalize_finish( array( 'length' ) ) && 'stop' === SSC_Provider::normalize_finish( 'tool_calls' ) && 'length' === SSC_Provider::normalize_finish( 'LENGTH' ) && 'error' === SSC_Provider::normalize_finish( 'error' ), 'N04: end reasons are normalized, odd input is "unknown", never a failure' );
+check( 'length' === SSC_Provider::finish_error( 'length' )['code'] && 'filtered' === SSC_Provider::finish_error( 'filtered' )['code'] && null === SSC_Provider::finish_error( 'stop' ) && null === SSC_Provider::finish_error( '' ), 'N04: only a length or policy stop explains an empty answer' );
 
 // Embeddings: request shapes, response parsing and vector math.
 $parts = SSC_Embeddings::request_parts( 'openai', 'sk', 'text-embedding-3-small', array( 'a', 'b' ) );
@@ -329,6 +390,22 @@ check( '203.0.113.44' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '203.0
 check( '203.0.113.44' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '203.0.113.44', 'HTTP_X_FORWARDED_FOR' => '1.2.3.4, garbage' ), 'HTTP_X_FORWARDED_FOR', array( '203.0.113.0/24' ) ), 'F02: a malformed entry in the chain is not guessed around' );
 check( '2001:4860::7' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '2001:db8::1', 'HTTP_CF_CONNECTING_IP' => '2001:4860::7' ), 'HTTP_CF_CONNECTING_IP', array( '2001:db8::/32' ) ), 'F02: IPv6 proxies and visitors work');
 check( '198.51.100.99' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '203.0.113.44', 'HTTP_X_FORWARDED_FOR' => '198.51.100.99:5555' ), 'HTTP_X_FORWARDED_FOR', array( '203.0.113.0/24' ) ), 'F02: a port after an IPv4 address is dropped' );
+// F02 (2026-10-05 review): LAN and carrier-grade addresses are not believed unless the owner says so; CGNAT never implicitly.
+$spoof = function ( $remote ) {
+	return array( 'REMOTE_ADDR' => $remote, 'HTTP_X_FORWARDED_FOR' => '198.51.100.9' );
+};
+foreach ( array( '192.168.1.25', '10.1.2.3', '172.16.5.5', '169.254.1.1', '100.64.1.25', 'fd00::5' ) as $near ) {
+	check( $near === SSC_Client_IP::resolve( $spoof( $near ), 'HTTP_X_FORWARDED_FOR', array() ), 'F02: a header from ' . $near . ' is ignored when no proxy is listed and private networks are not trusted' );
+}
+foreach ( array( '192.168.1.25', '10.1.2.3', '172.16.5.5', '169.254.1.1', 'fd00::5' ) as $near ) {
+	check( '198.51.100.9' === SSC_Client_IP::resolve( $spoof( $near ), 'HTTP_X_FORWARDED_FOR', array(), true ), 'F02: a proxy on the private network ' . $near . ' is believed once the owner allows it' );
+}
+check( '100.64.1.25' === SSC_Client_IP::resolve( $spoof( '100.64.1.25' ), 'HTTP_X_FORWARDED_FOR', array(), true ), 'F02: carrier-grade addresses are not private networks, even when private networks are trusted' );
+check( '198.51.100.9' === SSC_Client_IP::resolve( $spoof( '100.64.1.25' ), 'HTTP_X_FORWARDED_FOR', array( '100.64.0.0/10' ) ), 'F02: carrier-grade addresses are believed when listed as the proxy' );
+check( '198.51.100.9' === SSC_Client_IP::resolve( $spoof( '::1' ), 'HTTP_X_FORWARDED_FOR', array() ) && '198.51.100.9' === SSC_Client_IP::resolve( $spoof( '127.0.0.1' ), 'HTTP_X_FORWARDED_FOR', array() ), 'F02: a proxy on this very machine is still believed without listing' );
+check( '100.64.1.25' === SSC_Client_IP::resolve( array( 'REMOTE_ADDR' => '203.0.113.44', 'HTTP_X_FORWARDED_FOR' => '198.51.100.9, 100.64.1.25' ), 'HTTP_X_FORWARDED_FOR', array( '203.0.113.0/24' ) ), 'F02: a carrier-grade address inside the forwarded chain is the visitor, not a proxy to skip' );
+check( ! SSC_Client_IP::is_trusted( '192.168.1.25', array() ) && SSC_Client_IP::is_trusted( '192.168.1.25', array(), true ) && SSC_Client_IP::is_trusted( '127.0.0.1', array() ) && ! SSC_Client_IP::is_trusted( '100.64.0.1', array(), true ), 'F02: is_trusted() follows the same rules' );
+
 check( '203.0.113.44' === SSC_Client_IP::resolve( $direct, 'HTTP_X_EVIL', array( '203.0.113.0/24' ) ) && '203.0.113.44' === SSC_Client_IP::resolve( $direct, '', array( '203.0.113.0/24' ) ), 'F02: only the known header names are used, and none by default' );
 check( SSC_Client_IP::in_range( '203.0.113.200', '203.0.113.128/25' ) && ! SSC_Client_IP::in_range( '203.0.113.20', '203.0.113.128/25' ) && SSC_Client_IP::in_range( '::ffff:203.0.113.5', '203.0.113.0/24' ) && ! SSC_Client_IP::in_range( '203.0.113.5', '2001:db8::/32' ), 'F02: CIDR matching covers partial bytes, mapped IPv6 and mixed families' );
 check( array( '203.0.113.0/24', '2001:db8::/32', '10.1.1.1' ) === SSC_Client_IP::parse_list( "203.0.113.0/24, bad\n2001:db8::/32 999.1.1.1/8 10.1.1.1/40 10.1.1.1 203.0.113.0/24" ), 'F02: the typed list keeps valid addresses and blocks, once each' );
@@ -377,6 +454,12 @@ $conflicts = array(
 	array( 'برای کودکان مناسب است؟', 'برای بزرگسالان مناسب است؟' ),
 	array( 'در دوران بارداری مصرف شود؟', 'در دوران شیردهی مصرف شود؟' ),
 	array( 'روزی ۲ بار مصرف کنم؟', 'روزی ۳ بار مصرف کنم؟' ),
+	array( 'آیا بسته ۱۰ کاربر با ۲ گیگابایت شامل پشتیبانی است؟', 'آیا بسته ۵ کاربر با ۲ گیگابایت شامل پشتیبانی است؟' ),
+	array( 'دوز ۵ میلیگرم روزی ۲ بار مناسب است؟', 'دوز ۱۰ میلیگرم روزی ۲ بار مناسب است؟' ),
+	array( 'مصرف برای کودک ۲ ساله روزی ۱ بار مجاز است؟', 'مصرف برای کودک ۸ ساله روزی ۱ بار مجاز است؟' ),
+	array( 'دوز 5 mg روزی 2 بار', 'دوز 2 mg روزی 5 بار' ),
+	array( 'The dose is 5mg', 'The dose is 10mg' ),
+	array( 'دوز ۵ میلی‌گرم', 'دوز ۵ گرم' ),
 	array( 'این دارو غیرمجاز است؟', 'مصرف دارو در بارداری ممنوع است؟' ),
 	array( 'در بارداری می‌توانم این دارو را مصرف کنم؟', 'آیا می‌توانم این دارو را مصرف کنم؟' ),
 	array( 'Is it safe for my child?', 'Is it safe?' ),
@@ -402,6 +485,8 @@ $agree = array(
 	array( 'ارسال به شهرستان دارید؟', 'آیا ارسال به سراسر کشور دارید؟' ),
 	array( 'Do you ship to Tehran?', 'Do you ship to Tehran city?' ),
 	array( 'مصرف قبل از غذا', 'آیا قبل از غذا مصرف کنم؟' ),
+	array( 'دوز ۵ میلیگرم روزی ۲ بار؟', 'دوز 5 میلیگرم روزی 2 بار؟' ),
+	array( 'بسته ۱۰ کاربر ۲ گیگابایت شامل پشتیبانی است؟', 'آیا بسته ۱۰ کاربر ۲ گیگابایت شامل پشتیبانی هست؟' ),
 );
 foreach ( $agree as $pair ) {
 	check( '' === SSC_Knowledge_Polarity::conflict( $pair[0], $pair[1] ), 'F04: the same question in other words is not blocked: ' . $pair[0] . ' / ' . $pair[1] );

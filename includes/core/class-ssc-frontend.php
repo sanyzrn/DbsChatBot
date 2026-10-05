@@ -4,7 +4,7 @@
  *
  * Security contract:
  * - Nothing renders unless SSC_Setup::is_live() (setup done + published).
- * - The config payload NEVER contains secrets (API keys stay server-side).
+ * - The config payload NEVER contains secrets (API keys are never sent to the browser).
  * - Module-gated features are computed server-side; the client only mirrors.
  *
  * @package SmartSupportChatbot
@@ -302,6 +302,8 @@ class SSC_Frontend {
 			'productsDesc'    => __( 'Product information', 'nexachat-ai' ),
 			'chooseProduct'   => __( 'Which one?', 'nexachat-ai' ),
 			'requestForm'     => __( 'Consultation request', 'nexachat-ai' ),
+			'continueAnswer'  => __( 'Continue the answer', 'nexachat-ai' ),
+			'continueText'    => __( 'Please continue your last answer from where it stopped.', 'nexachat-ai' ),
 			'formEmail'       => __( 'Email (optional)', 'nexachat-ai' ),
 			'reportAdr'       => __( 'Report a side effect', 'nexachat-ai' ),
 			'moreDetails'     => __( 'More details (optional)', 'nexachat-ai' ),

@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-05 07:15:06+00:00\n"
+"POT-Creation-Date: 2026-10-05 15:20:38+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -29,8 +29,8 @@ msgstr ""
 #: includes/modules/class-ssc-module-analytics.php:155
 #: includes/modules/class-ssc-module-faq.php:265
 #: includes/modules/class-ssc-module-history.php:122
-#: includes/modules/class-ssc-module-leads.php:211
-#: includes/modules/class-ssc-module-leads.php:492
+#: includes/modules/class-ssc-module-leads.php:256
+#: includes/modules/class-ssc-module-leads.php:552
 #: includes/modules/class-ssc-module-live.php:1077
 #: includes/modules/class-ssc-module-live.php:1428
 msgid "Insufficient permissions."
@@ -138,98 +138,98 @@ msgstr ""
 msgid "Unlimited"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:147
+#: includes/admin/class-ssc-admin-settings.php:148
 msgid "Test message from your website assistant. SMS is working."
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:152
+#: includes/admin/class-ssc-admin-settings.php:153
 msgid "The test SMS was accepted by the panel."
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:195
+#: includes/admin/class-ssc-admin-settings.php:196
 msgid "Add the bot token first."
 msgstr ""
 
 #. translators: %s: error from the messenger.
-#: includes/admin/class-ssc-admin-settings.php:204
+#: includes/admin/class-ssc-admin-settings.php:205
 msgid "The bot could not be connected: %s"
 msgstr ""
 
 #. translators: %s: bot username.
-#: includes/admin/class-ssc-admin-settings.php:212
+#: includes/admin/class-ssc-admin-settings.php:213
 msgid "Connected to %s. New messages are checked every minute, and every few seconds while the Live chat screen is open."
 msgstr ""
 
 #. translators: %s: bot username.
-#: includes/admin/class-ssc-admin-settings.php:214
+#: includes/admin/class-ssc-admin-settings.php:215
 msgid "Connected to %s. Messages arrive instantly."
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:289
+#: includes/admin/class-ssc-admin-settings.php:290
 msgid "Rate limit by IP"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:290
+#: includes/admin/class-ssc-admin-settings.php:291
 msgid "Rate limit by session"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:291
+#: includes/admin/class-ssc-admin-settings.php:292
 msgid "Rate limit by IP and session"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:292
+#: includes/admin/class-ssc-admin-settings.php:293
 msgid "Rate limit off"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:298
+#: includes/admin/class-ssc-admin-settings.php:299
 msgid "Consent required"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:298
+#: includes/admin/class-ssc-admin-settings.php:299
 msgid "Consent optional"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:299
+#: includes/admin/class-ssc-admin-settings.php:300
 msgid "Full IPs stored"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:299
+#: includes/admin/class-ssc-admin-settings.php:300
 msgid "IPs not stored"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:299
+#: includes/admin/class-ssc-admin-settings.php:300
 msgid "IPs anonymized"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:305
+#: includes/admin/class-ssc-admin-settings.php:306
 #: includes/admin/views/page-settings.php:152
 msgid "All pages"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:305
+#: includes/admin/class-ssc-admin-settings.php:306
 msgid "Selected pages"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:306
+#: includes/admin/class-ssc-admin-settings.php:307
 msgid "Business hours on"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:306
+#: includes/admin/class-ssc-admin-settings.php:307
 msgid "Always available"
 msgstr ""
 
 #. translators: %d: number of modules.
-#: includes/admin/class-ssc-admin-settings.php:311
+#: includes/admin/class-ssc-admin-settings.php:312
 msgid "%d module with options"
 msgid_plural "%d modules with options"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin/class-ssc-admin-settings.php:312
+#: includes/admin/class-ssc-admin-settings.php:313
 msgid "Data is erased on delete"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-settings.php:312
+#: includes/admin/class-ssc-admin-settings.php:313
 msgid "Data is kept on delete"
 msgstr ""
 
@@ -284,7 +284,7 @@ msgstr ""
 #: includes/admin/class-ssc-admin.php:85
 #: includes/admin/views/page-about.php:142
 #: includes/admin/views/page-modules.php:62
-#: includes/admin/views/page-settings.php:299
+#: includes/admin/views/page-settings.php:304
 #: includes/admin/views/page-settings.php:77
 msgid "Modules"
 msgstr ""
@@ -332,12 +332,12 @@ msgid "The data deletion preference could not be saved. Deletion was stopped. Pl
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:232
-#: includes/core/class-ssc-frontend.php:334
+#: includes/core/class-ssc-frontend.php:336
 msgid "Online"
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:233
-#: includes/core/class-ssc-frontend.php:333
+#: includes/core/class-ssc-frontend.php:335
 msgid "Offline"
 msgstr ""
 
@@ -513,7 +513,7 @@ msgid "Paste this when you ask for help. It holds versions and settings only: no
 msgstr ""
 
 #: includes/admin/views/page-about.php:168
-#: includes/core/class-ssc-frontend.php:319
+#: includes/core/class-ssc-frontend.php:321
 #: includes/modules/class-ssc-module-woo.php:506
 msgid "Copied ✓"
 msgstr ""
@@ -837,7 +837,7 @@ msgstr ""
 #: includes/admin/views/page-appearance.php:193
 #: includes/admin/views/page-requests.php:134
 #: includes/admin/views/pharma-case.php:39
-#: includes/core/class-ssc-settings.php:1146
+#: includes/core/class-ssc-settings.php:1148
 msgid "Phone"
 msgstr ""
 
@@ -982,7 +982,7 @@ msgid "Run a connection test"
 msgstr ""
 
 #: includes/admin/views/page-connection.php:67
-msgid "Keys are encrypted at rest and never leave the server. Connection tests perform a real generation, not just a ping."
+msgid "Keys are stored encrypted and are never shown in the browser. They are sent only to the provider you choose, when a request is made. Connection tests perform a real generation, not just a ping."
 msgstr ""
 
 #: includes/admin/views/page-connection.php:72
@@ -1110,7 +1110,7 @@ msgid "API key (optional)"
 msgstr ""
 
 #: includes/admin/views/page-connection.php:174
-#: includes/admin/views/page-settings.php:682
+#: includes/admin/views/page-settings.php:687
 #: includes/admin/views/wizard.php:364
 msgid "A key is stored — type to replace"
 msgstr ""
@@ -1426,7 +1426,7 @@ msgstr ""
 #: includes/admin/views/page-faq.php:100
 #: includes/admin/views/page-faq.php:81
 #: includes/admin/views/page-knowledge.php:910
-#: includes/admin/views/page-settings.php:331
+#: includes/admin/views/page-settings.php:336
 msgid "Question"
 msgstr ""
 
@@ -1601,8 +1601,8 @@ msgstr ""
 
 #: includes/admin/views/page-dashboard.php:210
 #: includes/admin/views/page-requests.php:62
-#: includes/modules/class-ssc-module-leads.php:198
-#: includes/modules/class-ssc-module-leads.php:199
+#: includes/modules/class-ssc-module-leads.php:243
+#: includes/modules/class-ssc-module-leads.php:244
 msgid "Requests"
 msgstr ""
 
@@ -1976,7 +1976,7 @@ msgstr ""
 
 #: includes/admin/views/page-knowledge.php:229
 #: includes/admin/views/wizard.php:291
-#: includes/core/class-ssc-schema.php:612
+#: includes/core/class-ssc-schema.php:630
 msgid "General"
 msgstr ""
 
@@ -2292,7 +2292,7 @@ msgstr ""
 #: includes/admin/views/page-knowledge.php:470
 #: includes/admin/views/page-knowledge.php:629
 #: includes/admin/views/wizard.php:173
-#: includes/modules/class-ssc-module-pharma.php:585
+#: includes/modules/class-ssc-module-pharma.php:643
 msgid "Contact phone"
 msgstr ""
 
@@ -2768,7 +2768,7 @@ msgstr ""
 #: includes/admin/views/page-pharma.php:62
 #: includes/modules/class-ssc-module-live.php:1417
 #: includes/modules/class-ssc-module-live.php:878
-#: includes/modules/class-ssc-module-pharma.php:1481
+#: includes/modules/class-ssc-module-pharma.php:1539
 msgid "Closed"
 msgstr ""
 
@@ -2869,8 +2869,8 @@ msgid "No modules in this view."
 msgstr ""
 
 #: includes/admin/views/page-pharma.php:44
-#: includes/modules/class-ssc-module-pharma.php:1262
-#: includes/modules/class-ssc-module-pharma.php:1263
+#: includes/modules/class-ssc-module-pharma.php:1320
+#: includes/modules/class-ssc-module-pharma.php:1321
 msgid "ADR Cases"
 msgstr ""
 
@@ -2951,7 +2951,7 @@ msgstr ""
 
 #: includes/admin/views/page-pharma.php:112
 #: includes/admin/views/pharma-case.php:35
-#: includes/modules/class-ssc-module-pharma.php:572
+#: includes/modules/class-ssc-module-pharma.php:630
 msgid "Reporter"
 msgstr ""
 
@@ -2978,7 +2978,7 @@ msgid "In progress"
 msgstr ""
 
 #: includes/admin/views/page-requests.php:22
-#: includes/modules/class-ssc-module-pharma.php:1482
+#: includes/modules/class-ssc-module-pharma.php:1540
 msgid "Archived"
 msgstr ""
 
@@ -3132,7 +3132,7 @@ msgstr ""
 msgid "Protection"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:743
+#: includes/admin/views/page-settings.php:748
 #: includes/admin/views/page-settings.php:79
 msgid "Data tools"
 msgstr ""
@@ -3387,560 +3387,572 @@ msgid "Trusted proxies (addresses or CIDR blocks, one per line)"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:269
-msgid "The header above is believed only when the connection comes from one of these addresses, or from a private network (for example nginx on the same server). A visitor who reaches the server directly cannot choose his own address and slip past the limits. Cloudflare publishes its ranges at cloudflare.com/ips."
+msgid "The header above is believed only when the connection comes from one of these addresses or from this server itself (for example nginx on the same machine). A visitor who reaches the server directly cannot choose his own address and slip past the limits. Cloudflare publishes its ranges at cloudflare.com/ips."
 msgstr ""
 
 #: includes/admin/views/page-settings.php:270
+msgid "Also believe a proxy on a private network (10.x, 172.16–31.x, 192.168.x)"
+msgstr ""
+
+#: includes/admin/views/page-settings.php:271
+msgid "Tick it only if your server can be reached from that network solely through your proxy, and the proxy removes any address a visitor sends. Shared carrier-grade addresses (100.64.x) are never included: list them above if they are your proxy."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:272
 msgid "Use Cloudflare’s ranges"
 msgstr ""
 
 #. translators: %s: the address of this connection.
-#: includes/admin/views/page-settings.php:281
+#: includes/admin/views/page-settings.php:283
 msgid "Right now: no header is chosen, so the connecting address (%s) is used for visitors."
 msgstr ""
 
 #. translators: 1: the address of this connection, 2: the visitor address read from the header.
-#: includes/admin/views/page-settings.php:284
+#: includes/admin/views/page-settings.php:286
 msgid "Right now: your connection comes from %1$s, a proxy this site believes. The visitor address read from the header is %2$s."
 msgstr ""
 
 #. translators: %s: the address of this connection.
-#: includes/admin/views/page-settings.php:287
+#: includes/admin/views/page-settings.php:289
 msgid "Right now: your connection comes from %s, which is not a listed proxy, so the header is ignored and that address is used for visitors."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:299
+#: includes/admin/views/page-settings.php:291
+msgid "It is on a private network: if it is your proxy, tick the private-network option above."
+msgstr ""
+
+#: includes/admin/views/page-settings.php:304
 msgid "The options of the modules you switched on. Open one to change it."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:305
+#: includes/admin/views/page-settings.php:310
 msgid "Side-effect report form"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:306
+#: includes/admin/views/page-settings.php:311
 msgid "Choose how long the form visitors fill in is. Reporter name, contact phone, product and the reaction description are always asked: without them a report is not a valid safety case."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:309
+#: includes/admin/views/page-settings.php:314
 msgid "Form length"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:317
+#: includes/admin/views/page-settings.php:322
 msgid "Optional questions"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:319
+#: includes/admin/views/page-settings.php:324
 msgid "Fold them under \"More details (optional)\" so the form looks short"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:323
+#: includes/admin/views/page-settings.php:328
 msgid "Short introduction above the form (optional)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:332
+#: includes/admin/views/page-settings.php:337
 msgid "Ask"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:333
-#: includes/admin/views/page-settings.php:385
-#: includes/admin/views/page-settings.php:483
+#: includes/admin/views/page-settings.php:338
+#: includes/admin/views/page-settings.php:390
+#: includes/admin/views/page-settings.php:488
 msgid "Required"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:334
+#: includes/admin/views/page-settings.php:339
 msgid "Custom wording (optional)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:347
+#: includes/admin/views/page-settings.php:352
 msgid "always"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:348
+#: includes/admin/views/page-settings.php:353
 msgid "Ask: %s"
 msgstr ""
 
 #. translators: %s: question */ __( 'Ask: %s', 'nexachat-ai' ), $adr_field['label'] ) ); ?>" /></td>
-#: includes/admin/views/page-settings.php:349
+#: includes/admin/views/page-settings.php:354
 msgid "Required: %s"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:359
+#: includes/admin/views/page-settings.php:364
 msgid "\"Ask\" and \"Required\" are editable in Custom mode; the other lengths use a fixed set. If the seriousness question is off, serious cases cannot be flagged for immediate notification."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:361
+#: includes/admin/views/page-settings.php:366
 msgid "Your own questions"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:362
+#: includes/admin/views/page-settings.php:367
 msgid "Added at the end of the form, whatever the length. Answers are saved with the question text, so editing a question later never changes old reports."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:378
+#: includes/admin/views/page-settings.php:383
 msgid "Question text"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:379
+#: includes/admin/views/page-settings.php:384
 msgid "Answer type"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:384
+#: includes/admin/views/page-settings.php:389
 msgid "Choices, comma separated"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:384
-#: includes/admin/views/page-settings.php:482
+#: includes/admin/views/page-settings.php:389
+#: includes/admin/views/page-settings.php:487
 msgid "Choices"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:387
+#: includes/admin/views/page-settings.php:392
 msgid "Remove question"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:391
+#: includes/admin/views/page-settings.php:396
 msgid "+ Add question"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:396
+#: includes/admin/views/page-settings.php:401
 msgid "Voice module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:397
+#: includes/admin/views/page-settings.php:402
 msgid "Microphone input"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:398
+#: includes/admin/views/page-settings.php:403
 msgid "Read answers aloud"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:400
+#: includes/admin/views/page-settings.php:405
 msgid "Recognition language (or \"auto\")"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:407
+#: includes/admin/views/page-settings.php:412
 msgid "Conversation history module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:408
+#: includes/admin/views/page-settings.php:413
 msgid "Store conversations (needed for feedback, unanswered radar and quality review)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:409
+#: includes/admin/views/page-settings.php:414
 msgid "Tell visitors in the chat window that conversations are saved"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:414
+#: includes/admin/views/page-settings.php:419
 msgid "Satisfaction survey module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:415
+#: includes/admin/views/page-settings.php:420
 msgid "Show the end-of-conversation survey"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:420
+#: includes/admin/views/page-settings.php:425
 msgid "Human handoff module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:422
+#: includes/admin/views/page-settings.php:427
 msgid "Handoff message"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:429
+#: includes/admin/views/page-settings.php:434
 msgid "Proactive invitation module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:432
+#: includes/admin/views/page-settings.php:437
 msgid "Delay before showing (seconds)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:436
+#: includes/admin/views/page-settings.php:441
 msgid "Invitation text"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:440
+#: includes/admin/views/page-settings.php:445
 msgid "Show the invitation"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:442
+#: includes/admin/views/page-settings.php:447
 msgid "After the delay"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:443
+#: includes/admin/views/page-settings.php:448
 msgid "After scrolling part of the page"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:444
+#: includes/admin/views/page-settings.php:449
 msgid "When the visitor is about to leave (desktop; delay on phones)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:448
+#: includes/admin/views/page-settings.php:453
 msgid "Scroll depth (%)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:453
+#: includes/admin/views/page-settings.php:458
 msgid "Page-specific messages (one per line: path | message)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:455
+#: includes/admin/views/page-settings.php:460
 msgid "The first matching path wins; * matches anything. Pages without a match use the invitation text above. Use \"-\" as the message to show no invitation on those pages."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:461
+#: includes/admin/views/page-settings.php:466
 msgid "Request form module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:462
+#: includes/admin/views/page-settings.php:467
 msgid "The consultation form asks for a name, a phone number and a short description. Choose whether it also offers an email field, and add any custom fields you need. Server-side validation is generated from these definitions."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:464
+#: includes/admin/views/page-settings.php:469
 msgid "Email field"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:466
+#: includes/admin/views/page-settings.php:471
 msgid "Ask for an email address (optional for the visitor)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:467
+#: includes/admin/views/page-settings.php:472
 msgid "Do not ask for an email address"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:476
+#: includes/admin/views/page-settings.php:481
 msgid "Field label"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:477
+#: includes/admin/views/page-settings.php:482
 msgid "Field type"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:482
+#: includes/admin/views/page-settings.php:487
 msgid "Choices, comma separated (dropdown / radio only)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:484
+#: includes/admin/views/page-settings.php:489
 msgid "Placeholder"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:485
+#: includes/admin/views/page-settings.php:490
 msgid "Remove field"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:489
+#: includes/admin/views/page-settings.php:494
 msgid "+ Add field"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:495
+#: includes/admin/views/page-settings.php:500
 msgid "Bale / Telegram bot"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:496
+#: includes/admin/views/page-settings.php:501
 msgid "One bot serves alerts, operator replies and customer chats. Create it with @BotFather (Telegram) or @botfather in Bale, then paste its token here. On servers inside Iran use Bale: Telegram is not reachable from there."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:499
+#: includes/admin/views/page-settings.php:504
 msgid "Messenger platform"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:501
+#: includes/admin/views/page-settings.php:506
 #: includes/core/class-ssc-messenger.php:80
 msgid "Bale"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:502
+#: includes/admin/views/page-settings.php:507
 #: includes/core/class-ssc-messenger.php:80
 msgid "Telegram"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:506
+#: includes/admin/views/page-settings.php:511
 msgid "Bot token"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:507
+#: includes/admin/views/page-settings.php:512
 msgid "A token is stored — type to replace"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:509
+#: includes/admin/views/page-settings.php:514
 msgid "Remove the stored token"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:515
+#: includes/admin/views/page-settings.php:520
 msgid "How messages reach this site"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:517
+#: includes/admin/views/page-settings.php:522
 msgid "Instantly (webhook) — recommended for a public HTTPS site"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:518
+#: includes/admin/views/page-settings.php:523
 msgid "Checked every minute (polling) — for sites the messenger cannot reach"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:520
+#: includes/admin/views/page-settings.php:525
 msgid "With polling, replies also arrive within seconds while the Live chat screen is open."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:525
+#: includes/admin/views/page-settings.php:530
 msgid "Save and connect the bot"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:531
+#: includes/admin/views/page-settings.php:536
 msgid "Live chat module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:532
+#: includes/admin/views/page-settings.php:537
 msgid "Administrators can always answer. Choose other team members who may answer chats, too; each operator can connect their own Bale/Telegram account on the Live chat screen."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:544
+#: includes/admin/views/page-settings.php:549
 msgid "Operators"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:547
+#: includes/admin/views/page-settings.php:552
 msgid "No other team members yet (editors, shop managers…). Administrators answer chats."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:555
+#: includes/admin/views/page-settings.php:560
 msgid "Who gets a waiting chat"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:557
+#: includes/admin/views/page-settings.php:562
 msgid "The available operator with the fewest open chats"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:558
+#: includes/admin/views/page-settings.php:563
 msgid "Everyone is notified; the first to take it answers"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:562
+#: includes/admin/views/page-settings.php:567
 msgid "Offer the request form after (minutes without an answer)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:566
+#: includes/admin/views/page-settings.php:571
 msgid "Keep chat transcripts for (days)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:571
+#: includes/admin/views/page-settings.php:576
 msgid "Greeting when an operator joins ({name} = operator name)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:575
+#: includes/admin/views/page-settings.php:580
 msgid "Message when nobody can answer"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:579
+#: includes/admin/views/page-settings.php:584
 msgid "Saved replies (one per line)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:586
+#: includes/admin/views/page-settings.php:591
 #: includes/modules/class-ssc-module-woo.php:51
 msgid "WooCommerce sales assistant"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:588
+#: includes/admin/views/page-settings.php:593
 msgid "WooCommerce is not active on this site, so this module has nothing to do yet."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:590
+#: includes/admin/views/page-settings.php:595
 msgid "Answer with real prices and stock, and show product cards with \"Add to cart\""
 msgstr ""
 
-#: includes/admin/views/page-settings.php:592
+#: includes/admin/views/page-settings.php:597
 msgid "Products per answer"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:595
+#: includes/admin/views/page-settings.php:600
 msgid "Order tracking: customers check an order with its number and their phone or email"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:597
+#: includes/admin/views/page-settings.php:602
 msgid "Smart discount for hesitating visitors"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:598
+#: includes/admin/views/page-settings.php:603
 msgid "Offer a single-use discount code"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:601
+#: includes/admin/views/page-settings.php:606
 msgid "When to offer it"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:603
+#: includes/admin/views/page-settings.php:608
 msgid "About to leave, or lingering on a product or cart page"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:604
+#: includes/admin/views/page-settings.php:609
 msgid "Only when about to leave (desktop)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:605
+#: includes/admin/views/page-settings.php:610
 msgid "Only when lingering on a product or cart page"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:609
+#: includes/admin/views/page-settings.php:614
 msgid "Lingering means (seconds)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:613
+#: includes/admin/views/page-settings.php:618
 msgid "Discount"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:615
+#: includes/admin/views/page-settings.php:620
 msgid "Percent of the cart"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:616
+#: includes/admin/views/page-settings.php:621
 msgid "Fixed amount off the cart"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:620
+#: includes/admin/views/page-settings.php:625
 msgid "Amount (percent, or in the shop currency)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:624
+#: includes/admin/views/page-settings.php:629
 msgid "Minimum cart total (0 = none)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:628
+#: includes/admin/views/page-settings.php:633
 msgid "Code valid for (hours)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:632
+#: includes/admin/views/page-settings.php:637
 msgid "Most codes per day"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:637
+#: includes/admin/views/page-settings.php:642
 msgid "Offer text (empty = automatic)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:639
+#: includes/admin/views/page-settings.php:644
 msgid "The code is created only when the visitor clicks the offer; each visitor gets one code, each code works once."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:642
+#: includes/admin/views/page-settings.php:647
 msgid "Cart reminder by SMS"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:643
+#: includes/admin/views/page-settings.php:648
 msgid "Let visitors with items in their cart ask for one SMS reminder"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:645
+#: includes/admin/views/page-settings.php:650
 msgid "Needs the SMS module."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:649
+#: includes/admin/views/page-settings.php:654
 msgid "Send the reminder after (hours without an order)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:654
+#: includes/admin/views/page-settings.php:659
 msgid "Reminder text ({site}, {items}, {total}, {cart_url})"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:662
+#: includes/admin/views/page-settings.php:667
 msgid "SMS module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:665
+#: includes/admin/views/page-settings.php:670
 msgid "SMS panel"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:673
+#: includes/admin/views/page-settings.php:678
 msgid "Sender line number"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:677
+#: includes/admin/views/page-settings.php:682
 msgid "Username (Melipayamak only)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:681
+#: includes/admin/views/page-settings.php:686
 msgid "API key (Melipayamak: password)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:685
+#: includes/admin/views/page-settings.php:690
 msgid "Text me when a new request or report arrives"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:688
+#: includes/admin/views/page-settings.php:693
 msgid "My mobile number"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:692
+#: includes/admin/views/page-settings.php:697
 msgid "Send a test SMS to"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:699
+#: includes/admin/views/page-settings.php:704
 msgid "Save and send a test SMS"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:704
+#: includes/admin/views/page-settings.php:709
 msgid "Messenger bot module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:705
+#: includes/admin/views/page-settings.php:710
 msgid "Customers open your bot and chat with the assistant: same knowledge, same rules and limits as the website chat. Share the bot link on your site, Instagram bio and invoices."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:709
+#: includes/admin/views/page-settings.php:714
 msgid "Your bot:"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:711
+#: includes/admin/views/page-settings.php:716
 msgid "Add the bot token in the \"Bale / Telegram bot\" card, then press \"Save and connect the bot\"."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:714
+#: includes/admin/views/page-settings.php:719
 msgid "Welcome message for /start (empty = the website welcome text)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:718
+#: includes/admin/views/page-settings.php:723
 msgid "With Live chat on, these chats appear in the Live chat inbox and customers can ask for a person with the button or /human."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:724
+#: includes/admin/views/page-settings.php:729
 msgid "Notifications module"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:726
+#: includes/admin/views/page-settings.php:731
 msgid "Chat / channel ID for alerts"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:728
+#: includes/admin/views/page-settings.php:733
 msgid "New requests are posted here through the bot configured in the \"Bale / Telegram bot\" card."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:730
+#: includes/admin/views/page-settings.php:735
 msgid "Also send email notifications"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:732
+#: includes/admin/views/page-settings.php:737
 msgid "Email recipient (empty = site admin)"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:740
+#: includes/admin/views/page-settings.php:745
 msgid "Save settings"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:743
+#: includes/admin/views/page-settings.php:748
 msgid "Clear caches and decide what happens to your data when the plugin is deleted."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:745
+#: includes/admin/views/page-settings.php:750
 msgid "To back up everything you set up, or to move it to another website, use Export & Import."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:745
+#: includes/admin/views/page-settings.php:750
 msgid "Open Export & Import"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:748
+#: includes/admin/views/page-settings.php:753
 msgid "Clear cached AI answers"
 msgstr ""
 
-#: includes/admin/views/page-settings.php:755
+#: includes/admin/views/page-settings.php:760
 msgid "Remove ALL plugin data (settings, knowledge, requests, ADR cases, logs) when the plugin is deleted. Set this policy before deactivation; an inactive plugin cannot display a deletion prompt. Keep this off to preserve your data."
 msgstr ""
 
-#: includes/admin/views/page-settings.php:757
+#: includes/admin/views/page-settings.php:762
 msgid "Save data policy"
 msgstr ""
 
@@ -4170,7 +4182,7 @@ msgid "SERIOUS case"
 msgstr ""
 
 #: includes/admin/views/pharma-case.php:40
-#: includes/modules/class-ssc-module-pharma.php:575
+#: includes/modules/class-ssc-module-pharma.php:633
 msgid "Reporter role"
 msgstr ""
 
@@ -4179,12 +4191,12 @@ msgid "Patient age"
 msgstr ""
 
 #: includes/admin/views/pharma-case.php:45
-#: includes/modules/class-ssc-module-pharma.php:594
+#: includes/modules/class-ssc-module-pharma.php:652
 msgid "Patient sex"
 msgstr ""
 
 #: includes/admin/views/pharma-case.php:52
-#: includes/modules/class-ssc-module-pharma.php:601
+#: includes/modules/class-ssc-module-pharma.php:659
 msgid "Suspected product"
 msgstr ""
 
@@ -4679,14 +4691,14 @@ msgstr ""
 
 #: includes/core/class-ssc-ajax.php:149
 #: includes/core/class-ssc-rest.php:536
-#: includes/modules/class-ssc-module-leads.php:311
-#: includes/modules/class-ssc-module-pharma.php:1056
+#: includes/modules/class-ssc-module-leads.php:356
+#: includes/modules/class-ssc-module-pharma.php:1114
 msgid "ADR reporting is disabled on this site."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:154
 #: includes/core/class-ssc-rest.php:541
-#: includes/modules/class-ssc-module-leads.php:318
+#: includes/modules/class-ssc-module-leads.php:363
 msgid "Form submission is disabled on this site."
 msgstr ""
 
@@ -4742,15 +4754,27 @@ msgstr ""
 msgid "every day"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:324
+#: includes/core/class-ssc-chat-engine.php:301
+msgid "(The answer was cut short because it reached the length limit. Ask me to continue to get the rest.)"
+msgstr ""
+
+#: includes/core/class-ssc-chat-engine.php:304
+msgid "(The provider stopped this answer under its content policy, so it may be incomplete.)"
+msgstr ""
+
+#: includes/core/class-ssc-chat-engine.php:306
+msgid "(The answer was interrupted. Ask again to continue.)"
+msgstr ""
+
+#: includes/core/class-ssc-chat-engine.php:369
 msgid "Admin-only notice: the AI could not answer."
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:324
+#: includes/core/class-ssc-chat-engine.php:369
 msgid "Provider detail:"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:336
+#: includes/core/class-ssc-chat-engine.php:381
 msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
 msgstr ""
 
@@ -4878,146 +4902,154 @@ msgid "Which one?"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:304
-#: includes/core/class-ssc-schema.php:583
-#: includes/core/class-ssc-schema.php:607
+#: includes/core/class-ssc-schema.php:601
+#: includes/core/class-ssc-schema.php:625
 msgid "Consultation request"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:305
-msgid "Email (optional)"
+msgid "Continue the answer"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:306
-msgid "Report a side effect"
+msgid "Please continue your last answer from where it stopped."
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:307
-msgid "More details (optional)"
+msgid "Email (optional)"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:308
-msgid "View brochure"
+msgid "Report a side effect"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:309
-msgid "Call us"
+msgid "More details (optional)"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:310
-msgid "Listen to this answer"
+msgid "View brochure"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:311
-msgid "Stop audio"
+msgid "Call us"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:312
-msgid "Speak"
+msgid "Listen to this answer"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:313
-msgid "Listening…"
+msgid "Stop audio"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:314
-msgid "Talk to a human expert"
+msgid "Speak"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:315
-msgid "How was this conversation?"
+msgid "Listening…"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:316
-msgid "Thanks for your rating 🙏"
+msgid "Talk to a human expert"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:317
-msgid "Skip"
+msgid "How was this conversation?"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:318
-msgid "Copy answer"
+msgid "Thanks for your rating 🙏"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:319
+msgid "Skip"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:320
-msgid "Sources:"
-msgstr ""
-
-#: includes/core/class-ssc-frontend.php:321
-msgid "Your consent is required to continue."
+msgid "Copy answer"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:322
-msgid "Privacy policy"
+msgid "Sources:"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:323
-msgid "Full name"
+msgid "Your consent is required to continue."
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:324
-msgid "Phone number"
+msgid "Privacy policy"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:325
-msgid "Good answer"
+msgid "Full name"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:326
-msgid "Poor answer"
+msgid "Phone number"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:327
-msgid "Your message"
+msgid "Good answer"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:328
-msgid "Submit"
+msgid "Poor answer"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:329
-msgid "Received ✓ We will contact you soon."
+msgid "Your message"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:330
-msgid "The form could not be submitted. Please try again."
+msgid "Submit"
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:331
-msgid "Related questions:"
+msgid "Received ✓ We will contact you soon."
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:332
+msgid "The form could not be submitted. Please try again."
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:333
+msgid "Related questions:"
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:334
 msgid "Typing…"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:335
+#: includes/core/class-ssc-frontend.php:337
 msgid "Press Alt+C to open chat"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:336
+#: includes/core/class-ssc-frontend.php:338
 msgid "Previous conversations"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:337
+#: includes/core/class-ssc-frontend.php:339
 msgid "No previous conversations yet."
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:338
+#: includes/core/class-ssc-frontend.php:340
 msgid "Back to chat"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:339
+#: includes/core/class-ssc-frontend.php:341
 msgid "Delete this conversation"
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:340
+#: includes/core/class-ssc-frontend.php:342
 #: includes/core/class-ssc-rest.php:103
 #: includes/core/class-ssc-rest.php:124
 msgid "This conversation is no longer available."
 msgstr ""
 
-#: includes/core/class-ssc-frontend.php:341
+#: includes/core/class-ssc-frontend.php:343
 msgid "Conversations are saved to improve our answers."
 msgstr ""
 
@@ -5081,15 +5113,23 @@ msgstr ""
 msgid "The provider returned an unexpected response format."
 msgstr ""
 
+#: includes/core/class-ssc-http.php:281
+msgid "The model used its whole answer budget before it wrote anything. Raise \"Max answer length\", or choose a model that thinks less before answering."
+msgstr ""
+
 #: includes/core/class-ssc-http.php:282
+msgid "The provider stopped the answer under its content policy."
+msgstr ""
+
+#: includes/core/class-ssc-http.php:284
 msgid "Unknown connection error."
 msgstr ""
 
-#: includes/core/class-ssc-input.php:164
+#: includes/core/class-ssc-input.php:194
 msgid "I consent to the processing of my contact and health information for safety review and follow-up."
 msgstr ""
 
-#: includes/core/class-ssc-input.php:165
+#: includes/core/class-ssc-input.php:195
 msgid "I consent to the processing of my contact information and message for follow-up."
 msgstr ""
 
@@ -5183,15 +5223,23 @@ msgstr ""
 msgid "Server conversation history is optional and follows the configured retention policy. Outside pharmaceutical mode, the browser may keep a short-lived conversation and the server may cache answers. In pharmaceutical mode these two caches are disabled; submitted safety reports are still stored for review. Deleting a browser conversation does not delete server records. Contact the site owner about access or deletion requests."
 msgstr ""
 
-#: includes/core/class-ssc-provider.php:202
+#: includes/core/class-ssc-provider.php:201
+msgid "The model used its whole answer budget before writing an answer. Raise \"Max answer length\" in AI Connection, or pick a model that thinks less before answering."
+msgstr ""
+
+#: includes/core/class-ssc-provider.php:207
+msgid "The provider stopped this answer under its content policy."
+msgstr ""
+
+#: includes/core/class-ssc-provider.php:265
 msgid "No model selected."
 msgstr ""
 
-#: includes/core/class-ssc-provider.php:255
+#: includes/core/class-ssc-provider.php:321
 msgid "The provider replied 200 but no generated text was found in the response."
 msgstr ""
 
-#: includes/core/class-ssc-provider.php:303
+#: includes/core/class-ssc-provider.php:370
 msgid "No API key provided."
 msgstr ""
 
@@ -5243,47 +5291,47 @@ msgstr ""
 msgid "The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again."
 msgstr ""
 
-#: includes/core/class-ssc-schema.php:606
+#: includes/core/class-ssc-schema.php:624
 #: includes/modules/class-ssc-module-pharma.php:152
 msgid "Adverse drug reaction report"
 msgstr ""
 
-#: includes/core/class-ssc-schema.php:802
+#: includes/core/class-ssc-schema.php:820
 msgid "Submission deleted"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1144
-#: includes/modules/class-ssc-module-pharma.php:714
+#: includes/core/class-ssc-settings.php:1146
+#: includes/modules/class-ssc-module-pharma.php:772
 msgid "Short text"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1145
-#: includes/modules/class-ssc-module-pharma.php:715
+#: includes/core/class-ssc-settings.php:1147
+#: includes/modules/class-ssc-module-pharma.php:773
 msgid "Long text"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1147
+#: includes/core/class-ssc-settings.php:1149
 msgid "Email"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1148
-#: includes/modules/class-ssc-module-pharma.php:716
+#: includes/core/class-ssc-settings.php:1150
+#: includes/modules/class-ssc-module-pharma.php:774
 msgid "Number"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1149
+#: includes/core/class-ssc-settings.php:1151
 msgid "Dropdown"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1150
+#: includes/core/class-ssc-settings.php:1152
 msgid "Single choice"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1151
+#: includes/core/class-ssc-settings.php:1153
 msgid "Checkbox"
 msgstr ""
 
-#: includes/core/class-ssc-settings.php:1245
+#: includes/core/class-ssc-settings.php:1247
 msgid "About the organization"
 msgstr ""
 
@@ -5309,10 +5357,6 @@ msgstr ""
 
 #: includes/core/class-ssc-setup.php:398
 msgid "Privacy disclosures acknowledged"
-msgstr ""
-
-#: includes/core/class-ssc-stream.php:132
-msgid "(The answer was interrupted. Ask again to continue.)"
 msgstr ""
 
 #: includes/core/class-ssc-suggest.php:65
@@ -5580,32 +5624,37 @@ msgstr ""
 msgid "This file comes from a newer version of NexaChatAI. Update the plugin and try again."
 msgstr ""
 
-#. translators: 1: section name, 2: row number, 3: field name.
+#. translators: %s: setting name.
 #: includes/core/class-ssc-transfer.php:365
+msgid "This file cannot be imported: the setting “%s” holds a value of the wrong kind (a list where text belongs, or the other way round). Nothing was changed."
+msgstr ""
+
+#. translators: 1: section name, 2: row number, 3: field name.
+#: includes/core/class-ssc-transfer.php:375
 msgid "This file cannot be imported: %1$s, row %2$d has an invalid value in the field “%3$s”. Nothing was changed."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:536
+#: includes/core/class-ssc-transfer.php:593
 msgid "Not in the file."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:621
+#: includes/core/class-ssc-transfer.php:678
 msgid "The settings that decide where information is sent (AI endpoint, notification recipients) were kept as they were: they are imported only together with the API keys."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:664
+#: includes/core/class-ssc-transfer.php:721
 msgid "Some modules could not be switched on because a module they need is missing."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:828
+#: includes/core/class-ssc-transfer.php:885
 msgid "No password was entered, so the API keys were not imported."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:831
+#: includes/core/class-ssc-transfer.php:888
 msgid "The password is wrong (or the keys in the file are damaged), so the API keys were not imported. Everything else was."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:847
+#: includes/core/class-ssc-transfer.php:904
 msgid "Some keys could not be encrypted on this server and were not saved."
 msgstr ""
 
@@ -5613,7 +5662,7 @@ msgstr ""
 msgid "OpenAI-compatible endpoint"
 msgstr ""
 
-#: includes/core/providers/class-ssc-provider-gemini.php:206
+#: includes/core/providers/class-ssc-provider-gemini.php:217
 msgid "The model blocked the test prompt for safety reasons."
 msgstr ""
 
@@ -5717,50 +5766,66 @@ msgstr ""
 msgid "Turn conversations into actionable requests with clean, validated contact data."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:178
+#: includes/modules/class-ssc-module-leads.php:223
 msgid "Of course. Tap the button below, leave your name and phone number with a short description of what you need, and our team will contact you."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:314
+#: includes/modules/class-ssc-module-leads.php:359
 msgid "Invalid submission type."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:341
+#: includes/modules/class-ssc-module-leads.php:384
 msgid "Please enter a valid email address, or leave it empty."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:344
+#: includes/modules/class-ssc-module-leads.php:387
 msgid "Please enter your name (2-80 characters)."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:353
+#: includes/modules/class-ssc-module-leads.php:396
 msgid "Please enter a valid phone number."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:356
+#: includes/modules/class-ssc-module-leads.php:399
 msgid "Please describe your request (10-1000 characters)."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:370
+#: includes/modules/class-ssc-module-leads.php:413
 msgid "Your consent is required to submit this form."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:411
+#: includes/modules/class-ssc-module-leads.php:454
 msgid "The request could not be stored. Please try again."
 msgstr ""
 
 #. translators: %s: field label.
-#: includes/modules/class-ssc-module-leads.php:468
-#: includes/modules/class-ssc-module-pharma.php:1114
-msgid "The field \"%s\" is required."
+#: includes/modules/class-ssc-module-leads.php:486
+msgid "The field \"%s\" has an invalid value."
 msgstr ""
 
 #. translators: %s: field label.
-#: includes/modules/class-ssc-module-leads.php:472
+#: includes/modules/class-ssc-module-leads.php:494
 msgid "The field \"%s\" must be a valid email."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:495
+#. translators: %s: field label.
+#: includes/modules/class-ssc-module-leads.php:505
+#: includes/modules/class-ssc-module-pharma.php:1224
+msgid "The field \"%s\" must be a number."
+msgstr ""
+
+#. translators: %s: field label.
+#: includes/modules/class-ssc-module-leads.php:526
+msgid "The field \"%s\" must be one of the choices."
+msgstr ""
+
+#. translators: %s: field label.
+#: includes/modules/class-ssc-module-leads.php:532
+#: includes/modules/class-ssc-module-pharma.php:1172
+msgid "The field \"%s\" is required."
+msgstr ""
+
+#: includes/modules/class-ssc-module-leads.php:555
 msgid "Invalid nonce."
 msgstr ""
 
@@ -6085,268 +6150,263 @@ msgstr ""
 msgid "This may be a medical emergency. Stop and seek immediate medical help now — call your local emergency number or go to the nearest emergency department. Do not wait for a reply here."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:580
+#: includes/modules/class-ssc-module-pharma.php:638
 msgid "Reporter name"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:590
+#: includes/modules/class-ssc-module-pharma.php:648
 msgid "Patient age (years)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:604
+#: includes/modules/class-ssc-module-pharma.php:662
 msgid "Product name"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:609
+#: includes/modules/class-ssc-module-pharma.php:667
 msgid "Batch / lot number"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:613
+#: includes/modules/class-ssc-module-pharma.php:671
 msgid "Dose and frequency used"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:617
+#: includes/modules/class-ssc-module-pharma.php:675
 msgid "Route of administration"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:624
+#: includes/modules/class-ssc-module-pharma.php:682
 msgid "Suspected reaction"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:627
+#: includes/modules/class-ssc-module-pharma.php:685
 msgid "What happened? Describe the reaction and dates."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:632
+#: includes/modules/class-ssc-module-pharma.php:690
 msgid "Clinical severity (how it felt)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:637
+#: includes/modules/class-ssc-module-pharma.php:695
 msgid "Regulatory seriousness criteria (any that apply)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:640
+#: includes/modules/class-ssc-module-pharma.php:698
 msgid "Resulted in death"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:641
+#: includes/modules/class-ssc-module-pharma.php:699
 msgid "Life-threatening"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:642
+#: includes/modules/class-ssc-module-pharma.php:700
 msgid "Required or prolonged hospitalization"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:643
+#: includes/modules/class-ssc-module-pharma.php:701
 msgid "Persistent or significant disability"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:644
+#: includes/modules/class-ssc-module-pharma.php:702
 msgid "Congenital anomaly or birth defect"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:645
+#: includes/modules/class-ssc-module-pharma.php:703
 msgid "Other medically important event"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:649
+#: includes/modules/class-ssc-module-pharma.php:707
 msgid "Outcome so far"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:654
+#: includes/modules/class-ssc-module-pharma.php:712
 msgid "Other medicines taken at the same time"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:700
+#: includes/modules/class-ssc-module-pharma.php:758
 msgid "Short — essentials only (5 questions)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:701
+#: includes/modules/class-ssc-module-pharma.php:759
 msgid "Standard — essentials plus patient and outcome"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:702
+#: includes/modules/class-ssc-module-pharma.php:760
 msgid "Full — every question (most complete reports)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:703
+#: includes/modules/class-ssc-module-pharma.php:761
 msgid "Custom — choose each question"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:717
+#: includes/modules/class-ssc-module-pharma.php:775
 msgid "Dropdown (one choice)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:718
+#: includes/modules/class-ssc-module-pharma.php:776
 msgid "Checkboxes (several choices)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:960
+#: includes/modules/class-ssc-module-pharma.php:1018
 msgid "Patient / consumer"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:961
+#: includes/modules/class-ssc-module-pharma.php:1019
 msgid "Physician"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:962
+#: includes/modules/class-ssc-module-pharma.php:1020
 msgid "Pharmacist"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:963
+#: includes/modules/class-ssc-module-pharma.php:1021
 msgid "Nurse"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:964
+#: includes/modules/class-ssc-module-pharma.php:1022
 msgid "Other health professional"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:967
+#: includes/modules/class-ssc-module-pharma.php:1025
 msgid "Female"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:968
+#: includes/modules/class-ssc-module-pharma.php:1026
 msgid "Male"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:969
-#: includes/modules/class-ssc-module-pharma.php:980
+#: includes/modules/class-ssc-module-pharma.php:1027
+#: includes/modules/class-ssc-module-pharma.php:1038
 msgid "Other"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:970
-#: includes/modules/class-ssc-module-pharma.php:981
-#: includes/modules/class-ssc-module-pharma.php:995
+#: includes/modules/class-ssc-module-pharma.php:1028
+#: includes/modules/class-ssc-module-pharma.php:1039
+#: includes/modules/class-ssc-module-pharma.php:1053
 msgid "Unknown"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:973
+#: includes/modules/class-ssc-module-pharma.php:1031
 msgid "Oral"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:974
+#: includes/modules/class-ssc-module-pharma.php:1032
 msgid "Topical"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:975
+#: includes/modules/class-ssc-module-pharma.php:1033
 msgid "Intravenous"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:976
+#: includes/modules/class-ssc-module-pharma.php:1034
 msgid "Intramuscular"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:977
+#: includes/modules/class-ssc-module-pharma.php:1035
 msgid "Subcutaneous"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:978
+#: includes/modules/class-ssc-module-pharma.php:1036
 msgid "Inhalation"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:979
+#: includes/modules/class-ssc-module-pharma.php:1037
 msgid "Ophthalmic"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:984
+#: includes/modules/class-ssc-module-pharma.php:1042
 msgid "Mild"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:985
+#: includes/modules/class-ssc-module-pharma.php:1043
 msgid "Moderate"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:986
+#: includes/modules/class-ssc-module-pharma.php:1044
 msgid "Severe"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:989
+#: includes/modules/class-ssc-module-pharma.php:1047
 msgid "Recovered"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:990
+#: includes/modules/class-ssc-module-pharma.php:1048
 msgid "Recovering"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:991
+#: includes/modules/class-ssc-module-pharma.php:1049
 msgid "Not recovered"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:992
+#: includes/modules/class-ssc-module-pharma.php:1050
 msgid "Sequelae / permanent impairment"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:993
+#: includes/modules/class-ssc-module-pharma.php:1051
 msgid "Hospitalized"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:994
+#: includes/modules/class-ssc-module-pharma.php:1052
 msgid "Death"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1072
+#: includes/modules/class-ssc-module-pharma.php:1130
 msgid "Please enter the reporter name (2-80 characters)."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1076
+#: includes/modules/class-ssc-module-pharma.php:1134
 msgid "Please enter a valid contact phone."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1079
+#: includes/modules/class-ssc-module-pharma.php:1137
 msgid "Please describe the reaction (10-10000 characters)."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1087
+#: includes/modules/class-ssc-module-pharma.php:1145
 msgid "Your consent is required to submit a safety report."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1152
+#: includes/modules/class-ssc-module-pharma.php:1210
 msgid "Unknown product. Please choose from the list."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1163
-#: includes/modules/class-ssc-module-pharma.php:1169
+#: includes/modules/class-ssc-module-pharma.php:1221
+#: includes/modules/class-ssc-module-pharma.php:1227
 msgid "Patient age must be between 0 and 130 years."
 msgstr ""
 
-#. translators: %s: field label.
-#: includes/modules/class-ssc-module-pharma.php:1166
-msgid "The field \"%s\" must be a number."
-msgstr ""
-
-#: includes/modules/class-ssc-module-pharma.php:1219
+#: includes/modules/class-ssc-module-pharma.php:1277
 msgid "The report could not be stored. Please try again."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1223
+#: includes/modules/class-ssc-module-pharma.php:1281
 msgid "ADR report received"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1294
+#: includes/modules/class-ssc-module-pharma.php:1352
 msgid "Enter a valid pharmacovigilance contact email."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1402
+#: includes/modules/class-ssc-module-pharma.php:1460
 msgid "Case not found."
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1450
+#: includes/modules/class-ssc-module-pharma.php:1508
 msgid "Reporter PII removed (privacy request)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1478
+#: includes/modules/class-ssc-module-pharma.php:1536
 msgid "New (awaiting triage)"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1479
+#: includes/modules/class-ssc-module-pharma.php:1537
 msgid "Under assessment"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1480
+#: includes/modules/class-ssc-module-pharma.php:1538
 msgid "Follow-up requested"
 msgstr ""
 
-#: includes/modules/class-ssc-module-pharma.php:1491
+#: includes/modules/class-ssc-module-pharma.php:1549
 msgid "You do not have permission to access case records."
 msgstr ""
 

@@ -438,4 +438,5 @@ require __DIR__ . '/transfer.php';
 require __DIR__ . '/screens.php';
 require __DIR__ . '/audit.php';
 require __DIR__ . '/consult.php';
+require __DIR__ . '/audit2.php';
 echo "\n$checks integration checks passed.\n";

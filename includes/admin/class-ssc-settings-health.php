@@ -24,7 +24,7 @@ class SSC_Settings_Health {
 	 *     @type bool $https        The site uses HTTPS.
 	 *     @type bool $crypto       Keys can be encrypted (OpenSSL and AUTH_KEY).
 	 *     @type bool $behind_proxy A proxy header (e.g. Cloudflare) reached this request.
-	 *     @type bool $proxy_trusted This request came from a proxy the site believes (listed or on a private network).
+	 *     @type bool $proxy_trusted This request came from a proxy the site believes (listed, this server, or a private network when allowed).
 	 *     @type bool $forms        A module that collects contact data is on (requests or safety reports).
 	 *     @type bool $history      Conversation history is on.
 	 * }

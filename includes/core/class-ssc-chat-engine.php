@@ -253,12 +253,57 @@ class SSC_Chat_Engine {
 		self::record_recovery();
 		$reply             = $result['text'];
 		$this->web_sources = isset( $result['sources'] ) && is_array( $result['sources'] ) ? $result['sources'] : array();
-		if ( $cache_enabled && $cache_key && empty( $result['partial'] ) ) {
+
+		/*
+		 * An answer the model did not finish is never presented as a normal
+		 * one: it is marked in the text (every channel and the log see it),
+		 * flagged for the widget, and kept out of the shared cache. Going on
+		 * is the visitor's choice; nothing is requested automatically.
+		 */
+		$incomplete = self::incomplete_kind( $result );
+		if ( '' !== $incomplete ) {
+			$this->flags['incomplete'] = $incomplete;
+			$reply                     = rtrim( $reply ) . "\n\n" . self::incomplete_note( $incomplete );
+		}
+		if ( $cache_enabled && $cache_key && '' === $incomplete ) {
 			$ttl = (int) apply_filters( 'ssc_ai_cache_ttl', 6 * HOUR_IN_SECONDS );
 			set_transient( $cache_key, $reply, $ttl );
 		}
 		$this->last_source = 'ai';
 		return $reply;
+	}
+
+	/**
+	 * How an answer fell short, from the provider's end reason (PURE).
+	 *
+	 * @param array $result Provider envelope: finish, partial.
+	 * @return string '' when it ended normally; length|filtered|interrupted.
+	 */
+	public static function incomplete_kind( $result ) {
+		$finish = isset( $result['finish'] ) ? (string) $result['finish'] : '';
+		if ( 'filtered' === $finish ) {
+			return 'filtered';
+		}
+		if ( ! empty( $result['partial'] ) || 'error' === $finish ) {
+			return 'interrupted';
+		}
+		return 'length' === $finish ? 'length' : '';
+	}
+
+	/**
+	 * The words that mark an unfinished answer for the visitor.
+	 *
+	 * @param string $kind length|filtered|interrupted.
+	 * @return string
+	 */
+	public static function incomplete_note( $kind ) {
+		if ( 'length' === $kind ) {
+			return __( '(The answer was cut short because it reached the length limit. Ask me to continue to get the rest.)', 'nexachat-ai' );
+		}
+		if ( 'filtered' === $kind ) {
+			return __( '(The provider stopped this answer under its content policy, so it may be incomplete.)', 'nexachat-ai' );
+		}
+		return __( '(The answer was interrupted. Ask again to continue.)', 'nexachat-ai' );
 	}
 
 	/**
@@ -664,7 +709,15 @@ class SSC_Chat_Engine {
 				$server[ $key ] = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
 			}
 		}
-		return SSC_Client_IP::resolve( $server, $header, SSC_Client_IP::parse_list( $proxies ), true, $allowed );
+		/**
+		 * Believe a proxy on a private network (a load balancer, a container network)?
+		 * Off by default: only the site owner knows whether the server can be reached
+		 * from that network other than through the proxy.
+		 *
+		 * @param bool $trust From Settings.
+		 */
+		$private = (bool) apply_filters( 'ssc_trust_private_proxies', 'yes' === SSC_Settings::get( 'trust_private_proxies', 'no' ) );
+		return SSC_Client_IP::resolve( $server, $header, SSC_Client_IP::parse_list( $proxies ), $private, $allowed );
 	}
 
 	/**

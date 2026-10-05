@@ -73,14 +73,53 @@ class SSC_Knowledge_Polarity {
 	}
 
 	/**
-	 * Numbers a text mentions (as ASCII digits, which normalize() produces).
+	 * The quantities a text mentions, in the order written: each number with the
+	 * start of the word that follows it (its unit or what it counts: "10 users",
+	 * "5mg", "2 times"). Digits are ASCII, which normalize() produces.
 	 *
 	 * @param string $normalized Normalized text.
-	 * @return string[]
+	 * @return array[] Each: number (no leading zeros), unit (first three letters, or '').
 	 */
-	public static function numbers( $normalized ) {
-		preg_match_all( '/(?<![\p{L}\p{N}])\d+(?![\p{L}\p{N}])/u', (string) $normalized, $found );
-		return array_values( array_unique( $found[0] ) );
+	public static function quantities( $normalized ) {
+		preg_match_all( '/(?<![\p{L}\p{N}])(\d+)(?:\s*(\p{L}+))?/u', (string) $normalized, $found, PREG_SET_ORDER );
+		$out = array();
+		foreach ( $found as $match ) {
+			$number = ltrim( $match[1], '0' );
+			$out[]  = array(
+				'' === $number ? '0' : $number,
+				isset( $match[2] ) ? mb_substr( $match[2], 0, 3 ) : '',
+			);
+		}
+		return $out;
+	}
+
+	/**
+	 * Do the quantities of two texts differ? Same numbers in a different order,
+	 * a different count of numbers, or the same number counting something else
+	 * all differ. Only checked when both texts have numbers.
+	 *
+	 * @param string $a Normalized text.
+	 * @param string $b Normalized text.
+	 * @return bool
+	 */
+	public static function quantities_differ( $a, $b ) {
+		$qa = self::quantities( $a );
+		$qb = self::quantities( $b );
+		if ( ! $qa || ! $qb ) {
+			return false;
+		}
+		if ( count( $qa ) !== count( $qb ) ) {
+			return true;
+		}
+		foreach ( $qa as $i => $one ) {
+			if ( $one[0] !== $qb[ $i ][0] ) {
+				return true;
+			}
+			if ( '' !== $one[1] && '' !== $qb[ $i ][1] && $one[1] !== $qb[ $i ][1] ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -178,9 +217,7 @@ class SSC_Knowledge_Polarity {
 				return 'subject';
 			}
 		}
-		$numbers_a = self::numbers( $a );
-		$numbers_b = self::numbers( $b );
-		if ( $numbers_a && $numbers_b && ! array_intersect( $numbers_a, $numbers_b ) ) {
+		if ( self::quantities_differ( $a, $b ) ) {
 			return 'number';
 		}
 		return '';

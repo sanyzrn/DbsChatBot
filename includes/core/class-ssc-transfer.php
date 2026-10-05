@@ -357,6 +357,16 @@ class SSC_Transfer {
 			return new WP_Error( 'ssc_transfer_version', __( 'This file comes from a newer version of NexaChatAI. Update the plugin and try again.', 'nexachat-ai' ) );
 		}
 		$shape = self::shape_problem( $bundle );
+		if ( null !== $shape && 'settings' === $shape['section'] ) {
+			return new WP_Error(
+				'ssc_transfer_shape',
+				sprintf(
+					/* translators: %s: setting name. */
+					__( 'This file cannot be imported: the setting “%s” holds a value of the wrong kind (a list where text belongs, or the other way round). Nothing was changed.', 'nexachat-ai' ),
+					$shape['field']
+				)
+			);
+		}
 		if ( null !== $shape ) {
 			return new WP_Error(
 				'ssc_transfer_shape',
@@ -413,7 +423,54 @@ class SSC_Transfer {
 				);
 			}
 		}
+		if ( array_key_exists( 'settings', $bundle ) && null !== $bundle['settings'] ) {
+			$field = self::settings_problem( $bundle['settings'] );
+			if ( '' !== $field ) {
+				return array(
+					'section' => 'settings',
+					'row'     => 0,
+					'field'   => $field,
+				);
+			}
+		}
 		return null;
+	}
+
+	/**
+	 * The first setting of the file whose value is not the kind of value that
+	 * setting holds: a list where text belongs, text where a list belongs, a
+	 * word where a number belongs. Only settings that would be applied are
+	 * looked at; unknown and site-bound ones are ignored as before.
+	 *
+	 * @param mixed $values The settings section.
+	 * @return string The setting's name, '(settings)' when the section is not an object, '' when all is well.
+	 */
+	protected static function settings_problem( $values ) {
+		if ( ! is_array( $values ) ) {
+			return '(settings)';
+		}
+		$skip  = self::site_bound_settings();
+		$known = SSC_Settings::defaults();
+		foreach ( $values as $key => $value ) {
+			$key = (string) $key;
+			if ( ! array_key_exists( $key, $known ) || in_array( $key, $skip, true ) ) {
+				continue;
+			}
+			$default = $known[ $key ];
+			if ( is_array( $default ) ) {
+				$fits = is_array( $value );
+			} elseif ( is_int( $default ) || is_float( $default ) ) {
+				$fits = is_int( $value ) || is_float( $value ) || ( is_string( $value ) && is_numeric( trim( $value ) ) );
+			} elseif ( is_bool( $default ) ) {
+				$fits = is_bool( $value ) || is_int( $value ) || is_string( $value );
+			} else {
+				$fits = is_string( $value ) || is_int( $value ) || is_float( $value );
+			}
+			if ( ! $fits ) {
+				return preg_replace( '/[^A-Za-z0-9_\-]/', '', $key );
+			}
+		}
+		return '';
 	}
 
 	/**

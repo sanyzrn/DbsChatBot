@@ -81,6 +81,36 @@ class SSC_Input {
 	}
 
 	/**
+	 * An email address exactly as typed, or a refusal. Nothing is repaired: an
+	 * address that WordPress would only accept after changing it (a space inside,
+	 * a stray character) is refused, so a wrong address is never stored as a
+	 * different one. Only outer whitespace is dropped.
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string|false The address; '' when nothing was typed; false when it is not a valid address (a list or an object included).
+	 */
+	public static function strict_email( $value ) {
+		if ( null === $value ) {
+			return '';
+		}
+		if ( ! is_scalar( $value ) ) {
+			return false;
+		}
+		$typed = trim( (string) $value );
+		if ( '' === $typed ) {
+			return '';
+		}
+		if ( mb_strlen( $typed ) > 191 || preg_match( '/[\x00-\x1F\x7F\s]/u', $typed ) ) {
+			return false;
+		}
+		$valid = is_email( $typed );
+		if ( ! $valid || sanitize_email( $typed ) !== $typed ) {
+			return false;
+		}
+		return $typed;
+	}
+
+	/**
 	 * Chat message text: keeps what the visitor actually typed.
 	 *
 	 * WordPress sanitize_textarea_field() strips anything that looks like a tag, so a

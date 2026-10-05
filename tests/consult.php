@@ -33,7 +33,7 @@ $res = $leads_module->handle_submission( array_merge( $valid, array( 'phone' => 
 check( is_wp_error( $res ), 'Consultation: a missing phone is refused even with an email' );
 check( $count_before === (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . SSC_Schema::table_name() ), 'Consultation: refused requests are not stored' );
 $res = $leads_module->handle_submission( array_merge( $valid, array( 'email' => array( 'a@b.ir' ) ) ), '203.0.113.60' );
-check( ! is_wp_error( $res ) && '' === SSC_Module_Leads::email_of( $last() ), 'Consultation: a list in the email field is ignored, not a fatal error' );
+check( is_wp_error( $res ) && $count_before === (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . SSC_Schema::table_name() ), 'Consultation: a list in the email field is refused, not turned into an empty email' );
 
 // The site owner can switch the email field off.
 SSC_Settings::update( array( 'consult_email' => 'off' ) );

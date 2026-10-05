@@ -278,6 +278,8 @@ class SSC_HTTP {
 			'timeout'    => __( 'The provider took too long to respond. Try a faster model or test again.', 'nexachat-ai' ),
 			'endpoint'   => __( 'The endpoint address is invalid or not allowed.', 'nexachat-ai' ),
 			'malformed'  => __( 'The provider returned an unexpected response format.', 'nexachat-ai' ),
+			'length'     => __( 'The model used its whole answer budget before it wrote anything. Raise "Max answer length", or choose a model that thinks less before answering.', 'nexachat-ai' ),
+			'filtered'   => __( 'The provider stopped the answer under its content policy.', 'nexachat-ai' ),
 		);
 		return isset( $map[ $code ] ) ? $map[ $code ] : __( 'Unknown connection error.', 'nexachat-ai' );
 	}
