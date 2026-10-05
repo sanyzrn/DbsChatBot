@@ -9,7 +9,7 @@ The workflow runs for three reasons:
   a plugin version that has not been released yet.
 
 So a merge that does not change the version publishes nothing; a merge that
-bumps it (header, constant, Stable tag and a changelog section) is released as
+bumps it (header, constant, Stable tag, the README version badge and a changelog section) is released as
 soon as CI is green. Run with the event details in the environment (see main());
 decide() is pure so it can be tested without GitHub.
 """
@@ -24,16 +24,19 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def read_versions(root=ROOT):
-    """The version in the plugin header, the constant and readme.txt's Stable tag."""
+    """The version in the plugin header, the constant, readme.txt's Stable tag and the README version badge."""
     plugin = (root / 'nexachat-ai.php').read_text(encoding='utf-8')
     readme = (root / 'readme.txt').read_text(encoding='utf-8')
     header = re.search(r'^\s*\*\s*Version:\s*(\S+)', plugin, re.M)
     constant = re.search(r"define\(\s*'SSC_CHATBOT_VERSION',\s*'([^']+)'", plugin)
     stable = re.search(r'^Stable tag:\s*(\S+)', readme, re.M)
+    badge_text = (root / 'README.md').read_text(encoding='utf-8')
+    badge = re.search(r'img\.shields\.io/badge/version-([0-9][0-9.]*)-', badge_text)
     return {
         'header': header.group(1) if header else '',
         'constant': constant.group(1) if constant else '',
         'stable': stable.group(1) if stable else '',
+        'badge': badge.group(1) if badge else '',
     }
 
 
@@ -73,6 +76,8 @@ def decide(event, ref_type, ref_name, input_tag, versions, existing_tags,
             problems.append('the plugin header says %s' % (versions.get('header') or 'nothing'))
         if versions.get('stable') != version:
             problems.append('readme.txt "Stable tag" says %s' % (versions.get('stable') or 'nothing'))
+        if versions.get('badge') != version:
+            problems.append('the README version badge says %s' % (versions.get('badge') or 'nothing'))
         if not changelog:
             problems.append('readme.txt has no "= %s =" changelog section' % version)
         if problems:

@@ -7,7 +7,7 @@ spec = importlib.util.spec_from_file_location('plan_release', Path(__file__).res
 plan = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(plan)
 
-GOOD = {'header': '1.7.0', 'constant': '1.7.0', 'stable': '1.7.0'}
+GOOD = {'header': '1.7.0', 'constant': '1.7.0', 'stable': '1.7.0', 'badge': '1.7.0'}
 TAGS = {'v1.5.0', 'v1.6.0'}
 
 
@@ -22,7 +22,7 @@ class PlanRelease(unittest.TestCase):
         self.assertEqual('v1.7.0', tag)
 
     def test_a_merge_without_a_version_bump_publishes_nothing(self):
-        publish, tag, reason = after_ci({'header': '1.6.0', 'constant': '1.6.0', 'stable': '1.6.0'})
+        publish, tag, reason = after_ci({'header': '1.6.0', 'constant': '1.6.0', 'stable': '1.6.0', 'badge': '1.6.0'})
         self.assertFalse(publish)
         self.assertIn('already released', reason)
 
@@ -36,8 +36,10 @@ class PlanRelease(unittest.TestCase):
 
     def test_a_half_finished_bump_fails_loudly_instead_of_publishing(self):
         for versions, words in (
-            ({'header': '1.6.0', 'constant': '1.7.0', 'stable': '1.7.0'}, 'plugin header'),
-            ({'header': '1.7.0', 'constant': '1.7.0', 'stable': '1.6.0'}, 'Stable tag'),
+            ({'header': '1.6.0', 'constant': '1.7.0', 'stable': '1.7.0', 'badge': '1.7.0'}, 'plugin header'),
+            ({'header': '1.7.0', 'constant': '1.7.0', 'stable': '1.6.0', 'badge': '1.7.0'}, 'Stable tag'),
+            ({'header': '1.7.0', 'constant': '1.7.0', 'stable': '1.7.0', 'badge': '1.6.0'}, 'README version badge'),
+            ({'header': '1.7.0', 'constant': '1.7.0', 'stable': '1.7.0', 'badge': ''}, 'README version badge'),
         ):
             with self.assertRaises(ValueError) as caught:
                 after_ci(versions)
@@ -62,8 +64,13 @@ class PlanRelease(unittest.TestCase):
 
     def test_the_real_repository_is_readable(self):
         versions = plan.read_versions()
-        self.assertTrue(versions['constant'] and versions['header'] and versions['stable'])
+        self.assertTrue(versions['constant'] and versions['header'] and versions['stable'] and versions['badge'])
         self.assertTrue(plan.has_changelog(versions['constant']))
+
+    def test_every_place_that_shows_the_version_agrees(self):
+        # This is what stops a bump from leaving the README (or readme.txt) on the old version.
+        versions = plan.read_versions()
+        self.assertEqual({versions['constant']}, {versions['header'], versions['stable'], versions['badge']}, versions)
 
 
 if __name__ == '__main__':

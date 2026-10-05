@@ -5,7 +5,7 @@
 **A professional AI assistant for WordPress — Persian/RTL-first, with full LTR support.**
 
 [![CI](https://github.com/sanyzrn/DbsChatBot/actions/workflows/ci.yml/badge.svg)](https://github.com/sanyzrn/DbsChatBot/actions/workflows/ci.yml)
-[![Latest release](https://img.shields.io/github/v/release/sanyzrn/DbsChatBot)](https://github.com/sanyzrn/DbsChatBot/releases/latest)
+[![Version](https://img.shields.io/badge/version-1.7.0-0a7ea4.svg)](https://github.com/sanyzrn/DbsChatBot/releases/latest)
 [![License: GPL v2](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
 [![Requires PHP](https://img.shields.io/badge/PHP-7.4%2B-777bb4.svg)](composer.json)
 [![Requires WordPress](https://img.shields.io/badge/WordPress-5.6%2B-21759b.svg)](readme.txt)
@@ -173,8 +173,9 @@ python tools/build-translations.py  # compile fa_IR.json -> .po/.mo
 
 Releases are built by GitHub Actions and **publish themselves**: never upload a ZIP by hand.
 
-1. Bump `SSC_CHATBOT_VERSION` and the `Version:` header in `nexachat-ai.php`, and
-   `Stable tag` in `readme.txt`.
+1. Bump `SSC_CHATBOT_VERSION` and the `Version:` header in `nexachat-ai.php`,
+   `Stable tag` in `readme.txt`, and the `version-x.y.z` badge at the top of this README
+   (a fixed badge, so it shows the right version at once instead of waiting for a cache).
 2. Add a `= x.y.z =` section under `== Changelog ==` in `readme.txt` (it becomes the
    release notes).
 3. Merge to `main`. When CI finishes green on `main`, the **Release** workflow looks at
@@ -183,7 +184,7 @@ Releases are built by GitHub Actions and **publish themselves**: never upload a 
 
 A merge that does **not** change the version publishes nothing, so documentation or
 internal changes can be merged freely. If CI is red, nothing is published. If the version
-was bumped but one of the three places or the changelog section is missing, the Release run
+was bumped but one of the four places or the changelog section is missing, the Release run
 fails with a message saying which (nothing is published).
 
 The workflow checks that the tag matches the plugin version, builds the ZIP from an
@@ -334,18 +335,22 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 
 ### انتشار نسخهٔ جدید (برای توسعه‌دهنده)
 
-۱. شمارهٔ نسخه را در `nexachat-ai.php` (هر دو جا) و `Stable tag` در `readme.txt`
-بالا ببرید.
+انتشار **خودکار** است؛ ZIP را دستی بارگذاری نکنید.
+
+۱. شمارهٔ نسخه را در `nexachat-ai.php` (هر دو جا)، `Stable tag` در `readme.txt` و نشان
+`version-x.y.z` بالای همین README بالا ببرید.
 
 ۲. بخش `= x.y.z =` را در changelog فایل `readme.txt` بنویسید. این متن یادداشت انتشار
 می‌شود.
 
-۳. تغییرات را در `main` ادغام کنید. سپس یا تگ `vX.Y.Z` را push کنید، یا از
-**Actions ← Release ← Run workflow** روی `main` با تگ `vX.Y.Z` اجرا کنید. GitHub
-Actions فایل ZIP را می‌سازد، بررسی و منتشر می‌کند.
+۳. تغییرات را در `main` ادغام کنید. وقتی CI روی `main` سبز شد، workflow **Release**
+نسخهٔ افزونه را می‌بیند؛ اگر هنوز منتشر نشده باشد، ZIP را می‌سازد، بررسی و منتشر می‌کند
+و تگ `vX.Y.Z` را روی همان کامیت می‌سازد.
 
-ZIP را دستی بارگذاری نکنید. اگر انتشار را از صفحهٔ GitHub ساخته باشید، workflow فایل
-ZIP را به همان انتشار اضافه می‌کند.
+ادغامی که نسخه را تغییر نمی‌دهد چیزی منتشر نمی‌کند. اگر CI قرمز باشد یا بالا بردن نسخه
+کامل نباشد (یکی از چهار جای نسخه یا بخش changelog جا مانده باشد)، چیزی منتشر نمی‌شود و
+اجرای Release با پیام روشن شکست می‌خورد. انتشار دستی (push تگ یا **Actions ← Release ←
+Run workflow**) هم همچنان کار می‌کند.
 
 ### پروانه
 
