@@ -28,14 +28,27 @@ class SSC_Client_IP {
 	}
 
 	/**
-	 * Addresses of private networks and the machine itself. A proxy there (nginx
-	 * in front of PHP, a container network) cannot be reached by a stranger on
-	 * the internet, so its header is believed without listing it.
+	 * The machine itself. A proxy here (nginx in front of PHP on the same server)
+	 * cannot be a stranger on the internet, so its header is believed without
+	 * listing it.
+	 *
+	 * @return string[]
+	 */
+	public static function loopback_ranges() {
+		return array( '127.0.0.0/8', '::1/128' );
+	}
+
+	/**
+	 * Private networks (a load balancer or container network). Whether a proxy
+	 * there is real depends on how the server can be reached, which only the site
+	 * owner knows, so they are believed only when the owner turned that on.
+	 * Carrier-grade NAT (100.64.0.0/10) is not in the list: it is shared address
+	 * space, not a network the owner controls; list it as a proxy to trust it.
 	 *
 	 * @return string[]
 	 */
 	public static function private_ranges() {
-		return array( '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '100.64.0.0/10', '127.0.0.0/8', '169.254.0.0/16', '::1/128', 'fc00::/7', 'fe80::/10' );
+		return array( '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '169.254.0.0/16', 'fc00::/7', 'fe80::/10' );
 	}
 
 	/**
@@ -150,15 +163,21 @@ class SSC_Client_IP {
 	}
 
 	/**
-	 * Is the address one of the listed proxies (or a private one, when allowed)?
+	 * Is the address a proxy that is believed: a listed one, this machine, or (only
+	 * when the owner allowed it) one on a private network?
 	 *
-	 * @param string   $ip      Address.
-	 * @param string[] $trusted Ranges the site owner listed.
+	 * @param string   $ip            Address.
+	 * @param string[] $trusted       Ranges the site owner listed.
 	 * @param bool     $allow_private Believe proxies on private networks too.
 	 * @return bool
 	 */
-	public static function is_trusted( $ip, $trusted, $allow_private = true ) {
+	public static function is_trusted( $ip, $trusted, $allow_private = false ) {
 		foreach ( (array) $trusted as $range ) {
+			if ( self::in_range( $ip, $range ) ) {
+				return true;
+			}
+		}
+		foreach ( self::loopback_ranges() as $range ) {
 			if ( self::in_range( $ip, $range ) ) {
 				return true;
 			}
@@ -222,7 +241,7 @@ class SSC_Client_IP {
 	 * @param string[] $allowed Header names that may be used (null = the usual ones).
 	 * @return string
 	 */
-	public static function resolve( $server, $header, $trusted, $allow_private = true, $allowed = null ) {
+	public static function resolve( $server, $header, $trusted, $allow_private = false, $allowed = null ) {
 		$allowed = null === $allowed ? self::headers() : (array) $allowed;
 		$remote  = self::clean( isset( $server['REMOTE_ADDR'] ) ? (string) $server['REMOTE_ADDR'] : '' );
 		if ( '' === $remote || '' === $header || ! in_array( $header, $allowed, true ) || empty( $server[ $header ] ) || ! is_string( $server[ $header ] ) ) {

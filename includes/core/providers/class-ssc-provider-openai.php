@@ -145,6 +145,24 @@ class SSC_Provider_Openai extends SSC_Provider_OpenAI_Compat {
 	}
 
 	/**
+	 * How the model stopped (PURE). The Responses API reports an incomplete
+	 * answer in status/incomplete_details instead of a finish_reason.
+	 *
+	 * @param array $data Decoded response.
+	 * @return string
+	 */
+	public function finish_reason( $data ) {
+		if ( is_array( $data ) && isset( $data['output'] ) && is_array( $data['output'] ) ) {
+			if ( isset( $data['status'] ) && 'incomplete' === $data['status'] ) {
+				$reason = isset( $data['incomplete_details']['reason'] ) ? self::normalize_finish( $data['incomplete_details']['reason'] ) : '';
+				return in_array( $reason, array( 'length', 'filtered' ), true ) ? $reason : 'error';
+			}
+			return isset( $data['status'] ) ? 'stop' : '';
+		}
+		return parent::finish_reason( $data );
+	}
+
+	/**
 	 * URL citations from a Responses API answer (PURE).
 	 *
 	 * @param array $data Decoded response.

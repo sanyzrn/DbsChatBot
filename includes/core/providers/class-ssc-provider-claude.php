@@ -193,18 +193,34 @@ class SSC_Provider_Claude extends SSC_Provider {
 	 * message_stop ends the answer, an error event aborts it.
 	 *
 	 * @param array $event Decoded event.
-	 * @return array{text:string,done:bool,error:bool}
+	 * @return array{text:string,done:bool,error:bool,finish:string}
 	 */
 	public function parse_stream_event( $event ) {
-		$type = isset( $event['type'] ) ? (string) $event['type'] : '';
-		$text = '';
+		$type   = isset( $event['type'] ) ? (string) $event['type'] : '';
+		$text   = '';
+		$finish = '';
 		if ( 'content_block_delta' === $type && isset( $event['delta']['type'], $event['delta']['text'] ) && 'text_delta' === $event['delta']['type'] ) {
 			$text = (string) $event['delta']['text'];
 		}
+		// The end reason travels in message_delta, ahead of message_stop.
+		if ( 'message_delta' === $type && isset( $event['delta']['stop_reason'] ) ) {
+			$finish = self::normalize_finish( $event['delta']['stop_reason'] );
+		}
 		return array(
-			'text'  => $text,
-			'done'  => 'message_stop' === $type,
-			'error' => 'error' === $type,
+			'text'   => $text,
+			'done'   => 'message_stop' === $type,
+			'error'  => 'error' === $type,
+			'finish' => $finish,
 		);
+	}
+
+	/**
+	 * How the model stopped (PURE): stop_reason.
+	 *
+	 * @param array $data Payload.
+	 * @return string
+	 */
+	public function finish_reason( $data ) {
+		return is_array( $data ) && isset( $data['stop_reason'] ) ? self::normalize_finish( $data['stop_reason'] ) : '';
 	}
 }

@@ -55,6 +55,7 @@ class SSC_Admin_Settings {
 			$patch['submit_rate_limit']  = isset( $_POST['submit_rate_limit'] ) ? SSC_Settings::clamp_int( 'submit_rate_limit', wp_unslash( $_POST['submit_rate_limit'] ) ) : 20;
 			$patch['session_rate_limit'] = isset( $_POST['session_rate_limit'] ) ? SSC_Settings::clamp_int( 'session_rate_limit', wp_unslash( $_POST['session_rate_limit'] ) ) : 50;
 			$patch['trusted_proxy_header'] = isset( $_POST['trusted_proxy_header'] ) ? SSC_Settings::sanitize_value( 'trusted_proxy_header', wp_unslash( $_POST['trusted_proxy_header'] ) ) : '';
+			$patch['trust_private_proxies'] = isset( $_POST['trust_private_proxies'] ) ? 'yes' : 'no';
 			$patch['trusted_proxies']      = isset( $_POST['trusted_proxies'] ) ? SSC_Settings::sanitize_value( 'trusted_proxies', wp_unslash( $_POST['trusted_proxies'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize_value() keeps only valid addresses and ranges.
 
 			// Display targeting.
@@ -274,8 +275,8 @@ class SSC_Admin_Settings {
 				'https'        => 0 === strpos( home_url(), 'https://' ),
 				'crypto'       => function_exists( 'openssl_encrypt' ) && defined( 'AUTH_KEY' ) && '' !== AUTH_KEY,
 				'behind_proxy' => ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) || ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) || ! empty( $_SERVER['HTTP_X_REAL_IP'] ),
-				// This very request came from a proxy the site believes (listed, or on a private network).
-				'proxy_trusted' => isset( $_SERVER['REMOTE_ADDR'] ) && SSC_Client_IP::is_trusted( (string) wp_unslash( $_SERVER['REMOTE_ADDR'] ), SSC_Client_IP::parse_list( (string) ( isset( $s['trusted_proxies'] ) ? $s['trusted_proxies'] : '' ) ) ),
+				// This very request came from a proxy the site believes (listed, this server, or a private network when allowed).
+				'proxy_trusted' => isset( $_SERVER['REMOTE_ADDR'] ) && SSC_Client_IP::is_trusted( (string) wp_unslash( $_SERVER['REMOTE_ADDR'] ), SSC_Client_IP::parse_list( (string) ( isset( $s['trusted_proxies'] ) ? $s['trusted_proxies'] : '' ) ), 'yes' === ( isset( $s['trust_private_proxies'] ) ? $s['trust_private_proxies'] : 'no' ) ),
 				'forms'        => SSC_Modules::is_active( 'leads' ) || SSC_Modules::is_active( 'pharma' ),
 				'history'      => SSC_Modules::is_active( 'history' ),
 			)

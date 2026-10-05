@@ -373,6 +373,60 @@ class SSC_Module_Pharma extends SSC_Module {
 	}
 
 	/**
+	 * Trouble breathing, said in words a fixed list cannot foresee: the idea of
+	 * breathing together with the idea of "cannot", "impossible" or "hard", in
+	 * either order and with other words between ("نفس کشیدن برام غیرممکن شده",
+	 * "نفس کشیدن برایم خیلی سخت شده", "هوا بهم نمی‌رسه"). A sentence that denies
+	 * it ("نفس کشیدن سخت نیست", "without trouble breathing") does not count.
+	 * Being unable to breathe counts for anyone; being merely hard needs a
+	 * described person, and in a question that person must be the writer or
+	 * someone close ("after exercise" is not enough), so a teaching question
+	 * stays quiet.
+	 *
+	 * @param string $text     Normalized, space-padded message.
+	 * @param bool   $person   Whether the message describes somebody.
+	 * @param bool   $question Whether it is a general question.
+	 * @return bool
+	 */
+	protected static function breathing_trouble( $text, $person, $question = false ) {
+		$breath = '(?:نفس(?:م|ش|ت|مان|شان)?|تنفس)(?:\s+(?:کشیدن|کشیدنم|کشیدنش|کشی))?';
+		$cannot = '(?:غیر\s?ممکن|ناممکن|نمی\s?(?:تونم|توانم|تونه|تواند|تونی|توانی|تونیم|توانیم|تونن|توانند|شه|شود|شد|اد|اید|یاد))';
+		$hard   = '(?:سخت|دشوار|سنگین|گرفته|گرفت|تنگ|بند|مشکل|اذیت)\S*';
+		$gap    = '(?:\s+\S+)';
+		$unable = array(
+			'/(?:^|\s)' . $breath . $gap . '{0,5}?\s+' . $cannot . '(?:\s|$)/u',
+			'/(?:^|\s)' . $cannot . $gap . '{0,4}?\s+' . $breath . '(?:\s|$)/u',
+			'/(?:^|\s)هوا\s+(?:\S+\s+)?نمی\s?(?:رسه|رسد)(?:\s|$)/u',
+			'/(?:^|\s)هوا\s+کم\s+(?:میارم|می\s?ارم|می\s?اورم|اوردم|اورد|اوردی)(?:\s|$)/u',
+			'/(?:^|\s)(?:impossible|unable|struggling)\s+to\s+breathe(?:\s|$)/u',
+			'/(?:^|\s)breathing\s+(?:is\s+|has\s+become\s+|became\s+)?impossible(?:\s|$)/u',
+			'/(?:^|\s)(?:can\s?t|cannot|can\s+not|couldn\s?t|could\s+not)\s+get\s+(?:any\s+|enough\s+)?air(?:\s|$)/u',
+			'/(?:^|\s)(?:gasping|suffocating)(?:\s|$)/u',
+		);
+		$hard_p = array(
+			'/(?:^|\s)' . $breath . $gap . '{0,3}?\s+' . $hard . '(?:\s|$)/u',
+			'/(?:^|\s)' . $hard . $gap . '{0,3}?\s+' . $breath . '(?:\s|$)/u',
+			'/(?:^|\s)breathing\s+(?:is\s+|has\s+become\s+|became\s+)?(?:very\s+|so\s+|really\s+|too\s+)?(?:hard|difficult)(?:\s|$)/u',
+		);
+		$own    = (bool) preg_match( '/(?:^|\s)(?:من|ما|برام|برایم|برامون|براش|برایش|بهم|بهش|نفسم|تنفسم|مادرم|پدرم|بچم|بچه ام|پسرم|دخترم|همسرم|بچه|نوزاد|بیمار|مریض|i|im|my|me|we|our|he|she|his|her|him|they|their|son|daughter|baby|child|kid|mother|father|patient)(?:\s|$)/u', $text );
+		$list   = $person && ( ! $question || $own ) ? array_merge( $unable, $hard_p ) : $unable;
+		foreach ( $list as $pattern ) {
+			if ( ! preg_match_all( $pattern, $text, $found, PREG_OFFSET_CAPTURE ) ) {
+				continue;
+			}
+			foreach ( $found[0] as $hit ) {
+				$lead  = strlen( $hit[0] ) - strlen( ltrim( $hit[0] ) );
+				$start = mb_strlen( substr( $text, 0, $hit[1] + $lead ) );
+				$len   = mb_strlen( trim( $hit[0] ) );
+				if ( ! self::is_negated_at( $text, $start, $len ) ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Broad words that only count when somebody is described (my father died,
 	 * we called the emergency room), never in a general question.
 	 *
@@ -529,6 +583,10 @@ class SSC_Module_Pharma extends SSC_Module {
 		 */
 		$symptoms = (array) apply_filters( 'ssc_emergency_symptom_terms', self::emergency_symptom_terms(), $text );
 		if ( self::has_term( $text, $symptoms ) ) {
+			return true;
+		}
+		// Breathing named together with "cannot", "impossible" or "hard", however it is worded.
+		if ( self::breathing_trouble( $text, $person, $question ) ) {
 			return true;
 		}
 		// Broad words need a described person and no question.

@@ -155,8 +155,14 @@ msgid_plural "%s questions"
 msgstr[0] "%s پرسش"
 msgstr[1] "%s پرسش"
 
+msgid "(The answer was cut short because it reached the length limit. Ask me to continue to get the rest.)"
+msgstr "(پاسخ چون به سقف طول رسید نیمه‌کاره ماند. برای دریافت بقیه از من بخواهید ادامه بدهم.)"
+
 msgid "(The answer was interrupted. Ask again to continue.)"
 msgstr "(پاسخ قطع شد. برای ادامه دوباره بپرسید.)"
+
+msgid "(The provider stopped this answer under its content policy, so it may be incomplete.)"
+msgstr "(ارائه‌دهنده این پاسخ را بر اساس سیاست محتوای خود متوقف کرد؛ ممکن است ناقص باشد.)"
 
 msgid "+ Add a place"
 msgstr "+ افزودن مکان"
@@ -496,6 +502,9 @@ msgstr "تقریباً تمام است: اتصال را بررسی کنید"
 
 msgid "Also answers general questions unrelated to your business, like a general-purpose assistant. Every such answer is billed by your AI provider."
 msgstr "مثل یک دستیار همه‌منظوره، به پرسش‌های عمومیِ نامرتبط با کسب‌وکار شما هم پاسخ می‌دهد. هزینهٔ هر کدام از این پاسخ‌ها را ارائه‌دهندهٔ هوش مصنوعی از شما می‌گیرد."
+
+msgid "Also believe a proxy on a private network (10.x, 172.16–31.x, 192.168.x)"
+msgstr "پروکسی روی شبکهٔ خصوصی (10.x، 172.16 تا 31.x، 192.168.x) را هم بپذیر"
 
 msgid "Also permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?"
 msgstr "همهٔ داده‌های ذخیره‌شده (تنظیمات، دانش، گفتگوها، درخواست‌ها، پرونده‌های عارضه) هم برای همیشه حذف شوند؟"
@@ -1113,6 +1122,9 @@ msgstr "محتوایی که یاد گرفته شود"
 
 msgid "Continue"
 msgstr "ادامه"
+
+msgid "Continue the answer"
+msgstr "ادامهٔ پاسخ"
 
 msgid "Conversation History"
 msgstr "تاریخچهٔ گفتگو"
@@ -1917,6 +1929,9 @@ msgstr "برای بازدیدکنندگان نامرئی است."
 msgid "Invitation text"
 msgstr "متن دعوت"
 
+msgid "It is on a private network: if it is your proxy, tick the private-network option above."
+msgstr "این نشانی روی شبکهٔ خصوصی است: اگر پروکسی شماست، گزینهٔ شبکهٔ خصوصی را در بالا تیک بزنید."
+
 msgid "It last worked %s ago."
 msgstr "آخرین بار %s پیش درست کار می‌کرد."
 
@@ -1950,8 +1965,8 @@ msgstr "منتظر می‌مانم"
 msgid "Keeps your current products, entries and questions; the file adds new ones and updates matching ones."
 msgstr "محصولات، موارد و پرسش‌های فعلی شما می‌مانند؛ فایل موارد جدید را اضافه و موارد هم‌نام را به‌روز می‌کند."
 
-msgid "Keys are encrypted at rest and never leave the server. Connection tests perform a real generation, not just a ping."
-msgstr "کلیدها رمزنگاری‌شده ذخیره می‌شوند و هرگز از سرور خارج نمی‌شوند. آزمون اتصال یک تولید پاسخ واقعی انجام می‌دهد، نه فقط یک پینگ."
+msgid "Keys are stored encrypted and are never shown in the browser. They are sent only to the provider you choose, when a request is made. Connection tests perform a real generation, not just a ping."
+msgstr "کلیدها رمزنگاری‌شده ذخیره می‌شوند و هرگز در مرورگر نمایش داده نمی‌شوند. فقط هنگام ارسال درخواست و فقط به ارائه‌دهنده‌ای که شما انتخاب کرده‌اید فرستاده می‌شوند. آزمون اتصال یک تولید پاسخ واقعی انجام می‌دهد، نه فقط یک پینگ."
 
 msgid "Keywords"
 msgstr "کلیدواژه‌ها"
@@ -2802,6 +2817,9 @@ msgstr "پخش صدای کوتاه هنگام رسیدن پاسخ وقتی گف�
 
 msgid "Please confirm that you want the reminder."
 msgstr "لطفاً تأیید کنید که یادآوری را می‌خواهید."
+
+msgid "Please continue your last answer from where it stopped."
+msgstr "لطفاً پاسخ قبلی‌ات را از همان جایی که قطع شد ادامه بده."
 
 msgid "Please describe the reaction (10-10000 characters)."
 msgstr "عارضه را شرح دهید (۱۰ تا ۱۰۰۰۰ نویسه)."
@@ -3924,6 +3942,9 @@ msgstr "اطلاعاتی که دستیار به آن تکیه می‌کند. ه�
 msgid "The facts… (prices, policies, answers, anything)"
 msgstr "اطلاعات… (قیمت‌ها، سیاست‌ها، پاسخ‌ها، هر چیزی)"
 
+msgid "The field \"%s\" has an invalid value."
+msgstr "فیلد «%s» مقدار نامعتبر دارد."
+
 msgid "The field \"%s\" is required."
 msgstr "تکمیل فیلد «%s» الزامی است."
 
@@ -3932,6 +3953,9 @@ msgstr "فیلد «%s» باید عدد باشد."
 
 msgid "The field \"%s\" must be a valid email."
 msgstr "فیلد «%s» باید نشانی ایمیل معتبر باشد."
+
+msgid "The field \"%s\" must be one of the choices."
+msgstr "فیلد «%s» باید یکی از گزینه‌ها باشد."
 
 msgid "The file could not be held for review (the database refused it). Try a smaller file, for example without documents."
 msgstr "فایل برای بازبینی نگه داشته نشد (پایگاه داده نپذیرفت). فایل کوچک‌تری را امتحان کنید، مثلاً بدون اسناد."
@@ -3954,8 +3978,8 @@ msgstr "اولین مسیر منطبق اعمال می‌شود؛ * با هر چ
 msgid "The form could not be submitted. Please try again."
 msgstr "فرم ثبت نشد. لطفاً دوباره تلاش کنید."
 
-msgid "The header above is believed only when the connection comes from one of these addresses, or from a private network (for example nginx on the same server). A visitor who reaches the server directly cannot choose his own address and slip past the limits. Cloudflare publishes its ranges at cloudflare.com/ips."
-msgstr "سرایند بالا فقط وقتی پذیرفته می‌شود که اتصال از یکی از این نشانی‌ها یا از یک شبکهٔ خصوصی (مثلاً nginx روی همان سرور) بیاید. بازدیدکننده‌ای که مستقیم به سرور می‌رسد نمی‌تواند نشانی خودش را انتخاب کند و از محدودیت‌ها عبور کند. Cloudflare محدوده‌های خود را در cloudflare.com/ips منتشر می‌کند."
+msgid "The header above is believed only when the connection comes from one of these addresses or from this server itself (for example nginx on the same machine). A visitor who reaches the server directly cannot choose his own address and slip past the limits. Cloudflare publishes its ranges at cloudflare.com/ips."
+msgstr "سرایند بالا فقط وقتی پذیرفته می‌شود که اتصال از یکی از این نشانی‌ها یا از خود همین سرور (مثلاً nginx روی همان ماشین) بیاید. بازدیدکننده‌ای که مستقیم به سرور می‌رسد نمی‌تواند نشانی خودش را انتخاب کند و از محدودیت‌ها عبور کند. Cloudflare محدوده‌های خود را در cloudflare.com/ips منتشر می‌کند."
 
 msgid "The identity test could not run."
 msgstr "آزمون هویت اجرا نشد."
@@ -3992,6 +4016,12 @@ msgstr "مدل پیام آزمون را به دلایل ایمنی مسدود ک
 
 msgid "The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again."
 msgstr "مدل پاسخ داد اما سازمان شما را درست معرفی نکرد. مشخصات کسب‌وکار و دانش را بازبینی و آزمون را دوباره اجرا کنید."
+
+msgid "The model used its whole answer budget before it wrote anything. Raise \"Max answer length\", or choose a model that thinks less before answering."
+msgstr "مدل پیش از نوشتن حتی یک کلمه کل بودجهٔ پاسخ را مصرف کرد. «حداکثر طول پاسخ» را بیشتر کنید یا مدلی را انتخاب کنید که پیش از پاسخ کمتر فکر می‌کند."
+
+msgid "The model used its whole answer budget before writing an answer. Raise \"Max answer length\" in AI Connection, or pick a model that thinks less before answering."
+msgstr "مدل پیش از نوشتن پاسخ کل بودجهٔ پاسخ را مصرف کرد. «حداکثر طول پاسخ» را در «اتصال هوش مصنوعی» بیشتر کنید یا مدلی را انتخاب کنید که پیش از پاسخ کمتر فکر می‌کند."
 
 msgid "The name customers know you by"
 msgstr "نامی که مشتریان شما را با آن می‌شناسند"
@@ -4034,6 +4064,12 @@ msgstr "پاسخ ارائه‌دهنده JSON معتبر نبود."
 
 msgid "The provider returned an unexpected response format."
 msgstr "ارائه‌دهنده پاسخی با قالب غیرمنتظره برگرداند."
+
+msgid "The provider stopped the answer under its content policy."
+msgstr "ارائه‌دهنده پاسخ را بر اساس سیاست محتوای خود متوقف کرد."
+
+msgid "The provider stopped this answer under its content policy."
+msgstr "ارائه‌دهنده این پاسخ را بر اساس سیاست محتوای خود متوقف کرد."
 
 msgid "The provider took too long to respond. Try a faster model or test again."
 msgstr "پاسخ ارائه‌دهنده بیش از حد طول کشید. مدل سریع‌تری انتخاب کنید یا دوباره آزمایش کنید."
@@ -4140,6 +4176,9 @@ msgstr "این نشانی ایمیل در «تماس و ساعات کاری» ه
 msgid "This file cannot be imported: %1$s, row %2$d has an invalid value in the field “%3$s”. Nothing was changed."
 msgstr "این فایل وارد نمی‌شود: %1$s، ردیف %2$d در فیلد «%3$s» مقدار نامعتبر دارد. چیزی تغییر نکرد."
 
+msgid "This file cannot be imported: the setting “%s” holds a value of the wrong kind (a list where text belongs, or the other way round). Nothing was changed."
+msgstr "این فایل وارد نمی‌شود: تنظیم «%s» مقداری از نوع نادرست دارد (فهرست به‌جای متن، یا برعکس). چیزی تغییر نکرد."
+
 msgid "This file comes from a newer version of NexaChatAI. Update the plugin and try again."
 msgstr "این فایل از نسخهٔ جدیدتری از نکسا‌چت‌ای‌آی است. افزونه را به‌روز کنید و دوباره تلاش کنید."
 
@@ -4211,6 +4250,9 @@ msgstr "سه لایه در یک افزونه"
 
 msgid "Three short entries are enough to start. You can add more any time in Business Knowledge."
 msgstr "برای شروع سه مورد کوتاه کافی است. هر زمان بخواهید می‌توانید در دانش کسب‌وکار موارد بیشتری اضافه کنید."
+
+msgid "Tick it only if your server can be reached from that network solely through your proxy, and the proxy removes any address a visitor sends. Shared carrier-grade addresses (100.64.x) are never included: list them above if they are your proxy."
+msgstr "فقط وقتی تیک بزنید که سرور شما از آن شبکه تنها از راه پروکسی شما در دسترس است و پروکسی هر نشانی‌ای را که بازدیدکننده بفرستد حذف می‌کند. نشانی‌های مشترک اپراتوری (100.64.x) هرگز شامل نمی‌شوند: اگر پروکسی شما هستند، آن‌ها را در فهرست بالا بنویسید."
 
 msgid "Tick what you want to keep and edit freely. Nothing is saved until you press \"Add selected\"."
 msgstr "موارد دلخواه را تیک بزنید و آزادانه ویرایش کنید. تا «افزودن موارد انتخاب‌شده» را نزنید چیزی ذخیره نمی‌شود."

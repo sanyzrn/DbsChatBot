@@ -1280,6 +1280,11 @@
 
         function handleFlags(data) {
                 var i18n = cfg.i18n || {};
+                if (data.flags && (data.flags.incomplete === 'length' || data.flags.incomplete === 'interrupted')) {
+                        // Going on is the visitor's choice: one tap sends the request, nothing is sent for them.
+                        addChips([{ label: i18n.continueAnswer || 'Continue the answer', onClick: function () { userSend(i18n.continueText || 'Please continue your last answer from where it stopped.'); } }]);
+                        return;
+                }
                 if (data.flags && data.flags.adr_offer && cfg.features && cfg.features.pharma) {
                         addChips([{ label: i18n.reportAdr || 'Report side effect', onClick: showAdrForm }]);
                         return;
@@ -1413,6 +1418,12 @@
                         input.type = type || 'text';
                         input.name = name;
                         if (type === 'tel' || type === 'email' || type === 'number') { input.dir = 'ltr'; }
+                        // A number field is a text box with a number keyboard: a browser's own number input refuses Persian digits, which the server reads.
+                        if (type === 'number') {
+                                input.type = 'text';
+                                input.setAttribute('inputmode', 'decimal');
+                                input.setAttribute('autocomplete', 'off');
+                        }
                         if (extra && extra.placeholder) { input.placeholder = extra.placeholder; }
                         if (required) { input.required = true; }
                         wrap.appendChild(input);

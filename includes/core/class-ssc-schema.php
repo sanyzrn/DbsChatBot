@@ -32,7 +32,7 @@ class SSC_Schema {
 	const LIVE_REFS         = 'ssc_chatbot_live_refs';
 	const CARTS_TABLE       = 'ssc_chatbot_carts';
 	const MEMORY_TABLE      = 'ssc_chatbot_conversations';
-	const DB_VERSION        = '17';
+	const DB_VERSION        = '18';
 	const DB_VERSION_OPTION = 'ssc_chatbot_db_version';
 
 	/*
@@ -395,12 +395,30 @@ class SSC_Schema {
 			SSC_Settings::migrate_answer_scope();
 			self::migrate_product_ids();
 			self::migrate_chatlog_default();
+			self::migrate_private_proxy_trust();
 			// Setup state safety net for IN-PLACE updates (activation hooks do
 			// not re-run): a legacy live chatbot must stay live.
 			SSC_Setup::initialize_state();
 			update_option( self::DB_VERSION_OPTION, self::DB_VERSION, false );
 		} finally {
 			delete_transient( 'ssc_chatbot_upgrade_lock' );
+		}
+	}
+
+	/**
+	 * Proxies on private networks used to be believed without being asked. That
+	 * is now a setting that is off by default. A site that had already chosen a
+	 * proxy header and listed no proxies was relying on the old behaviour (a load
+	 * balancer on a private address), so it keeps it, once; the setting is visible
+	 * in Settings and can be turned off.
+	 */
+	public static function migrate_private_proxy_trust() {
+		if ( get_option( 'ssc_private_proxy_trust_applied' ) ) {
+			return;
+		}
+		update_option( 'ssc_private_proxy_trust_applied', 1, false );
+		if ( '' !== (string) SSC_Settings::get( 'trusted_proxy_header', '' ) && '' === trim( (string) SSC_Settings::get( 'trusted_proxies', '' ) ) ) {
+			SSC_Settings::update( array( 'trust_private_proxies' => 'yes' ) );
 		}
 	}
 

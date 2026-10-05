@@ -136,15 +136,78 @@ abstract class SSC_Provider {
 	 * Interpret one decoded SSE data payload (PURE - unit tested).
 	 *
 	 * @param array $event Decoded JSON of one `data:` line.
-	 * @return array{text:string,done:bool,error:bool}
+	 * @return array{text:string,done:bool,error:bool,finish:string}
 	 */
 	public function parse_stream_event( $event ) {
 		unset( $event );
 		return array(
-			'text'  => '',
-			'done'  => false,
-			'error' => false,
+			'text'   => '',
+			'done'   => false,
+			'error'  => false,
+			'finish' => '',
 		);
+	}
+
+	/**
+	 * Why a generation ended, in one vocabulary for every provider.
+	 *
+	 * Values: stop (the model finished), length (it ran out of its answer
+	 * budget), filtered (the provider stopped it under a content policy),
+	 * error (it stopped on a failure) and '' (the provider did not say, which
+	 * counts as finished).
+	 *
+	 * @param mixed $raw Provider-specific reason (finish_reason, stop_reason, finishReason).
+	 * @return string stop|length|filtered|error|''.
+	 */
+	public static function normalize_finish( $raw ) {
+		if ( ! is_scalar( $raw ) || '' === trim( (string) $raw ) ) {
+			return '';
+		}
+		$raw = strtolower( trim( (string) $raw ) );
+		if ( in_array( $raw, array( 'length', 'max_tokens', 'max_output_tokens', 'model_context_window_exceeded' ), true ) ) {
+			return 'length';
+		}
+		if ( in_array( $raw, array( 'content_filter', 'safety', 'blocklist', 'prohibited_content', 'spii', 'recitation', 'refusal', 'image_safety', 'language' ), true ) ) {
+			return 'filtered';
+		}
+		if ( in_array( $raw, array( 'error', 'other', 'malformed_function_call', 'unexpected_tool_call' ), true ) ) {
+			return 'error';
+		}
+		return 'stop';
+	}
+
+	/**
+	 * The normalized end reason of a complete (non-streamed) response (PURE).
+	 *
+	 * @param array $data Decoded response.
+	 * @return string stop|length|filtered|error|''.
+	 */
+	public function finish_reason( $data ) {
+		unset( $data );
+		return '';
+	}
+
+	/**
+	 * What went wrong when a model stopped without writing any answer, or
+	 * null when its stop was not the reason (PURE).
+	 *
+	 * @param string $finish Normalized end reason.
+	 * @return array|null code, message.
+	 */
+	public static function finish_error( $finish ) {
+		if ( 'length' === $finish ) {
+			return array(
+				'code'    => 'length',
+				'message' => __( 'The model used its whole answer budget before writing an answer. Raise "Max answer length" in AI Connection, or pick a model that thinks less before answering.', 'nexachat-ai' ),
+			);
+		}
+		if ( 'filtered' === $finish ) {
+			return array(
+				'code'    => 'filtered',
+				'message' => __( 'The provider stopped this answer under its content policy.', 'nexachat-ai' ),
+			);
+		}
+		return null;
 	}
 
 	/**
@@ -245,12 +308,15 @@ abstract class SSC_Provider {
 			);
 		}
 
-		$text = trim( $this->extract_text( $response['data'] ) );
+		$text   = trim( $this->extract_text( $response['data'] ) );
+		$finish = $this->finish_reason( $response['data'] );
 		if ( '' === $text ) {
+			$why = self::finish_error( $finish );
 			return array(
-				'ok'    => false,
-				'text'  => '',
-				'error' => array(
+				'ok'     => false,
+				'text'   => '',
+				'finish' => $finish,
+				'error'  => null !== $why ? $why : array(
 					'code'    => 'malformed',
 					'message' => __( 'The provider replied 200 but no generated text was found in the response.', 'nexachat-ai' ),
 				),
@@ -259,6 +325,7 @@ abstract class SSC_Provider {
 		return array(
 			'ok'      => true,
 			'text'    => $text,
+			'finish'  => $finish,
 			'error'   => null,
 			'sources' => $this->extract_sources( $response['data'] ),
 		);

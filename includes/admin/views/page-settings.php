@@ -266,12 +266,14 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 				<div class="ssc-field">
 					<label for="trusted_proxies"><?php esc_html_e( 'Trusted proxies (addresses or CIDR blocks, one per line)', 'nexachat-ai' ); ?></label>
 					<textarea id="trusted_proxies" name="trusted_proxies" rows="3" dir="ltr" placeholder="203.0.113.0/24&#10;2001:db8::/32"><?php echo esc_textarea( (string) $s['trusted_proxies'] ); ?></textarea>
-					<p class="ssc-field__hint"><?php esc_html_e( 'The header above is believed only when the connection comes from one of these addresses, or from a private network (for example nginx on the same server). A visitor who reaches the server directly cannot choose his own address and slip past the limits. Cloudflare publishes its ranges at cloudflare.com/ips.', 'nexachat-ai' ); ?></p>
+					<p class="ssc-field__hint"><?php esc_html_e( 'The header above is believed only when the connection comes from one of these addresses or from this server itself (for example nginx on the same machine). A visitor who reaches the server directly cannot choose his own address and slip past the limits. Cloudflare publishes its ranges at cloudflare.com/ips.', 'nexachat-ai' ); ?></p>
+					<label class="ssc-check ssc-check--tight"><input type="checkbox" name="trust_private_proxies" value="yes" <?php checked( 'yes', $s['trust_private_proxies'] ); ?> /> <span><?php esc_html_e( 'Also believe a proxy on a private network (10.x, 172.16–31.x, 192.168.x)', 'nexachat-ai' ); ?></span></label>
+					<p class="ssc-field__hint"><?php esc_html_e( 'Tick it only if your server can be reached from that network solely through your proxy, and the proxy removes any address a visitor sends. Shared carrier-grade addresses (100.64.x) are never included: list them above if they are your proxy.', 'nexachat-ai' ); ?></p>
 					<button type="button" class="ssc-btn ssc-btn--ghost ssc-btn--sm" data-ssc-fill="trusted_proxies" data-text="<?php echo esc_attr( implode( "\n", SSC_Client_IP::cloudflare_ranges() ) ); ?>"><?php esc_html_e( 'Use Cloudflare’s ranges', 'nexachat-ai' ); ?></button>
 					<?php
 					$ssc_remote = isset( $_SERVER['REMOTE_ADDR'] ) ? SSC_Client_IP::clean( sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) ) : '';
 					if ( '' !== $ssc_remote ) :
-						$ssc_listed = SSC_Client_IP::is_trusted( $ssc_remote, SSC_Client_IP::parse_list( (string) $s['trusted_proxies'] ) );
+						$ssc_listed = SSC_Client_IP::is_trusted( $ssc_remote, SSC_Client_IP::parse_list( (string) $s['trusted_proxies'] ), 'yes' === $s['trust_private_proxies'] );
 						$ssc_seen   = ( new SSC_Chat_Engine() )->client_ip();
 						?>
 						<p class="ssc-field__hint ssc-proxynote">
@@ -285,6 +287,9 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 							} else {
 								/* translators: %s: the address of this connection. */
 								echo esc_html( sprintf( __( 'Right now: your connection comes from %s, which is not a listed proxy, so the header is ignored and that address is used for visitors.', 'nexachat-ai' ), $ssc_remote ) );
+								if ( SSC_Client_IP::is_trusted( $ssc_remote, array(), true ) ) {
+									echo ' ' . esc_html__( 'It is on a private network: if it is your proxy, tick the private-network option above.', 'nexachat-ai' );
+								}
 							}
 							?>
 						</p>

@@ -131,6 +131,50 @@ class SSC_Module_Leads extends SSC_Module {
 		if ( preg_match( '/\s(?:هزینه|قیمت|تعرفه|چقدر|چنده|price|prices|cost|costs|fee|fees|how much)\s/u', $text ) ) {
 			return false;
 		}
+		foreach ( self::request_clauses( (string) $message ) as $clause ) {
+			if ( self::clause_wants_consultation( ' ' . SSC_Knowledge::normalize( $clause ) . ' ' ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * The parts of a message that can each carry their own wish. A negation
+	 * ("no particular problem", "I do not want a call") belongs to its own
+	 * part: "مشکل خاصی ندارم ولی می‌خواهم مشاوره بگیرم" still asks for one.
+	 * A part that holds a negation is split once more at "and", so
+	 * "I have no problem and I want advice" is read as two statements, while
+	 * "I do not want a consultation and no call" stays refused.
+	 *
+	 * @param string $message Visitor message as written.
+	 * @return string[]
+	 */
+	protected static function request_clauses( $message ) {
+		$parts   = preg_split( '/[.!?؟،,;؛:\n]+|\s(?:ولی|اما|لیکن|ولیکن|ولي|but|however|though|although|yet|except)\s/iu', ' ' . $message . ' ' );
+		$clauses = array();
+		foreach ( (array) $parts as $part ) {
+			if ( '' === trim( (string) $part ) ) {
+				continue;
+			}
+			if ( SSC_Knowledge_Polarity::negations( ' ' . SSC_Knowledge::normalize( $part ) . ' ' ) > 0 ) {
+				foreach ( (array) preg_split( '/\s(?:و|and|also|plus)\s/iu', (string) $part ) as $piece ) {
+					$clauses[] = (string) $piece;
+				}
+				continue;
+			}
+			$clauses[] = (string) $part;
+		}
+		return $clauses;
+	}
+
+	/**
+	 * Does one clause ask for a consultation or a call back? (PURE)
+	 *
+	 * @param string $text Normalized, space-padded clause.
+	 * @return bool
+	 */
+	protected static function clause_wants_consultation( $text ) {
 		if ( SSC_Knowledge_Polarity::negations( $text ) > 0 ) {
 			return false;
 		}
@@ -138,6 +182,7 @@ class SSC_Module_Leads extends SSC_Module {
 		$persian = array(
 			'/\s(?:مشاوره|مشاور|کارشناس)\s(?:.*\s)?(?:' . $verbs . '|بگیرم|رزرو|ثبت|بدید|بدهید|بدین)\s/u',
 			'/\s(?:' . $verbs . ')\s(?:.*\s)?(?:مشاوره|مشاور|مشورت)\s/u',
+			'/\s(?:نیاز|احتیاج)\s+به\s+(?:یک\s+)?(?:مشاوره|مشاور|مشورت)\s/u',
 			'/\s(?:با|به)\s+من\s+(?:تماس|زنگ)\s/u',
 			'/\s(?:تماس|زنگ)\s+(?:بگیرید|بگیرین|بزنید|بزنین)\s+(?:با|به)\s+من\s/u',
 			'/\s(?:با|به)\s+(?:یک\s+)?(?:کارشناس|مشاور)\s+(?:صحبت|حرف|در\s+ارتباط)\s/u',
@@ -324,14 +369,12 @@ class SSC_Module_Leads extends SSC_Module {
 		// The email is optional: empty is fine, a wrong one is refused (so it is never stored by mistake).
 		$email     = '';
 		$bad_email = false;
-		if ( self::email_enabled() && isset( $params['email'] ) ) {
-			$typed = SSC_Input::text( $params['email'], 191 );
-			if ( '' !== $typed ) {
-				$email = sanitize_email( $typed );
-				if ( '' === $email || ! is_email( $email ) ) {
-					$email     = '';
-					$bad_email = true;
-				}
+		if ( self::email_enabled() && array_key_exists( 'email', $params ) ) {
+			$checked = SSC_Input::strict_email( $params['email'] );
+			if ( false === $checked ) {
+				$bad_email = true;
+			} else {
+				$email = $checked;
 			}
 		}
 
@@ -438,14 +481,31 @@ class SSC_Module_Leads extends SSC_Module {
 			$key   = $field['key'];
 			$value = isset( $decoded[ $key ] ) ? $decoded[ $key ] : '';
 			if ( ! is_scalar( $value ) ) {
-				$value = '';
+				// A list or an object where a single value belongs is refused, never quietly turned into "empty".
+				/* translators: %s: field label. */
+				return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" has an invalid value.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
 			}
+			$typed = trim( (string) $value );
 			switch ( $field['type'] ) {
 				case 'email':
-					$value = sanitize_email( $value );
+					$checked = SSC_Input::strict_email( $typed );
+					if ( false === $checked ) {
+						/* translators: %s: field label. */
+						return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" must be a valid email.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
+					}
+					$value = $checked;
 					break;
 				case 'number':
-					$value = is_numeric( $value ) ? (float) $value : '';
+					$value = '';
+					if ( '' !== $typed ) {
+						// Persian and Arabic digits are numbers too; anything else is refused, not emptied.
+						$digits = SSC_Input::ascii_number( $typed );
+						if ( '' === $digits ) {
+							/* translators: %s: field label. */
+							return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" must be a number.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
+						}
+						$value = (float) $digits;
+					}
 					break;
 				case 'tel':
 				case 'text':
@@ -460,16 +520,16 @@ class SSC_Module_Leads extends SSC_Module {
 					break;
 				case 'select':
 				case 'radio':
-					$value = in_array( (string) $value, array_map( 'strval', $field['options'] ), true ) ? (string) $value : '';
+					$value = (string) $value;
+					if ( '' !== $value && ! in_array( $value, array_map( 'strval', $field['options'] ), true ) ) {
+						/* translators: %s: field label. */
+						return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" must be one of the choices.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
+					}
 					break;
 			}
 			if ( $field['required'] && '' === (string) $value ) {
 				/* translators: %s: field label. */
 				return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" is required.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
-			}
-			if ( 'email' === $field['type'] && '' !== (string) $value && ! is_email( $value ) ) {
-				/* translators: %s: field label. */
-				return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" must be a valid email.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
 			}
 			if ( '' !== (string) $value ) {
 				$out[ $key ] = $value;

@@ -6,8 +6,8 @@
  * visitor can read partial output before the full reply is ready.
  * Falls back inside the common engine when the provider or server cannot stream.
  *
- * Security: same gates as /chat (is_live, rate limit). No secrets leave the
- * server; the stream only carries assistant deltas + a final envelope.
+ * Security: same gates as /chat (is_live, rate limit). No secrets reach the
+ * browser; the stream only carries assistant deltas + a final envelope.
  *
  * @package SmartSupportChatbot
  */
@@ -113,11 +113,31 @@ class SSC_Stream {
 		 */
 		$complete = $status['got'] && $status['finished'] && ! $status['failed'] && '' !== trim( $full );
 		if ( $complete ) {
+			// How it ended travels with the answer: a model that ran out of
+			// budget or was stopped by a policy did not finish its reply.
 			return array(
-				'ok'    => true,
-				'text'  => $full,
-				'error' => null,
+				'ok'     => true,
+				'text'   => $full,
+				'finish' => $status['finish'],
+				'error'  => null,
 			);
+		}
+
+		/*
+		 * The model ended without writing a word because it spent its whole
+		 * budget (reasoning models) or was stopped by a policy. A plain retry
+		 * would be billed again and end the same way: say why instead.
+		 */
+		if ( ! $status['got'] && $status['finished'] && '' === trim( $full ) ) {
+			$why = SSC_Provider::finish_error( $status['finish'] );
+			if ( null !== $why ) {
+				return array(
+					'ok'     => false,
+					'text'   => '',
+					'finish' => $status['finish'],
+					'error'  => $why,
+				);
+			}
 		}
 
 		/*
@@ -129,7 +149,8 @@ class SSC_Stream {
 		if ( $status['got'] && '' !== trim( $full ) ) {
 			return array(
 				'ok'      => true,
-				'text'    => rtrim( $full ) . "\n\n" . __( '(The answer was interrupted. Ask again to continue.)', 'nexachat-ai' ),
+				'text'    => rtrim( $full ),
+				'finish'  => 'filtered' === $status['finish'] ? 'filtered' : 'error',
 				'error'   => null,
 				'partial' => true,
 			);
@@ -253,7 +274,7 @@ class SSC_Stream {
 	 * @param array    $body     JSON body (already prepared for streaming).
 	 * @param callable $on_delta function(string $text).
 	 * @param callable $parse    Provider parser: array $event => {text, done, error}.
-	 * @return array{got:bool,finished:bool,failed:bool,errno:int} Stream outcome.
+	 * @return array{got:bool,finished:bool,failed:bool,errno:int,finish:string} Stream outcome.
 	 */
 	protected static function curl_stream( $url, $headers, $body, $on_delta, $parse ) {
 		$aborted = array(
@@ -261,6 +282,7 @@ class SSC_Stream {
 			'finished' => false,
 			'failed'   => true,
 			'errno'    => 0,
+			'finish'   => '',
 		);
 
 		if ( defined( 'WP_PROXY_HOST' ) || ! function_exists( 'curl_init' ) || ! SSC_HTTP::is_safe_url( $url, true ) ) {
@@ -288,6 +310,7 @@ class SSC_Stream {
 		$got      = false;
 		$finished = false;
 		$failed   = false;
+		$finish   = '';
 		$bytes    = 0;
 		$buf      = '';
 		$ch       = curl_init( $url );
@@ -303,7 +326,7 @@ class SSC_Stream {
 				CURLOPT_HTTPHEADER     => $header_lines,
 				CURLOPT_TIMEOUT        => 45,
 				CURLOPT_RETURNTRANSFER => false,
-				CURLOPT_WRITEFUNCTION  => function ( $ch, $chunk ) use ( &$buf, &$got, &$finished, &$failed, &$bytes, $on_delta, $parse ) {
+				CURLOPT_WRITEFUNCTION  => function ( $ch, $chunk ) use ( &$buf, &$got, &$finished, &$failed, &$finish, &$bytes, $on_delta, $parse ) {
 					$bytes += strlen( $chunk );
 					if ( $bytes > 2097152 || connection_aborted() || 200 !== (int) curl_getinfo( $ch, CURLINFO_HTTP_CODE ) ) {
 						return 0;
@@ -332,6 +355,9 @@ class SSC_Stream {
 						if ( ! empty( $event['done'] ) ) {
 							$finished = true;
 						}
+						if ( ! empty( $event['finish'] ) ) {
+							$finish = (string) $event['finish'];
+						}
 						if ( isset( $event['text'] ) && is_string( $event['text'] ) && '' !== $event['text'] ) {
 							$got = true;
 							call_user_func( $on_delta, $event['text'] );
@@ -353,6 +379,7 @@ class SSC_Stream {
 			'finished' => $finished,
 			'failed'   => $failed,
 			'errno'    => $errno,
+			'finish'   => $finish,
 		);
 	}
 }
