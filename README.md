@@ -171,21 +171,30 @@ python tools/build-translations.py  # compile fa_IR.json -> .po/.mo
 
 ## Releasing
 
-Releases are built by GitHub Actions — never upload a ZIP by hand.
+Releases are built by GitHub Actions and **publish themselves**: never upload a ZIP by hand.
 
 1. Bump `SSC_CHATBOT_VERSION` and the `Version:` header in `nexachat-ai.php`, and
    `Stable tag` in `readme.txt`.
 2. Add a `= x.y.z =` section under `== Changelog ==` in `readme.txt` (it becomes the
    release notes).
-3. Merge to `main`, then either push a tag (`git tag vX.Y.Z && git push origin vX.Y.Z`)
-   or run **Actions → Release → Run workflow** on `main` with the tag `vX.Y.Z` — the
-   workflow then creates the tag on the commit it built.
+3. Merge to `main`. When CI finishes green on `main`, the **Release** workflow looks at
+   the plugin version: if it has not been released yet, the ZIP is built, verified and
+   published, and GitHub creates the tag `vX.Y.Z` on the commit CI tested. Nothing else to do.
 
-The **Release** workflow checks that the tag matches the plugin version, builds the ZIP
-from an allowlist, verifies it contains no development files or credentials, and
-publishes it with its SHA-256 checksum. If a release for that tag was already created
-in the GitHub UI, the workflow attaches the ZIP to it instead of failing. It can also be
-re-run for an existing tag from **Actions → Release → Run workflow** to repair it.
+A merge that does **not** change the version publishes nothing, so documentation or
+internal changes can be merged freely. If CI is red, nothing is published. If the version
+was bumped but one of the three places or the changelog section is missing, the Release run
+fails with a message saying which (nothing is published).
+
+The workflow checks that the tag matches the plugin version, builds the ZIP from an
+allowlist, verifies it contains no development files or credentials, and publishes it with
+its SHA-256 checksum. If a release for that tag was already created in the GitHub UI, the
+workflow attaches the ZIP to it instead of failing.
+
+You can still release by hand: push a tag (`git tag vX.Y.Z && git push origin vX.Y.Z`) or
+run **Actions → Release → Run workflow** with the tag `vX.Y.Z`; running it for an existing
+tag rebuilds that tag and repairs its release. The decision logic lives in
+`tools/plan-release.py` and is covered by `tests/plan_release_test.py`.
 
 To build locally: `python tools/build-release.py && python tools/verify-release.py`
 (output in `dist/`).
