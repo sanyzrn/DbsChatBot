@@ -19,3 +19,7 @@ desktop.ini
 *.log
 .phpunit.result.cache
 .phpcs-cache
+
+# Python bytecode (tools/ and tests/ run with plain python)
+__pycache__/
+*.pyc
