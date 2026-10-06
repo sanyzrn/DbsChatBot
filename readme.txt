@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.7.1
+Stable tag: 1.7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,15 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.7.2 =
+
+* Fixed: the FAQ bank no longer gives one answer to questions that differ in a unit, a sign or a number. 10 GB and 10 Gb (bytes and bits), 10 gigabyte and 10 gigabit, -20 and 20 degrees, 5 millimeter and 5 milligram, 2.5 and 25 are all told apart, in English and in Persian. The same quantity spelled another way (10 GB and 10 گیگ, 25 and 25.0, 1,000 and 1000, +20 and 20) still matches.
+* Fixed: an import file whose documents hold a list where text belongs, no id or no text is refused whole, naming the document and the field. Nothing is stored as the text "Array" any more. Documents are read in full before anything is written, each one is replaced all or nothing, and "Replace" removes the documents that are not in the file only after the ones that are in it are in place; a document that fails is reported and the previous one stays.
+* Fixed: an import file whose settings hold a value of the wrong kind inside a list (a form field whose label is a list, a bad option, a bad safety-report form entry) is refused whole, naming the exact place, for example form_fields[0].label.
+* Fixed: a visitor who asks for a consultation and then takes it back ("actually I do not want one", "never mind", "ولش کن") is no longer offered the request form, and neither is a wish that waits for a condition ("call me if I need help later", "اگر نیاز داشتم تماس بگیرید"). "No particular problem, but I want a consultation" is still recognised.
+* Fixed: when Gemini stops an answer for safety reasons, or refuses a request before writing anything, the result is reported as a content-policy stop and not as an unexpected response. No blocked text and no Continue button are shown, and a streamed safety stop no longer triggers a second, billed request.
+* Persian translation of the new text.
 
 = 1.7.1 =
 
