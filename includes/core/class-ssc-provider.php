@@ -298,10 +298,14 @@ abstract class SSC_Provider {
 		// Extra guard: some gateways return 200 with an embedded error object.
 		$embedded = $this->embedded_error( $response['data'] );
 		if ( '' !== $embedded ) {
+			// A provider that stopped the answer under its content policy is not a damaged response, even when it says so as an error.
+			$finish = $this->finish_reason( $response['data'] );
+			$why    = 'filtered' === $finish ? self::finish_error( 'filtered' ) : null;
 			return array(
-				'ok'    => false,
-				'text'  => '',
-				'error' => array(
+				'ok'     => false,
+				'text'   => '',
+				'finish' => $finish,
+				'error'  => null !== $why ? $why : array(
 					'code'    => 'malformed',
 					'message' => $embedded,
 				),

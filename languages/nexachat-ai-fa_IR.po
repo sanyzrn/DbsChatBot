@@ -3607,6 +3607,9 @@ msgstr "تخفیف هوشمند برای بازدیدکنندگان مردد"
 msgid "Smart offer from the NexaChatAI assistant"
 msgstr "پیشنهاد هوشمند دستیار NexaChatAI"
 
+msgid "Some documents could not be imported and were left as they were. Documents that are not in the file were not removed."
+msgstr "برخی اسناد وارد نشدند و همان‌طور که بودند ماندند. اسنادی که در فایل نیستند حذف نشدند."
+
 msgid "Some entries do not fit, so the assistant does not see them (or only their beginning). Shorten the entries, remove the least important ones, or move long texts to Documents."
 msgstr "بعضی موارد جا نمی‌شوند و دستیار آن‌ها را (یا فقط ابتدایشان را) نمی‌بیند. موارد را کوتاه کنید، کم‌اهمیت‌ترین‌ها را حذف کنید یا متن‌های بلند را به «اسناد» ببرید."
 

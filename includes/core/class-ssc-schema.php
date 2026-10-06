@@ -1345,7 +1345,6 @@ class SSC_Schema {
 		if ( '' === $doc_id || ! $chunks ) {
 			return false;
 		}
-		$table   = self::kb_table_name();
 		$product = sanitize_text_field( $product );
 		$temp    = sanitize_key( 'tmp-' . wp_generate_password( 14, false ) );
 		try {
@@ -1361,41 +1360,99 @@ class SSC_Schema {
 				self::kb_delete_document( $temp );
 				return false;
 			}
-			// The swap: the new chunks take the document's id first, then the older chunks of that id go.
-			// New rows always have higher ids than the rows that were there, so nothing is lost if the
-			// second step fails on an engine without transactions: the two versions then coexist until the next replace.
-			// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- the swap on the custom table.
-			$first = (int) $wpdb->get_var( $wpdb->prepare( "SELECT MIN(id) FROM {$table} WHERE doc_id = %s", $temp ) );
-			$wpdb->query( 'START TRANSACTION' );
-			$moved = $wpdb->update(
-				$table,
-				array(
-					'doc_id'     => $doc_id,
-					'product_id' => $product,
-				),
-				array( 'doc_id' => $temp ),
-				array( '%s', '%s' ),
-				array( '%s' )
-			);
-			if ( $first < 1 || $moved !== $built ) {
-				$wpdb->query( 'ROLLBACK' );
-				self::kb_delete_document( $temp );
-				return false;
-			}
-			$removed = $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE doc_id = %s AND id < %d", $doc_id, $first ) );
-			if ( false === $removed ) {
-				$wpdb->query( 'ROLLBACK' );
-				return false;
-			}
-			$wpdb->query( 'COMMIT' );
-			// phpcs:enable
-			return $built;
+			return self::kb_swap_in( $doc_id, $temp, $built, $product );
 		} catch ( Throwable $e ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- see above.
 			$wpdb->query( 'ROLLBACK' );
 			self::kb_delete_document( $temp );
 			return false;
 		}
+	}
+
+	/**
+	 * Replace a document with chunks that are already split (an import file keeps
+	 * the split it was exported with), all or nothing, like kb_replace_document().
+	 *
+	 * @param string   $doc_id  Document id.
+	 * @param string   $title   Source title.
+	 * @param string[] $chunks  Chunk texts, in reading order.
+	 * @param string   $product Product scope.
+	 * @param string   $url     Source URL.
+	 * @return int|false Chunks of the new version, or false when it could not be built (the old version is untouched).
+	 */
+	public static function kb_replace_chunks( $doc_id, $title, $chunks, $product = 'general', $url = '' ) {
+		global $wpdb;
+		$doc_id = sanitize_key( $doc_id );
+		$usable = array();
+		foreach ( (array) $chunks as $chunk ) {
+			if ( is_string( $chunk ) && '' !== trim( $chunk ) ) {
+				$usable[] = $chunk;
+			}
+		}
+		if ( '' === $doc_id || ! $usable ) {
+			return false;
+		}
+		$product = sanitize_text_field( $product );
+		$temp    = sanitize_key( 'tmp-' . wp_generate_password( 14, false ) );
+		try {
+			$built = self::kb_insert_chunks( $temp, $title, $usable, self::KB_PENDING, $url );
+			/** This action is documented in kb_replace_document(). */
+			do_action( 'ssc_kb_replace_built', $doc_id, $temp );
+			if ( count( $usable ) !== $built ) {
+				self::kb_delete_document( $temp );
+				return false;
+			}
+			return self::kb_swap_in( $doc_id, $temp, $built, $product );
+		} catch ( Throwable $e ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- see kb_swap_in().
+			$wpdb->query( 'ROLLBACK' );
+			self::kb_delete_document( $temp );
+			return false;
+		}
+	}
+
+	/**
+	 * Put a fully built temporary version in place of the document, in one
+	 * transaction: the new chunks take the document's id first, then the older
+	 * chunks of that id go. New rows always have higher ids than the rows that
+	 * were there, so nothing is lost if the second step fails on an engine
+	 * without transactions: the two versions then coexist until the next replace.
+	 *
+	 * @param string $doc_id  Document id.
+	 * @param string $temp    Temporary id the new chunks were built under.
+	 * @param int    $built   Chunks of the new version.
+	 * @param string $product Product scope of the new version.
+	 * @return int|false Chunks of the new version, or false (the old version is untouched when the temporary one was cleaned up).
+	 */
+	protected static function kb_swap_in( $doc_id, $temp, $built, $product ) {
+		global $wpdb;
+		$table = self::kb_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- the swap on the custom table.
+		$first = (int) $wpdb->get_var( $wpdb->prepare( "SELECT MIN(id) FROM {$table} WHERE doc_id = %s", $temp ) );
+		$wpdb->query( 'START TRANSACTION' );
+		$moved = $wpdb->update(
+			$table,
+			array(
+				'doc_id'     => $doc_id,
+				'product_id' => $product,
+			),
+			array( 'doc_id' => $temp ),
+			array( '%s', '%s' ),
+			array( '%s' )
+		);
+		if ( $first < 1 || $moved !== $built ) {
+			$wpdb->query( 'ROLLBACK' );
+			self::kb_delete_document( $temp );
+			return false;
+		}
+		$removed = $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE doc_id = %s AND id < %d", $doc_id, $first ) );
+		if ( false === $removed ) {
+			$wpdb->query( 'ROLLBACK' );
+			return false;
+		}
+		$wpdb->query( 'COMMIT' );
+		// phpcs:enable
+		return $built;
 	}
 
 	/**

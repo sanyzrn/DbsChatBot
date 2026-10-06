@@ -1656,5 +1656,6 @@
   "The field \"%s\" has an invalid value.": "فیلد «%s» مقدار نامعتبر دارد.",
   "The field \"%s\" must be one of the choices.": "فیلد «%s» باید یکی از گزینه‌ها باشد.",
   "Also believe a proxy on a private network (10.x, 172.16–31.x, 192.168.x)": "پروکسی روی شبکهٔ خصوصی (10.x، 172.16 تا 31.x، 192.168.x) را هم بپذیر",
-  "Tick it only if your server can be reached from that network solely through your proxy, and the proxy removes any address a visitor sends. Shared carrier-grade addresses (100.64.x) are never included: list them above if they are your proxy.": "فقط وقتی تیک بزنید که سرور شما از آن شبکه تنها از راه پروکسی شما در دسترس است و پروکسی هر نشانی‌ای را که بازدیدکننده بفرستد حذف می‌کند. نشانی‌های مشترک اپراتوری (100.64.x) هرگز شامل نمی‌شوند: اگر پروکسی شما هستند، آن‌ها را در فهرست بالا بنویسید."
+  "Tick it only if your server can be reached from that network solely through your proxy, and the proxy removes any address a visitor sends. Shared carrier-grade addresses (100.64.x) are never included: list them above if they are your proxy.": "فقط وقتی تیک بزنید که سرور شما از آن شبکه تنها از راه پروکسی شما در دسترس است و پروکسی هر نشانی‌ای را که بازدیدکننده بفرستد حذف می‌کند. نشانی‌های مشترک اپراتوری (100.64.x) هرگز شامل نمی‌شوند: اگر پروکسی شما هستند، آن‌ها را در فهرست بالا بنویسید.",
+  "Some documents could not be imported and were left as they were. Documents that are not in the file were not removed.": "برخی اسناد وارد نشدند و همان‌طور که بودند ماندند. اسنادی که در فایل نیستند حذف نشدند."
 }
