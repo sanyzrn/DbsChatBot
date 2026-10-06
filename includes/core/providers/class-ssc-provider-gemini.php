@@ -173,7 +173,8 @@ class SSC_Provider_Gemini extends SSC_Provider {
 
 	/**
 	 * One streamed GenerateContentResponse (PURE). Thought parts are skipped;
-	 * a finishReason marks the final chunk (SAFETY counts as a failure).
+	 * a finishReason marks the final chunk. A SAFETY stop also ends the stream
+	 * (so no second, billed request is made for it) and counts as a failure.
 	 *
 	 * @param array $event Decoded chunk.
 	 * @return array{text:string,done:bool,error:bool,finish:string}
@@ -190,7 +191,7 @@ class SSC_Provider_Gemini extends SSC_Provider {
 		$finish = isset( $event['candidates'][0]['finishReason'] ) ? (string) $event['candidates'][0]['finishReason'] : '';
 		return array(
 			'text'   => $text,
-			'done'   => '' !== $finish && 'SAFETY' !== $finish,
+			'done'   => '' !== $finish,
 			'error'  => isset( $event['error'] ) || 'SAFETY' === $finish,
 			'finish' => self::normalize_finish( $finish ),
 		);
@@ -203,7 +204,11 @@ class SSC_Provider_Gemini extends SSC_Provider {
 	 * @return string
 	 */
 	public function finish_reason( $data ) {
-		return is_array( $data ) && isset( $data['candidates'][0]['finishReason'] ) ? self::normalize_finish( $data['candidates'][0]['finishReason'] ) : '';
+		if ( is_array( $data ) && isset( $data['candidates'][0]['finishReason'] ) ) {
+			return self::normalize_finish( $data['candidates'][0]['finishReason'] );
+		}
+		// A request refused before any answer was written says why in promptFeedback.
+		return is_array( $data ) && ! empty( $data['promptFeedback']['blockReason'] ) ? 'filtered' : '';
 	}
 
 	/**

@@ -160,6 +160,10 @@ vendor/bin/phpcbf         # auto-fix formatting
 
 CI runs every suite on PHP 7.4 through 8.5, plus a packaging check.
 
+### Roadmap
+
+Planned work is kept in `docs/internal/` (written in Persian): [`ROADMAP-HARDENING-fa.md`](docs/internal/ROADMAP-HARDENING-fa.md) for quality, tests and compatibility; [`ROADMAP-IDEAS-fa.md`](docs/internal/ROADMAP-IDEAS-fa.md) for product ideas, each with a verdict; [`ROADMAP-V2-fa.md`](docs/internal/ROADMAP-V2-fa.md) for features and sales.
+
 ### Translations
 
 `languages/fa_IR.json` is the source of the Persian catalog. After changing strings:
@@ -351,6 +355,10 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 کامل نباشد (یکی از چهار جای نسخه یا بخش changelog جا مانده باشد)، چیزی منتشر نمی‌شود و
 اجرای Release با پیام روشن شکست می‌خورد. انتشار دستی (push تگ یا **Actions ← Release ←
 Run workflow**) هم همچنان کار می‌کند.
+
+### نقشهٔ راه
+
+کارهای برنامه‌ریزی‌شده در `docs/internal/` نگهداری می‌شوند: [`ROADMAP-HARDENING-fa.md`](docs/internal/ROADMAP-HARDENING-fa.md) (کیفیت، تست و سازگاری)، [`ROADMAP-IDEAS-fa.md`](docs/internal/ROADMAP-IDEAS-fa.md) (ایده‌های محصول همراه با حکم هر ایده) و [`ROADMAP-V2-fa.md`](docs/internal/ROADMAP-V2-fa.md) (قابلیت و فروش).
 
 ### پروانه
 

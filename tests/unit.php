@@ -113,6 +113,7 @@ check( false === mb_strpos( SSC_Prompt_Builder::fence( 'DOC', 'T', '<script>aler
  */
 require __DIR__ . '/../includes/core/class-ssc-knowledge.php';
 require __DIR__ . '/../includes/core/class-ssc-knowledge-polarity.php';
+require __DIR__ . '/../includes/core/class-ssc-quantities.php';
 require __DIR__ . '/../includes/core/class-ssc-merge.php';
 require __DIR__ . '/../includes/core/class-ssc-module.php';
 require __DIR__ . '/../includes/modules/class-ssc-module-pharma.php';
@@ -492,6 +493,51 @@ foreach ( $agree as $pair ) {
 	check( '' === SSC_Knowledge_Polarity::conflict( $pair[0], $pair[1] ), 'F04: the same question in other words is not blocked: ' . $pair[0] . ' / ' . $pair[1] );
 }
 check( 2 === SSC_Knowledge_Polarity::negations( SSC_Knowledge::normalize( 'ممنوع نیست؟' ) ) && 0 === SSC_Knowledge_Polarity::negations( SSC_Knowledge::normalize( 'نشان نام نان' ) ), 'F04: words that merely start with a negating letter are not negations' );
+
+// F04 (2026-10-06 review): the unit, its capitals and the sign are part of the quantity.
+foreach ( array(
+	array( 'آیا بسته ۱۰ گیگابایت شامل پشتیبانی است؟', 'آیا بسته ۱۰ گیگابیت شامل پشتیبانی است؟' ),
+	array( 'Does the 10 gigabyte plan include support?', 'Does the 10 gigabit plan include support?' ),
+	array( 'Does the 10 GB plan include support?', 'Does the 10 Gb plan include support?' ),
+	array( 'آیا در دمای -۲۰ درجه نگهداری می‌شود؟', 'آیا در دمای ۲۰ درجه نگهداری می‌شود؟' ),
+	array( 'آیا در دمای منفی ۲۰ درجه نگهداری می‌شود؟', 'آیا در دمای ۲۰ درجه نگهداری می‌شود؟' ),
+	array( 'storage at -20 degrees', 'storage at 20 degrees' ),
+	array( 'storage at -20 degrees', 'storage at +20 degrees' ),
+	array( 'storage at minus 20 degrees', 'storage at 20 degrees' ),
+	array( 'a 5 millimeter pipe', 'a 5 milligram pipe' ),
+	array( 'لوله ۵ میلی‌متر', 'لوله ۵ میلی‌گرم' ),
+	array( 'dose 2.5 mg', 'dose 25 mg' ),
+	array( 'دوز ۲٫۵ میلی‌گرم', 'دوز ۲۵ میلی‌گرم' ),
+	array( 'the limit is 10 days', 'the limit is 10 months' ),
+	array( 'گارانتی ۶ ماه', 'گارانتی ۶ سال' ),
+	array( 'price 10 toman', 'price 10 dollars' ),
+	array( 'plan with 10 GB', 'plan with 10 g' ),
+	array( 'temperature of 20% humidity', 'temperature of 20 degrees humidity' ),
+) as $pair ) {
+	check( '' !== SSC_Knowledge_Polarity::conflict( $pair[0], $pair[1] ) && '' !== SSC_Knowledge_Polarity::conflict( $pair[1], $pair[0] ), 'F04: a different unit, sign or number is told apart (both ways): ' . $pair[0] . ' / ' . $pair[1] );
+}
+foreach ( array(
+	array( 'آیا بسته ۱۰ گیگابایت شامل پشتیبانی است؟', 'آیا بسته 10 گیگ شامل پشتیبانی است؟' ),
+	array( 'Does the 10 GB plan include support?', 'Does the 10 gb plan include support?' ),
+	array( 'Does the 10 GB plan include support?', 'Does the 10 gigabytes plan include support?' ),
+	array( 'storage at +20 degrees', 'storage at 20 degrees' ),
+	array( 'storage at -20 degrees', 'storage at -۲۰ degrees' ),
+	array( 'storage at -20 degrees', 'storage at minus 20 deg' ),
+	array( 'dose 5 mg', 'dose 5 milligrams' ),
+	array( 'دوز ۵ میلی‌گرم', 'دوز 5 mg' ),
+	array( 'dose 25 mg', 'dose 25.0 mg' ),
+	array( 'سقف ۱,۰۰۰ کاربر', 'سقف 1000 کاربر' ),
+	array( 'support for 10 users', 'support for 10 user' ),
+	array( 'پشتیبانی از ۱۰ کاربران', 'پشتیبانی از ۱۰ کاربر' ),
+	array( 'limit of 10 days', 'limit of 10 روز' ),
+	array( 'a 20% discount', 'a 20 percent discount' ),
+	array( 'is it 10?', 'is it 10 GB?' ),
+) as $pair ) {
+	check( '' === SSC_Knowledge_Polarity::conflict( $pair[0], $pair[1] ) && '' === SSC_Knowledge_Polarity::conflict( $pair[1], $pair[0] ), 'F04: the same quantity in another spelling is not blocked: ' . $pair[0] . ' / ' . $pair[1] );
+}
+check( array( array( 'value' => '-20', 'unit' => 'u:deg' ), array( 'value' => '3', 'unit' => '' ) ) === SSC_Quantities::extract( 'between -۲۰ degrees and 3' ), 'F04: quantities keep their sign, canonical digits and unit key' );
+check( array( array( 'value' => '10', 'unit' => '' ), array( 'value' => '20', 'unit' => 'u:mg' ) ) === SSC_Quantities::extract( 'dose 10-20 mg' ), 'F04: a range is two quantities, not a negative number' );
+check( 'd:g|B' === SSC_Quantities::unit_key( 'GB' ) && 'd:g|b' === SSC_Quantities::unit_key( 'Gb' ) && 'd:g|?' === SSC_Quantities::unit_key( 'gb' ) && 'u:mg' === SSC_Quantities::unit_key( 'میلی', 'گرم' ), 'F04: GB is bytes, Gb is bits, gb cannot say, and a two-word Persian unit is read whole' );
 
 // F10: the reading budget is planned in one place: entries fit from the top down, one is cut, the rest are left out.
 $plan = SSC_Knowledge::plan_knowledge( array(

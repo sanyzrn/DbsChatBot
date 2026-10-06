@@ -115,9 +115,14 @@ class SSC_Module_Leads extends SSC_Module {
 	}
 
 	/**
-	 * Does the message clearly ask for a consultation or a call back? Questions
-	 * about a consultation (its price, whether it is free) and negated sentences
-	 * are left to the assistant. Pure logic.
+	 * Does the message clearly ask, in the end, for a consultation or a call
+	 * back? Questions about a consultation (its price, whether it is free) are
+	 * left to the assistant. The message is read clause by clause and the last
+	 * stand wins: "I want a consultation, actually I do not want one" is a
+	 * refusal; a wish that depends on a condition ("call me if I need help
+	 * later") is not a request now; a negation about something else ("no
+	 * particular problem, but I want a consultation") does not cancel the
+	 * request. Pure logic.
 	 *
 	 * @param string $message Visitor message.
 	 * @return bool
@@ -131,12 +136,22 @@ class SSC_Module_Leads extends SSC_Module {
 		if ( preg_match( '/\s(?:هزینه|قیمت|تعرفه|چقدر|چنده|price|prices|cost|costs|fee|fees|how much)\s/u', $text ) ) {
 			return false;
 		}
+		$stand     = false;
+		$condition = false;
 		foreach ( self::request_clauses( (string) $message ) as $clause ) {
-			if ( self::clause_wants_consultation( ' ' . SSC_Knowledge::normalize( $clause ) . ' ' ) ) {
-				return true;
+			$kind = self::clause_stance( ' ' . SSC_Knowledge::normalize( $clause ) . ' ' );
+			if ( 'if' === $kind ) {
+				// A condition holds for what is asked next, too ("If I need help, call me").
+				$condition = true;
+			} elseif ( 'refuse' === $kind ) {
+				$stand     = false;
+				$condition = false;
+			} elseif ( 'ask' === $kind ) {
+				$stand     = $condition ? $stand : true;
+				$condition = false;
 			}
 		}
-		return false;
+		return $stand;
 	}
 
 	/**
@@ -169,15 +184,62 @@ class SSC_Module_Leads extends SSC_Module {
 	}
 
 	/**
-	 * Does one clause ask for a consultation or a call back? (PURE)
+	 * What one clause says about a consultation (PURE).
+	 *
+	 * @param string $text Normalized, space-padded clause.
+	 * @return string 'refuse' (says no, takes it back), 'if' (a wish that waits for a condition), 'ask' (asks now) or '' (nothing about it).
+	 */
+	protected static function clause_stance( $text ) {
+		if ( self::refuses( $text ) ) {
+			return 'refuse';
+		}
+		if ( SSC_Knowledge_Polarity::negations( $text ) > 0 ) {
+			return '';
+		}
+		if ( preg_match( '/\s(?:(?:if|when|once|whenever)\s+(?:i|we)\s+(?:will\s+|do\s+|ever\s+|might\s+|should\s+)?(?:need|want|require|decide|have\s+to)|if\s+(?:needed|necessary)|maybe|perhaps|might|someday|some\s+day|in\s+the\s+future|اگر\s+(?:نیاز|لازم|احتیاج|خواستم|بخوام|بخواهم)\S*|در\s+صورت\s+(?:نیاز|لزوم)|هر\s+وقت\s+(?:نیاز|خواستم)|وقتی\s+(?:نیاز|خواستم)|شاید|در\s+آینده)\s/u', $text ) ) {
+			return 'if';
+		}
+		return self::intent_match( $text ) ? 'ask' : '';
+	}
+
+	/**
+	 * Does a clause say no to a consultation or a call, or take the request back?
+	 * "I do not want a consultation", "مشاوره نمی‌خوام", "don't call me", "never
+	 * mind", "ولش کن", or a bare "فعلاً نمی‌خواهم". Not a negation about
+	 * something else ("مشکل خاصی ندارم").
 	 *
 	 * @param string $text Normalized, space-padded clause.
 	 * @return bool
 	 */
-	protected static function clause_wants_consultation( $text ) {
-		if ( SSC_Knowledge_Polarity::negations( $text ) > 0 ) {
-			return false;
+	protected static function refuses( $text ) {
+		$act  = '(?:مشاوره|مشاور|مشورت|تماس|زنگ|کارشناس|consult\w*|advice|advis\w+|call\w*|phone|contact|expert|specialist)';
+		$want = '(?:نمی\s?(?:خوام|خواهم|خواد|خواهد|خوایم|خواهیم)|نخواستم|(?:do\s+not|don\s?t|dont|no\s+longer)\s+(?:want|need|require)|no\s+thanks|actually\s+no)';
+		$deny = '(?:' . $want . '|ندارم|نداریم|لازم\s+نیست|نیازی\s+نیست|no\s+need)';
+		if ( preg_match( '/\s(?:ولش\s+کن|ول\s+کن|بی\s?خیال|فراموش\s+کن|منصرف|never\s?mind|forget\s+(?:it|that)|scrap\s+that|changed\s+my\s+mind)\s/u', $text ) ) {
+			return true;
 		}
+		if ( preg_match( '/\s(?:(?:do\s+not|don\s?t|dont|never)\s+(?:call|phone|contact|ring)|(?:تماس|زنگ)\s+(?:نگیر|نزن)\S*)/u', $text ) ) {
+			return true;
+		}
+		if ( preg_match( '/\s' . $act . '\s(?:\S+\s+){0,2}?' . $deny . '\s|\s' . $want . '\s(?:\S+\s+){0,3}?' . $act . '\s/u', $text ) ) {
+			return true;
+		}
+		// Nothing left but the refusal itself ("فعلاً نمی‌خواهم", "no thanks").
+		if ( preg_match( '/\s' . $want . '\s/u', $text ) ) {
+			$rest = preg_replace( '/\s' . $want . '\s/u', ' ', $text );
+			$rest = preg_replace( '/\s(?:فعلا|الان|دیگه|هم|اصلا|actually|really|now|anymore|thanks|thank|you|please|i|we|so|نه|ممنون|مرسی)(?=\s)/u', ' ', (string) $rest );
+			return count( preg_split( '/\s+/u', trim( (string) $rest ), -1, PREG_SPLIT_NO_EMPTY ) ) <= 1;
+		}
+		return false;
+	}
+
+	/**
+	 * Does an unnegated clause ask for a consultation or a call back? (PURE)
+	 *
+	 * @param string $text Normalized, space-padded clause.
+	 * @return bool
+	 */
+	protected static function intent_match( $text ) {
 		$verbs   = 'می\s?خوام|می\s?خواهم|میخوام|میخواهم|نیاز\s+دارم|لازم\s+دارم|درخواست';
 		$persian = array(
 			'/\s(?:مشاوره|مشاور|کارشناس)\s(?:.*\s)?(?:' . $verbs . '|بگیرم|رزرو|ثبت|بدید|بدهید|بدین)\s/u',

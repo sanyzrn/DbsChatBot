@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-05 16:27:52+00:00\n"
+"POT-Creation-Date: 2026-10-06 12:35:17+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -29,8 +29,8 @@ msgstr ""
 #: includes/modules/class-ssc-module-analytics.php:155
 #: includes/modules/class-ssc-module-faq.php:265
 #: includes/modules/class-ssc-module-history.php:122
-#: includes/modules/class-ssc-module-leads.php:256
-#: includes/modules/class-ssc-module-leads.php:552
+#: includes/modules/class-ssc-module-leads.php:318
+#: includes/modules/class-ssc-module-leads.php:614
 #: includes/modules/class-ssc-module-live.php:1077
 #: includes/modules/class-ssc-module-live.php:1428
 msgid "Insufficient permissions."
@@ -1601,8 +1601,8 @@ msgstr ""
 
 #: includes/admin/views/page-dashboard.php:210
 #: includes/admin/views/page-requests.php:62
-#: includes/modules/class-ssc-module-leads.php:243
-#: includes/modules/class-ssc-module-leads.php:244
+#: includes/modules/class-ssc-module-leads.php:305
+#: includes/modules/class-ssc-module-leads.php:306
 msgid "Requests"
 msgstr ""
 
@@ -4691,14 +4691,14 @@ msgstr ""
 
 #: includes/core/class-ssc-ajax.php:149
 #: includes/core/class-ssc-rest.php:536
-#: includes/modules/class-ssc-module-leads.php:356
+#: includes/modules/class-ssc-module-leads.php:418
 #: includes/modules/class-ssc-module-pharma.php:1114
 msgid "ADR reporting is disabled on this site."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:154
 #: includes/core/class-ssc-rest.php:541
-#: includes/modules/class-ssc-module-leads.php:363
+#: includes/modules/class-ssc-module-leads.php:425
 msgid "Form submission is disabled on this site."
 msgstr ""
 
@@ -5235,11 +5235,11 @@ msgstr ""
 msgid "No model selected."
 msgstr ""
 
-#: includes/core/class-ssc-provider.php:321
+#: includes/core/class-ssc-provider.php:325
 msgid "The provider replied 200 but no generated text was found in the response."
 msgstr ""
 
-#: includes/core/class-ssc-provider.php:370
+#: includes/core/class-ssc-provider.php:374
 msgid "No API key provided."
 msgstr ""
 
@@ -5634,27 +5634,31 @@ msgstr ""
 msgid "This file cannot be imported: %1$s, row %2$d has an invalid value in the field “%3$s”. Nothing was changed."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:593
+#: includes/core/class-ssc-transfer.php:674
 msgid "Not in the file."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:678
+#: includes/core/class-ssc-transfer.php:759
 msgid "The settings that decide where information is sent (AI endpoint, notification recipients) were kept as they were: they are imported only together with the API keys."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:721
+#: includes/core/class-ssc-transfer.php:802
 msgid "Some modules could not be switched on because a module they need is missing."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:885
+#: includes/core/class-ssc-transfer.php:974
+msgid "Some documents could not be imported and were left as they were. Documents that are not in the file were not removed."
+msgstr ""
+
+#: includes/core/class-ssc-transfer.php:988
 msgid "No password was entered, so the API keys were not imported."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:888
+#: includes/core/class-ssc-transfer.php:991
 msgid "The password is wrong (or the keys in the file are damaged), so the API keys were not imported. Everything else was."
 msgstr ""
 
-#: includes/core/class-ssc-transfer.php:904
+#: includes/core/class-ssc-transfer.php:1007
 msgid "Some keys could not be encrypted on this server and were not saved."
 msgstr ""
 
@@ -5662,7 +5666,7 @@ msgstr ""
 msgid "OpenAI-compatible endpoint"
 msgstr ""
 
-#: includes/core/providers/class-ssc-provider-gemini.php:217
+#: includes/core/providers/class-ssc-provider-gemini.php:222
 msgid "The model blocked the test prompt for safety reasons."
 msgstr ""
 
@@ -5766,66 +5770,66 @@ msgstr ""
 msgid "Turn conversations into actionable requests with clean, validated contact data."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:223
+#: includes/modules/class-ssc-module-leads.php:285
 msgid "Of course. Tap the button below, leave your name and phone number with a short description of what you need, and our team will contact you."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:359
+#: includes/modules/class-ssc-module-leads.php:421
 msgid "Invalid submission type."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:384
+#: includes/modules/class-ssc-module-leads.php:446
 msgid "Please enter a valid email address, or leave it empty."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:387
+#: includes/modules/class-ssc-module-leads.php:449
 msgid "Please enter your name (2-80 characters)."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:396
+#: includes/modules/class-ssc-module-leads.php:458
 msgid "Please enter a valid phone number."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:399
+#: includes/modules/class-ssc-module-leads.php:461
 msgid "Please describe your request (10-1000 characters)."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:413
+#: includes/modules/class-ssc-module-leads.php:475
 msgid "Your consent is required to submit this form."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:454
+#: includes/modules/class-ssc-module-leads.php:516
 msgid "The request could not be stored. Please try again."
 msgstr ""
 
 #. translators: %s: field label.
-#: includes/modules/class-ssc-module-leads.php:486
+#: includes/modules/class-ssc-module-leads.php:548
 msgid "The field \"%s\" has an invalid value."
 msgstr ""
 
 #. translators: %s: field label.
-#: includes/modules/class-ssc-module-leads.php:494
+#: includes/modules/class-ssc-module-leads.php:556
 msgid "The field \"%s\" must be a valid email."
 msgstr ""
 
 #. translators: %s: field label.
-#: includes/modules/class-ssc-module-leads.php:505
+#: includes/modules/class-ssc-module-leads.php:567
 #: includes/modules/class-ssc-module-pharma.php:1224
 msgid "The field \"%s\" must be a number."
 msgstr ""
 
 #. translators: %s: field label.
-#: includes/modules/class-ssc-module-leads.php:526
+#: includes/modules/class-ssc-module-leads.php:588
 msgid "The field \"%s\" must be one of the choices."
 msgstr ""
 
 #. translators: %s: field label.
-#: includes/modules/class-ssc-module-leads.php:532
+#: includes/modules/class-ssc-module-leads.php:594
 #: includes/modules/class-ssc-module-pharma.php:1172
 msgid "The field \"%s\" is required."
 msgstr ""
 
-#: includes/modules/class-ssc-module-leads.php:555
+#: includes/modules/class-ssc-module-leads.php:617
 msgid "Invalid nonce."
 msgstr ""
 

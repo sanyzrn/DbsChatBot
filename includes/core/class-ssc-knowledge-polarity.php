@@ -73,56 +73,6 @@ class SSC_Knowledge_Polarity {
 	}
 
 	/**
-	 * The quantities a text mentions, in the order written: each number with the
-	 * start of the word that follows it (its unit or what it counts: "10 users",
-	 * "5mg", "2 times"). Digits are ASCII, which normalize() produces.
-	 *
-	 * @param string $normalized Normalized text.
-	 * @return array[] Each: number (no leading zeros), unit (first three letters, or '').
-	 */
-	public static function quantities( $normalized ) {
-		preg_match_all( '/(?<![\p{L}\p{N}])(\d+)(?:\s*(\p{L}+))?/u', (string) $normalized, $found, PREG_SET_ORDER );
-		$out = array();
-		foreach ( $found as $match ) {
-			$number = ltrim( $match[1], '0' );
-			$out[]  = array(
-				'' === $number ? '0' : $number,
-				isset( $match[2] ) ? mb_substr( $match[2], 0, 3 ) : '',
-			);
-		}
-		return $out;
-	}
-
-	/**
-	 * Do the quantities of two texts differ? Same numbers in a different order,
-	 * a different count of numbers, or the same number counting something else
-	 * all differ. Only checked when both texts have numbers.
-	 *
-	 * @param string $a Normalized text.
-	 * @param string $b Normalized text.
-	 * @return bool
-	 */
-	public static function quantities_differ( $a, $b ) {
-		$qa = self::quantities( $a );
-		$qb = self::quantities( $b );
-		if ( ! $qa || ! $qb ) {
-			return false;
-		}
-		if ( count( $qa ) !== count( $qb ) ) {
-			return true;
-		}
-		foreach ( $qa as $i => $one ) {
-			if ( $one[0] !== $qb[ $i ][0] ) {
-				return true;
-			}
-			if ( '' !== $one[1] && '' !== $qb[ $i ][1] && $one[1] !== $qb[ $i ][1] ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Groups whose subject changes the answer entirely: a general answer must not
 	 * go to someone who says they are pregnant or asks about a child, and an
 	 * answer written for them must not go to a general question.
@@ -197,7 +147,8 @@ class SSC_Knowledge_Polarity {
 		$a = SSC_Knowledge::normalize( $question );
 		$b = SSC_Knowledge::normalize( $reference );
 		if ( $a === $b ) {
-			return '';
+			// Normalizing drops the sign and the case of a unit: -20 and 20 read the same afterwards.
+			return SSC_Quantities::differ( (string) $question, (string) $reference ) ? 'number' : '';
 		}
 		if ( self::negations( $a ) !== self::negations( $b ) || self::negated_form( $a, $b ) ) {
 			return 'negation';
@@ -217,7 +168,7 @@ class SSC_Knowledge_Polarity {
 				return 'subject';
 			}
 		}
-		if ( self::quantities_differ( $a, $b ) ) {
+		if ( SSC_Quantities::differ( (string) $question, (string) $reference ) ) {
 			return 'number';
 		}
 		return '';

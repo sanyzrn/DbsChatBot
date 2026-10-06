@@ -395,6 +395,7 @@ class SSC_Transfer {
 			'products'  => array( 'attributes' ),
 			'knowledge' => array(),
 			'faq'       => array(),
+			'documents' => array( 'chunks' ),
 		);
 		foreach ( $checks as $section => $arrays ) {
 			if ( ! isset( $bundle[ $section ] ) || ! is_array( $bundle[ $section ] ) ) {
@@ -404,6 +405,14 @@ class SSC_Transfer {
 			foreach ( $bundle[ $section ] as $row ) {
 				++$row_no;
 				$field = SSC_Input::bad_field( $row, $arrays );
+				// A document without an id or without text is not a document: refused, not skipped in silence.
+				if ( '' === $field && 'documents' === $section ) {
+					if ( '' === trim( SSC_Input::scalar( isset( $row['doc_id'] ) ? $row['doc_id'] : '' ) ) ) {
+						$field = 'doc_id';
+					} elseif ( empty( $row['chunks'] ) || ! is_array( $row['chunks'] ) ) {
+						$field = 'chunks';
+					}
+				}
 				if ( '' !== $field ) {
 					return array(
 						'section' => $section,
@@ -439,18 +448,20 @@ class SSC_Transfer {
 	/**
 	 * The first setting of the file whose value is not the kind of value that
 	 * setting holds: a list where text belongs, text where a list belongs, a
-	 * word where a number belongs. Only settings that would be applied are
-	 * looked at; unknown and site-bound ones are ignored as before.
+	 * word where a number belongs, and the same one level down inside the lists
+	 * of rows (a form field whose label is a list). Only settings that would be
+	 * applied are looked at; unknown and site-bound ones are ignored as before.
 	 *
 	 * @param mixed $values The settings section.
-	 * @return string The setting's name, '(settings)' when the section is not an object, '' when all is well.
+	 * @return string Where it is ("welcome_text", "form_fields[0].label"), '(settings)' when the section is not an object, '' when all is well.
 	 */
 	protected static function settings_problem( $values ) {
 		if ( ! is_array( $values ) ) {
 			return '(settings)';
 		}
-		$skip  = self::site_bound_settings();
-		$known = SSC_Settings::defaults();
+		$skip   = self::site_bound_settings();
+		$known  = SSC_Settings::defaults();
+		$nested = self::nested_settings();
 		foreach ( $values as $key => $value ) {
 			$key = (string) $key;
 			if ( ! array_key_exists( $key, $known ) || in_array( $key, $skip, true ) ) {
@@ -458,16 +469,86 @@ class SSC_Transfer {
 			}
 			$default = $known[ $key ];
 			if ( is_array( $default ) ) {
-				$fits = is_array( $value );
+				$where = isset( $nested[ $key ] ) ? self::nested_problem( $value, $nested[ $key ], $key ) : ( is_array( $value ) ? '' : $key );
 			} elseif ( is_int( $default ) || is_float( $default ) ) {
-				$fits = is_int( $value ) || is_float( $value ) || ( is_string( $value ) && is_numeric( trim( $value ) ) );
+				$where = ( is_int( $value ) || is_float( $value ) || ( is_string( $value ) && is_numeric( trim( $value ) ) ) ) ? '' : $key;
 			} elseif ( is_bool( $default ) ) {
-				$fits = is_bool( $value ) || is_int( $value ) || is_string( $value );
+				$where = ( is_bool( $value ) || is_int( $value ) || is_string( $value ) ) ? '' : $key;
 			} else {
-				$fits = is_string( $value ) || is_int( $value ) || is_float( $value );
+				$where = ( is_string( $value ) || is_int( $value ) || is_float( $value ) ) ? '' : $key;
 			}
-			if ( ! $fits ) {
-				return preg_replace( '/[^A-Za-z0-9_\-]/', '', $key );
+			if ( '' !== $where ) {
+				return preg_replace( '/[^A-Za-z0-9_\-\[\].]/', '', $where );
+			}
+		}
+		return '';
+	}
+
+	/**
+	 * What the list-valued settings hold inside: "s" a plain value, "l" a list
+	 * of plain values, "sl" either, array( 'list' => columns ) a list of rows,
+	 * array( 'row' => columns ) one row, array( 'map' => spec ) rows by name.
+	 * A column that is not named holds a plain value.
+	 *
+	 * @return array
+	 */
+	protected static function nested_settings() {
+		$choices = array( 'list' => array( 'options' => 'sl' ) );
+		return array(
+			'form_fields'    => $choices,
+			'sitesync_types' => 'l',
+			'adr_form'       => array(
+				'row' => array(
+					'fields' => array( 'map' => array( 'row' => array() ) ),
+					'custom' => $choices,
+				),
+			),
+		);
+	}
+
+	/**
+	 * Check a value against a nested_settings() shape.
+	 *
+	 * @param mixed        $value Value from the file.
+	 * @param string|array $spec  Shape.
+	 * @param string       $path  Where the value is, for the message.
+	 * @return string The path of the first value that does not fit, '' when all fit.
+	 */
+	protected static function nested_problem( $value, $spec, $path ) {
+		if ( 's' === $spec ) {
+			return is_scalar( $value ) ? '' : $path;
+		}
+		if ( 'sl' === $spec && is_scalar( $value ) ) {
+			return '';
+		}
+		if ( 'l' === $spec || 'sl' === $spec ) {
+			if ( ! is_array( $value ) ) {
+				return $path;
+			}
+			foreach ( $value as $i => $leaf ) {
+				if ( ! is_scalar( $leaf ) ) {
+					return $path . '[' . $i . ']';
+				}
+			}
+			return '';
+		}
+		if ( ! is_array( $value ) ) {
+			return $path;
+		}
+		if ( isset( $spec['list'] ) || isset( $spec['map'] ) ) {
+			$inner = isset( $spec['list'] ) ? array( 'row' => $spec['list'] ) : $spec['map'];
+			foreach ( $value as $i => $item ) {
+				$where = self::nested_problem( $item, $inner, isset( $spec['list'] ) ? $path . '[' . $i . ']' : $path . '.' . $i );
+				if ( '' !== $where ) {
+					return $where;
+				}
+			}
+			return '';
+		}
+		foreach ( $value as $column => $cell ) {
+			$where = self::nested_problem( $cell, isset( $spec['row'][ $column ] ) ? $spec['row'][ $column ] : 's', $path . '.' . $column );
+			if ( '' !== $where ) {
+				return $where;
 			}
 		}
 		return '';
@@ -837,16 +918,12 @@ class SSC_Transfer {
 	 * @return array
 	 */
 	protected static function apply_documents( $docs, $replace ) {
-		if ( $replace ) {
-			foreach ( SSC_Schema::kb_documents() as $doc ) {
-				if ( 0 !== strpos( (string) $doc['doc_id'], 'wp-' ) ) {
-					SSC_Schema::kb_delete_document( $doc['doc_id'] );
-				}
-			}
-		}
-		$count = 0;
-		foreach ( array_slice( $docs, 0, 500 ) as $doc ) {
-			if ( ! is_array( $doc ) || empty( $doc['doc_id'] ) || empty( $doc['chunks'] ) || ! is_array( $doc['chunks'] ) ) {
+		// Read every document first: nothing is written or removed until the whole file has been looked at.
+		$ready  = array();
+		$known  = array();
+		$failed = 0;
+		foreach ( array_slice( (array) $docs, 0, 500 ) as $doc ) {
+			if ( ! is_array( $doc ) || ! isset( $doc['doc_id'] ) || ! is_scalar( $doc['doc_id'] ) ) {
 				continue;
 			}
 			$id = substr( sanitize_key( (string) $doc['doc_id'] ), 0, 40 );
@@ -854,21 +931,47 @@ class SSC_Transfer {
 			if ( '' === $id || 0 === strpos( $id, 'wp-' ) ) {
 				continue;
 			}
-			$chunks = array();
-			foreach ( array_slice( $doc['chunks'], 0, 400 ) as $chunk ) {
-				$chunks[] = mb_substr( sanitize_textarea_field( (string) $chunk ), 0, 6000 );
+			// A document the file names is kept in replace mode even when it cannot be read.
+			$known[ $id ] = true;
+			$chunks       = array();
+			foreach ( array_slice( isset( $doc['chunks'] ) && is_array( $doc['chunks'] ) ? $doc['chunks'] : array(), 0, 400 ) as $chunk ) {
+				$chunk = is_scalar( $chunk ) ? mb_substr( sanitize_textarea_field( (string) $chunk ), 0, 6000 ) : '';
+				if ( '' !== trim( $chunk ) ) {
+					$chunks[] = $chunk;
+				}
 			}
-			SSC_Schema::kb_delete_document( $id );
-			$inserted = SSC_Schema::kb_insert_chunks(
-				$id,
-				isset( $doc['title'] ) ? (string) $doc['title'] : $id,
-				$chunks,
-				isset( $doc['product_id'] ) && '' !== (string) $doc['product_id'] ? (string) $doc['product_id'] : 'general',
-				isset( $doc['url'] ) ? (string) $doc['url'] : ''
+			if ( ! $chunks ) {
+				++$failed;
+				continue;
+			}
+			$ready[ $id ] = array(
+				'title'   => isset( $doc['title'] ) && is_scalar( $doc['title'] ) && '' !== trim( (string) $doc['title'] ) ? (string) $doc['title'] : $id,
+				'chunks'  => $chunks,
+				'product' => isset( $doc['product_id'] ) && is_scalar( $doc['product_id'] ) && '' !== trim( (string) $doc['product_id'] ) ? (string) $doc['product_id'] : 'general',
+				'url'     => isset( $doc['url'] ) && is_scalar( $doc['url'] ) ? (string) $doc['url'] : '',
 			);
-			if ( $inserted > 0 ) {
-				++$count;
+		}
+		$count = 0;
+		foreach ( $ready as $id => $doc ) {
+			// All or nothing per document: a failed insert leaves the document that was there.
+			if ( false === SSC_Schema::kb_replace_chunks( $id, $doc['title'], $doc['chunks'], $doc['product'], $doc['url'] ) ) {
+				++$failed;
+				$known[ $id ] = true;
+				continue;
 			}
+			++$count;
+		}
+		// Replace mode removes what the file does not name, and only once everything it does name is in place.
+		if ( $replace && ! $failed ) {
+			foreach ( SSC_Schema::kb_documents() as $doc ) {
+				$old = (string) $doc['doc_id'];
+				if ( 0 !== strpos( $old, 'wp-' ) && ! isset( $known[ $old ] ) ) {
+					SSC_Schema::kb_delete_document( $old );
+				}
+			}
+		}
+		if ( $failed ) {
+			return self::row( 'documents', 'warn', $count, __( 'Some documents could not be imported and were left as they were. Documents that are not in the file were not removed.', 'nexachat-ai' ) );
 		}
 		return self::row( 'documents', 'ok', $count, '' );
 	}
