@@ -78,10 +78,13 @@ These are documented deliberately rather than presented as fixed.
   with an injection despite the trust boundary, has its answer forwarded to the
   visitor verbatim. Treat the mode as a strong instruction, not a control, and
   review real answers with your medical team before production use.
-- **Conversation history is client-supplied.** The browser sends prior turns
-  back with each message. They are sanitized, role-restricted and length-capped,
-  but a crafted client can present assistant turns that never happened. History
-  therefore influences the model and must not be treated as an audit record.
+- **Conversation context comes from the server, not the browser.** Since 1.1 the
+  assistant's context is read from the conversation the server stored under a
+  random id; the browser sends only that id, and an assistant turn written by a
+  browser is never accepted. Only a widget so old that it sends no id can still
+  supply earlier turns, and then only the visitor's own (role-restricted, sanitized
+  and length-capped). The stored transcript is still not a tamper-proof audit
+  record: it is what the server answered, kept for a limited time.
 - **Emergency screening is a keyword heuristic.** It is deliberately broad and
   intended to reduce harm, not to perform clinical triage. It will produce false
   positives, and it can miss a description that uses none of its terms.
@@ -89,6 +92,12 @@ These are documented deliberately rather than presented as fixed.
   again when the request is issued. A hostname could in principle rebind between
   the two. WordPress core applies a second layer of protection, so practical risk
   is low, but the window is real.
+- **Hosts that publish only IPv6 (AAAA) records are not supported.** The address
+  guard resolves IPv4 only, and so does WordPress core's own check
+  (`wp_http_validate_url`, used by `wp_safe_remote_post`), so an endpoint or webhook
+  that has no A record is refused as "not a valid public address". Only an endpoint
+  or webhook on an IPv6-only name is affected. The same limit means an AAAA record
+  is not checked for a host that has both; endpoints are chosen by an administrator.
 - **Anonymization is not redaction.** Removing direct identifiers from a safety
   report does not anonymize free-text clinical narratives or audit notes.
 - **Provider trust.** Messages are sent to the AI provider the site owner
