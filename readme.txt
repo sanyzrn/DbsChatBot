@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,12 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.7.3 =
+
+* New: the plugin declares compatibility with WooCommerce's high-performance order storage (HPOS, "custom order tables"). It reads orders only through WooCommerce's own order functions, so WooCommerce no longer lists it as "compatibility unknown" on stores that use HPOS.
+* Docs: SECURITY.md described conversation history as supplied by the browser. Since 1.1 the assistant's context comes from the conversation the server stored, and a browser can never add an assistant turn; the clause now says so. It also states a verified limit: an endpoint or webhook on a host that publishes only IPv6 (AAAA) records is refused, as it is by WordPress core's own address check.
+* Docs: tests/README.md lists every check file of the integration suite and what a bare command-line PHP needs to run the unit tests.
 
 = 1.7.2 =
 
