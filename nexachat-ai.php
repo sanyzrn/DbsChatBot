@@ -69,4 +69,17 @@ unset( $nexachatai_network );
 // before the guard above could run.
 define( 'SSC_CHATBOT_VERSION', '1.7.2' );
 define( 'NEXACHATAI_MAIN_FILE', __FILE__ );
+
+// WooCommerce: orders are read only through WooCommerce's own order API (wc_get_order, the WC_Order getters,
+// order notes and the checkout hooks), never from the posts tables, so the plugin works with high-performance
+// order storage (HPOS). Declaring it keeps WooCommerce from listing the plugin as "compatibility unknown".
+add_action(
+	'before_woocommerce_init',
+	function () {
+		if ( class_exists( 'Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', NEXACHATAI_MAIN_FILE, true );
+		}
+	}
+);
+
 require_once __DIR__ . '/includes/bootstrap.php';
