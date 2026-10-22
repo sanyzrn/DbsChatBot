@@ -21,7 +21,7 @@ For integration checks, install WordPress in a **disposable database and directo
 | `transfer.php` | Export and import: round trip, hostile files, undo |
 | `screens.php` | The admin screens render and carry what they should |
 | `consult.php` | The consultation request form and its offer in the chat |
-| `audit.php`, `audit2.php`, `audit3.php`, `audit4.php` | The regression checks of the external reviews of 1.5.0, 1.7.0, 1.7.1 and 1.7.2; each block names the finding it closes |
+| `audit.php`, `audit2.php`, `audit3.php`, `audit4.php`, `audit5.php` | The regression checks of the external reviews of 1.5.0, 1.7.0, 1.7.1, 1.7.2 and 1.7.3; each block names the finding it closes |
 
 `tests/http-smoke.py` is the only separate script; it is described below.
 

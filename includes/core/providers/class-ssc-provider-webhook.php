@@ -175,9 +175,11 @@ class SSC_Provider_Webhook extends SSC_Provider {
 		$response                = wp_safe_remote_post(
 			$parts['url'],
 			array(
-				'timeout' => (int) apply_filters( 'ssc_http_timeout', 60 ),
-				'headers' => $headers,
-				'body'    => (string) $parts['body'],
+				'redirection'         => 0, // Never forward the message and the signature to a redirect target.
+				'limit_response_size' => 2097152,
+				'timeout'             => (int) apply_filters( 'ssc_http_timeout', 60 ),
+				'headers'             => $headers,
+				'body'                => (string) $parts['body'],
 			)
 		);
 

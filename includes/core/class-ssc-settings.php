@@ -614,6 +614,9 @@ class SSC_Settings {
 		if ( ! array_key_exists( $key, $defaults ) ) {
 			return null; // Unknown keys are dropped by policy.
 		}
+		if ( in_array( $key, self::secret_fields(), true ) ) {
+			return null; // Keys and tokens are stored encrypted by set_secret(), never as the plain text this sanitizer would return.
+		}
 		$dv = $defaults[ $key ];
 
 		if ( is_array( $dv ) ) {

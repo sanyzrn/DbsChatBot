@@ -51,6 +51,8 @@ $ssc_qa_mode    = (string) SSC_Settings::get( 'qa_mode', 'ai_first' );
 				esc_html_e( 'No file was uploaded.', 'nexachat-ai' );
 			} elseif ( 'badtype' === $err ) {
 				esc_html_e( 'Only .csv, .json and .txt files can be imported.', 'nexachat-ai' );
+			} elseif ( 'empty' === $err ) {
+				esc_html_e( 'The file has no usable rows (a question and an answer), so nothing was replaced.', 'nexachat-ai' );
 			} else {
 				echo esc_html(
 					sprintf(

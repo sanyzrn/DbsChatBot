@@ -195,11 +195,30 @@ class SSC_Module_Faq extends SSC_Module {
 		}
 		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
 		$content = (string) file_get_contents( $tmp_name ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- upload validated with is_uploaded_file().
-		$rows    = array();
+		$replace = isset( $_POST['import_mode'] ) && 'replace' === sanitize_key( wp_unslash( $_POST['import_mode'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified by the caller.
+		return $this->import_content( $content, $replace );
+	}
+
+	/**
+	 * Read the rows of an uploaded CSV/JSON text and add them to the bank. In
+	 * replace mode a file with nothing usable in it is refused: it must not
+	 * empty the bank it was meant to replace.
+	 *
+	 * @param string $content Text of the file.
+	 * @param bool   $replace Replace the bank instead of adding to it.
+	 * @return array inserted/skipped/error.
+	 */
+	protected function import_content( $content, $replace ) {
+		$out  = array(
+			'inserted' => 0,
+			'skipped'  => 0,
+			'error'    => '',
+		);
+		$rows = array();
 		if ( false !== strpos( $content, '{"' ) && null !== json_decode( $content, true ) ) {
 			$decoded = json_decode( $content, true );
 			foreach ( (array) $decoded as $row ) {
-				if ( is_array( $row ) && isset( $row['question'], $row['answer'] ) ) {
+				if ( is_array( $row ) && isset( $row['question'], $row['answer'] ) && is_scalar( $row['question'] ) && is_scalar( $row['answer'] ) && '' !== trim( (string) $row['question'] ) && '' !== trim( (string) $row['answer'] ) ) {
 					$rows[] = array(
 						'question' => (string) $row['question'],
 						'answer'   => (string) $row['answer'],
@@ -234,7 +253,11 @@ class SSC_Module_Faq extends SSC_Module {
 				}
 			}
 		}
-		$replace         = isset( $_POST['import_mode'] ) && 'replace' === sanitize_key( wp_unslash( $_POST['import_mode'] ) );
+		if ( $replace && ! $rows ) {
+			// A header-only file, a one-line file or rows without answers must not wipe the bank it was meant to replace.
+			$out['error'] = 'empty';
+			return $out;
+		}
 		$out['inserted'] = SSC_Schema::qa_import( $rows, $replace );
 		return $out;
 	}

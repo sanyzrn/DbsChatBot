@@ -89,9 +89,16 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 		'nafas_chatbot_stats_migrated',
 	);
 	$options[] = 'ssc_chatlog_default_applied';
+	// Written by later versions: the last provider failure (with the provider's own message), one-time migration marks.
+	$options[] = 'ssc_ai_failures';
+	$options[] = 'ssc_private_proxy_trust_applied';
+	$options[] = 'ssc_settings_v5_applied';
 	foreach ( $options as $option ) {
 		delete_option( $option );
 	}
+	// Daily coupon counters written as options by older versions.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- opt-in destructive uninstall.
+	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'ssc_woo_cpn_day_' ) . '%' ) );
 
 	$suffixes = array( 'submissions', 'chatlog', 'qa', 'kb', 'stats', 'audit', 'notifications', 'live_threads', 'live_messages', 'live_refs', 'carts', 'conversations' );
 	// Operator presence and messenger links.

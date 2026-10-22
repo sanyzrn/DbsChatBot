@@ -1,8 +1,8 @@
 === NexaChatAI ===
 Contributors: DbsStudio
-Tags: chatbot, ai, support, elementor, persian, rtl, consultation, assistant
+Tags: chatbot, ai, support, persian, rtl
 Requires at least: 5.6
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.7.3
 License: GPLv2 or later
@@ -47,6 +47,28 @@ All of the following are off by default and appear only after you switch them on
 * **WooCommerce sales assistant:** product cards with real price and stock and an add-to-cart button, order tracking by order number and mobile, product comparison, a capped smart coupon on exit or hesitation, and an SMS cart reminder.
 * **SMS gateway:** Kavenegar, Melipayamak, IPPanel or SMS.ir, for cart reminders and new-request alerts.
 * **Learn from my website:** published pages, posts and products become knowledge automatically and stay up to date.
+
+== External services ==
+
+NexaChatAI contacts an outside service only after the site owner has chosen and configured it. Nothing is sent to the plugin's author: there is no telemetry, no licence check and no update ping.
+
+= AI provider (the one the owner selects) =
+Used to write answers, to build the optional knowledge index (embeddings), to summarise long conversations, and for the optional web search. Called on each chat message, on each indexing job and on the administrator's connection test. Sent: the visitor's message, the recent conversation or its summary, the business profile and the knowledge excerpts found for the question, and the assistant's instructions. In pharmaceutical mode the visitor's text can describe a health problem; the owner should have a data-processing agreement with the provider they choose. The owner's API key goes only to that provider.
+
+* OpenAI: https://openai.com/policies/terms-of-use and https://openai.com/policies/privacy-policy
+* Anthropic (Claude): https://www.anthropic.com/legal/commercial-terms and https://www.anthropic.com/legal/privacy
+* Google (Gemini): https://ai.google.dev/gemini-api/terms and https://policies.google.com/privacy
+* OpenRouter: https://openrouter.ai/terms and https://openrouter.ai/privacy
+* Any OpenAI-compatible endpoint or webhook the owner enters: governed by that service's own terms.
+
+= Bale and Telegram (optional) =
+Used for administrator notifications, for live-chat operator replies and for the messenger bot. Called when the Notifications, Live chat or Messenger module is on and the owner has connected a bot. Sent: the notification text, or the visitor's chat message and the answer. Bale: https://bale.ai/ . Telegram: https://telegram.org/tos and https://telegram.org/privacy
+
+= SMS panel (optional) =
+Used for cart reminders and administrator alerts. Called only when the SMS module is on and a message is sent. Sent: the recipient's mobile number and the message text. Kavenegar: https://kavenegar.com/ . Melipayamak: https://www.melipayamak.com/ . IPPanel / Faraz SMS: https://ippanel.com/ . SMS.ir: https://sms.ir/
+
+= Website pages (optional) =
+"Import from a web address" (Knowledge and the setup wizard) downloads the page the administrator types, from the server that runs the site. "Learn from my website" reads the site's own posts and pages and contacts no one.
 
 == Installation ==
 

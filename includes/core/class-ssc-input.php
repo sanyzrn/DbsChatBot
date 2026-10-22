@@ -81,6 +81,20 @@ class SSC_Input {
 	}
 
 	/**
+	 * A key for a visitor's address that cannot be turned back into the address:
+	 * a keyed hash (the site's own salt), not a plain MD5, which anyone with
+	 * the stored value can reverse for an IPv4 address in seconds. Used for
+	 * rate-limit counters and short-lived transients; 32 characters, like the
+	 * MD5 it replaces.
+	 *
+	 * @param string $value Address (or any visitor identifier).
+	 * @return string
+	 */
+	public static function visitor_key( $value ) {
+		return substr( hash_hmac( 'sha256', (string) $value, wp_salt( 'auth' ) ), 0, 32 );
+	}
+
+	/**
 	 * An email address exactly as typed, or a refusal. Nothing is repaired: an
 	 * address that WordPress would only accept after changing it (a space inside,
 	 * a stray character) is refused, so a wrong address is never stored as a

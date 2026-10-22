@@ -134,16 +134,16 @@ class SSC_Admin {
 		}
 		$nonce = wp_create_nonce( 'ssc_uninstall_policy' );
 		$label = __( 'NexaChatAI', 'nexachat-ai' );
-		$ask   = __( 'Also permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?', 'nexachat-ai' );
-		$yes   = __( 'OK = delete plugin + data', 'nexachat-ai' );
-		$no    = __( 'Cancel = delete plugin, KEEP data', 'nexachat-ai' );
+		$ask   = __( 'Delete the plugin AND permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?', 'nexachat-ai' );
+		$keep  = __( 'Delete the plugin but KEEP the saved data? (Cancel stops the deletion.)', 'nexachat-ai' );
 		?>
 <script id="ssc-uninstall-confirm">
 (function () {
 	var PLUGIN = <?php echo wp_json_encode( $plugin ); ?>;
 	var NONCE = <?php echo wp_json_encode( $nonce ); ?>;
 	var AJAX = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
-	var ASK = <?php echo wp_json_encode( $ask . "\n\n" . $yes . "\n" . $no ); ?>;
+	var ASK = <?php echo wp_json_encode( $ask ); ?>;
+	var KEEP = <?php echo wp_json_encode( $keep ); ?>;
 
 	function rowMatches(link) {
 		var row = link.closest('tr[data-plugin]');
@@ -183,7 +183,9 @@ class SSC_Admin {
 		e.stopPropagation();
 		if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); }
 
+		// Two plain questions, so that Cancel always means "do not delete": delete with data? else delete and keep data? else stop.
 		var wipe = window.confirm(ASK);
+		if (!wipe && !window.confirm(KEEP)) { return; }
 		setPolicy(wipe, function () {
 			link.setAttribute('data-ssc-uninstall', '1');
 			// Re-click so WordPress runs its own confirm + delete flow.

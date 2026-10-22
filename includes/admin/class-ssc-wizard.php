@@ -195,7 +195,7 @@ class SSC_Wizard {
 		if ( '' === $url || ! SSC_HTTP::is_safe_url( $url, true ) ) {
 			return false;
 		}
-		$response = wp_safe_remote_get( $url, array( 'timeout' => 20 ) );
+		$response = wp_safe_remote_get( $url, array( 'timeout' => 20, 'limit_response_size' => 2 * MB_IN_BYTES ) );
 		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return false;
 		}

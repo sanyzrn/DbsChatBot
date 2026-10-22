@@ -1059,7 +1059,7 @@ class SSC_Module_Live extends SSC_Module {
 			return new WP_Error( 'ssc_too_large', __( 'The request is too large.', 'nexachat-ai' ), array( 'status' => 413 ) );
 		}
 		$engine = new SSC_Chat_Engine();
-		$key    = 'ssc_live_rate_' . md5( $engine->client_ip() );
+		$key    = 'ssc_live_rate_' . SSC_Input::visitor_key( $engine->client_ip() );
 		$count  = (int) get_transient( $key );
 		if ( $count > 90 ) {
 			return new WP_Error( 'ssc_rate_limited', __( 'Please slow down and try again in a minute.', 'nexachat-ai' ), array( 'status' => 429 ) );
