@@ -585,7 +585,7 @@ class SSC_Module_Woo extends SSC_Module {
 	 */
 	protected static function blocked( $bucket, $max, $count = false ) {
 		$engine = new SSC_Chat_Engine();
-		$key    = 'ssc_woo_' . $bucket . '_' . md5( $engine->client_ip() );
+		$key    = 'ssc_woo_' . $bucket . '_' . SSC_Input::visitor_key( $engine->client_ip() );
 		$fails  = (int) get_transient( $key );
 		if ( $count ) {
 			set_transient( $key, $fails + 1, 15 * MINUTE_IN_SECONDS );
@@ -720,13 +720,13 @@ class SSC_Module_Woo extends SSC_Module {
 			return new WP_Error( 'ssc_not_available', __( 'This offer has ended.', 'nexachat-ai' ), array( 'status' => 404 ) );
 		}
 		$engine  = new SSC_Chat_Engine();
-		$visitor = 'ssc_woo_cpn_' . md5( $engine->client_ip() );
+		$visitor = 'ssc_woo_cpn_' . SSC_Input::visitor_key( $engine->client_ip() );
 		$given   = get_transient( $visitor );
 		if ( is_array( $given ) ) {
 			return rest_ensure_response( $given ); // Same visitor, same code: no farming.
 		}
 		$day   = 'ssc_woo_cpn_day_' . gmdate( 'Ymd' );
-		$count = (int) get_option( $day, 0 );
+		$count = (int) get_transient( $day );
 		if ( $count >= (int) SSC_Settings::get( 'woo_coupon_daily', 20 ) ) {
 			return new WP_Error( 'ssc_coupon_cap', __( 'Today\'s offers have all been claimed. Please check back tomorrow.', 'nexachat-ai' ), array( 'status' => 409 ) );
 		}
@@ -756,7 +756,7 @@ class SSC_Module_Woo extends SSC_Module {
 		}
 		$coupon->set_description( __( 'Smart offer from the NexaChatAI assistant', 'nexachat-ai' ) );
 		$coupon->save();
-		update_option( $day, $count + 1, false );
+		set_transient( $day, $count + 1, 2 * DAY_IN_SECONDS );
 		$payload = array(
 			'code'    => $code,
 			'text'    => self::coupon_teaser(),
@@ -800,6 +800,8 @@ class SSC_Module_Woo extends SSC_Module {
 				$items[] = $line['data']->get_name() . ' × ' . (int) $line['quantity'];
 			}
 		}
+		// Each request costs an SMS to a number the visitor typed: it counts against the limit whether or not it succeeds.
+		self::blocked( 'remind', 5, true );
 		self::save_reminder( $phone, WC()->session ? (string) WC()->session->get_customer_id() : '', $items, self::money( $cart->get_total( 'edit' ) ) );
 		return rest_ensure_response(
 			array(

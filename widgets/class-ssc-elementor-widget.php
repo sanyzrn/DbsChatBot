@@ -171,7 +171,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 	 * Render (server-side; empty string when the chatbot is not live).
 	 */
 	protected function render() {
-		if ( ! function_exists( 'SSC_Plugin' ) ) {
+		if ( ! class_exists( 'SSC_Plugin' ) ) {
 			return;
 		}
 		$overrides = array();

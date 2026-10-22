@@ -531,12 +531,19 @@ class SSC_Schema {
 	 * Upgrade 4.x settings shape to 5.0 (once).
 	 */
 	public static function migrate_settings_v5() {
+		if ( get_option( 'ssc_settings_v5_applied' ) ) {
+			return;
+		}
 		$saved = get_option( SSC_Settings::OPTION_KEY, array() );
 		if ( ! is_array( $saved ) || empty( $saved ) ) {
 			return;
 		}
-		$is_legacy = isset( $saved['company_id'] ) || isset( $saved['show_company'] ) || isset( $saved['ai_system_prompt'] ) || isset( $saved['product_knowledge'] );
+		// The 4.x keys are kept after the move (nothing is destroyed), so their presence alone does not mean
+		// "not migrated yet". Settings in the 5.x shape always carry the business profile; only settings without
+		// it are 4.x settings. Running this on 5.x settings would rebuild them from the defaults.
+		$is_legacy = ( isset( $saved['company_id'] ) || isset( $saved['show_company'] ) || isset( $saved['ai_system_prompt'] ) || isset( $saved['product_knowledge'] ) ) && ! isset( $saved['business'] );
 		if ( ! $is_legacy ) {
+			update_option( 'ssc_settings_v5_applied', 1, false );
 			return;
 		}
 		$migrated = SSC_Settings::migrate_v4( $saved );
@@ -561,6 +568,7 @@ class SSC_Schema {
 			}
 		}
 		update_option( SSC_Settings::OPTION_KEY, $migrated, false );
+		update_option( 'ssc_settings_v5_applied', 1, false );
 	}
 
 	/**
@@ -1810,7 +1818,7 @@ class SSC_Schema {
 		$blocked = false;
 
 		if ( in_array( $mode, array( 'ip', 'both' ), true ) && $limit_ip > 0 ) {
-			$count = self::counter_hit( 'rl:' . $bucket . ':ip:' . md5( $ip ) );
+			$count = self::counter_hit( 'rl:' . $bucket . ':ip:' . SSC_Input::visitor_key( $ip ) );
 			if ( $count > $limit_ip ) {
 				$blocked = true;
 			}
@@ -1818,13 +1826,13 @@ class SSC_Schema {
 		if ( ! $blocked && in_array( $mode, array( 'session', 'both' ), true ) && $limit_session > 0 ) {
 			// Omitting cid must not disable session quotas.
 			$cid   = '' !== $cid ? $cid : 'missing:' . $ip;
-			$count = self::counter_hit( 'rl:' . $bucket . ':sess:' . md5( $cid ) );
+			$count = self::counter_hit( 'rl:' . $bucket . ':sess:' . SSC_Input::visitor_key( $cid ) );
 			if ( $count > $limit_session ) {
 				$blocked = true;
 			}
 			// Backstop: sessions can be regenerated; an IP ceiling guards it.
 			$cap = max( 10, $limit_session * 10 );
-			if ( self::counter_hit( 'rl:' . $bucket . ':ipcap:' . md5( $ip ) ) > $cap ) {
+			if ( self::counter_hit( 'rl:' . $bucket . ':ipcap:' . SSC_Input::visitor_key( $ip ) ) > $cap ) {
 				$blocked = true;
 			}
 		}
@@ -1950,6 +1958,9 @@ class SSC_Schema {
 		$stale = gmdate( 'Y-m-d', time() - 2 * DAY_IN_SECONDS );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- stale counter purge.
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . self::stats_table_name() . " WHERE metric LIKE 'rl:%%' AND stat_date < %s", $stale ) );
+		// Older versions kept the daily coupon count as an option per day and never removed it; it is a transient now.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- one-off cleanup of leftover option rows.
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'ssc_woo_cpn_day_' ) . '%' ) );
 	}
 
 	/**

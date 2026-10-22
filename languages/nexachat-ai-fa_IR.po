@@ -506,9 +506,6 @@ msgstr "مثل یک دستیار همه‌منظوره، به پرسش‌های 
 msgid "Also believe a proxy on a private network (10.x, 172.16–31.x, 192.168.x)"
 msgstr "پروکسی روی شبکهٔ خصوصی (10.x، 172.16 تا 31.x، 192.168.x) را هم بپذیر"
 
-msgid "Also permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?"
-msgstr "همهٔ داده‌های ذخیره‌شده (تنظیمات، دانش، گفتگوها، درخواست‌ها، پرونده‌های عارضه) هم برای همیشه حذف شوند؟"
-
 msgid "Also send email notifications"
 msgstr "ارسال اعلان ایمیلی هم انجام شود"
 
@@ -852,9 +849,6 @@ msgstr "تماس با ما"
 
 msgid "Cancel"
 msgstr "انصراف"
-
-msgid "Cancel = delete plugin, KEEP data"
-msgstr "انصراف = حذف افزونه، با حفظ داده‌ها"
 
 msgid "Capture complete, reviewable safety reports instead of loose chat messages."
 msgstr "به‌جای پیام‌های پراکندهٔ گفتگو، گزارش‌های ایمنی کامل و قابل بررسی دریافت کنید."
@@ -1275,6 +1269,12 @@ msgstr "حذف"
 
 msgid "Delete case"
 msgstr "حذف پرونده"
+
+msgid "Delete the plugin AND permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?"
+msgstr "افزونه حذف شود و همهٔ داده‌های ذخیره‌شده (تنظیمات، دانش، گفتگوها، درخواست‌ها، پرونده‌های عارضه) هم برای همیشه پاک شوند؟"
+
+msgid "Delete the plugin but KEEP the saved data? (Cancel stops the deletion.)"
+msgstr "افزونه حذف شود اما داده‌های ذخیره‌شده بماند؟ (با «انصراف»، حذف انجام نمی‌شود.)"
 
 msgid "Delete this conversation"
 msgstr "حذف این گفتگو"
@@ -2507,9 +2507,6 @@ msgstr "عدد"
 
 msgid "Nurse"
 msgstr "پرستار"
-
-msgid "OK = delete plugin + data"
-msgstr "تأیید = حذف افزونه و داده‌ها"
 
 msgid "Of course. Tap the button below, leave your name and phone number with a short description of what you need, and our team will contact you."
 msgstr "حتماً. دکمهٔ زیر را بزنید، نام و شمارهٔ تماس خود را همراه با توضیح کوتاهی دربارهٔ نیازتان بنویسید تا همکارانمان با شما تماس بگیرند."
@@ -3965,6 +3962,9 @@ msgstr "فایل برای بازبینی نگه داشته نشد (پایگاه 
 
 msgid "The file could not be opened. Is it a valid .docx document?"
 msgstr "فایل باز نشد. آیا یک سند .docx معتبر است؟"
+
+msgid "The file has no usable rows (a question and an answer), so nothing was replaced."
+msgstr "فایل هیچ ردیف قابل‌استفاده‌ای (پرسش و پاسخ) ندارد، پس چیزی جایگزین نشد."
 
 msgid "The file is larger than 2 MB and was NOT imported."
 msgstr "حجم فایل بیش از ۲ مگابایت است و وارد نشد."

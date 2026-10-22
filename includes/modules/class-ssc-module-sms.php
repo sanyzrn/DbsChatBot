@@ -175,7 +175,7 @@ class SSC_Module_Sms extends SSC_Module {
 
 		switch ( $provider ) {
 			case 'melipayamak':
-				$response = wp_safe_remote_post(
+				$response = self::post(
 					'https://rest.payamak-panel.com/api/SendSMS/SendSMS',
 					array(
 						'timeout' => 15,
@@ -196,7 +196,7 @@ class SSC_Module_Sms extends SSC_Module {
 				return ( isset( $data['RetStatus'] ) && 1 === (int) $data['RetStatus'] ) ? true : self::provider_error( isset( $data['StrRetStatus'] ) ? $data['StrRetStatus'] : '' );
 
 			case 'ippanel':
-				$response = wp_safe_remote_post(
+				$response = self::post(
 					'https://api2.ippanel.com/api/v1/sms/send/webservice/single',
 					array(
 						'timeout' => 15,
@@ -220,7 +220,7 @@ class SSC_Module_Sms extends SSC_Module {
 				return ( isset( $data['status'] ) && 'OK' === strtoupper( (string) $data['status'] ) ) ? true : self::provider_error( isset( $data['error_message'] ) ? $data['error_message'] : ( isset( $data['message'] ) ? $data['message'] : '' ) );
 
 			case 'smsir':
-				$response = wp_safe_remote_post(
+				$response = self::post(
 					'https://api.sms.ir/v1/send/bulk',
 					array(
 						'timeout' => 15,
@@ -252,7 +252,7 @@ class SSC_Module_Sms extends SSC_Module {
 				if ( '' !== $sender ) {
 					$params['sender'] = $sender;
 				}
-				$response = wp_safe_remote_post(
+				$response = self::post(
 					'https://api.kavenegar.com/v1/' . rawurlencode( $key ) . '/sms/send.json',
 					array(
 						'timeout' => 15,
@@ -265,6 +265,19 @@ class SSC_Module_Sms extends SSC_Module {
 				}
 				return ( isset( $data['return']['status'] ) && 200 === (int) $data['return']['status'] ) ? true : self::provider_error( isset( $data['return']['message'] ) ? $data['return']['message'] : '' );
 		}
+	}
+
+	/**
+	 * One request to a gateway: no redirects (the key and the message must not follow one) and a size cap.
+	 *
+	 * @param string $url  Gateway address.
+	 * @param array  $args Request arguments.
+	 * @return array|WP_Error
+	 */
+	protected static function post( $url, $args ) {
+		$args['redirection']         = 0;
+		$args['limit_response_size'] = 1048576;
+		return wp_safe_remote_post( $url, $args );
 	}
 
 	/**
