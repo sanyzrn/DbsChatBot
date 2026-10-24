@@ -33,6 +33,12 @@ AES-256-CBC using encrypt-then-MAC, keyed from the site's `AUTH_KEY` and
 than stored in plaintext. Keys are never included in the frontend config payload,
 never logged, and never returned by any endpoint.
 
+**Messenger webhooks.** Telegram sends the webhook secret in a request header. Bale cannot, so its
+webhook address carries the secret in the query string (`?k=…`); web-server access logs on your host
+may therefore contain it. Treat those logs as sensitive, and if the address leaks, reset the secret by
+deleting the option `ssc_messenger_secret` and saving the messenger settings again (the old address
+then stops working).
+
 **Outbound requests.** Every provider, webhook and document-import request passes
 through an SSRF guard that resolves DNS and rejects private, loopback and
 link-local targets; HTTPS is required whenever credentials travel; redirects are

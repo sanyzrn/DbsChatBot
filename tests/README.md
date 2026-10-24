@@ -21,7 +21,7 @@ For integration checks, install WordPress in a **disposable database and directo
 | `transfer.php` | Export and import: round trip, hostile files, undo |
 | `screens.php` | The admin screens render and carry what they should |
 | `consult.php` | The consultation request form and its offer in the chat |
-| `audit.php`, `audit2.php`, `audit3.php`, `audit4.php`, `audit5.php` | The regression checks of the external reviews of 1.5.0, 1.7.0, 1.7.1, 1.7.2 and 1.7.3; each block names the finding it closes |
+| `audit.php`, `audit2.php`, `audit3.php`, `audit4.php`, `audit5.php`, `audit6.php` | The regression checks of the external reviews of 1.5.0, 1.7.0, 1.7.1, 1.7.2, 1.7.3 and the 24 Oct 2026 audit; each block names the finding it closes |
 
 `tests/http-smoke.py` is the only separate script; it is described below.
 
@@ -32,3 +32,5 @@ The integration suite leaves the chatbot unpublished. For `python tests/http-smo
 The browser audit additionally covered English/Persian rendering, the complete Persian ADR submission on a 390×844 viewport, fallback chat, and resetting the visible conversation with the Twenty Twenty-Five theme. No automatic browser suite or exhaustive theme compatibility claim is implied.
 
 `tools/build-translations.py` compiles the maintained Persian JSON catalog to PO/MO. `tools/build-release.py` creates the installable ZIP and SHA-256 from a file allowlist, excluding tests, local WordPress data, and credentials.
+
+With WooCommerce active on the test site, `tests/woo.php` also runs (catalogue, order tracking, coupons, cart reminders); without it that block prints SKIP. The suite raises PHP's `memory_limit` to 512M by itself.

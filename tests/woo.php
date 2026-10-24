@@ -95,7 +95,7 @@ if ( class_exists( 'WooCommerce' ) ) {
 		$r->set_param( 'contact', $contact );
 		return SSC_Module_Woo::rest_order( $r );
 	};
-	delete_transient( 'ssc_woo_order_' . md5( ( new SSC_Chat_Engine() )->client_ip() ) );
+	delete_transient( 'ssc_woo_order_' . SSC_Input::visitor_key( ( new SSC_Chat_Engine() )->client_ip() ) );
 	$good    = $ask( (string) $order->get_id(), '09121112233' );
 	$wrong   = $ask( (string) $order->get_id(), '09120000000' );
 	$missing = $ask( '99999999', '09121112233' );
@@ -104,16 +104,16 @@ if ( class_exists( 'WooCommerce' ) ) {
 
 	// Smart coupon: created once per visitor, single-use, daily cap.
 	SSC_Settings::update( array( 'woo_coupon_enabled' => 'yes', 'woo_coupon_amount' => 12, 'woo_coupon_type' => 'percent', 'woo_coupon_daily' => 5, 'woo_coupon_min' => 0 ) );
-	delete_transient( 'ssc_woo_cpn_' . md5( ( new SSC_Chat_Engine() )->client_ip() ) );
-	delete_option( 'ssc_woo_cpn_day_' . gmdate( 'Ymd' ) );
+	delete_transient( 'ssc_woo_cpn_' . SSC_Input::visitor_key( ( new SSC_Chat_Engine() )->client_ip() ) );
+	delete_transient( 'ssc_woo_cpn_day_' . gmdate( 'Ymd' ) );
 	$first  = SSC_Module_Woo::rest_coupon( new WP_REST_Request( 'POST', '/ssc/v1/woo/coupon' ) )->get_data();
 	$again  = SSC_Module_Woo::rest_coupon( new WP_REST_Request( 'POST', '/ssc/v1/woo/coupon' ) )->get_data();
 	$coupon = new WC_Coupon( $first['code'] );
 	check( $first['code'] === $again['code'] && 1 === (int) $coupon->get_usage_limit() && 12.0 === (float) $coupon->get_amount() && $coupon->get_date_expires(), 'One single-use, expiring coupon per visitor' );
-	delete_transient( 'ssc_woo_cpn_' . md5( ( new SSC_Chat_Engine() )->client_ip() ) );
-	update_option( 'ssc_woo_cpn_day_' . gmdate( 'Ymd' ), 5 );
+	delete_transient( 'ssc_woo_cpn_' . SSC_Input::visitor_key( ( new SSC_Chat_Engine() )->client_ip() ) );
+	set_transient( 'ssc_woo_cpn_day_' . gmdate( 'Ymd' ), 5, 2 * DAY_IN_SECONDS );
 	check( is_wp_error( SSC_Module_Woo::rest_coupon( new WP_REST_Request( 'POST', '/ssc/v1/woo/coupon' ) ) ), 'The daily coupon cap is enforced' );
-	delete_option( 'ssc_woo_cpn_day_' . gmdate( 'Ymd' ) );
+	delete_transient( 'ssc_woo_cpn_day_' . gmdate( 'Ymd' ) );
 	wp_delete_post( $coupon->get_id(), true );
 
 	// Cart reminder: stored, sent once after the delay, cancelled by an order.

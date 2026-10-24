@@ -1,0 +1,25 @@
+<?php
+/**
+ * Checks closing the 24 Oct 2026 audit (T-01, C-01, O-01, O-02).
+ */
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+// C-01: hosts without the intl extension still fold PDF presentation forms.
+$glyphs = "\u{FE91}\u{FEAE}\u{FEED}\u{FEB7}\u{FEEE}\u{FEAD}"; // Presentation forms of "برو" + "شور".
+check( 'بروشور' === SSC_Arabic_Forms::fold( $glyphs ), 'Presentation forms fold to base letters without intl' );
+check( 'لا' === SSC_Arabic_Forms::fold( "\u{FEFB}" ) && 'Vitamin D3 ۱۲۳ عادی' === SSC_Arabic_Forms::fold( 'Vitamin D3 ۱۲۳ عادی' ), 'Ligatures expand and ordinary text is untouched' );
+check( SSC_Knowledge::normalize( SSC_Arabic_Forms::fold( $glyphs ) ) === SSC_Knowledge::normalize( 'بروشور' ), 'Folded text matches an ordinary question in the knowledge search' );
+if ( class_exists( 'Normalizer' ) ) {
+	$same = true;
+	foreach ( array( array( 0xFB50, 0xFDFF ), array( 0xFE70, 0xFEFF ) ) as $range ) {
+		for ( $cp = $range[0]; $cp <= $range[1]; $cp++ ) {
+			if ( ( $cp >= 0xFDD0 && $cp <= 0xFDEF ) || 0xFEFF === $cp ) { continue; }
+			$ch = mb_chr( $cp, 'UTF-8' );
+			$n  = Normalizer::normalize( $ch, Normalizer::FORM_KC );
+			if ( false !== $n && SSC_Arabic_Forms::fold( $ch ) !== $n ) { $same = false; }
+		}
+	}
+	check( $same, 'The fallback table equals Normalizer (NFKC) for every presentation form' );
+} else {
+	echo "SKIP: intl is not loaded, so the table was not compared with Normalizer\n";
+}
