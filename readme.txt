@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, persian, rtl
 Requires at least: 5.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.3
+Stable tag: 1.7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,17 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.7.4 =
+
+* Fixed: a site that had been customised on version 5 and still carried an old 4.x setting key (for example company_id) had its settings reset to the defaults by the upgrade routine (AI provider, IP storage, answer scope, business hours and phone). The migration now runs once and leaves a mark.
+* Fixed: importing an FAQ file with no usable rows in "Replace" mode emptied the whole answer bank. It now stops with a message and changes nothing; a JSON row needs both a question and an answer.
+* Fixed: the Elementor widget never rendered because its guard looked for a function instead of the class.
+* Fixed: PDF text with Arabic presentation forms is folded to ordinary Persian letters on hosts without the PHP intl extension, so Persian PDFs are searchable there too.
+* Privacy: rate-limit and coupon counters are keyed with a salted HMAC of the visitor instead of a plain MD5 of the IP address. Daily coupon counters are transients instead of one option per day; old ones are cleaned up daily and on uninstall, and uninstall now also removes the AI failure record and the migration marks.
+* Security: the custom webhook, the SMS panels and the setup wizard's page fetch no longer follow redirects and cap the size of the answer; secret fields are refused by the general settings sanitizer; successful product reminders now count toward the rate limit too.
+* Changed: the uninstall question is two plain questions, so Cancel always means the plugin is not deleted.
+* Docs: readme.txt has five tags, "Tested up to" 7.1 and an External services section; SECURITY.md notes that the Bale webhook secret travels in the query string.
 
 = 1.7.3 =
 

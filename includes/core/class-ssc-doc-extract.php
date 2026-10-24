@@ -146,15 +146,19 @@ class SSC_Doc_Extract {
 	public static function tidy( $text ) {
 		$text = (string) $text;
 		// PDFs often map Persian/Arabic glyphs to their presentation forms.
-		if ( class_exists( 'Normalizer' ) && preg_match( '/[\x{FB50}-\x{FDFF}\x{FE70}-\x{FEFF}]/u', $text ) ) {
-			$text = preg_replace_callback(
-				'/[\x{FB50}-\x{FDFF}\x{FE70}-\x{FEFF}]+/u',
-				function ( $m ) {
-					$n = Normalizer::normalize( $m[0], Normalizer::FORM_KC );
-					return false === $n ? $m[0] : $n;
-				},
-				$text
-			);
+		if ( preg_match( '/[\x{FB50}-\x{FDFF}\x{FE70}-\x{FEFF}]/u', $text ) ) {
+			if ( class_exists( 'Normalizer' ) ) {
+				$text = preg_replace_callback(
+					'/[\x{FB50}-\x{FDFF}\x{FE70}-\x{FEFF}]+/u',
+					function ( $m ) {
+						$n = Normalizer::normalize( $m[0], Normalizer::FORM_KC );
+						return false === $n ? $m[0] : $n;
+					},
+					$text
+				);
+			} else {
+				$text = SSC_Arabic_Forms::fold( $text ); // Hosts without the intl extension.
+			}
 		}
 		$text = str_replace( array( "\r\n", "\r", "\u{00A0}" ), array( "\n", "\n", ' ' ), $text );
 		$text = preg_replace( "/[ \t]+/u", ' ', $text );

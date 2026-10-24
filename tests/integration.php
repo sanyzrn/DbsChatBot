@@ -8,6 +8,7 @@ require_once dirname( __DIR__ ) . '/nexachat-ai.php';
 ssc_chatbot_activate();
 add_filter( 'pre_wp_mail', '__return_true' ); // No messages may leave the test environment.
 add_filter( 'pre_http_request', function () { return new WP_Error( 'test_network_blocked', 'External requests are mocked.' ); } );
+if ( wp_convert_hr_to_bytes( ini_get( 'memory_limit' ) ) > 0 && wp_convert_hr_to_bytes( ini_get( 'memory_limit' ) ) < 512 * MB_IN_BYTES ) { ini_set( 'memory_limit', '512M' ); } // WooCommerce plus the whole suite needs more than the common 128M.
 $checks = 0;
 function check( $condition, $label ) {
     global $checks;
@@ -442,4 +443,5 @@ require __DIR__ . '/audit2.php';
 require __DIR__ . '/audit3.php';
 require __DIR__ . '/audit4.php';
 require __DIR__ . '/audit5.php';
+require __DIR__ . '/audit6.php';
 echo "\n$checks integration checks passed.\n";
