@@ -307,4 +307,3 @@ class SSC_Admin {
 		$this->controller( 'SSC_Wizard' )->render();
 	}
 }
-

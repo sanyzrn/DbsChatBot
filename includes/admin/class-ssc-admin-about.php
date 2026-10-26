@@ -216,27 +216,79 @@ class SSC_Admin_About {
 	/**
 	 * Bundled release notes, available without a network request or repository access.
 	 *
-	 * @return array[] Version and plain-text note lines.
+	 * Each note carries its kind (the word before the first colon: Fixed, New,
+	 * Changed, Security, Privacy, Docs) so the screen can label it.
+	 *
+	 * @return array[] Version and notes (type + plain text).
 	 */
 	public static function changelog() {
 		$file = SSC_CHATBOT_DIR . 'readme.txt';
-		if ( ! is_readable( $file ) ) { return array(); }
+		if ( ! is_readable( $file ) ) {
+			return array();
+		}
 		$text = file_get_contents( $file );
-		if ( false === $text ) { return array(); }
+		if ( false === $text ) {
+			return array();
+		}
 		$parts = explode( '== Changelog ==', $text, 2 );
-		if ( count( $parts ) < 2 ) { return array(); }
+		if ( count( $parts ) < 2 ) {
+			return array();
+		}
 		$section = preg_split( '/^== /m', $parts[1], 2 );
 		$entries = array();
 		if ( preg_match_all( '/^= ([^=\r\n]+) =\s*\r?\n(.*?)(?=^= |\z)/ms', $section[0], $matches, PREG_SET_ORDER ) ) {
 			foreach ( $matches as $match ) {
 				$lines = array_filter( array_map( 'trim', preg_split( '/\R/', trim( $match[2] ) ) ), 'strlen' );
+				$notes = array();
+				foreach ( $lines as $line ) {
+					$line = preg_replace( '/^\*\s+/', '', $line );
+					$type = '';
+					if ( preg_match( '/^(Fixed|New|Changed|Security|Privacy|Docs|Removed|Improved):\s+(.*)$/s', $line, $kind ) ) {
+						$type = strtolower( $kind[1] );
+						$line = $kind[2];
+					}
+					$notes[] = array(
+						'type' => $type,
+						'text' => ucfirst( $line ),
+					);
+				}
 				$entries[] = array(
 					'version' => trim( $match[1] ),
-					'notes'   => array_map( function ( $line ) { return preg_replace( '/^\*\s+/', '', $line ); }, $lines ),
+					'notes'   => $notes,
 				);
 			}
 		}
 		return $entries;
+	}
+
+	/**
+	 * Label of a note kind.
+	 *
+	 * @param string $type Kind from changelog().
+	 * @return string
+	 */
+	public static function note_label( $type ) {
+		$labels = array(
+			'fixed'    => __( 'Fixed', 'nexachat-ai' ),
+			'new'      => __( 'New', 'nexachat-ai' ),
+			'changed'  => __( 'Changed', 'nexachat-ai' ),
+			'improved' => __( 'Improved', 'nexachat-ai' ),
+			'removed'  => __( 'Removed', 'nexachat-ai' ),
+			'security' => __( 'Security', 'nexachat-ai' ),
+			'privacy'  => __( 'Privacy', 'nexachat-ai' ),
+			'docs'     => __( 'Docs', 'nexachat-ai' ),
+		);
+		return isset( $labels[ $type ] ) ? $labels[ $type ] : __( 'Note', 'nexachat-ai' );
+	}
+
+	/**
+	 * Escaped note text; `code` spans become <code>.
+	 *
+	 * @param string $text Plain note.
+	 * @return string Safe HTML.
+	 */
+	public static function note_html( $text ) {
+		return preg_replace( '/`([^`]+)`/', '<code>$1</code>', esc_html( (string) $text ) );
 	}
 
 	/**
@@ -263,4 +315,3 @@ class SSC_Admin_About {
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-about.php';
 	}
 }
-

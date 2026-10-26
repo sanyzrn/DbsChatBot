@@ -3,12 +3,12 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: NexaChatAI 1.7.3\n"
+"Project-Id-Version: NexaChatAI 1.7.6\n"
 "Report-Msgid-Bugs-To: https://dbsstudio.ir/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-22 12:03:03+00:00\n"
+"POT-Creation-Date: 2026-10-26 14:20:15+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: includes/admin/class-ssc-admin-modules.php:25
 #: includes/admin/class-ssc-admin-settings.php:23
 #: includes/admin/class-ssc-admin-transfer.php:23
-#: includes/admin/class-ssc-admin.php:302
+#: includes/admin/class-ssc-admin.php:305
 #: includes/admin/class-ssc-admin.php:39
 #: includes/admin/class-ssc-wizard.php:38
 #: includes/core/class-ssc-ajax.php:233
@@ -136,6 +136,48 @@ msgstr ""
 
 #: includes/admin/class-ssc-admin-about.php:156
 msgid "Unlimited"
+msgstr ""
+
+#: includes/admin/class-ssc-admin-about.php:272
+msgid "Fixed"
+msgstr ""
+
+#: includes/admin/class-ssc-admin-about.php:273
+#: includes/admin/views/page-requests.php:19
+#: includes/admin/views/page-requests.php:74
+msgid "New"
+msgstr ""
+
+#: includes/admin/class-ssc-admin-about.php:274
+msgid "Changed"
+msgstr ""
+
+#: includes/admin/class-ssc-admin-about.php:275
+msgid "Improved"
+msgstr ""
+
+#: includes/admin/class-ssc-admin-about.php:276
+msgid "Removed"
+msgstr ""
+
+#: includes/admin/class-ssc-admin-about.php:277
+#: includes/admin/views/page-about.php:57
+msgid "Security"
+msgstr ""
+
+#: includes/admin/class-ssc-admin-about.php:278
+#: includes/admin/views/page-settings.php:73
+#: includes/admin/views/page-settings.php:88
+msgid "Privacy"
+msgstr ""
+
+#: includes/admin/class-ssc-admin-about.php:279
+msgid "Docs"
+msgstr ""
+
+#: includes/admin/class-ssc-admin-about.php:281
+#: includes/admin/views/pharma-case.php:139
+msgid "Note"
 msgstr ""
 
 #: includes/admin/class-ssc-admin-settings.php:148
@@ -259,29 +301,29 @@ msgstr ""
 msgid "You have unsaved changes"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:81
+#: includes/admin/class-ssc-admin.php:84
 msgid "Dashboard"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:82
+#: includes/admin/class-ssc-admin.php:85
 #: includes/admin/class-ssc-wizard.php:373
 #: includes/admin/views/page-knowledge.php:430
 msgid "Business Knowledge"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:83
+#: includes/admin/class-ssc-admin.php:86
 #: includes/admin/class-ssc-wizard.php:374
 #: includes/admin/views/page-connection.php:66
 msgid "AI Connection"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:84
+#: includes/admin/class-ssc-admin.php:87
 #: includes/admin/class-ssc-wizard.php:375
 #: includes/admin/views/page-appearance.php:41
 msgid "Appearance"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:85
+#: includes/admin/class-ssc-admin.php:88
 #: includes/admin/views/page-about.php:142
 #: includes/admin/views/page-modules.php:62
 #: includes/admin/views/page-settings.php:304
@@ -289,50 +331,50 @@ msgstr ""
 msgid "Modules"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:86
+#: includes/admin/class-ssc-admin.php:89
 #: includes/admin/views/page-settings.php:21
 #: includes/core/class-ssc-plugin.php:115
 msgid "Settings"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:93
-#: includes/admin/class-ssc-admin.php:94
+#: includes/admin/class-ssc-admin.php:96
+#: includes/admin/class-ssc-admin.php:97
 msgid "Setup Wizard"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:105
+#: includes/admin/class-ssc-admin.php:108
 #: includes/admin/views/page-transfer.php:61
 msgid "Export & Import"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:106
+#: includes/admin/class-ssc-admin.php:109
 msgid "About"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:136
+#: includes/admin/class-ssc-admin.php:139
 #: includes/core/class-ssc-plugin.php:159
 #: widgets/class-ssc-elementor-widget.php:32
 msgid "NexaChatAI"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:137
+#: includes/admin/class-ssc-admin.php:140
 msgid "Delete the plugin AND permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:138
+#: includes/admin/class-ssc-admin.php:141
 msgid "Delete the plugin but KEEP the saved data? (Cancel stops the deletion.)"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:168
+#: includes/admin/class-ssc-admin.php:171
 msgid "The data deletion preference could not be saved. Deletion was stopped. Please check Settings before trying again."
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:234
+#: includes/admin/class-ssc-admin.php:237
 #: includes/core/class-ssc-frontend.php:336
 msgid "Online"
 msgstr ""
 
-#: includes/admin/class-ssc-admin.php:235
+#: includes/admin/class-ssc-admin.php:238
 #: includes/core/class-ssc-frontend.php:335
 msgid "Offline"
 msgstr ""
@@ -378,10 +420,6 @@ msgstr ""
 #. translators: %s: REST base URL.
 #: includes/admin/views/page-about.php:51
 msgid "Public endpoints under %s, with an admin-ajax fallback for heavily cached pages."
-msgstr ""
-
-#: includes/admin/views/page-about.php:57
-msgid "Security"
 msgstr ""
 
 #: includes/admin/views/page-about.php:58
@@ -449,6 +487,7 @@ msgid "Website"
 msgstr ""
 
 #: includes/admin/views/page-about.php:109
+#: includes/admin/views/page-about.php:174
 msgid "Releases & changelog"
 msgstr ""
 
@@ -518,19 +557,44 @@ msgstr ""
 msgid "Copy to clipboard"
 msgstr ""
 
-#: includes/admin/views/page-about.php:173
+#. translators: %d: number of versions.
+#: includes/admin/views/page-about.php:179
+msgid "%d version, newest first."
+msgid_plural "%d versions, newest first."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/views/page-about.php:194
+msgid "Installed"
+msgstr ""
+
+#. translators: %d: number of notes.
+#: includes/admin/views/page-about.php:200
+msgid "%d change"
+msgid_plural "%d changes"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of older versions.
+#: includes/admin/views/page-about.php:234
+msgid "Show %d older version"
+msgid_plural "Show %d older versions"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/views/page-about.php:249
 msgid "Credits"
 msgstr ""
 
-#: includes/admin/views/page-about.php:175
+#: includes/admin/views/page-about.php:251
 msgid "Saber Rastikerdar, SIL Open Font License 1.1"
 msgstr ""
 
-#: includes/admin/views/page-about.php:176
+#: includes/admin/views/page-about.php:252
 msgid "The Inter Project Authors, SIL Open Font License 1.1"
 msgstr ""
 
-#: includes/admin/views/page-about.php:177
+#: includes/admin/views/page-about.php:253
 msgid "Christian Robertson, Apache License 2.0"
 msgstr ""
 
@@ -2967,11 +3031,6 @@ msgstr ""
 msgid "SERIOUS"
 msgstr ""
 
-#: includes/admin/views/page-requests.php:19
-#: includes/admin/views/page-requests.php:74
-msgid "New"
-msgstr ""
-
 #: includes/admin/views/page-requests.php:20
 #: includes/admin/views/page-requests.php:75
 msgid "In progress"
@@ -3115,11 +3174,6 @@ msgstr ""
 
 #: includes/admin/views/page-settings.php:71
 msgid "Settings sections"
-msgstr ""
-
-#: includes/admin/views/page-settings.php:73
-#: includes/admin/views/page-settings.php:88
-msgid "Privacy"
 msgstr ""
 
 #: includes/admin/views/page-settings.php:144
@@ -4300,10 +4354,6 @@ msgstr ""
 msgid "By"
 msgstr ""
 
-#: includes/admin/views/pharma-case.php:139
-msgid "Note"
-msgstr ""
-
 #: includes/admin/views/pharma-case.php:153
 msgid "No audit entries yet."
 msgstr ""
@@ -4813,24 +4863,24 @@ msgstr ""
 msgid "No readable text was found. If this is a scanned document, upload a text version (Word, or a PDF saved from a text editor)."
 msgstr ""
 
-#: includes/core/class-ssc-doc-extract.php:180
+#: includes/core/class-ssc-doc-extract.php:184
 msgid "This server cannot open Word files (the PHP zip extension is missing). Save the document as PDF or TXT and upload that."
 msgstr ""
 
-#: includes/core/class-ssc-doc-extract.php:184
-#: includes/core/class-ssc-doc-extract.php:201
+#: includes/core/class-ssc-doc-extract.php:188
+#: includes/core/class-ssc-doc-extract.php:205
 msgid "The file could not be opened. Is it a valid .docx document?"
 msgstr ""
 
-#: includes/core/class-ssc-doc-extract.php:224
+#: includes/core/class-ssc-doc-extract.php:228
 msgid "This does not look like a PDF file."
 msgstr ""
 
-#: includes/core/class-ssc-doc-extract.php:227
+#: includes/core/class-ssc-doc-extract.php:231
 msgid "This PDF is password-protected or encrypted. Remove the protection and upload it again."
 msgstr ""
 
-#: includes/core/class-ssc-doc-extract.php:234
+#: includes/core/class-ssc-doc-extract.php:238
 msgid "The PDF could not be read."
 msgstr ""
 
@@ -5339,24 +5389,48 @@ msgstr ""
 msgid "Business profile completed"
 msgstr ""
 
-#: includes/core/class-ssc-setup.php:378
+#: includes/core/class-ssc-setup.php:374
+msgid "Complete the business profile"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:379
 msgid "Essential business knowledge added"
 msgstr ""
 
-#: includes/core/class-ssc-setup.php:383
+#: includes/core/class-ssc-setup.php:380
+msgid "Add the essential business knowledge"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:385
 msgid "AI provider connection verified"
 msgstr ""
 
-#: includes/core/class-ssc-setup.php:388
+#: includes/core/class-ssc-setup.php:386
+msgid "Verify the AI provider connection"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:391
 msgid "Business identity test passed"
 msgstr ""
 
-#: includes/core/class-ssc-setup.php:393
+#: includes/core/class-ssc-setup.php:392
+msgid "Pass the business identity test"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:397
 msgid "Appearance configured"
 msgstr ""
 
 #: includes/core/class-ssc-setup.php:398
+msgid "Configure the appearance"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:403
 msgid "Privacy disclosures acknowledged"
+msgstr ""
+
+#: includes/core/class-ssc-setup.php:404
+msgid "Acknowledge the privacy disclosures"
 msgstr ""
 
 #: includes/core/class-ssc-suggest.php:65
@@ -6722,4 +6796,3 @@ msgstr ""
 #: widgets/class-ssc-elementor-widget.php:162
 msgid "Match device"
 msgstr ""
-

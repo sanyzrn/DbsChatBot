@@ -47,6 +47,11 @@ msgid_plural "%d cases"
 msgstr[0] "%d پرونده"
 msgstr[1] "%d پرونده"
 
+msgid "%d change"
+msgid_plural "%d changes"
+msgstr[0] "%d تغییر"
+msgstr[1] "%d تغییر"
+
 msgid "%d chunks are waiting to be indexed (continues in the background)."
 msgstr "%d تکه در انتظار نمایه‌سازی است (در پس‌زمینه ادامه می‌یابد)."
 
@@ -121,6 +126,11 @@ msgstr[1] "%d درخواست"
 
 msgid "%d specifications"
 msgstr "%d مشخصه"
+
+msgid "%d version, newest first."
+msgid_plural "%d versions, newest first."
+msgstr[0] "%d نسخه، جدیدترین در بالا."
+msgstr[1] "%d نسخه، جدیدترین در بالا."
 
 msgid "%s document"
 msgid_plural "%s documents"
@@ -353,6 +363,9 @@ msgstr "دربارهٔ ما، خدمات و راه‌های ارتباط"
 msgid "Above a bottom menu"
 msgstr "بالای منوی پایین"
 
+msgid "Acknowledge the privacy disclosures"
+msgstr "اطلاع‌رسانی حریم خصوصی را تأیید کنید"
+
 msgid "Action"
 msgstr "اقدام"
 
@@ -394,6 +407,9 @@ msgstr "ابتدا توکن ربات را در تنظیمات ← ماژول‌�
 
 msgid "Add the bot token in the \"Bale / Telegram bot\" card, then press \"Save and connect the bot\"."
 msgstr "توکن ربات را در کارت «ربات بله / تلگرام» وارد کنید و سپس «ذخیره و اتصال ربات» را بزنید."
+
+msgid "Add the essential business knowledge"
+msgstr "دانش اصلی کسب‌وکار را اضافه کنید"
 
 msgid "Add the facts visitors usually ask about. No AI jargon needed — just type what you would tell a new employee."
 msgstr "اطلاعاتی را که بازدیدکنندگان معمولاً می‌پرسند اضافه کنید. اصطلاحات فنی لازم نیست — همان چیزی را بنویسید که به یک همکار تازه‌وارد می‌گفتید."
@@ -874,6 +890,9 @@ msgstr "خودمانی"
 msgid "Change status"
 msgstr "تغییر وضعیت"
 
+msgid "Changed"
+msgstr "تغییر"
+
 msgid "Changing the provider, key, model or endpoint invalidates previous verification. Run a test after every change."
 msgstr "تغییر ارائه‌دهنده، کلید، مدل یا نشانی، تأیید قبلی را باطل می‌کند. پس از هر تغییر آزمون را اجرا کنید."
 
@@ -1012,6 +1031,9 @@ msgstr "ترجمهٔ کامل فارسی، چیدمان راست‌به‌چپ �
 msgid "Complete setup"
 msgstr "تکمیل راه‌اندازی"
 
+msgid "Complete the business profile"
+msgstr "مشخصات کسب‌وکار را کامل کنید"
+
 msgid "Complete the business profile (step 1) first."
 msgstr "ابتدا مشخصات کسب‌وکار (گام ۱) را کامل کنید."
 
@@ -1032,6 +1054,9 @@ msgstr "برای دریافت خلاصه، یک سرویس هوش مصنوعی �
 
 msgid "Configure and verify an AI provider first."
 msgstr "ابتدا یک ارائه‌دهندهٔ هوش مصنوعی را تنظیم و تأیید کنید."
+
+msgid "Configure the appearance"
+msgstr "ظاهر را تنظیم کنید"
 
 msgid "Confirm below"
 msgstr "تأیید در پایین صفحه"
@@ -1336,6 +1361,9 @@ msgstr "ذخیره نشود"
 msgid "Do this later"
 msgstr "بعداً انجام می‌دهم"
 
+msgid "Docs"
+msgstr "مستندات"
+
 msgid "Document"
 msgstr "سند"
 
@@ -1556,6 +1584,9 @@ msgstr "اصلاح"
 
 msgid "Fix server encryption (OpenSSL and AUTH_KEY)"
 msgstr "رمزنگاری سرور را درست کنید (OpenSSL و AUTH_KEY)"
+
+msgid "Fixed"
+msgstr "رفع اشکال"
 
 msgid "Fixed amount off the cart"
 msgstr "مبلغ ثابت از سبد خرید"
@@ -1851,6 +1882,9 @@ msgstr "%1$d پاسخ وارد شد (%2$d مورد نادیده گرفته شد)
 msgid "Improve answer quality with real conversation evidence, with configurable retention."
 msgstr "بهبود کیفیت پاسخ با شواهد واقعی گفتگو، همراه با مدت نگهداری قابل تنظیم."
 
+msgid "Improved"
+msgstr "بهبود"
+
 msgid "In every mode, facts about your organization (prices, policies, specifications) come only from your knowledge — the assistant never invents them."
 msgstr "در همهٔ حالت‌ها، اطلاعات مربوط به سازمان شما (قیمت‌ها، سیاست‌ها، مشخصات) فقط از دانشی که وارد کرده‌اید گرفته می‌شود — دستیار هرگز آن‌ها را از خودش نمی‌سازد."
 
@@ -1886,6 +1920,9 @@ msgstr "افزونه‌های صنعتی"
 
 msgid "Inhalation"
 msgstr "استنشاقی"
+
+msgid "Installed"
+msgstr "نصب‌شده"
 
 msgid "Instant alerts for new requests via Bale/Telegram and/or email, with delivery tracking and automatic retries for failed deliveries."
 msgstr "هشدار فوری درخواست‌های جدید از طریق بله/تلگرام و/یا ایمیل، همراه با پیگیری تحویل و تلاش خودکار دوباره برای ارسال‌های ناموفق."
@@ -2710,6 +2747,9 @@ msgstr "صفحه‌بندی"
 msgid "Partly used"
 msgstr "بخشی استفاده می‌شود"
 
+msgid "Pass the business identity test"
+msgstr "آزمون هویت کسب‌وکار را با موفقیت بگذرانید"
+
 msgid "Password for the API keys"
 msgstr "گذرواژهٔ کلیدهای API"
 
@@ -3154,6 +3194,9 @@ msgstr "حذف توکن ذخیره‌شده"
 msgid "Remove website pages"
 msgstr "حذف صفحه‌های سایت"
 
+msgid "Removed"
+msgstr "حذف"
+
 msgid "Replace"
 msgstr "جایگزینی"
 
@@ -3555,6 +3598,11 @@ msgstr "بلوک‌های کوتاه و دقیقی که دستیار عیناً 
 
 msgid "Short, reliable facts the assistant can quote: hours, policies, prices, answers to common questions."
 msgstr "اطلاعات کوتاه و مطمئنی که دستیار می‌تواند نقل کند: ساعات کاری، قوانین، قیمت‌ها و پاسخ پرسش‌های رایج."
+
+msgid "Show %d older version"
+msgid_plural "Show %d older versions"
+msgstr[0] "نمایش %d نسخهٔ قدیمی‌تر"
+msgstr[1] "نمایش %d نسخهٔ قدیمی‌تر"
 
 msgid "Show all conversations"
 msgstr "نمایش همهٔ گفتگوها"
@@ -4436,6 +4484,9 @@ msgstr "همین الان برای ارائه‌دهنده، کلید، مدل �
 
 msgid "Verify & Launch"
 msgstr "بررسی و راه‌اندازی"
+
+msgid "Verify the AI provider connection"
+msgstr "اتصال به ارائه‌دهندهٔ هوش مصنوعی را تأیید کنید"
 
 msgid "Version"
 msgstr "نسخه"
