@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, persian, rtl
 Requires at least: 5.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.4
+Stable tag: 1.7.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,13 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.7.5 =
+* Fixed: product, menu and brochure buttons keep readable brand-color hover, focus and pressed states instead of looking disabled under host-theme styles.
+* Fixed: the floating chat button stays opaque and circular, and becomes darker on hover/focus/press.
+* Fixed: the empty Persian message composer and its placeholder align to the right while typed text keeps automatic direction.
+* Changed: the WordPress sidebar displays «نکساچت» for a Persian administrator language, independently of the widget language.
+* Changed: restored the original NexaHR furred mascot, including its face, tuft, feet and pointer-driven gaze. Each SVG has isolated gradient IDs so the header and launcher render independently.
 
 = 1.7.4 =
 

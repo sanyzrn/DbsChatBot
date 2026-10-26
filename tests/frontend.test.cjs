@@ -143,6 +143,28 @@ test('Text on custom colours is picked by contrast', () => {
   assert.equal(luminance('rgb(1,2,3)'), -1, 'unknown formats are reported, not guessed');
 });
 
+test('Coexisting NexaHR mascots use isolated, resolvable SVG paint servers', () => {
+  const { mascotSvg } = load('        var mascotSequence =', '        var ICON_BOT');
+  const allIds = new Set();
+  for (const face of [false, true, false, true]) {
+    const svg = mascotSvg(face);
+    assert.ok(svg.includes('ssc-mascot'), 'the existing motion hooks are kept');
+    assert.ok(!/className|stopColor|strokeWidth|ref=|=\{/.test(svg), 'no React-only syntax leaks into SVG');
+    const ids = [...svg.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
+    for (const id of ids) {
+      assert.ok(!allIds.has(id), 'launcher and header never share a gradient id');
+      allIds.add(id);
+    }
+    for (const [, ref] of svg.matchAll(/url\(#([^)]+)\)/g)) {
+      assert.ok(ids.includes(ref), 'every fur/iris gradient resolves inside its own SVG');
+    }
+    if (!face) {
+      assert.ok(svg.includes('ssc-m-feet') && svg.includes('ssc-m-tuft'), 'the original full character has its feet and tuft');
+      assert.ok(svg.includes('ssc-m-pupils') && svg.includes('ssc-m-face'), 'pointer gaze still has both targets');
+    }
+  }
+});
+
 test('Button distances: zero is a real value, only junk falls back', () => {
   const { distance } = load('        /** A distance setting as CSS px', '        function cssVars(');
   assert.equal(distance(0, 22), '0px', 'zero is honoured');
@@ -252,3 +274,4 @@ test('The consultation form asks for an optional email only when the site allows
   assert.match(body, /if \(cfg\.consultEmail\) \{ field\(i18n\.formEmail \|\| 'Email \(optional\)', 'email', 'email', false\); \}/, 'the email field is optional (not required) and gated by the setting');
   assert.ok(body.indexOf("'phone', 'tel', true") < body.indexOf("'email', 'email', false"), 'the email comes right after the phone');
 });
+
