@@ -3,12 +3,12 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: NexaChatAI 1.7.6\n"
+"Project-Id-Version: NexaChatAI 1.7.7\n"
 "Report-Msgid-Bugs-To: https://dbsstudio.ir/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-26 14:20:15+00:00\n"
+"POT-Creation-Date: 2026-10-26 18:14:00+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -1001,7 +1001,7 @@ msgstr ""
 msgid "Your own service, called with a signed request."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:243
+#: includes/admin/views/page-connection.php:244
 #: includes/admin/views/page-connection.php:45
 msgid "Only from my knowledge"
 msgstr ""
@@ -1010,7 +1010,7 @@ msgstr ""
 msgid "My business and its field"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:245
+#: includes/admin/views/page-connection.php:246
 #: includes/admin/views/page-connection.php:47
 msgid "Any question"
 msgstr ""
@@ -1025,13 +1025,13 @@ msgstr ""
 msgid "FAQ bank first"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:286
+#: includes/admin/views/page-connection.php:287
 #: includes/admin/views/page-connection.php:53
 #: includes/admin/views/page-faq.php:27
 msgid "FAQ bank only"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:174
+#: includes/admin/views/page-connection.php:175
 #: includes/admin/views/page-connection.php:57
 #: includes/admin/views/wizard.php:364
 msgid "Paste your API key"
@@ -1128,7 +1128,7 @@ msgid "Set by the pharmaceutical policy"
 msgstr ""
 
 #: includes/admin/views/page-connection.php:135
-#: includes/admin/views/page-connection.php:264
+#: includes/admin/views/page-connection.php:265
 msgid "Web search"
 msgstr ""
 
@@ -1159,217 +1159,221 @@ msgstr ""
 msgid "“No AI engine” answers from your FAQ bank and knowledge only — nothing leaves your server."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:173
+#: includes/admin/views/page-connection.php:165
+msgid "The server must be able to reach the provider. Some providers do not serve every country, and servers inside Iran may be refused or blocked. If the connection test fails with an access or network error, host the site outside Iran or use the OpenAI-compatible endpoint with a gateway you can reach."
+msgstr ""
+
+#: includes/admin/views/page-connection.php:174
 #: includes/admin/views/wizard.php:363
 msgid "API key"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:173
+#: includes/admin/views/page-connection.php:174
 #: includes/admin/views/wizard.php:363
 msgid "API key (optional)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:174
+#: includes/admin/views/page-connection.php:175
 #: includes/admin/views/page-settings.php:687
 #: includes/admin/views/wizard.php:364
 msgid "A key is stored — type to replace"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:176
+#: includes/admin/views/page-connection.php:177
 msgid "Remove the stored key"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:179
+#: includes/admin/views/page-connection.php:180
 #: includes/admin/views/wizard.php:366
 msgid "Most hosted services need a key; it is sent as a Bearer token. Leave it empty for a local gateway that needs none."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:184
+#: includes/admin/views/page-connection.php:185
 #: includes/admin/views/wizard.php:371
 msgid "Model"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:195
+#: includes/admin/views/page-connection.php:196
 #: includes/admin/views/wizard.php:385
 msgid "Enter model ID manually…"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:198
-#: includes/admin/views/page-connection.php:200
+#: includes/admin/views/page-connection.php:199
+#: includes/admin/views/page-connection.php:201
 #: includes/admin/views/wizard.php:390
 msgid "Model ID"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:202
+#: includes/admin/views/page-connection.php:203
 msgid "Model IDs evolve — manual entry is always available and lists stay current via your own updates."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:207
+#: includes/admin/views/page-connection.php:208
 #: includes/admin/views/wizard.php:396
 msgid "Endpoint URL (OpenAI-compatible)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:214
+#: includes/admin/views/page-connection.php:215
 #: includes/admin/views/wizard.php:403
 msgid "Webhook URL"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:218
+#: includes/admin/views/page-connection.php:219
 msgid "Shared secret (HMAC)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:219
+#: includes/admin/views/page-connection.php:220
 #: includes/admin/views/wizard.php:408
 msgid "A secret is stored — type to replace"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:227
+#: includes/admin/views/page-connection.php:228
 #: includes/admin/views/wizard.php:415
 msgid "Test connection"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:234
+#: includes/admin/views/page-connection.php:235
 msgid "What the assistant may answer"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:234
+#: includes/admin/views/page-connection.php:235
 msgid "In every mode, facts about your organization (prices, policies, specifications) come only from your knowledge. The assistant never invents them."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:237
+#: includes/admin/views/page-connection.php:238
 msgid "The pharmaceutical module is active: its answer policy (Settings → Privacy) decides the scope, unrelated topics are always declined, and web search is off."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:240
+#: includes/admin/views/page-connection.php:241
 msgid "Answer scope"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:243
+#: includes/admin/views/page-connection.php:244
 msgid "Answers strictly from the business profile, knowledge entries and documents. Anything else gets \"I don't have that information\" and your contact details. Safest; best for regulated content."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:244
+#: includes/admin/views/page-connection.php:245
 msgid "My business and its field (recommended)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:244
+#: includes/admin/views/page-connection.php:245
 msgid "Helps with your products, services, orders and support, and can explain general concepts of your industry. Politely declines unrelated requests such as trivia, homework, coding or news."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:245
+#: includes/admin/views/page-connection.php:246
 msgid "Also answers general questions unrelated to your business, like a general-purpose assistant. Every such answer is billed by your AI provider."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:257
+#: includes/admin/views/page-connection.php:258
 msgid "Reply to unrelated questions (optional)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:258
+#: includes/admin/views/page-connection.php:259
 msgid "e.g. I can only help with questions about our products and services. For anything else, please contact us."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:259
+#: includes/admin/views/page-connection.php:260
 msgid "Used when a question is outside the chosen scope. Empty = a short, friendly reply written by the assistant in the visitor's language."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:264
+#: includes/admin/views/page-connection.php:265
 msgid "Let the assistant look up current, public information when your knowledge is not enough."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:266
+#: includes/admin/views/page-connection.php:267
 msgid "Let the assistant search the internet for current, public information"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:267
+#: includes/admin/views/page-connection.php:268
 msgid "Uses your provider's built-in search (OpenAI, Claude, Gemini, OpenRouter; not available for custom endpoints or webhooks). The provider bills searches separately. Searched answers are not streamed or cached, and the pages used are listed under the answer. Your own knowledge always wins over web results. Not used in \"Only from my knowledge\" mode."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:268
+#: includes/admin/views/page-connection.php:269
 msgid "The selected provider has no web search tool, so this option has no effect."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:270
+#: includes/admin/views/page-connection.php:271
 msgid "Search only these sites (optional, one domain per line)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:272
+#: includes/admin/views/page-connection.php:273
 msgid "For example your own website, to answer from pages you have not imported. Honoured by OpenAI and Claude; Gemini and OpenRouter search the whole web."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:278
+#: includes/admin/views/page-connection.php:279
 msgid "Advanced engine options"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:278
+#: includes/admin/views/page-connection.php:279
 msgid "Fine tuning. The defaults suit most sites."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:282
+#: includes/admin/views/page-connection.php:283
 #: includes/admin/views/page-faq.php:74
 msgid "Answer priority"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:284
+#: includes/admin/views/page-connection.php:285
 msgid "AI first, FAQ bank as fallback"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:285
+#: includes/admin/views/page-connection.php:286
 msgid "FAQ bank first, AI as fallback"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:290
+#: includes/admin/views/page-connection.php:291
 msgid "Creativity (temperature)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:292
+#: includes/admin/views/page-connection.php:293
 msgid "0.1 — very precise"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:292
+#: includes/admin/views/page-connection.php:293
 msgid "0.4 — balanced"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:292
+#: includes/admin/views/page-connection.php:293
 msgid "0.7 — creative"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:292
+#: includes/admin/views/page-connection.php:293
 msgid "1 — maximum creativity"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:298
+#: includes/admin/views/page-connection.php:299
 msgid "Max answer length"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:302
+#: includes/admin/views/page-connection.php:303
 msgid "Conversation memory (messages)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:304
+#: includes/admin/views/page-connection.php:305
 msgid "The latest messages the AI reads word for word. Older messages are not forgotten: they are kept as a short summary."
 msgstr ""
 
-#: includes/admin/views/page-connection.php:307
+#: includes/admin/views/page-connection.php:308
 msgid "Retrieved knowledge chunks per answer"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:311
+#: includes/admin/views/page-connection.php:312
 msgid "Cache identical questions (6 hours, faster + cheaper)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:313
+#: includes/admin/views/page-connection.php:314
 msgid "Extra instructions for the assistant"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:314
+#: includes/admin/views/page-connection.php:315
 msgid "Optional business-specific rules…"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:317
+#: includes/admin/views/page-connection.php:318
 msgid "Offline message (when nothing can answer)"
 msgstr ""
 
-#: includes/admin/views/page-connection.php:323
+#: includes/admin/views/page-connection.php:324
 msgid "Save connection"
 msgstr ""
 
@@ -5101,6 +5105,14 @@ msgstr ""
 
 #: includes/core/class-ssc-frontend.php:343
 msgid "Conversations are saved to improve our answers."
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:474
+msgid "Place the AI assistant chat widget on this page."
+msgstr ""
+
+#: includes/core/class-ssc-frontend.php:483
+msgid "The assistant is configured in the NexaChatAI admin menu. Publishing is controlled there."
 msgstr ""
 
 #: includes/core/class-ssc-http.php:96

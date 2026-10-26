@@ -162,6 +162,7 @@ if ( 'none' !== $sel && ! $verified ) {
 					<?php endforeach; ?>
 				</select>
 				<p class="ssc-field__hint"><?php esc_html_e( '“No AI engine” answers from your FAQ bank and knowledge only — nothing leaves your server.', 'nexachat-ai' ); ?></p>
+				<p class="ssc-field__hint"><?php esc_html_e( 'The server must be able to reach the provider. Some providers do not serve every country, and servers inside Iran may be refused or blocked. If the connection test fails with an access or network error, host the site outside Iran or use the OpenAI-compatible endpoint with a gateway you can reach.', 'nexachat-ai' ); ?></p>
 			</div>
 
 			<?php foreach ( $providers as $pid => $provider ) : ?>

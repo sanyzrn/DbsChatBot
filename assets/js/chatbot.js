@@ -1,5 +1,5 @@
 /**
- * Smart Support Chatbot — frontend widget (v5).
+ * NexaChatAI — frontend widget (v5).
  *
  * Design notes:
  * - Vanilla JS, no dependencies, no build step.

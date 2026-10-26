@@ -1,5 +1,5 @@
 /**
- * Smart Support Chatbot — admin interactions.
+ * NexaChatAI — admin interactions.
  * Vanilla JS (no jQuery dependency). RTL-agnostic.
  */
 (function () {
