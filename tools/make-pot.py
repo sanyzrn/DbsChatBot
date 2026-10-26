@@ -196,7 +196,7 @@ def main() -> None:
         'msgid ""',
         'msgstr ""',
         f'"Project-Id-Version: NexaChatAI {version()}\\n"',
-        '"Report-Msgid-Bugs-To: https://github.com/sanyzrn/DbsChatBot/issues\\n"',
+        '"Report-Msgid-Bugs-To: https://dbsstudio.ir/issues\\n"',
         '"MIME-Version: 1.0\\n"',
         '"Content-Type: text/plain; charset=UTF-8\\n"',
         '"Content-Transfer-Encoding: 8bit\\n"',
@@ -231,3 +231,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+

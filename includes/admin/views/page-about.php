@@ -106,8 +106,8 @@ $ssc_specs  = array(
 			<h2><?php echo SSC_Icons::get( 'link' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <?php esc_html_e( 'Links', 'nexachat-ai' ); ?></h2>
 			<ul class="ssc-alinks__list">
 				<li><a href="<?php echo esc_url( SSC_Admin_About::MAKER_URL ); ?>" target="_blank" rel="noopener"><?php echo SSC_Icons::get( 'globe' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <span><?php esc_html_e( 'Website', 'nexachat-ai' ); ?><small>DbsStudio.ir</small></span></a></li>
-				<li><a href="<?php echo esc_url( SSC_Admin_About::REPO_URL . '/releases' ); ?>" target="_blank" rel="noopener"><?php echo SSC_Icons::get( 'download' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <span><?php esc_html_e( 'Releases & changelog', 'nexachat-ai' ); ?><small>GitHub</small></span></a></li>
-				<li><a href="<?php echo esc_url( SSC_Admin_About::REPO_URL . '/issues' ); ?>" target="_blank" rel="noopener"><?php echo SSC_Icons::get( 'chat' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <span><?php esc_html_e( 'Report a problem', 'nexachat-ai' ); ?><small>GitHub</small></span></a></li>
+				<li><a href="#ssc-about-changelog"><?php echo SSC_Icons::get( 'download' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <span><?php esc_html_e( 'Releases & changelog', 'nexachat-ai' ); ?><small>v<?php echo esc_html( $headers['version'] ); ?></small></span></a></li>
+				<li><a href="<?php echo esc_url( SSC_Admin_About::SUPPORT_URL ); ?>" target="_blank" rel="noopener noreferrer"><?php echo SSC_Icons::get( 'chat' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <span><?php esc_html_e( 'Report a problem', 'nexachat-ai' ); ?><small>DbsStudio.ir</small></span></a></li>
 			</ul>
 		</section>
 	</div>
@@ -169,6 +169,20 @@ $ssc_specs  = array(
 		</div>
 	</section>
 
+	<section id="ssc-about-changelog" class="ssc-card">
+		<h2><?php esc_html_e( 'Releases & changelog', 'nexachat-ai' ); ?></h2>
+		<?php foreach ( $changelog as $ssc_entry ) : ?>
+			<details>
+				<summary><strong dir="ltr"><?php echo esc_html( $ssc_entry['version'] ); ?></strong></summary>
+				<ul>
+					<?php foreach ( $ssc_entry['notes'] as $ssc_note ) : ?>
+						<li dir="auto"><?php echo esc_html( $ssc_note ); ?></li>
+					<?php endforeach; ?>
+				</ul>
+			</details>
+		<?php endforeach; ?>
+	</section>
+
 	<section class="ssc-card ssc-acredits">
 		<h2><?php esc_html_e( 'Credits', 'nexachat-ai' ); ?></h2>
 		<ul>
@@ -179,3 +193,4 @@ $ssc_specs  = array(
 		<p class="ssc-acredits__foot">© <?php echo esc_html( gmdate( 'Y' ) ); ?> <a href="<?php echo esc_url( SSC_Admin_About::MAKER_URL ); ?>" target="_blank" rel="noopener"><?php echo esc_html( SSC_Admin_About::MAKER ); ?></a> · <a href="<?php echo esc_url( SSC_Admin_About::MAKER_URL ); ?>" target="_blank" rel="noopener">DbsStudio.ir</a></p>
 	</section>
 </div>
+

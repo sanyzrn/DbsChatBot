@@ -275,3 +275,11 @@ test('The consultation form asks for an optional email only when the site allows
   assert.ok(body.indexOf("'phone', 'tel', true") < body.indexOf("'email', 'email', false"), 'the email comes right after the phone');
 });
 
+
+test('Mascot shade mixing expands short hex and tracks changed brand colors', () => {
+  const { mascotShade } = load('        function mascotShade(', '        function cssVars(');
+  assert.equal(mascotShade('#fff', -0.25), '#bfbfbf');
+  assert.equal(mascotShade('#000', 0.28), '#474747');
+  assert.equal(mascotShade('#123', -0.25), mascotShade('#112233', -0.25));
+  assert.notEqual(mascotShade('#2563eb', -0.25), mascotShade('#b61615', -0.25));
+});

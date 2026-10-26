@@ -11,7 +11,7 @@
 
 Please report security issues **privately**, not through a public issue.
 
-- Open a [private security advisory](https://github.com/sanyzrn/DbsChatBot/security/advisories/new) on GitHub, or
+- Use the [DbsStudio issue-reporting page](https://dbsstudio.ir/issues), or
 - email **kaspersky.sany@gmail.com** with `NexaChatAI security` in the subject.
 
 Helpful details: affected version, WordPress and PHP versions, reproduction steps,
@@ -110,3 +110,4 @@ These are documented deliberately rather than presented as fixed.
   configures. That provider's handling of the data is outside this plugin's
   control.
 - **Mail delivery.** Acceptance by a mail server is not proof of inbox delivery.
+

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: NexaChatAI 1.7.3\n"
-"Report-Msgid-Bugs-To: https://github.com/sanyzrn/DbsChatBot/issues\n"
+"Report-Msgid-Bugs-To: https://dbsstudio.ir/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -6722,3 +6722,4 @@ msgstr ""
 #: widgets/class-ssc-elementor-widget.php:162
 msgid "Match device"
 msgstr ""
+

@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class SSC_Admin_About {
 
-	const MAKER     = 'DbsStudio';
-	const MAKER_URL = 'https://dbsstudio.ir';
-	const REPO_URL  = 'https://github.com/sanyzrn/DbsChatBot';
+	const MAKER       = 'DbsStudio';
+	const MAKER_URL   = 'https://dbsstudio.ir';
+	const SUPPORT_URL = 'https://dbsstudio.ir/issues';
 
 	/**
 	 * Constructor.
@@ -214,6 +214,32 @@ class SSC_Admin_About {
 	}
 
 	/**
+	 * Bundled release notes, available without a network request or repository access.
+	 *
+	 * @return array[] Version and plain-text note lines.
+	 */
+	public static function changelog() {
+		$file = SSC_CHATBOT_DIR . 'readme.txt';
+		if ( ! is_readable( $file ) ) { return array(); }
+		$text = file_get_contents( $file );
+		if ( false === $text ) { return array(); }
+		$parts = explode( '== Changelog ==', $text, 2 );
+		if ( count( $parts ) < 2 ) { return array(); }
+		$section = preg_split( '/^== /m', $parts[1], 2 );
+		$entries = array();
+		if ( preg_match_all( '/^= ([^=\r\n]+) =\s*\r?\n(.*?)(?=^= |\z)/ms', $section[0], $matches, PREG_SET_ORDER ) ) {
+			foreach ( $matches as $match ) {
+				$lines = array_filter( array_map( 'trim', preg_split( '/\R/', trim( $match[2] ) ) ), 'strlen' );
+				$entries[] = array(
+					'version' => trim( $match[1] ),
+					'notes'   => array_map( function ( $line ) { return preg_replace( '/^\*\s+/', '', $line ); }, $lines ),
+				);
+			}
+		}
+		return $entries;
+	}
+
+	/**
 	 * Render.
 	 */
 	public function render() {
@@ -233,6 +259,8 @@ class SSC_Admin_About {
 		$providers = SSC_Providers::all();
 		$modules   = SSC_Modules::all();
 		$active    = SSC_Modules::active_ids();
+		$changelog = self::changelog();
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-about.php';
 	}
 }
+
