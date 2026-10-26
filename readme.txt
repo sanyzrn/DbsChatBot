@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, persian, rtl
 Requires at least: 5.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.7
+Stable tag: 1.7.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,12 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. The server also needs outbound HTTPS access to the AI provider you choose. Some providers do not serve every country, and servers inside Iran may be refused or blocked; use a host outside Iran, or the OpenAI-compatible endpoint with a gateway you can reach. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.7.8 =
+* Changed: the Gutenberg block is named NexaChatAI and its title and editor texts follow the site language (it was still called "Smart Assistant Chatbot" and sent editors to a menu with that name).
+* Changed: the AI connection screen and this file say that the server must be able to reach the AI provider, and that some providers refuse or block servers inside Iran; use a host outside Iran or an OpenAI-compatible gateway you can reach.
+* Changed: all addresses point to DbsStudio. The plugin page is dbsstudio.ir/nexachatai, and "Report a problem" in About opens dbsstudio.ir/issues with the product and the installed version already filled in. Security reports use the same private form.
+* Docs: the full SIL Open Font License (Vazirmatn, Inter) and Apache 2.0 (Roboto) texts ship next to the bundled fonts.
 
 = 1.7.7 =
 * Changed: on phones the open chat is a floating card with side margins instead of a full-screen sheet. It rests where the launcher was (above a bottom menu), a soft scrim behind it closes the chat when tapped, and it rises above the on-screen keyboard so the message box stays visible.

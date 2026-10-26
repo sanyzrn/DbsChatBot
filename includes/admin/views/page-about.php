@@ -107,7 +107,7 @@ $ssc_specs  = array(
 			<ul class="ssc-alinks__list">
 				<li><a href="<?php echo esc_url( SSC_Admin_About::MAKER_URL ); ?>" target="_blank" rel="noopener"><?php echo SSC_Icons::get( 'globe' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <span><?php esc_html_e( 'Website', 'nexachat-ai' ); ?><small>DbsStudio.ir</small></span></a></li>
 				<li><a href="#ssc-about-changelog"><?php echo SSC_Icons::get( 'download' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <span><?php esc_html_e( 'Releases & changelog', 'nexachat-ai' ); ?><small>v<?php echo esc_html( $headers['version'] ); ?></small></span></a></li>
-				<li><a href="<?php echo esc_url( SSC_Admin_About::SUPPORT_URL ); ?>" target="_blank" rel="noopener noreferrer"><?php echo SSC_Icons::get( 'chat' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <span><?php esc_html_e( 'Report a problem', 'nexachat-ai' ); ?><small>DbsStudio.ir</small></span></a></li>
+				<li><a href="<?php echo esc_url( SSC_Admin_About::support_url() ); ?>" target="_blank" rel="noopener noreferrer"><?php echo SSC_Icons::get( 'chat' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <span><?php esc_html_e( 'Report a problem', 'nexachat-ai' ); ?><small>DbsStudio.ir</small></span></a></li>
 			</ul>
 		</section>
 	</div>

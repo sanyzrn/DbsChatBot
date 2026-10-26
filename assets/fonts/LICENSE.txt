@@ -1,15 +1,15 @@
 Fonts bundled with this plugin (self-hosted — no external CDN requests):
 
 - vazirmatn-400/500/700.woff2
-  Vazirmatn font — Copyright (c) Saber Rastikerdar — licensed under the SIL Open Font License 1.1
+  Vazirmatn font — Copyright 2015 The Vazirmatn Project Authors — licensed under the SIL Open Font License 1.1 (full text: OFL-Vazirmatn.txt)
   https://github.com/rastikerdar/vazirmatn
 
 - inter-400/700.woff2
-  Inter font (latin subset) — Copyright (c) The Inter Project Authors — licensed under the SIL Open Font License 1.1
+  Inter font (latin subset) — Copyright (c) The Inter Project Authors — licensed under the SIL Open Font License 1.1 (full text: OFL-Inter.txt)
   https://github.com/rsms/inter  (served via fontsource)
 
 - roboto-400/700.woff2
-  Roboto font (latin subset) — Copyright (c) Christian Robertson (Google) — licensed under the Apache License 2.0
+  Roboto font (latin subset) — Copyright (c) Christian Robertson (Google) — licensed under the Apache License 2.0 (full text: Apache-2.0-Roboto.txt)
   https://fonts.google.com/specimen/Roboto  (served via fontsource)
 
-Full license texts: https://openfontlicense.org/ , https://www.apache.org/licenses/LICENSE-2.0
+The full license texts ship next to the fonts (OFL-Vazirmatn.txt, OFL-Inter.txt, Apache-2.0-Roboto.txt). More: https://openfontlicense.org/ , https://www.apache.org/licenses/LICENSE-2.0
