@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, persian, rtl
 Requires at least: 5.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.5
+Stable tag: 1.7.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,13 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.7.6 =
+* Fixed: consent text uses a regular font weight, and checkboxes remain 22px wide without shrinking beside long Persian text. The entire label remains clickable with a minimum 44px row height and a visible keyboard focus ring.
+* Changed: the mascot fur, highlights and shadows follow Primary brand color in the launcher, header and live preview, including shorthand hex colors.
+* Changed: About displays the bundled changelog locally instead of linking to the private repository; problem reports go to https://dbsstudio.ir/issues.
+* Changed: installation instructions and translation/security issue destinations no longer require private repository access.
+* Docs: added an internal, scoped RTL-Theme marketplace readiness review (excluded from the installable ZIP).
 
 = 1.7.5 =
 * Fixed: product, menu and brochure buttons keep readable brand-color hover, focus and pressed states instead of looking disabled under host-theme styles.

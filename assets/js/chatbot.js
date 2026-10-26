@@ -1506,7 +1506,7 @@
 
                 // Consent (enforced server-side when enabled).
                 if (cfg.consent && cfg.consent.enabled) {
-                        var cw = el('label', 'ssc-f ssc-f--check');
+                        var cw = el('label', 'ssc-f ssc-f--check ssc-f--consent');
                         var cc = el('input', 'ssc-f__check');
                         cc.type = 'checkbox';
                         cc.name = 'consent';
@@ -2120,7 +2120,7 @@
 
                 // Consent is ALWAYS required for ADR (sensitive health data), even
                 // when the global leads-consent toggle is off.
-                var adrConsentWrap = el('label', 'ssc-f ssc-f--check');
+                var adrConsentWrap = el('label', 'ssc-f ssc-f--check ssc-f--consent');
                 var adrConsent = el('input', 'ssc-f__check');
                 adrConsent.type = 'checkbox';
                 adrConsent.name = 'consent';

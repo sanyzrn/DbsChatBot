@@ -679,8 +679,27 @@
 }
 
 .ssc-root .ssc-f__input:focus { outline: 2px solid var(--ssc-primary); outline-offset: 1px; border-color: transparent; }
-.ssc-root .ssc-f--check { display: flex; flex-direction: row; align-items: flex-start; gap: 7px; }
-.ssc-root .ssc-f--check .ssc-f__label { font-weight: 500; color: var(--ssc-ink); }
+.ssc-root .ssc-f--check { display: flex; flex-direction: row; align-items: flex-start; gap: 10px; min-height: 44px; cursor: pointer; }
+.ssc-root .ssc-f--check .ssc-f__label { flex: 1; min-width: 0; font-weight: 500; color: var(--ssc-ink); }
+.ssc-root .ssc-f--consent .ssc-f__label { font-weight: 400; line-height: 1.75; }
+.ssc-root .ssc-f--check input.ssc-f__check[type="checkbox"] {
+	appearance: auto;
+	-webkit-appearance: checkbox;
+	flex: 0 0 22px;
+	width: 22px;
+	height: 22px;
+	min-width: 22px;
+	min-height: 22px;
+	max-width: 22px;
+	max-height: 22px;
+	margin: 2px 0 0;
+	padding: 0;
+	transform: none;
+	opacity: 1;
+	accent-color: var(--ssc-primary);
+	cursor: pointer;
+}
+.ssc-root .ssc-f--check input.ssc-f__check[type="checkbox"]:focus-visible { outline: 2px solid var(--ssc-primary); outline-offset: 3px; }
 .ssc-root .ssc-f--group { border: 1px dashed var(--ssc-line); border-radius: 9px; padding: 9px; margin: 0; display: flex; flex-direction: column; gap: 6px; }
 .ssc-root .ssc-f--group .ssc-f__label { font-weight: 600; }
 .ssc-root .ssc-f--group legend { padding: 0 4px; }
