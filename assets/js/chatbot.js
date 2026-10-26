@@ -847,6 +847,28 @@
 
         var lastFocus = null;
 
+        /**
+         * On phones the open window is a card that follows the visible area.
+         * The visual viewport shrinks when the on-screen keyboard opens; this
+         * publishes how much it covers (--ssc-kb) and how tall it is (--ssc-vvh)
+         * so the card stays above the keyboard instead of hiding the composer.
+         */
+        function syncViewport() {
+                var vv = window.visualViewport;
+                if (!root || previewMount || !vv || !state.open) {
+                        if (root) { root.style.removeProperty('--ssc-kb'); root.style.removeProperty('--ssc-vvh'); }
+                        return;
+                }
+                var covered = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+                root.style.setProperty('--ssc-kb', covered > 80 ? covered + 'px' : '0px');
+                root.style.setProperty('--ssc-vvh', Math.round(vv.height) + 'px');
+        }
+
+        if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', syncViewport);
+                window.visualViewport.addEventListener('scroll', syncViewport);
+        }
+
         function toggleWindow(force) {
                 var open = ('boolean' === typeof force) ? force : !state.open;
                 if (open === state.open) { return; }
@@ -855,6 +877,7 @@
                 launcher.setAttribute('aria-expanded', open ? 'true' : 'false');
                 launcher.setAttribute('aria-label', open ? ((cfg.i18n && cfg.i18n.close) || 'Close chat') : ((cfg.i18n && cfg.i18n.open) || 'Open chat'));
                 root.classList.toggle('is-open', open);
+                syncViewport();
                 win.classList.toggle('is-closed', !open);
                 win.classList.toggle('is-open', open);
                 if (win.inert !== undefined) { win.inert = !open; }
@@ -2478,7 +2501,7 @@
         // admin previews stay open). Pointerdown runs before chips remove themselves,
         // so clicks inside the conversation are never mistaken for outside ones.
         document.addEventListener('pointerdown', function (e) {
-                if (!state.open || previewMount || !root || root.contains(e.target)) { return; }
+                if (!state.open || previewMount || !root || (root.contains(e.target) && e.target !== root)) { return; }
                 if (e.target && e.target.isConnected === false) { return; }
                 toggleWindow(false);
         }, true);
@@ -2641,4 +2664,3 @@
                 }
         };
 })();
-

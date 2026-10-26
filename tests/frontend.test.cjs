@@ -283,3 +283,12 @@ test('Mascot shade mixing expands short hex and tracks changed brand colors', ()
   assert.equal(mascotShade('#123', -0.25), mascotShade('#112233', -0.25));
   assert.notEqual(mascotShade('#2563eb', -0.25), mascotShade('#b61615', -0.25));
 });
+
+test('On phones the open window is a floating card with a scrim, not a full-screen sheet', () => {
+  const css = fs.readFileSync(require('node:path').join(__dirname, '..', 'assets', 'css', 'chatbot.css'), 'utf8');
+  const phone = css.slice(css.indexOf('@media (max-width: 480px)'), css.indexOf('@media (prefers-reduced-motion: reduce)', css.indexOf('@media (max-width: 480px)')));
+  assert.ok(!/inset:\s*0;[^}]*height:\s*100d?vh/.test(phone), 'no full-screen inset + 100vh sheet');
+  assert.match(phone, /--ssc-kb/, 'the card rises above an on-screen keyboard');
+  assert.match(phone, /left:\s*min\(var\(--ssc-off-x\), 16px\)/, 'the card keeps a side margin');
+  assert.match(phone, /\.ssc-root\.is-open:not\(\.ssc-preview-mount\)::before/, 'a scrim sits behind the open card');
+});

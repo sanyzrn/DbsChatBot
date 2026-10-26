@@ -139,7 +139,7 @@ $ssc_active_modules = count(
 				<ul>
 					<?php foreach ( $ssc_next as $ssc_item ) : ?>
 						<?php $ssc_go = isset( $ssc_where[ $ssc_item['id'] ] ) ? $ssc_where[ $ssc_item['id'] ] : array( 'check', 'slate', SSC_Setup::wizard_url() ); ?>
-						<li><a href="<?php echo esc_url( $ssc_go[2] ); ?>"><span class="ssc-hhero__stepico"><?php echo SSC_Icons::get( $ssc_go[0] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span><span><?php echo esc_html( $ssc_item['label'] ); ?></span></a></li>
+						<li><a href="<?php echo esc_url( $ssc_go[2] ); ?>"><span class="ssc-hhero__stepico"><?php echo SSC_Icons::get( $ssc_go[0] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span><span><?php echo esc_html( $ssc_item['todo'] ); ?></span></a></li>
 					<?php endforeach; ?>
 				</ul>
 			</div>
@@ -226,7 +226,7 @@ $ssc_active_modules = count(
 				<?php $ssc_go = isset( $ssc_where[ $ssc_item['id'] ] ) ? $ssc_where[ $ssc_item['id'] ] : array( 'check', 'slate', SSC_Setup::wizard_url() ); ?>
 				<li class="<?php echo $ssc_item['done'] ? 'is-done' : ''; ?>" data-ssc-hue="<?php echo esc_attr( $ssc_go[1] ); ?>">
 					<span class="ssc-dready__ico"><?php echo SSC_Icons::get( $ssc_go[0] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?></span>
-					<span class="ssc-dready__label"><?php echo esc_html( $ssc_item['label'] ); ?></span>
+					<span class="ssc-dready__label"><?php echo esc_html( $ssc_item['done'] ? $ssc_item['label'] : $ssc_item['todo'] ); ?></span>
 					<?php if ( $ssc_item['done'] ) : ?>
 						<span class="ssc-dready__state"><?php echo SSC_Icons::get( 'check' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?><span class="screen-reader-text"><?php esc_html_e( 'Done', 'nexachat-ai' ); ?></span></span>
 					<?php else : ?>

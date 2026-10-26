@@ -268,6 +268,11 @@
 	animation: ssc-caret 1s steps(1) infinite;
 }
 
+@keyframes ssc-scrim {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
 @keyframes ssc-caret {
 	0%, 50% { opacity: 0.55; }
 	51%, 100% { opacity: 0; }
@@ -900,35 +905,50 @@
 		--ssc-off-y: var(--ssc-off-y-m, 18px);
 	}
 
-	/* Phones: the open window becomes a full-screen sheet (dvh follows the
-	 * visible viewport when the browser toolbar or keyboard changes it). */
-	.ssc-root .ssc-window {
-		inset: 0;
-		width: 100%;
+	/* Phones: the open window is a floating card, not a full-screen sheet. It
+	 * keeps a margin on both sides, rests where the launcher was (so it also
+	 * clears a bottom bar the launcher avoided), and never grows taller than
+	 * the visible area. --ssc-kb / --ssc-vvh come from the visual viewport
+	 * (see syncViewport) so an on-screen keyboard never covers the composer. */
+	.ssc-root .ssc-window,
+	.ssc-root.ssc-pos-left .ssc-window {
+		inset-block-end: max(var(--ssc-bottom), calc(var(--ssc-kb, 0px) + 8px));
+		left: min(var(--ssc-off-x), 16px);
+		right: min(var(--ssc-off-x), 16px);
+		width: auto;
 		max-width: none;
-		height: 100vh;
-		height: 100dvh;
-		border-radius: 0;
-		border: 0;
-		padding-block-end: env(safe-area-inset-bottom, 0px);
+		height: min(680px, 80vh, calc(var(--ssc-vvh, 100vh) - max(var(--ssc-bottom), calc(var(--ssc-kb, 0px) + 8px)) - 16px));
+		height: min(680px, 80dvh, calc(var(--ssc-vvh, 100dvh) - max(var(--ssc-bottom), calc(var(--ssc-kb, 0px) + 8px)) - 16px));
+		min-height: 320px;
+		border-radius: var(--ssc-win-radius);
+		border: 1px solid var(--ssc-line);
 	}
 
-	.ssc-root .ssc-window--inline,
-	.ssc-preview-mount .ssc-window { height: 480px; border-radius: var(--ssc-win-radius); }
+	/* Embedded (shortcode / block) and preview windows stay in the page flow. */
+	.ssc-root.ssc-root .ssc-window--inline,
+	.ssc-root.ssc-preview-mount .ssc-window { width: 100%; height: 480px; min-height: 0; left: auto; right: auto; }
 
 	.ssc-root.is-open .ssc-launcher { display: none; }
 
-	/* The full-screen sheet must sit above the WordPress toolbar, or a
-	 * signed-in user's chat header (and close button) hides behind it. */
+	/* The open card must sit above the WordPress toolbar and the host's own
+	 * fixed bars, or its header (and close button) hides behind them. */
 	.ssc-root.is-open:not(.ssc-preview-mount) { z-index: 100000; }
+
+	/* A soft scrim behind the card keeps the page quiet; tapping it closes the
+	 * chat (the pointer handler treats a tap on the root itself as "outside"). */
+	.ssc-root.is-open:not(.ssc-preview-mount)::before {
+		content: "";
+		position: fixed;
+		inset: 0;
+		background: rgba(16, 19, 34, 0.38);
+		z-index: var(--ssc-z);
+		animation: ssc-scrim 0.2s ease both;
+	}
+	.ssc-root.is-open:not(.ssc-preview-mount) .ssc-window { z-index: calc(var(--ssc-z) + 1); }
 
 	/* 16px stops iOS from zooming into the field on focus. */
 	.ssc-root .ssc-input,
 	.ssc-root .ssc-f__input { font-size: 16px; }
-
-	/* The left-position rules are more specific than the sheet's inset: without
-	 * this a left-placed widget opened shifted sideways on phones. */
-	.ssc-root.ssc-pos-left .ssc-window { left: 0; right: 0; }
 
 	.ssc-root .ssc-msg { max-width: 92%; }
 	.ssc-root .ssc-proactive { inset-inline: 10px; max-width: none; }
@@ -1139,4 +1159,3 @@
 	.ssc-root .ssc-launcher--mascot:hover .ssc-m-body { animation: none !important; }
 }
 .ssc-root .ssc-head__avatar.has-mascot svg { width: 100%; height: 100%; }
-

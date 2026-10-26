@@ -110,4 +110,3 @@ These are documented deliberately rather than presented as fixed.
   configures. That provider's handling of the data is outside this plugin's
   control.
 - **Mail delivery.** Acceptance by a mail server is not proof of inbox delivery.
-

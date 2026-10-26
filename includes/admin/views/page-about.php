@@ -169,18 +169,80 @@ $ssc_specs  = array(
 		</div>
 	</section>
 
-	<section id="ssc-about-changelog" class="ssc-card">
-		<h2><?php esc_html_e( 'Releases & changelog', 'nexachat-ai' ); ?></h2>
-		<?php foreach ( $changelog as $ssc_entry ) : ?>
-			<details>
-				<summary><strong dir="ltr"><?php echo esc_html( $ssc_entry['version'] ); ?></strong></summary>
-				<ul>
-					<?php foreach ( $ssc_entry['notes'] as $ssc_note ) : ?>
-						<li dir="auto"><?php echo esc_html( $ssc_note ); ?></li>
+	<section id="ssc-about-changelog" class="ssc-card ssc-achange">
+		<div class="ssc-achange__head">
+			<h2><?php esc_html_e( 'Releases & changelog', 'nexachat-ai' ); ?></h2>
+			<p class="ssc-muted">
+				<?php
+				printf(
+					/* translators: %d: number of versions. */
+					esc_html( _n( '%d version, newest first.', '%d versions, newest first.', count( $changelog ), 'nexachat-ai' ) ),
+					count( $changelog )
+				);
+				?>
+			</p>
+		</div>
+		<?php
+		$ssc_render_release = function ( $ssc_entry, $ssc_open ) {
+			$ssc_current = ( SSC_CHATBOT_VERSION === $ssc_entry['version'] );
+			?>
+			<li class="ssc-achange__item<?php echo $ssc_current ? ' is-current' : ''; ?>">
+				<details<?php echo $ssc_open ? ' open' : ''; ?>>
+					<summary>
+						<strong class="ssc-achange__ver" dir="ltr"><?php echo esc_html( $ssc_entry['version'] ); ?></strong>
+						<?php if ( $ssc_current ) : ?>
+							<span class="ssc-achange__tag"><?php esc_html_e( 'Installed', 'nexachat-ai' ); ?></span>
+						<?php endif; ?>
+						<span class="ssc-achange__count">
+							<?php
+							printf(
+								/* translators: %d: number of notes. */
+								esc_html( _n( '%d change', '%d changes', count( $ssc_entry['notes'] ), 'nexachat-ai' ) ),
+								count( $ssc_entry['notes'] )
+							);
+							?>
+						</span>
+					</summary>
+					<ul class="ssc-achange__notes">
+						<?php foreach ( $ssc_entry['notes'] as $ssc_note ) : ?>
+							<li dir="auto">
+								<?php if ( '' !== $ssc_note['type'] ) : ?>
+									<span class="ssc-achange__kind ssc-achange__kind--<?php echo esc_attr( $ssc_note['type'] ); ?>"><?php echo esc_html( SSC_Admin_About::note_label( $ssc_note['type'] ) ); ?></span>
+								<?php endif; ?>
+								<span class="ssc-achange__text"><?php echo SSC_Admin_About::note_html( $ssc_note['text'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by esc_html() in note_html(). ?></span>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</details>
+			</li>
+			<?php
+		};
+		$ssc_recent = array_slice( $changelog, 0, 5 );
+		$ssc_older  = array_slice( $changelog, 5 );
+		?>
+		<ol class="ssc-achange__list">
+			<?php foreach ( $ssc_recent as $ssc_i => $ssc_entry ) : ?>
+				<?php $ssc_render_release( $ssc_entry, 0 === $ssc_i ); ?>
+			<?php endforeach; ?>
+		</ol>
+		<?php if ( $ssc_older ) : ?>
+			<details class="ssc-achange__older">
+				<summary>
+					<?php
+					printf(
+						/* translators: %d: number of older versions. */
+						esc_html( _n( 'Show %d older version', 'Show %d older versions', count( $ssc_older ), 'nexachat-ai' ) ),
+						count( $ssc_older )
+					);
+					?>
+				</summary>
+				<ol class="ssc-achange__list">
+					<?php foreach ( $ssc_older as $ssc_entry ) : ?>
+						<?php $ssc_render_release( $ssc_entry, false ); ?>
 					<?php endforeach; ?>
-				</ul>
+				</ol>
 			</details>
-		<?php endforeach; ?>
+		<?php endif; ?>
 	</section>
 
 	<section class="ssc-card ssc-acredits">
@@ -193,4 +255,3 @@ $ssc_specs  = array(
 		<p class="ssc-acredits__foot">© <?php echo esc_html( gmdate( 'Y' ) ); ?> <a href="<?php echo esc_url( SSC_Admin_About::MAKER_URL ); ?>" target="_blank" rel="noopener"><?php echo esc_html( SSC_Admin_About::MAKER ); ?></a> · <a href="<?php echo esc_url( SSC_Admin_About::MAKER_URL ); ?>" target="_blank" rel="noopener">DbsStudio.ir</a></p>
 	</section>
 </div>
-

@@ -371,31 +371,37 @@ class SSC_Setup {
 			array(
 				'id'    => 'identity',
 				'label' => __( 'Business profile completed', 'nexachat-ai' ),
+				'todo'  => __( 'Complete the business profile', 'nexachat-ai' ),
 				'done'  => $identity,
 			),
 			array(
 				'id'    => 'knowledge',
 				'label' => __( 'Essential business knowledge added', 'nexachat-ai' ),
+				'todo'  => __( 'Add the essential business knowledge', 'nexachat-ai' ),
 				'done'  => $knowledge,
 			),
 			array(
 				'id'    => 'connection',
 				'label' => __( 'AI provider connection verified', 'nexachat-ai' ),
+				'todo'  => __( 'Verify the AI provider connection', 'nexachat-ai' ),
 				'done'  => $conn,
 			),
 			array(
 				'id'    => 'identity_test',
 				'label' => __( 'Business identity test passed', 'nexachat-ai' ),
+				'todo'  => __( 'Pass the business identity test', 'nexachat-ai' ),
 				'done'  => $identity_verified,
 			),
 			array(
 				'id'    => 'appearance',
 				'label' => __( 'Appearance configured', 'nexachat-ai' ),
+				'todo'  => __( 'Configure the appearance', 'nexachat-ai' ),
 				'done'  => $appearance,
 			),
 			array(
 				'id'    => 'privacy',
 				'label' => __( 'Privacy disclosures acknowledged', 'nexachat-ai' ),
+				'todo'  => __( 'Acknowledge the privacy disclosures', 'nexachat-ai' ),
 				'done'  => $privacy,
 			),
 		);

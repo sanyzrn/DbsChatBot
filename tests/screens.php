@@ -47,6 +47,17 @@ check( array() === $notices, 'The About screen renders its bundled changelog wit
 check( false !== strpos( $html, 'https://dbsstudio.ir/issues' ) && false === strpos( $html, 'github.com' ), 'About reports problems to the public website and has no GitHub destinations' );
 check( false !== strpos( $html, 'href="#ssc-about-changelog"' ) && false !== strpos( $html, 'id="ssc-about-changelog"' ) && false !== strpos( $html, '<details>' ), 'The changelog link opens release notes bundled in the installed plugin' );
 check( ! empty( SSC_Admin_About::changelog() ) && SSC_CHATBOT_VERSION === SSC_Admin_About::changelog()[0]['version'], 'The bundled changelog starts with the installed plugin version' );
+$ssc_log = SSC_Admin_About::changelog();
+$ssc_kinds = array( '', 'fixed', 'new', 'changed', 'improved', 'removed', 'security', 'privacy', 'docs' );
+$ssc_known = true;
+foreach ( $ssc_log as $ssc_rel ) {
+	foreach ( $ssc_rel['notes'] as $ssc_n ) {
+		if ( ! in_array( $ssc_n['type'], $ssc_kinds, true ) || '' === trim( $ssc_n['text'] ) ) { $ssc_known = false; }
+	}
+}
+check( $ssc_known, 'Every release note has a known kind (or none) and some text' );
+check( false !== strpos( $html, 'ssc-achange__kind--' ) && false !== strpos( $html, 'ssc-achange__older' ) && 1 === substr_count( $html, 'ssc-achange__tag' ), 'The changelog labels each note, marks the installed version once and folds the older versions' );
+check( '<code>x</code> &lt;b&gt;' === SSC_Admin_About::note_html( '`x` <b>' ), 'Changelog notes are escaped; only `code` spans become code' );
 
 // AI connection.
 list( $html, $notices ) = ssc_test_screen( array( 'page' => 'ssc-connection' ), function () {

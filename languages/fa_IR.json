@@ -1657,5 +1657,29 @@
   "Also believe a proxy on a private network (10.x, 172.16–31.x, 192.168.x)": "پروکسی روی شبکهٔ خصوصی (10.x، 172.16 تا 31.x، 192.168.x) را هم بپذیر",
   "Tick it only if your server can be reached from that network solely through your proxy, and the proxy removes any address a visitor sends. Shared carrier-grade addresses (100.64.x) are never included: list them above if they are your proxy.": "فقط وقتی تیک بزنید که سرور شما از آن شبکه تنها از راه پروکسی شما در دسترس است و پروکسی هر نشانی‌ای را که بازدیدکننده بفرستد حذف می‌کند. نشانی‌های مشترک اپراتوری (100.64.x) هرگز شامل نمی‌شوند: اگر پروکسی شما هستند، آن‌ها را در فهرست بالا بنویسید.",
   "Some documents could not be imported and were left as they were. Documents that are not in the file were not removed.": "برخی اسناد وارد نشدند و همان‌طور که بودند ماندند. اسنادی که در فایل نیستند حذف نشدند.",
-  "The file has no usable rows (a question and an answer), so nothing was replaced.": "فایل هیچ ردیف قابل‌استفاده‌ای (پرسش و پاسخ) ندارد، پس چیزی جایگزین نشد."
+  "The file has no usable rows (a question and an answer), so nothing was replaced.": "فایل هیچ ردیف قابل‌استفاده‌ای (پرسش و پاسخ) ندارد، پس چیزی جایگزین نشد.",
+  "Fixed": "رفع اشکال",
+  "Changed": "تغییر",
+  "Improved": "بهبود",
+  "Removed": "حذف",
+  "Docs": "مستندات",
+  "Installed": "نصب‌شده",
+  "%d version, newest first.\u0000%d versions, newest first.": [
+    "%d نسخه، جدیدترین در بالا.",
+    "%d نسخه، جدیدترین در بالا."
+  ],
+  "%d change\u0000%d changes": [
+    "%d تغییر",
+    "%d تغییر"
+  ],
+  "Show %d older version\u0000Show %d older versions": [
+    "نمایش %d نسخهٔ قدیمی‌تر",
+    "نمایش %d نسخهٔ قدیمی‌تر"
+  ],
+  "Complete the business profile": "مشخصات کسب‌وکار را کامل کنید",
+  "Add the essential business knowledge": "دانش اصلی کسب‌وکار را اضافه کنید",
+  "Verify the AI provider connection": "اتصال به ارائه‌دهندهٔ هوش مصنوعی را تأیید کنید",
+  "Pass the business identity test": "آزمون هویت کسب‌وکار را با موفقیت بگذرانید",
+  "Configure the appearance": "ظاهر را تنظیم کنید",
+  "Acknowledge the privacy disclosures": "اطلاع‌رسانی حریم خصوصی را تأیید کنید"
 }
