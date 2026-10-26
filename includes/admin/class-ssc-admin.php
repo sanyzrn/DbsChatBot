@@ -67,6 +67,9 @@ class SSC_Admin {
 	 */
 	public function register_menu() {
 		$brand = defined( 'NEXACHATAI_NAME' ) ? NEXACHATAI_NAME : 'NexaChatAI';
+		// The dashboard follows the current admin's language, not the widget's.
+		$locale = function_exists( 'determine_locale' ) ? determine_locale() : get_locale();
+		if ( preg_match( '/^fa(?:[_-]|$)/i', $locale ) ) { $brand = 'نکساچت'; }
 
 		add_menu_page(
 			$brand,
@@ -304,3 +307,4 @@ class SSC_Admin {
 		$this->controller( 'SSC_Wizard' )->render();
 	}
 }
+
