@@ -1681,5 +1681,8 @@
   "Verify the AI provider connection": "اتصال به ارائه‌دهندهٔ هوش مصنوعی را تأیید کنید",
   "Pass the business identity test": "آزمون هویت کسب‌وکار را با موفقیت بگذرانید",
   "Configure the appearance": "ظاهر را تنظیم کنید",
-  "Acknowledge the privacy disclosures": "اطلاع‌رسانی حریم خصوصی را تأیید کنید"
+  "Acknowledge the privacy disclosures": "اطلاع‌رسانی حریم خصوصی را تأیید کنید",
+  "The assistant is configured in the NexaChatAI admin menu. Publishing is controlled there.": "دستیار از منوی «نکساچت» در پنل مدیریت تنظیم می‌شود و انتشار آن هم از همان‌جا کنترل می‌شود.",
+  "Place the AI assistant chat widget on this page.": "ویجت گفتگوی دستیار هوشمند را در این صفحه قرار می‌دهد.",
+  "The server must be able to reach the provider. Some providers do not serve every country, and servers inside Iran may be refused or blocked. If the connection test fails with an access or network error, host the site outside Iran or use the OpenAI-compatible endpoint with a gateway you can reach.": "سرور شما باید بتواند به ارائه‌دهنده برسد. برخی ارائه‌دهندگان همهٔ کشورها را پوشش نمی‌دهند و ممکن است سرورهای داخل ایران رد یا مسدود شوند. اگر آزمون اتصال با خطای دسترسی یا شبکه شکست خورد، سایت را روی سرور خارج از ایران میزبانی کنید یا از «نقطهٔ سازگار با OpenAI» و دروازه‌ای که به آن دسترسی دارید استفاده کنید."
 }

@@ -2843,6 +2843,9 @@ msgstr "موبایل"
 msgid "Physician"
 msgstr "پزشک"
 
+msgid "Place the AI assistant chat widget on this page."
+msgstr "ویجت گفتگوی دستیار هوشمند را در این صفحه قرار می‌دهد."
+
 msgid "Placeholder"
 msgstr "متن راهنما"
 
@@ -3915,6 +3918,9 @@ msgstr "دستیار و تیم شما در یک گفتگو: وقتی سؤالی 
 msgid "The assistant is answering again."
 msgstr "از این به بعد دوباره دستیار پاسخ می‌دهد."
 
+msgid "The assistant is configured in the NexaChatAI admin menu. Publishing is controlled there."
+msgstr "دستیار از منوی «نکساچت» در پنل مدیریت تنظیم می‌شود و انتشار آن هم از همان‌جا کنترل می‌شود."
+
 msgid "The assistant is invisible to visitors until the wizard is complete and you publish it. Pick up where you left off."
 msgstr "تا وقتی جادوگر کامل نشود و آن را منتشر نکنید، دستیار برای بازدیدکنندگان دیده نمی‌شود. از همان‌جا که ماندید ادامه دهید."
 
@@ -4154,6 +4160,9 @@ msgstr "ارائه‌دهندهٔ انتخاب‌شده ابزار جست‌وج
 
 msgid "The server could not reach the provider (network or provider outage). Try again later."
 msgstr "سرور نتوانست به ارائه‌دهنده دسترسی پیدا کند (قطعی شبکه یا سرویس). بعداً دوباره تلاش کنید."
+
+msgid "The server must be able to reach the provider. Some providers do not serve every country, and servers inside Iran may be refused or blocked. If the connection test fails with an access or network error, host the site outside Iran or use the OpenAI-compatible endpoint with a gateway you can reach."
+msgstr "سرور شما باید بتواند به ارائه‌دهنده برسد. برخی ارائه‌دهندگان همهٔ کشورها را پوشش نمی‌دهند و ممکن است سرورهای داخل ایران رد یا مسدود شوند. اگر آزمون اتصال با خطای دسترسی یا شبکه شکست خورد، سایت را روی سرور خارج از ایران میزبانی کنید یا از «نقطهٔ سازگار با OpenAI» و دروازه‌ای که به آن دسترسی دارید استفاده کنید."
 
 msgid "The settings that decide where information is sent (AI endpoint, notification recipients) were kept as they were: they are imported only together with the API keys."
 msgstr "تنظیماتی که تعیین می‌کنند اطلاعات به کجا فرستاده شود (نقطهٔ اتصال هوش مصنوعی، گیرندگان اعلان‌ها) همان‌طور که بودند ماندند: این موارد فقط همراه کلیدهای API وارد می‌شوند."

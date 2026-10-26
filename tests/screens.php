@@ -39,6 +39,11 @@ check( false !== strpos( $html, 'ssc-dhero' ) && false !== strpos( $html, 'class
 check( substr_count( $html, 'ssc-dready__ico' ) === count( SSC_Setup::readiness() ), 'The readiness list has one row for every readiness check' );
 check( false !== strpos( $html, 'page=ssc-knowledge#identity' ) && false !== strpos( $html, 'page=ssc-connection#engine' ), 'Each unfinished check links to the section where it is fixed' );
 
+// The Gutenberg block carries the current brand and its editor texts come from the server (translated).
+$ssc_block = WP_Block_Type_Registry::get_instance()->get_registered( 'ssc/chatbot' );
+check( $ssc_block && 'NexaChatAI' === $ssc_block->title && false === stripos( $ssc_block->title, 'smart' ), 'The block is named NexaChatAI, not the old brand' );
+check( false !== strpos( (string) file_get_contents( SSC_CHATBOT_DIR . 'blocks/chatbot/index.js' ), 'sscBlockI18n' ) && false === strpos( (string) file_get_contents( SSC_CHATBOT_DIR . 'blocks/chatbot/index.js' ), 'Smart Assistant' ), 'The block editor script reads its texts from the server and has no old brand' );
+
 // About links work for marketplace customers without private repository access.
 list( $html, $notices ) = ssc_test_screen( array( 'page' => 'ssc-about' ), function () {
 	( new SSC_Admin_About() )->render();

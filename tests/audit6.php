@@ -23,3 +23,14 @@ if ( class_exists( 'Normalizer' ) ) {
 } else {
 	echo "SKIP: intl is not loaded, so the table was not compared with Normalizer\n";
 }
+
+// Marketplace readiness: every address points to DbsStudio and the bundled fonts carry their full licences.
+$ssc_header = (string) file_get_contents( SSC_CHATBOT_DIR . 'nexachat-ai.php' );
+check( 1 === preg_match( '/Plugin URI:\s+https:\/\/dbsstudio\.ir\//', $ssc_header ) && false === strpos( $ssc_header, 'saeedzarrini' ), 'The plugin page and author page are both on dbsstudio.ir' );
+$ssc_support = SSC_Admin_About::support_url();
+check( 0 === strpos( $ssc_support, 'https://dbsstudio.ir/issues?' ) && false !== strpos( $ssc_support, 'product=nexachatai' ) && false !== strpos( $ssc_support, 'version=' . rawurlencode( SSC_CHATBOT_VERSION ) ), 'The problem-report link opens with the product and installed version filled in' );
+check( false !== strpos( (string) file_get_contents( SSC_CHATBOT_DIR . 'SECURITY.md' ), 'https://dbsstudio.ir/issues?product=nexachatai&kind=security' ), 'Security reports use the private DbsStudio form' );
+foreach ( array( 'OFL-Vazirmatn.txt' => 'SIL OPEN FONT LICENSE Version 1.1', 'OFL-Inter.txt' => 'SIL OPEN FONT LICENSE Version 1.1', 'Apache-2.0-Roboto.txt' => 'Apache License' ) as $ssc_file => $ssc_needle ) {
+	$ssc_text = (string) file_get_contents( SSC_CHATBOT_DIR . 'assets/fonts/' . $ssc_file );
+	check( false !== strpos( $ssc_text, $ssc_needle ) && strlen( $ssc_text ) > 3500, 'Full licence text ships for the bundled fonts: ' . $ssc_file );
+}

@@ -464,7 +464,28 @@ class SSC_Frontend {
 		if ( ! file_exists( $dir . '/block.json' ) ) {
 			return;
 		}
-		register_block_type( $dir, array( 'render_callback' => array( $this, 'render_block' ) ) );
+		$name = defined( 'NEXACHATAI_NAME' ) ? NEXACHATAI_NAME : 'NexaChatAI';
+		$type = register_block_type(
+			$dir,
+			array(
+				'render_callback' => array( $this, 'render_block' ),
+				// The editor has no translation catalog for this script, so the visible texts are translated here.
+				'title'           => $name,
+				'description'     => __( 'Place the AI assistant chat widget on this page.', 'nexachat-ai' ),
+			)
+		);
+		if ( $type && function_exists( 'generate_block_asset_handle' ) ) {
+			wp_add_inline_script(
+				generate_block_asset_handle( 'ssc/chatbot', 'editorScript' ),
+				'window.sscBlockI18n = ' . wp_json_encode(
+					array(
+						'label'        => $name,
+						'instructions' => __( 'The assistant is configured in the NexaChatAI admin menu. Publishing is controlled there.', 'nexachat-ai' ),
+					)
+				) . ';',
+				'before'
+			);
+		}
 	}
 
 	/**

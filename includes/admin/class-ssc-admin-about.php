@@ -20,6 +20,21 @@ class SSC_Admin_About {
 	const SUPPORT_URL = 'https://dbsstudio.ir/issues';
 
 	/**
+	 * Problem-report page, opened with the product and the installed version filled in.
+	 *
+	 * @return string
+	 */
+	public static function support_url() {
+		return add_query_arg(
+			array(
+				'product' => 'nexachatai',
+				'version' => rawurlencode( SSC_CHATBOT_VERSION ),
+			),
+			self::SUPPORT_URL
+		);
+	}
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
