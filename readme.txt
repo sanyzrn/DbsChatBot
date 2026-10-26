@@ -72,7 +72,7 @@ Used for cart reminders and administrator alerts. Called only when the SMS modul
 
 == Installation ==
 
-1. Download `nexachat-ai-<version>.zip` from the project's GitHub Releases page. The "Source code" archives GitHub adds to each release are not installable plugins.
+1. Download the installable `nexachat-ai-<version>.zip` from the marketplace or account where you purchased the plugin.
 2. Plugins → Add New → Upload Plugin, choose the ZIP and activate — the setup wizard opens automatically.
 3. Complete the five steps and publish.
 4. Use the floating widget, shortcode `[ssc_chatbot]`, Gutenberg block, or Elementor widget.
@@ -391,3 +391,4 @@ Back up your database first. Review pharma answer mode, approved content, consen
 = 0.5.1-beta =
 
 Beta rebrand of the 5.x line. Data and settings are preserved. Review Appearance and delete-data policy after upgrade.
+

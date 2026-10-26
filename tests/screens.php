@@ -39,6 +39,15 @@ check( false !== strpos( $html, 'ssc-dhero' ) && false !== strpos( $html, 'class
 check( substr_count( $html, 'ssc-dready__ico' ) === count( SSC_Setup::readiness() ), 'The readiness list has one row for every readiness check' );
 check( false !== strpos( $html, 'page=ssc-knowledge#identity' ) && false !== strpos( $html, 'page=ssc-connection#engine' ), 'Each unfinished check links to the section where it is fixed' );
 
+// About links work for marketplace customers without private repository access.
+list( $html, $notices ) = ssc_test_screen( array( 'page' => 'ssc-about' ), function () {
+	( new SSC_Admin_About() )->render();
+} );
+check( array() === $notices, 'The About screen renders its bundled changelog without PHP notices' );
+check( false !== strpos( $html, 'https://dbsstudio.ir/issues' ) && false === strpos( $html, 'github.com' ), 'About reports problems to the public website and has no GitHub destinations' );
+check( false !== strpos( $html, 'href="#ssc-about-changelog"' ) && false !== strpos( $html, 'id="ssc-about-changelog"' ) && false !== strpos( $html, '<details>' ), 'The changelog link opens release notes bundled in the installed plugin' );
+check( ! empty( SSC_Admin_About::changelog() ) && SSC_CHATBOT_VERSION === SSC_Admin_About::changelog()[0]['version'], 'The bundled changelog starts with the installed plugin version' );
+
 // AI connection.
 list( $html, $notices ) = ssc_test_screen( array( 'page' => 'ssc-connection' ), function () {
 	( new SSC_Admin_Connection() )->render();
@@ -263,3 +272,4 @@ if ( null === $screens_before['modules'] ) {
 } else {
 	update_option( SSC_Modules::OPTION, $screens_before['modules'], false );
 }
+
