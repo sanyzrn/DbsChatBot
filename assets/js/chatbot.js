@@ -445,7 +445,7 @@
         /** Blend a hex colour toward white (+) or black (-), keeping its hue. */
         function mascotShade(color, amount) {
                 var hex = String(color || '').replace(/^#/, '');
-                if (/^[0-9a-f]{3}$/i.test(hex)) { hex = hex.replace(/./g, '        function cssVars() {        function cssVars() {'); }
+                if (/^[0-9a-f]{3}$/i.test(hex)) { hex = hex.replace(/./g, '$&$&'); }
                 if (!/^[0-9a-f]{6}$/i.test(hex)) { hex = '16203a'; }
                 var target = amount < 0 ? 0 : 255;
                 var weight = Math.min(1, Math.abs(amount));
