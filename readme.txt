@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, persian, rtl
 Requires at least: 5.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.6
+Stable tag: 1.7.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,11 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.7.7 =
+* Changed: on phones the open chat is a floating card with side margins instead of a full-screen sheet. It rests where the launcher was (above a bottom menu), a soft scrim behind it closes the chat when tapped, and it rises above the on-screen keyboard so the message box stays visible.
+* Changed: About shows the release notes as a timeline: newest first, the installed version tagged, each note labelled (Fixed, New, Changed, Security, Privacy, Docs), older versions folded away.
+* Fixed: unfinished items in the dashboard checklist read as actions ("Complete the business profile") instead of the finished-state wording that was shown next to a "Finish" button.
 
 = 1.7.6 =
 * Fixed: consent text uses a regular font weight, and checkboxes remain 22px wide without shrinking beside long Persian text. The entire label remains clickable with a minimum 44px row height and a visible keyboard focus ring.
