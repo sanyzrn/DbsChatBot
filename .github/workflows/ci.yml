@@ -120,7 +120,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Release planner tests (which merges publish a release)
-        run: python tests/plan_release_test.py
+        run: python tests/plan_release_test.py && python tests/build_release_test.py
       - name: Build the distributable ZIP
         run: python tools/build-release.py
       - name: Verify no development files were shipped

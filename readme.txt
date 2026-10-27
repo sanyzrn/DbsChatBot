@@ -50,7 +50,7 @@ All of the following are off by default and appear only after you switch them on
 
 == External services ==
 
-NexaChatAI contacts an outside service only after the site owner has chosen and configured it. Nothing is sent to the plugin's author: there is no telemetry, no licence check and no update ping.
+NexaChatAI contacts an outside service only after the site owner has chosen and configured it. Nothing is sent to the plugin's author: there is no telemetry, no licence check and no update ping. (The copy sold on RTL-Theme also contains that marketplace's own licence file. It is the marketplace's code, not this plugin's; the plugin only loads it where ionCube is available and does not call it otherwise.)
 
 = AI provider (the one the owner selects) =
 Used to write answers, to build the optional knowledge index (embeddings), to summarise long conversations, and for the optional web search. Called on each chat message, on each indexing job and on the administrator's connection test. Sent: the visitor's message, the recent conversation or its summary, the business profile and the knowledge excerpts found for the question, and the assistant's instructions. In pharmaceutical mode the visitor's text can describe a health problem; the owner should have a data-processing agreement with the provider they choose. The owner's API key goes only to that provider.
