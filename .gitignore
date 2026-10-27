@@ -15,6 +15,9 @@
 Thumbs.db
 desktop.ini
 
+# Marketplace licence file (belongs to the RTL-Theme product; never commit it)
+RTL_License_*.php
+
 # Local overrides & logs
 *.log
 .phpunit.result.cache

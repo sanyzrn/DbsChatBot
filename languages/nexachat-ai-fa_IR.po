@@ -1675,6 +1675,9 @@ msgstr "عمومی"
 msgid "Gently start conversations with hesitant visitors without being intrusive."
 msgstr "گفتگو با بازدیدکنندگان مردد را بدون مزاحمت آغاز کنید."
 
+msgid "Get a licence"
+msgstr "دریافت لایسنس"
+
 msgid "Getting there"
 msgstr "در مسیر خوبی هستید"
 
@@ -2185,6 +2188,9 @@ msgstr "چندین مدل با یک کلید."
 msgid "Map link, e.g. https://maps.app.goo.gl/…"
 msgstr "پیوند نقشه، مثلاً https://maps.app.goo.gl/…"
 
+msgid "Marketplace licence"
+msgstr "لایسنس مارکت"
+
 msgid "Match device"
 msgstr "مطابق دستگاه"
 
@@ -2310,6 +2316,9 @@ msgstr "نام، نقش و لحن"
 
 msgid "Name: %s"
 msgstr "نام: %s"
+
+msgid "Needs licence"
+msgstr "نیازمند لایسنس"
 
 msgid "Needs the SMS module."
 msgstr "به ماژول پیامک نیاز دارد."
@@ -2478,6 +2487,9 @@ msgstr "هنوز چیزی نیست"
 
 msgid "None — use REMOTE_ADDR (direct connection)"
 msgstr "هیچ — استفاده از REMOTE_ADDR (اتصال مستقیم)"
+
+msgid "Not active"
+msgstr "فعال نیست"
 
 msgid "Not helpful"
 msgstr "نامفید"
@@ -4053,6 +4065,9 @@ msgstr "آخرین آزمون %s پیش ناموفق بود"
 msgid "The latest messages the AI reads word for word. Older messages are not forgotten: they are kept as a short summary."
 msgstr "تعداد آخرین پیام‌هایی که هوش مصنوعی کلمه‌به‌کلمه می‌خواند. پیام‌های قدیمی‌تر فراموش نمی‌شوند و به‌صورت یک خلاصهٔ کوتاه نگه داشته می‌شوند."
 
+msgid "The licence for this site is not active. You can use everything to try it, up to %1$d AI answers a day; live chat, the messenger bot, the WooCommerce assistant, the SMS gateway, learning from the website and the pharmaceutical extension need an active licence. Product page: %2$s"
+msgstr "لایسنس این سایت فعال نیست. برای امتحان می‌توانید از همه‌چیز استفاده کنید، تا %1$d پاسخ هوش مصنوعی در روز؛ چت زنده، ربات پیام‌رسان، دستیار ووکامرس، درگاه پیامک، یادگیری از سایت و افزونهٔ دارویی به لایسنس فعال نیاز دارند. صفحهٔ محصول: %2$s"
+
 msgid "The live inbox needs JavaScript."
 msgstr "صندوق گفتگوی زنده به جاوااسکریپت نیاز دارد."
 
@@ -4274,6 +4289,9 @@ msgstr "این متن شمارهٔ تلفنی (%s) را ذکر می‌کند ک�
 
 msgid "This mentions an email address (%s) that is not the one in Contact & hours. If it is another department, say so in the text; otherwise correct the profile."
 msgstr "این متن نشانی ایمیلی (%s) را ذکر می‌کند که با ایمیل «تماس و ساعات کاری» یکی نیست. اگر مربوط به بخش دیگری است در متن بنویسید؛ وگرنه نمایه را اصلاح کنید."
+
+msgid "This module needs an active licence."
+msgstr "این ماژول به لایسنس فعال نیاز دارد."
 
 msgid "This module needs: %s"
 msgstr "این ماژول نیاز دارد به: %s"

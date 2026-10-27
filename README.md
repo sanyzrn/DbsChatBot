@@ -5,7 +5,7 @@
 **A professional AI assistant for WordPress — Persian/RTL-first, with full LTR support.**
 
 [![CI](https://github.com/sanyzrn/DbsChatBot/actions/workflows/ci.yml/badge.svg)](https://github.com/sanyzrn/DbsChatBot/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.7.8-0a7ea4.svg)](https://github.com/sanyzrn/DbsChatBot/releases/latest)
+[![Version](https://img.shields.io/badge/version-1.7.9-0a7ea4.svg)](https://github.com/sanyzrn/DbsChatBot/releases/latest)
 [![License: GPL v2](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
 [![Requires PHP](https://img.shields.io/badge/PHP-7.4%2B-777bb4.svg)](composer.json)
 [![Requires WordPress](https://img.shields.io/badge/WordPress-5.6%2B-21759b.svg)](readme.txt)

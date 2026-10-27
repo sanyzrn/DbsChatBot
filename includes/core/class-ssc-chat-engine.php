@@ -224,6 +224,11 @@ class SSC_Chat_Engine {
 			}
 		}
 
+		// Without an active licence the AI answers a limited number of questions a day; the rest fall back to the FAQ bank and knowledge.
+		if ( SSC_License::ai_cap_reached() ) {
+			return '';
+		}
+
 		$result = null;
 		// Searching answers arrive complete (with citations) over plain HTTP.
 		if ( ! $web && is_callable( $on_delta ) && SSC_Stream::provider_supports( $provider ) ) {
@@ -251,6 +256,7 @@ class SSC_Chat_Engine {
 		}
 
 		self::record_recovery();
+		SSC_License::count_ai_answer();
 		$reply             = $result['text'];
 		$this->web_sources = isset( $result['sources'] ) && is_array( $result['sources'] ) ? $result['sources'] : array();
 

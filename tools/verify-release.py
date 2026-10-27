@@ -5,6 +5,10 @@ correct package looks like, so a mistake in build-release.py is caught rather
 than mirrored. Exits non-zero on any finding.
 
 Usage:  python tools/verify-release.py [path/to/plugin.zip]
+        python tools/verify-release.py --rtl path/to/nexachat-ai-x.y.z-rtl.zip
+
+The public ZIP must never contain the RTL-Theme licence file; the marketplace ZIP
+(--rtl) must contain exactly one, next to the main plugin file.
 """
 
 import re
@@ -59,7 +63,10 @@ def newest_archive() -> Path:
 
 
 def main() -> None:
-    archive = Path(sys.argv[1]) if len(sys.argv) > 1 else newest_archive()
+    argv = sys.argv[1:]
+    rtl = '--rtl' in argv
+    argv = [a for a in argv if a != '--rtl']
+    archive = Path(argv[0]) if argv else newest_archive()
     problems = []
 
     with zipfile.ZipFile(archive) as bundle:
@@ -80,6 +87,19 @@ def main() -> None:
     for required in REQUIRED:
         if required not in names:
             problems.append(f'Missing required file: {required}')
+
+    licenses = [n for n in names if re.search(r'(^|/)RTL_License_[^/]*\.php$', n)]
+    if rtl:
+        expected = [n for n in licenses if re.fullmatch(rf'{SLUG}/RTL_License_[0-9a-f]+\.php', n)]
+        if len(licenses) != 1 or len(expected) != 1:
+            problems.append(f'The marketplace ZIP must hold exactly one RTL_License file next to the main plugin file; found {licenses}.')
+        else:
+            with zipfile.ZipFile(archive) as bundle:
+                main_php = bundle.read(f'{SLUG}/nexachat-ai.php').decode('utf-8', 'ignore')
+            if expected[0].split('/')[-1] not in main_php:
+                problems.append('nexachat-ai.php does not load the licence file that is in the ZIP.')
+    elif licenses:
+        problems.append(f'Marketplace licence file in the public ZIP: {licenses}')
 
     # A stray secret is worse than a stray file; scan the text we ship.
     secret_like = re.compile(

@@ -6,8 +6,15 @@ is listed positively here, and tools/verify-release.py re-checks the result
 independently so a mistake in this file cannot ship silently.
 
 Usage:  python tools/build-release.py
+        python tools/build-release.py --rtl-license /path/to/RTL_License_<hash>.php [--out DIR]
+
+The second form builds the ZIP sold on RTL-Theme: the same files plus the
+marketplace licence file, placed unchanged in the plugin folder, under the name
+nexachat-ai-<version>-rtl.zip. The licence file belongs to that marketplace
+product and stays out of the repository and out of the public ZIP.
 """
 
+import argparse
 import hashlib
 import re
 import sys
@@ -75,7 +82,24 @@ def collect() -> list[Path]:
     return sorted(files)
 
 
+RTL_LICENSE_NAME = re.compile(r'^RTL_License_[0-9a-f]{8,}\.php$')
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description='Build the distributable plugin ZIP.')
+    parser.add_argument('--rtl-license', metavar='FILE', help='marketplace licence file to include (builds the -rtl ZIP)')
+    parser.add_argument('--out', metavar='DIR', help='output directory (default: dist/)')
+    args = parser.parse_args()
+
+    license_path = None
+    if args.rtl_license:
+        license_path = Path(args.rtl_license)
+        if not license_path.is_file() or not RTL_LICENSE_NAME.match(license_path.name):
+            sys.exit('--rtl-license must point to the unchanged RTL_License_<hash>.php file.')
+        loader = (ROOT / 'nexachat-ai.php').read_text(encoding='utf-8')
+        if license_path.name not in loader:
+            sys.exit(f'nexachat-ai.php does not load {license_path.name}; update the loader to this file name first.')
+
     version = plugin_version()
     header = (ROOT / 'nexachat-ai.php').read_text(encoding='utf-8')
     declared = re.search(r'^\s*\*\s*Version:\s*(\S+)', header, re.M)
@@ -93,18 +117,22 @@ def main() -> None:
             f'plugin is {version}.'
         )
 
-    output = ROOT / 'dist'
-    output.mkdir(exist_ok=True)
-    archive = output / f'nexachat-ai-{version}.zip'
-    files = collect()
+    output = Path(args.out) if args.out else ROOT / 'dist'
+    output.mkdir(parents=True, exist_ok=True)
+    archive = output / (f'nexachat-ai-{version}-rtl.zip' if license_path else f'nexachat-ai-{version}.zip')
+    # (archive name, source path); the licence file sits next to the main plugin file, byte for byte.
+    entries = [(f'{SLUG}/' + path.relative_to(ROOT).as_posix(), path) for path in collect()]
+    if license_path:
+        entries.append((f'{SLUG}/{license_path.name}', license_path))
+        entries.sort(key=lambda entry: entry[0])
+    files = [path for _, path in entries]
 
     # Reproducible: the archive must depend only on file names and contents, so
     # that anyone can rebuild a tag and confirm the published checksum. A ZIP
     # normally embeds each file's mtime, which differs between a working copy
     # and a fresh checkout and would make every build produce different bytes.
     with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
-        for path in files:
-            name = f'{SLUG}/' + path.relative_to(ROOT).as_posix()
+        for name, path in entries:
             info = zipfile.ZipInfo(name, date_time=FIXED_TIMESTAMP)
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o644 << 16  # Regular file, consistent mode.
@@ -116,7 +144,7 @@ def main() -> None:
     )
 
     size_kb = archive.stat().st_size / 1024
-    print(f'{archive.relative_to(ROOT).as_posix()}')
+    print(archive.relative_to(ROOT).as_posix() if archive.is_relative_to(ROOT) else archive)
     print(f'{len(files)} files, {size_kb:.1f} KB')
     print(f'SHA256 {digest}')
 

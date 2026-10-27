@@ -3,7 +3,7 @@
  * Plugin Name:       NexaChatAI
  * Plugin URI:        https://dbsstudio.ir/nexachatai
  * Description:       Professional AI assistant for WordPress. Setup wizard, multi-provider AI engines, business knowledge base, modular architecture. Optional voice, analytics, lead collection and pharmaceutical (pharmacovigilance) extension. Persian/RTL-first with LTR support.
- * Version:           1.7.8
+ * Version:           1.7.9
  * Author:            DbsStudio
  * Author URI:        https://dbsstudio.ir
  * Text Domain:       nexachat-ai
@@ -67,8 +67,19 @@ unset( $nexachatai_network );
 // Functions are declared in a separate file: PHP binds top-level functions
 // at compile time, so declaring them here would collide with the old copy
 // before the guard above could run.
-define( 'SSC_CHATBOT_VERSION', '1.7.8' );
+define( 'SSC_CHATBOT_VERSION', '1.7.9' );
 define( 'NEXACHATAI_MAIN_FILE', __FILE__ );
+
+// RTL-Theme licence file. It exists only in the ZIP sold on RTL-Theme (tools/build-release.py --rtl-license);
+// the public/GitHub ZIP never contains it, and the plugin works the same without it.
+// The file is encoded with ionCube: where the ionCube Loader is missing it prints an error and ends the request,
+// and it was encoded for PHP 8.1 and 8.2 only. So it is loaded only where the Loader is active on those versions;
+// everywhere else it is left alone instead of stopping the site.
+$nexachatai_rtl_license = __DIR__ . DIRECTORY_SEPARATOR . 'RTL_License_c5f56181a1bd41bb.php';
+if ( PHP_VERSION_ID >= 80100 && PHP_VERSION_ID < 80300 && extension_loaded( 'ionCube Loader' ) && is_file( $nexachatai_rtl_license ) ) {
+	require_once $nexachatai_rtl_license;
+}
+unset( $nexachatai_rtl_license );
 
 // WooCommerce: orders are read only through WooCommerce's own order API (wc_get_order, the WC_Order getters,
 // order notes and the checkout hooks), never from the posts tables, so the plugin works with high-performance
