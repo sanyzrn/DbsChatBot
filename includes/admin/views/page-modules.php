@@ -68,6 +68,9 @@ $ssc_percent = $ssc_total > 0 ? (int) round( 100 * $ssc_on / $ssc_total ) : 0;
 		</form>
 	</header>
 
+	<?php if ( SSC_License::is_limited() ) : ?>
+		<div class="ssc-notice ssc-notice--info" role="status"><?php echo esc_html( SSC_License::notice() ); ?></div>
+	<?php endif; ?>
 	<?php if ( $activated ) : ?>
 		<div class="ssc-notice ssc-notice--success" role="status"><span class="dashicons dashicons-yes-alt" aria-hidden="true"></span> <?php esc_html_e( 'Module activated.', 'nexachat-ai' ); ?></div>
 	<?php endif; ?>
@@ -146,6 +149,7 @@ $ssc_percent = $ssc_total > 0 ? (int) round( 100 * $ssc_on / $ssc_total ) : 0;
 				foreach ( $cat_modules as $module ) :
 					++$rendered;
 					$status     = $statuses[ $module->id() ]['status'];
+					$ssc_locked = SSC_License::module_locked( $module->id() );
 					$deps       = $module->dependencies();
 					$dep_labels = array();
 					foreach ( $deps as $dep ) {
@@ -177,6 +181,8 @@ $ssc_percent = $ssc_total > 0 ? (int) round( 100 * $ssc_on / $ssc_total ) : 0;
 										esc_html_e( 'Active', 'nexachat-ai' );
 									} elseif ( 'setup' === $status ) {
 										esc_html_e( 'Setup Required', 'nexachat-ai' );
+									} elseif ( $ssc_locked ) {
+										esc_html_e( 'Needs licence', 'nexachat-ai' );
 									} else {
 										esc_html_e( 'Inactive', 'nexachat-ai' );
 									}
@@ -193,6 +199,9 @@ $ssc_percent = $ssc_total > 0 ? (int) round( 100 * $ssc_on / $ssc_total ) : 0;
 							<?php if ( 'inactive' !== $status && $module->needs_config() ) : ?>
 								<a class="ssc-modcard__configure" href="<?php echo esc_url( $ssc_settings_url ); ?>"><?php echo SSC_Icons::get( 'sliders' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?> <?php esc_html_e( 'Configure', 'nexachat-ai' ); ?></a>
 							<?php endif; ?>
+							<?php if ( $ssc_locked ) : ?>
+								<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( SSC_License::PRODUCT_URL ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Get a licence', 'nexachat-ai' ); ?></a>
+							<?php else : ?>
 							<a class="ssc-btn <?php echo 'inactive' === $status ? 'ssc-btn--primary' : 'ssc-btn--ghost'; ?>" href="<?php echo esc_url( $toggle_url ); ?>">
 								<?php if ( 'inactive' === $status ) : ?>
 									<?php esc_html_e( 'Activate', 'nexachat-ai' ); ?>
@@ -200,6 +209,7 @@ $ssc_percent = $ssc_total > 0 ? (int) round( 100 * $ssc_on / $ssc_total ) : 0;
 									<?php esc_html_e( 'Deactivate', 'nexachat-ai' ); ?>
 								<?php endif; ?>
 							</a>
+							<?php endif; ?>
 						</div>
 					</article>
 				<?php endforeach; ?>

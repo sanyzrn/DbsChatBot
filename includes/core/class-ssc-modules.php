@@ -103,7 +103,8 @@ class SSC_Modules {
 	 * @return bool
 	 */
 	public static function is_active( $id ) {
-		return in_array( $id, self::active_ids(), true );
+		// A premium module stays switched on in storage but does not run while the licence is inactive.
+		return in_array( $id, self::active_ids(), true ) && ! SSC_License::module_locked( $id );
 	}
 
 	/**
@@ -116,6 +117,9 @@ class SSC_Modules {
 		$modules = self::all();
 		if ( ! isset( $modules[ $id ] ) ) {
 			return false;
+		}
+		if ( SSC_License::module_locked( $id ) ) {
+			return new WP_Error( 'ssc_module_license', __( 'This module needs an active licence.', 'nexachat-ai' ) );
 		}
 		if ( self::is_active( $id ) ) {
 			return true;

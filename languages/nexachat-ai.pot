@@ -3,17 +3,17 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: NexaChatAI 1.7.7\n"
+"Project-Id-Version: NexaChatAI 1.7.8\n"
 "Report-Msgid-Bugs-To: https://dbsstudio.ir/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-26 18:14:00+00:00\n"
+"POT-Creation-Date: 2026-10-27 09:39:00+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: nexachat-ai\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: includes/admin/class-ssc-admin-about.php:27
+#: includes/admin/class-ssc-admin-about.php:42
 #: includes/admin/class-ssc-admin-appearance.php:23
 #: includes/admin/class-ssc-admin-connection.php:25
 #: includes/admin/class-ssc-admin-dashboard.php:23
@@ -36,146 +36,146 @@ msgstr ""
 msgid "Insufficient permissions."
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:73
+#: includes/admin/class-ssc-admin-about.php:88
 msgid "WordPress version"
 msgstr ""
 
 #. translators: 1: installed version, 2: required version.
-#: includes/admin/class-ssc-admin-about.php:76
-#: includes/admin/class-ssc-admin-about.php:83
+#: includes/admin/class-ssc-admin-about.php:91
+#: includes/admin/class-ssc-admin-about.php:98
 msgid "%1$s (needs %2$s or newer)"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:80
+#: includes/admin/class-ssc-admin-about.php:95
 msgid "PHP version"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:87
+#: includes/admin/class-ssc-admin-about.php:102
 msgid "OpenSSL (encrypts API keys)"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:101
-#: includes/admin/class-ssc-admin-about.php:107
-#: includes/admin/class-ssc-admin-about.php:89
-#: includes/admin/class-ssc-admin-about.php:95
+#: includes/admin/class-ssc-admin-about.php:104
+#: includes/admin/class-ssc-admin-about.php:110
+#: includes/admin/class-ssc-admin-about.php:116
+#: includes/admin/class-ssc-admin-about.php:122
 #: includes/admin/views/page-live.php:20
 #: includes/modules/class-ssc-module-live.php:1406
 msgid "Available"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:89
+#: includes/admin/class-ssc-admin-about.php:104
 msgid "AUTH_KEY is missing from wp-config.php"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:89
-#: includes/admin/class-ssc-admin-about.php:95
+#: includes/admin/class-ssc-admin-about.php:104
+#: includes/admin/class-ssc-admin-about.php:110
 msgid "Not installed"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:93
+#: includes/admin/class-ssc-admin-about.php:108
 msgid "mbstring (Persian text handling)"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:99
+#: includes/admin/class-ssc-admin-about.php:114
 msgid "ZipArchive (Word .docx import)"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:101
+#: includes/admin/class-ssc-admin-about.php:116
 msgid "Not installed: Word files cannot be imported"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:105
+#: includes/admin/class-ssc-admin-about.php:120
 msgid "zlib (PDF import, export review)"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:107
+#: includes/admin/class-ssc-admin-about.php:122
 msgid "Not installed: some PDF files cannot be read"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:111
+#: includes/admin/class-ssc-admin-about.php:126
 msgid "Site address uses HTTPS"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:113
+#: includes/admin/class-ssc-admin-about.php:128
 msgid "Yes"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:113
+#: includes/admin/class-ssc-admin-about.php:128
 msgid "No: visitors’ messages travel unencrypted"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:117
+#: includes/admin/class-ssc-admin-about.php:132
 msgid "Background tasks (WP-Cron)"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:119
+#: includes/admin/class-ssc-admin-about.php:134
 msgid "Disabled in wp-config.php: make sure a server cron calls wp-cron.php"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:119
+#: includes/admin/class-ssc-admin-about.php:134
 msgid "Enabled"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:130
+#: includes/admin/class-ssc-admin-about.php:145
 msgid "Database tables"
 msgstr ""
 
 #. translators: %s: table names.
-#: includes/admin/class-ssc-admin-about.php:134
+#: includes/admin/class-ssc-admin-about.php:149
 msgid "Missing: %s. Deactivate and activate the plugin to create them."
 msgstr ""
 
 #. translators: 1: number of tables, 2: schema version.
-#: includes/admin/class-ssc-admin-about.php:136
+#: includes/admin/class-ssc-admin-about.php:151
 msgid "All %1$d tables present (schema version %2$s)"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:142
+#: includes/admin/class-ssc-admin-about.php:157
 msgid "PHP memory limit"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:156
+#: includes/admin/class-ssc-admin-about.php:171
 msgid "Unlimited"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:272
+#: includes/admin/class-ssc-admin-about.php:287
 msgid "Fixed"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:273
+#: includes/admin/class-ssc-admin-about.php:288
 #: includes/admin/views/page-requests.php:19
 #: includes/admin/views/page-requests.php:74
 msgid "New"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:274
+#: includes/admin/class-ssc-admin-about.php:289
 msgid "Changed"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:275
+#: includes/admin/class-ssc-admin-about.php:290
 msgid "Improved"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:276
+#: includes/admin/class-ssc-admin-about.php:291
 msgid "Removed"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:277
+#: includes/admin/class-ssc-admin-about.php:292
 #: includes/admin/views/page-about.php:57
 msgid "Security"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:278
+#: includes/admin/class-ssc-admin-about.php:293
 #: includes/admin/views/page-settings.php:73
 #: includes/admin/views/page-settings.php:88
 msgid "Privacy"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:279
+#: includes/admin/class-ssc-admin-about.php:294
 msgid "Docs"
 msgstr ""
 
-#: includes/admin/class-ssc-admin-about.php:281
+#: includes/admin/class-ssc-admin-about.php:296
 #: includes/admin/views/pharma-case.php:139
 msgid "Note"
 msgstr ""
@@ -324,7 +324,7 @@ msgid "Appearance"
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:88
-#: includes/admin/views/page-about.php:142
+#: includes/admin/views/page-about.php:145
 #: includes/admin/views/page-modules.php:62
 #: includes/admin/views/page-settings.php:304
 #: includes/admin/views/page-settings.php:77
@@ -487,7 +487,7 @@ msgid "Website"
 msgstr ""
 
 #: includes/admin/views/page-about.php:109
-#: includes/admin/views/page-about.php:174
+#: includes/admin/views/page-about.php:177
 msgid "Releases & changelog"
 msgstr ""
 
@@ -519,87 +519,101 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: includes/admin/views/page-about.php:123
-msgid "Requires"
+#: includes/admin/views/page-about.php:124
+msgid "Marketplace licence"
 msgstr ""
 
 #: includes/admin/views/page-about.php:124
-msgid "Database schema"
+msgid "Not active"
 msgstr ""
 
-#: includes/admin/views/page-about.php:125
-msgid "REST namespace"
+#: includes/admin/views/page-about.php:124
+#: includes/admin/views/page-modules.php:108
+#: includes/admin/views/page-modules.php:181
+msgid "Active"
 msgstr ""
 
 #: includes/admin/views/page-about.php:126
+msgid "Requires"
+msgstr ""
+
+#: includes/admin/views/page-about.php:127
+msgid "Database schema"
+msgstr ""
+
+#: includes/admin/views/page-about.php:128
+msgid "REST namespace"
+msgstr ""
+
+#: includes/admin/views/page-about.php:129
 msgid "Settings option"
 msgstr ""
 
-#: includes/admin/views/page-about.php:151
+#: includes/admin/views/page-about.php:154
 msgid "System check"
 msgstr ""
 
-#: includes/admin/views/page-about.php:164
+#: includes/admin/views/page-about.php:167
 msgid "Support information"
 msgstr ""
 
-#: includes/admin/views/page-about.php:165
+#: includes/admin/views/page-about.php:168
 msgid "Paste this when you ask for help. It holds versions and settings only: no API keys, no conversations, no personal data."
 msgstr ""
 
-#: includes/admin/views/page-about.php:168
+#: includes/admin/views/page-about.php:171
 #: includes/core/class-ssc-frontend.php:321
 #: includes/modules/class-ssc-module-woo.php:506
 msgid "Copied ✓"
 msgstr ""
 
-#: includes/admin/views/page-about.php:168
+#: includes/admin/views/page-about.php:171
 msgid "Copy to clipboard"
 msgstr ""
 
 #. translators: %d: number of versions.
-#: includes/admin/views/page-about.php:179
+#: includes/admin/views/page-about.php:182
 msgid "%d version, newest first."
 msgid_plural "%d versions, newest first."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin/views/page-about.php:194
+#: includes/admin/views/page-about.php:197
 msgid "Installed"
 msgstr ""
 
 #. translators: %d: number of notes.
-#: includes/admin/views/page-about.php:200
+#: includes/admin/views/page-about.php:203
 msgid "%d change"
 msgid_plural "%d changes"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of older versions.
-#: includes/admin/views/page-about.php:234
+#: includes/admin/views/page-about.php:237
 msgid "Show %d older version"
 msgid_plural "Show %d older versions"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin/views/page-about.php:249
+#: includes/admin/views/page-about.php:252
 msgid "Credits"
 msgstr ""
 
-#: includes/admin/views/page-about.php:251
+#: includes/admin/views/page-about.php:254
 msgid "Saber Rastikerdar, SIL Open Font License 1.1"
 msgstr ""
 
-#: includes/admin/views/page-about.php:252
+#: includes/admin/views/page-about.php:255
 msgid "The Inter Project Authors, SIL Open Font License 1.1"
 msgstr ""
 
-#: includes/admin/views/page-about.php:253
+#: includes/admin/views/page-about.php:256
 msgid "Christian Robertson, Apache License 2.0"
 msgstr ""
 
 #: includes/admin/views/page-analytics.php:25
-#: includes/core/class-ssc-modules.php:243
+#: includes/core/class-ssc-modules.php:247
 #: includes/modules/class-ssc-module-analytics.php:142
 #: includes/modules/class-ssc-module-analytics.php:143
 msgid "Analytics"
@@ -1104,7 +1118,7 @@ msgid "Changing the provider, key, model or endpoint invalidates previous verifi
 msgstr ""
 
 #: includes/admin/views/page-connection.php:121
-#: includes/admin/views/page-dashboard.php:138
+#: includes/admin/views/page-dashboard.php:141
 msgid "Next"
 msgstr ""
 
@@ -1520,142 +1534,142 @@ msgid "Delete"
 msgstr ""
 
 #. translators: %d: number of notifications.
-#: includes/admin/views/page-dashboard.php:56
+#: includes/admin/views/page-dashboard.php:59
 msgid "%d notifications exhausted automatic retries. Check delivery settings, then retry them."
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:59
+#: includes/admin/views/page-dashboard.php:62
 msgid "The assistant is published without an AI engine — it can only answer from your FAQ bank."
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:62
+#: includes/admin/views/page-dashboard.php:65
 msgid "External data transfer disclosures have not been acknowledged."
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:66
+#: includes/admin/views/page-dashboard.php:69
 msgid "%d notification deliveries are pending retry (last error: %s)."
 msgstr ""
 
 #. translators: 1: number of failed answers, 2: the reason in plain words.
-#: includes/admin/views/page-dashboard.php:71
+#: includes/admin/views/page-dashboard.php:74
 msgid "The AI engine failed to answer %1$d time in the last day: %2$s"
 msgid_plural "The AI engine failed to answer %1$d times in the last day: %2$s"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of questions.
-#: includes/admin/views/page-dashboard.php:75
+#: includes/admin/views/page-dashboard.php:78
 msgid "%d question went unanswered in the last 14 days — consider adding it to your FAQ bank."
 msgid_plural "%d questions went unanswered in the last 14 days — consider adding them to your FAQ bank."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin/views/page-dashboard.php:94
+#: includes/admin/views/page-dashboard.php:97
 msgid "Setup wizard"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:96
+#: includes/admin/views/page-dashboard.php:99
 msgid "Take offline"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:98
+#: includes/admin/views/page-dashboard.php:101
 #: includes/admin/views/wizard.php:571
 msgid "Publish chatbot"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:105
+#: includes/admin/views/page-dashboard.php:108
 msgid "How much of the setup is done"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:108
-#: includes/admin/views/page-dashboard.php:153
+#: includes/admin/views/page-dashboard.php:111
+#: includes/admin/views/page-dashboard.php:156
 msgid "Live on your site"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:108
-#: includes/admin/views/page-dashboard.php:153
+#: includes/admin/views/page-dashboard.php:111
+#: includes/admin/views/page-dashboard.php:156
 msgid "Not published"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:112
+#: includes/admin/views/page-dashboard.php:115
 msgid "Setup is not finished"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:114
+#: includes/admin/views/page-dashboard.php:117
 msgid "Everything is ready: publish when you like"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:116
+#: includes/admin/views/page-dashboard.php:119
 msgid "Your assistant is answering visitors"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:123
+#: includes/admin/views/page-dashboard.php:126
 msgid "The assistant is invisible to visitors until the wizard is complete and you publish it. Pick up where you left off."
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:125
+#: includes/admin/views/page-dashboard.php:128
 msgid "Visitors will not see the chat until you publish it. You can take it offline again at any time."
 msgstr ""
 
 #. translators: 1: steps done, 2: steps in total.
-#: includes/admin/views/page-dashboard.php:128
+#: includes/admin/views/page-dashboard.php:131
 msgid "%1$d of %2$d readiness checks pass. Keep the business knowledge fresh for the best answers."
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:133
+#: includes/admin/views/page-dashboard.php:136
 msgid "Resume setup"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:154
+#: includes/admin/views/page-dashboard.php:157
 msgid "Visitors can chat with the assistant."
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:154
+#: includes/admin/views/page-dashboard.php:157
 msgid "Invisible to visitors."
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:161
+#: includes/admin/views/page-dashboard.php:164
 msgid "No AI engine"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:165
+#: includes/admin/views/page-dashboard.php:168
 msgid "Connection verified"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:167
+#: includes/admin/views/page-dashboard.php:170
 msgid "The last test failed %s ago"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:169
+#: includes/admin/views/page-dashboard.php:172
 msgid "Not verified"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:174
-#: includes/admin/views/page-dashboard.php:182
+#: includes/admin/views/page-dashboard.php:177
+#: includes/admin/views/page-dashboard.php:185
 msgid "Manage"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:179
+#: includes/admin/views/page-dashboard.php:182
 msgid "Business knowledge"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:180
+#: includes/admin/views/page-dashboard.php:183
 msgid "%d entries · %d documents"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:187
+#: includes/admin/views/page-dashboard.php:190
 msgid "Important notices"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:196
+#: includes/admin/views/page-dashboard.php:199
 msgid "Retry failed notifications"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:199
+#: includes/admin/views/page-dashboard.php:202
 msgid "Open FAQ bank"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:208
+#: includes/admin/views/page-dashboard.php:211
 #: includes/admin/views/page-knowledge.php:441
 #: includes/admin/views/page-knowledge.php:70
 #: includes/core/class-ssc-frontend.php:301
@@ -1663,37 +1677,37 @@ msgstr ""
 msgid "Products & services"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:210
+#: includes/admin/views/page-dashboard.php:213
 #: includes/admin/views/page-requests.php:62
 #: includes/modules/class-ssc-module-leads.php:305
 #: includes/modules/class-ssc-module-leads.php:306
 msgid "Requests"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:213
+#: includes/admin/views/page-dashboard.php:216
 msgid "Conversations (all time)"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:215
+#: includes/admin/views/page-dashboard.php:218
 #: includes/core/class-ssc-transfer.php:56
 msgid "Active modules"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:221
+#: includes/admin/views/page-dashboard.php:224
 msgid "Readiness"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:222
+#: includes/admin/views/page-dashboard.php:225
 msgid "%1$d of %2$d"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:231
+#: includes/admin/views/page-dashboard.php:234
 #: includes/admin/views/page-requests.php:21
 #: includes/admin/views/page-requests.php:76
 msgid "Done"
 msgstr ""
 
-#: includes/admin/views/page-dashboard.php:233
+#: includes/admin/views/page-dashboard.php:236
 msgid "Finish"
 msgstr ""
 
@@ -2857,82 +2871,85 @@ msgstr ""
 msgid "Search modules"
 msgstr ""
 
-#: includes/admin/views/page-modules.php:72
+#: includes/admin/views/page-modules.php:75
 msgid "Module activated."
 msgstr ""
 
-#: includes/admin/views/page-modules.php:75
+#: includes/admin/views/page-modules.php:78
 msgid "Module deactivated. Its data is kept and will be there when you re-enable it."
 msgstr ""
 
-#: includes/admin/views/page-modules.php:83
+#: includes/admin/views/page-modules.php:86
 msgid "Share of modules that are on"
 msgstr ""
 
 #. translators: 1: modules on, 2: modules in total.
-#: includes/admin/views/page-modules.php:89
+#: includes/admin/views/page-modules.php:92
 msgid "%1$d of %2$d modules are on"
 msgstr ""
 
 #. translators: %d: number of modules.
-#: includes/admin/views/page-modules.php:96
+#: includes/admin/views/page-modules.php:99
 msgid "%d module is on but still needs a little setup. Use Configure on its card."
 msgid_plural "%d modules are on but still need a little setup. Use Configure on their cards."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin/views/page-modules.php:98
+#: includes/admin/views/page-modules.php:101
 msgid "Switch on only what you need. Each module adds its own page or setting, and nothing is deleted when you turn one off."
 msgstr ""
 
-#: includes/admin/views/page-modules.php:103
+#: includes/admin/views/page-modules.php:106
 msgid "Show modules"
 msgstr ""
 
-#: includes/admin/views/page-modules.php:104
+#: includes/admin/views/page-modules.php:107
 msgid "All"
 msgstr ""
 
-#: includes/admin/views/page-modules.php:105
-#: includes/admin/views/page-modules.php:177
-msgid "Active"
-msgstr ""
-
-#: includes/admin/views/page-modules.php:107
-#: includes/admin/views/page-modules.php:179
+#: includes/admin/views/page-modules.php:110
+#: includes/admin/views/page-modules.php:183
 msgid "Setup Required"
 msgstr ""
 
-#: includes/admin/views/page-modules.php:109
-#: includes/admin/views/page-modules.php:181
+#: includes/admin/views/page-modules.php:112
+#: includes/admin/views/page-modules.php:187
 msgid "Inactive"
 msgstr ""
 
-#: includes/admin/views/page-modules.php:142
+#: includes/admin/views/page-modules.php:145
 msgid "%1$d of %2$d on"
 msgstr ""
 
-#: includes/admin/views/page-modules.php:189
+#: includes/admin/views/page-modules.php:185
+msgid "Needs licence"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:195
 msgid "Requires: %s"
 msgstr ""
 
-#: includes/admin/views/page-modules.php:194
+#: includes/admin/views/page-modules.php:200
 msgid "Configure"
 msgstr ""
 
-#: includes/admin/views/page-modules.php:198
+#: includes/admin/views/page-modules.php:203
+msgid "Get a licence"
+msgstr ""
+
+#: includes/admin/views/page-modules.php:207
 msgid "Activate"
 msgstr ""
 
-#: includes/admin/views/page-modules.php:200
+#: includes/admin/views/page-modules.php:209
 msgid "Deactivate"
 msgstr ""
 
-#: includes/admin/views/page-modules.php:212
+#: includes/admin/views/page-modules.php:222
 msgid "No modules match your search."
 msgstr ""
 
-#: includes/admin/views/page-modules.php:216
+#: includes/admin/views/page-modules.php:226
 msgid "No modules in this view."
 msgstr ""
 
@@ -4808,27 +4825,27 @@ msgstr ""
 msgid "every day"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:301
+#: includes/core/class-ssc-chat-engine.php:307
 msgid "(The answer was cut short because it reached the length limit. Ask me to continue to get the rest.)"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:304
+#: includes/core/class-ssc-chat-engine.php:310
 msgid "(The provider stopped this answer under its content policy, so it may be incomplete.)"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:306
+#: includes/core/class-ssc-chat-engine.php:312
 msgid "(The answer was interrupted. Ask again to continue.)"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:369
+#: includes/core/class-ssc-chat-engine.php:375
 msgid "Admin-only notice: the AI could not answer."
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:369
+#: includes/core/class-ssc-chat-engine.php:375
 msgid "Provider detail:"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:381
+#: includes/core/class-ssc-chat-engine.php:387
 msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
 msgstr ""
 
@@ -5199,6 +5216,11 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
+#. translators: 1: AI answers per day, 2: product page address.
+#: includes/core/class-ssc-license.php:187
+msgid "The licence for this site is not active. You can use everything to try it, up to %1$d AI answers a day; live chat, the messenger bot, the WooCommerce assistant, the SMS gateway, learning from the website and the pharmaceutical extension need an active licence. Product page: %2$s"
+msgstr ""
+
 #: includes/core/class-ssc-locations.php:33
 msgid "Head office"
 msgstr ""
@@ -5248,28 +5270,32 @@ msgstr ""
 msgid "NexaChatAI: every minute"
 msgstr ""
 
+#: includes/core/class-ssc-modules.php:122
+msgid "This module needs an active licence."
+msgstr ""
+
 #. translators: %s: comma-separated list of required module names.
-#: includes/core/class-ssc-modules.php:136
+#: includes/core/class-ssc-modules.php:140
 msgid "This module needs: %s"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:241
+#: includes/core/class-ssc-modules.php:245
 msgid "Customer Engagement"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:242
+#: includes/core/class-ssc-modules.php:246
 msgid "Communication"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:244
+#: includes/core/class-ssc-modules.php:248
 msgid "Knowledge & Intelligence"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:245
+#: includes/core/class-ssc-modules.php:249
 msgid "Business Tools"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:246
+#: includes/core/class-ssc-modules.php:250
 msgid "Industry Extensions"
 msgstr ""
 

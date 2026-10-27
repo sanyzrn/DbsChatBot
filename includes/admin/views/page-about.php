@@ -120,6 +120,9 @@ $ssc_specs  = array(
 			<div><dt><?php esc_html_e( 'Plugin folder', 'nexachat-ai' ); ?></dt><dd><code>nexachat-ai</code></dd></div>
 			<div><dt><?php esc_html_e( 'Text domain', 'nexachat-ai' ); ?></dt><dd><code>nexachat-ai</code></dd></div>
 			<div><dt><?php esc_html_e( 'License', 'nexachat-ai' ); ?></dt><dd><?php echo esc_html( $headers['license'] ); ?></dd></div>
+			<?php if ( 'open' !== SSC_License::state() ) : ?>
+				<div><dt><?php esc_html_e( 'Marketplace licence', 'nexachat-ai' ); ?></dt><dd><?php echo esc_html( SSC_License::is_limited() ? __( 'Not active', 'nexachat-ai' ) : __( 'Active', 'nexachat-ai' ) ); ?></dd></div>
+			<?php endif; ?>
 			<div><dt><?php esc_html_e( 'Requires', 'nexachat-ai' ); ?></dt><dd>WordPress <?php echo esc_html( $headers['requires_wp'] ); ?>+ · PHP <?php echo esc_html( $headers['requires_php'] ); ?>+</dd></div>
 			<div><dt><?php esc_html_e( 'Database schema', 'nexachat-ai' ); ?></dt><dd><?php echo esc_html( (string) get_option( SSC_Schema::DB_VERSION_OPTION, '?' ) ); ?></dd></div>
 			<div><dt><?php esc_html_e( 'REST namespace', 'nexachat-ai' ); ?></dt><dd><code><?php echo esc_html( SSC_REST::NS ); ?></code></dd></div>

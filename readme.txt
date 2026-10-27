@@ -4,7 +4,7 @@ Tags: chatbot, ai, support, persian, rtl
 Requires at least: 5.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.8
+Stable tag: 1.7.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,11 @@ Enable the Pharma module to select either approved-company-content-only answers 
 PHP mbstring and OpenSSL extensions are needed. The server also needs outbound HTTPS access to the AI provider you choose. Some providers do not serve every country, and servers inside Iran may be refused or blocked; use a host outside Iran, or the OpenAI-compatible endpoint with a gateway you can reach. Notifications require the Notifications module and working email/messenger delivery. WP-Cron depends on site traffic unless a system scheduler is configured. Notification jobs are persisted before delivery, claimed per worker, and retried by a five-minute WP-Cron schedule with backoff. After five failed attempts they remain visible for administrator retry. Mail acceptance is not proof of inbox delivery; monitor your mail service and safety-report inbox.
 
 == Changelog ==
+
+= 1.7.9 =
+* New: the copy sold on RTL-Theme loads the marketplace licence file safely (only where the ionCube Loader is active on PHP 8.1 or 8.2, never otherwise, so a site is never stopped by it). Where that licence is loaded and not active, premium modules (live chat, messenger bot, WooCommerce assistant, SMS gateway, learning from the website, pharmaceutical extension) stay visible but locked, and the AI answers up to 30 questions a day, after which visitors get the FAQ and knowledge answer. Everything else keeps working. Without the licence file (the GitHub ZIP) nothing is limited.
+* Changed: About shows the marketplace licence state when one is present.
+* Docs: readme.txt notes that the marketplace copy contains the marketplace's own licence file.
 
 = 1.7.8 =
 * Changed: the Gutenberg block is named NexaChatAI and its title and editor texts follow the site language (it was still called "Smart Assistant Chatbot" and sent editors to a menu with that name).

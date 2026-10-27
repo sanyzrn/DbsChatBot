@@ -50,6 +50,9 @@ foreach ( $readiness as $ssc_item ) {
 
 /* Notices: what needs attention, each with a colour and an optional action. */
 $ssc_notes     = array();
+if ( SSC_License::is_limited() ) {
+	$ssc_notes[] = array( 'amber', SSC_License::notice(), '' );
+}
 $notify_failed = SSC_Notification_Queue::failed_count();
 if ( $notify_failed > 0 ) {
 	/* translators: %d: number of notifications. */

@@ -1684,5 +1684,11 @@
   "Acknowledge the privacy disclosures": "اطلاع‌رسانی حریم خصوصی را تأیید کنید",
   "The assistant is configured in the NexaChatAI admin menu. Publishing is controlled there.": "دستیار از منوی «نکساچت» در پنل مدیریت تنظیم می‌شود و انتشار آن هم از همان‌جا کنترل می‌شود.",
   "Place the AI assistant chat widget on this page.": "ویجت گفتگوی دستیار هوشمند را در این صفحه قرار می‌دهد.",
-  "The server must be able to reach the provider. Some providers do not serve every country, and servers inside Iran may be refused or blocked. If the connection test fails with an access or network error, host the site outside Iran or use the OpenAI-compatible endpoint with a gateway you can reach.": "سرور شما باید بتواند به ارائه‌دهنده برسد. برخی ارائه‌دهندگان همهٔ کشورها را پوشش نمی‌دهند و ممکن است سرورهای داخل ایران رد یا مسدود شوند. اگر آزمون اتصال با خطای دسترسی یا شبکه شکست خورد، سایت را روی سرور خارج از ایران میزبانی کنید یا از «نقطهٔ سازگار با OpenAI» و دروازه‌ای که به آن دسترسی دارید استفاده کنید."
+  "The server must be able to reach the provider. Some providers do not serve every country, and servers inside Iran may be refused or blocked. If the connection test fails with an access or network error, host the site outside Iran or use the OpenAI-compatible endpoint with a gateway you can reach.": "سرور شما باید بتواند به ارائه‌دهنده برسد. برخی ارائه‌دهندگان همهٔ کشورها را پوشش نمی‌دهند و ممکن است سرورهای داخل ایران رد یا مسدود شوند. اگر آزمون اتصال با خطای دسترسی یا شبکه شکست خورد، سایت را روی سرور خارج از ایران میزبانی کنید یا از «نقطهٔ سازگار با OpenAI» و دروازه‌ای که به آن دسترسی دارید استفاده کنید.",
+  "This module needs an active licence.": "این ماژول به لایسنس فعال نیاز دارد.",
+  "Needs licence": "نیازمند لایسنس",
+  "Get a licence": "دریافت لایسنس",
+  "Marketplace licence": "لایسنس مارکت",
+  "Not active": "فعال نیست",
+  "The licence for this site is not active. You can use everything to try it, up to %1$d AI answers a day; live chat, the messenger bot, the WooCommerce assistant, the SMS gateway, learning from the website and the pharmaceutical extension need an active licence. Product page: %2$s": "لایسنس این سایت فعال نیست. برای امتحان می‌توانید از همه‌چیز استفاده کنید، تا %1$d پاسخ هوش مصنوعی در روز؛ چت زنده، ربات پیام‌رسان، دستیار ووکامرس، درگاه پیامک، یادگیری از سایت و افزونهٔ دارویی به لایسنس فعال نیاز دارند. صفحهٔ محصول: %2$s"
 }

@@ -444,4 +444,5 @@ require __DIR__ . '/audit3.php';
 require __DIR__ . '/audit4.php';
 require __DIR__ . '/audit5.php';
 require __DIR__ . '/audit6.php';
+require __DIR__ . '/audit7.php';
 echo "\n$checks integration checks passed.\n";
