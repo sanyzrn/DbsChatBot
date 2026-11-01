@@ -53,7 +53,7 @@ outside your server.
 | **Business knowledge** | Profile, knowledge entries, product catalog and document import (URL, PDF, Word, `.txt`, `.md`, `.csv`, `.json`), organised in sections with progress rings. Keyword retrieval plus optional semantic retrieval (embeddings), with source citations under answers. |
 | **Streaming replies** | Server-Sent Events for OpenAI, Claude, Gemini and compatible providers; an interrupted stream keeps what was already shown. |
 | **Conversation memory** | Kept server-side under a random conversation id — the browser never supplies the model's context. |
-| **Widget** | Multi-line composer, safe Markdown answers, per-message text direction, copy / feedback, tap-to-call, main menu, full-screen on phones, light/dark themes. |
+| **Widget** | Multi-line composer, safe Markdown answers, per-message text direction, copy / feedback, tap-to-call, main menu, floating mobile card with a soft backdrop, light/dark themes. |
 | **Security** | API keys encrypted at rest (AES-256-CBC, encrypt-then-MAC), SSRF-guarded requests, rate limits (object-cache aware), honeypot, payload caps. |
 | **Privacy** | Server transcripts opt-in, configurable retention, visitor IPs anonymized by default, suggested privacy-policy text. |
 | **Targeting** | Page path, device and login rules; business hours with a live (cache-safe) online/offline status. |
@@ -115,7 +115,7 @@ Layer C — Industry        independent extensions (pharmaceutical ADR reporting
 ```
 
 ```
-vazho.php  thin loader (hands over from the pre-1.1 folder safely)
+vazho.php  plugin entry point and guarded bootstrap
 includes/
   bootstrap.php  constants, autoloader, activation hooks
   core/          engine, REST + AJAX transports, streaming, settings, schema, HTTP,
@@ -154,7 +154,14 @@ CI runs every suite on PHP 7.4 through 8.5, plus a packaging check.
 
 ### Roadmap
 
-Planned work is kept in `docs/internal/` (written in Persian): [`ROADMAP-HARDENING-fa.md`](docs/internal/ROADMAP-HARDENING-fa.md) for quality, tests and compatibility; [`ROADMAP-IDEAS-fa.md`](docs/internal/ROADMAP-IDEAS-fa.md) for product ideas, each with a verdict; [`ROADMAP-V2-fa.md`](docs/internal/ROADMAP-V2-fa.md) for features and sales.
+Start with [AGENTS.md](AGENTS.md) and the [current status](docs/internal/agent-workflows/STATUS.md).
+The [framework](docs/internal/agent-workflows/01-Vazho-Development-Framework.md),
+[owner decisions](docs/internal/agent-workflows/DECISIONS.md),
+[selection catalog](docs/internal/agent-workflows/Vazho-Selection-Catalog.md) and
+[continuation guide](docs/internal/agent-workflows/CONTINUE-HERE.md) define current scope.
+The first selected deliverable is the limited answer-receipt **design**, not implementation.
+Older roadmaps and audits remain [supporting references](docs/internal/README.md);
+they are not authorization to build all listed features. Public releases are paused until the owner requests one.
 
 ### Translations
 
