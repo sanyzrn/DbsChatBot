@@ -3,7 +3,7 @@
  * Webhook provider adapter: fully external answer engine, HMAC-signed both
  * ways (fail-closed when a secret is configured).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +30,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 	 * @return string
 	 */
 	public function label() {
-		return __( 'Custom webhook', 'nexachat-ai' );
+		return __( 'Custom webhook', 'vazho' );
 	}
 
 	/**
@@ -151,7 +151,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'endpoint',
-					'message' => __( 'No webhook URL configured.', 'nexachat-ai' ),
+					'message' => __( 'No webhook URL configured.', 'vazho' ),
 				),
 			);
 		}
@@ -164,7 +164,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'endpoint',
-					'message' => __( 'The webhook URL is not allowed (public address; HTTPS required when a secret is configured).', 'nexachat-ai' ),
+					'message' => __( 'The webhook URL is not allowed (public address; HTTPS required when a secret is configured).', 'vazho' ),
 				),
 			);
 		}
@@ -219,7 +219,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 					'text'  => '',
 					'error' => array(
 						'code'    => 'auth',
-						'message' => __( 'The webhook response signature is missing or invalid.', 'nexachat-ai' ),
+						'message' => __( 'The webhook response signature is missing or invalid.', 'vazho' ),
 					),
 				);
 			}
@@ -232,7 +232,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'malformed',
-					'message' => __( 'The webhook did not return JSON.', 'nexachat-ai' ),
+					'message' => __( 'The webhook did not return JSON.', 'vazho' ),
 				),
 			);
 		}
@@ -244,7 +244,7 @@ class SSC_Provider_Webhook extends SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'malformed',
-					'message' => __( 'The webhook JSON has no "reply", "message" or "text" field.', 'nexachat-ai' ),
+					'message' => __( 'The webhook JSON has no "reply", "message" or "text" field.', 'vazho' ),
 				),
 			);
 		}

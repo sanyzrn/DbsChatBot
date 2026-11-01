@@ -29,7 +29,7 @@ class MarketplaceBuild(unittest.TestCase):
     def test_public_zip_has_no_licence_file(self):
         done = self.build()
         self.assertEqual(done.returncode, 0, done.stderr)
-        archive = next(self.out.glob('nexachat-ai-*.zip'))
+        archive = next(self.out.glob('vazho-*.zip'))
         self.assertFalse(archive.name.endswith('-rtl.zip'))
         self.assertFalse([n for n in zipfile.ZipFile(archive).namelist() if 'RTL_License' in n])
         self.assertEqual(run('tools/verify-release.py', str(archive)).returncode, 0)
@@ -37,21 +37,21 @@ class MarketplaceBuild(unittest.TestCase):
     def test_marketplace_zip_carries_the_file_unchanged_next_to_the_main_file(self):
         done = self.build('--rtl-license', str(self.license))
         self.assertEqual(done.returncode, 0, done.stderr)
-        archive = next(self.out.glob('nexachat-ai-*-rtl.zip'))
+        archive = next(self.out.glob('vazho-*-rtl.zip'))
         bundle = zipfile.ZipFile(archive)
-        self.assertEqual(bundle.read(f'nexachat-ai/{NAME}'), self.license.read_bytes())
-        self.assertIn('nexachat-ai/nexachat-ai.php', bundle.namelist())
+        self.assertEqual(bundle.read(f'vazho/{NAME}'), self.license.read_bytes())
+        self.assertIn('vazho/vazho.php', bundle.namelist())
         verified = run('tools/verify-release.py', '--rtl', str(archive))
         self.assertEqual(verified.returncode, 0, verified.stderr)
 
     def test_the_public_check_rejects_a_zip_that_holds_the_licence(self):
         self.build('--rtl-license', str(self.license))
-        archive = next(self.out.glob('nexachat-ai-*-rtl.zip'))
+        archive = next(self.out.glob('vazho-*-rtl.zip'))
         self.assertNotEqual(run('tools/verify-release.py', str(archive)).returncode, 0)
 
     def test_the_marketplace_check_rejects_a_zip_without_it(self):
         self.build()
-        archive = next(self.out.glob('nexachat-ai-*.zip'))
+        archive = next(self.out.glob('vazho-*.zip'))
         self.assertNotEqual(run('tools/verify-release.py', '--rtl', str(archive)).returncode, 0)
 
     def test_a_renamed_or_unknown_licence_file_is_refused(self):
@@ -63,8 +63,8 @@ class MarketplaceBuild(unittest.TestCase):
         self.assertNotEqual(self.build('--rtl-license', str(renamed)).returncode, 0)
 
     def test_the_loader_guards_against_a_missing_ionCube_loader_and_other_php_versions(self):
-        main = (ROOT / 'nexachat-ai.php').read_text(encoding='utf-8')
-        loader = re.search(r"if \( PHP_VERSION_ID.*?\) \{\n\trequire_once \$nexachatai_rtl_license;", main, re.S)
+        main = (ROOT / 'vazho.php').read_text(encoding='utf-8')
+        loader = re.search(r"if \( PHP_VERSION_ID.*?\) \{\n\trequire_once \$vazho_rtl_license;", main, re.S)
         self.assertTrue(loader, 'the licence file must be loaded behind a guard')
         for needle in ("extension_loaded( 'ionCube Loader' )", 'is_file(', 'PHP_VERSION_ID >= 80100', 'PHP_VERSION_ID < 80300'):
             self.assertIn(needle, loader.group(0))

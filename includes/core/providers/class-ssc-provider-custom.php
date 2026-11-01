@@ -3,7 +3,7 @@
  * Custom OpenAI-compatible endpoint adapter (Groq, DeepSeek, Ollama gateways,
  * Azure-style proxies, self-hosted relays...).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +30,7 @@ class SSC_Provider_Custom extends SSC_Provider_OpenAI_Compat {
 	 * @return string
 	 */
 	public function label() {
-		return __( 'OpenAI-compatible endpoint', 'nexachat-ai' );
+		return __( 'OpenAI-compatible endpoint', 'vazho' );
 	}
 
 	/**

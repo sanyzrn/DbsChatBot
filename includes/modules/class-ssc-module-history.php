@@ -6,7 +6,7 @@
  * Disabled by default: without this module nothing about conversations is
  * persisted (privacy-preserving default).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,7 +33,7 @@ class SSC_Module_History extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Conversation History', 'nexachat-ai' );
+		return __( 'Conversation History', 'vazho' );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class SSC_Module_History extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Stores conversations so you can review quality, capture answers into the FAQ bank and spot unanswered questions.', 'nexachat-ai' );
+		return __( 'Stores conversations so you can review quality, capture answers into the FAQ bank and spot unanswered questions.', 'vazho' );
 	}
 
 	/**
@@ -51,7 +51,7 @@ class SSC_Module_History extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Improve answer quality with real conversation evidence, with configurable retention.', 'nexachat-ai' );
+		return __( 'Improve answer quality with real conversation evidence, with configurable retention.', 'vazho' );
 	}
 
 	/**
@@ -106,8 +106,8 @@ class SSC_Module_History extends SSC_Module {
 		}
 		add_submenu_page(
 			'ssc-dashboard',
-			__( 'Conversations', 'nexachat-ai' ),
-			__( 'Conversations', 'nexachat-ai' ),
+			__( 'Conversations', 'vazho' ),
+			__( 'Conversations', 'vazho' ),
 			'manage_options',
 			'ssc-conversations',
 			array( $this, 'render_page' )
@@ -119,7 +119,7 @@ class SSC_Module_History extends SSC_Module {
 	 */
 	public function render_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		$this->handle_row_actions();
 

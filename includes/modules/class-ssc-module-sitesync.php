@@ -12,7 +12,7 @@
  * Documents are stored with the id "wp-<post id>" and the page URL, so
  * answers can cite the page they came from.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -43,7 +43,7 @@ class SSC_Module_Sitesync extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Learn from my website', 'nexachat-ai' );
+		return __( 'Learn from my website', 'vazho' );
 	}
 
 	/**
@@ -52,7 +52,7 @@ class SSC_Module_Sitesync extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Your published pages, posts and products become the assistant\'s knowledge automatically, and stay up to date when you edit them.', 'nexachat-ai' );
+		return __( 'Your published pages, posts and products become the assistant\'s knowledge automatically, and stay up to date when you edit them.', 'vazho' );
 	}
 
 	/**
@@ -61,7 +61,7 @@ class SSC_Module_Sitesync extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'The assistant knows your site from minute one, without copying anything by hand.', 'nexachat-ai' );
+		return __( 'The assistant knows your site from minute one, without copying anything by hand.', 'vazho' );
 	}
 
 	/**

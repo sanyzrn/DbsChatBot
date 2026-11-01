@@ -4,7 +4,7 @@
  * the sticky save bar and collapsible cards. Every value is escaped here, so
  * a view can call them without repeating the markup.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -126,7 +126,7 @@ class SSC_Admin_UI {
 	 * @param string $label Button text.
 	 */
 	public static function save_bar( $label ) {
-		echo '<div class="ssc-hsave" data-ssc-hubsave><span class="ssc-hsave__state" data-ssc-hubdirty hidden><span class="ssc-hsave__dot"></span> ' . esc_html__( 'You have unsaved changes', 'nexachat-ai' ) . '</span><button type="submit" class="ssc-btn ssc-btn--primary">' . esc_html( $label ) . '</button></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above.
+		echo '<div class="ssc-hsave" data-ssc-hubsave><span class="ssc-hsave__state" data-ssc-hubdirty hidden><span class="ssc-hsave__dot"></span> ' . esc_html__( 'You have unsaved changes', 'vazho' ) . '</span><button type="submit" class="ssc-btn ssc-btn--primary">' . esc_html( $label ) . '</button></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above.
 	}
 
 	/**

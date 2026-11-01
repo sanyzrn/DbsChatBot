@@ -1,4 +1,4 @@
-"""Regenerate languages/nexachat-ai.pot from the source tree.
+"""Regenerate languages/vazho.pot from the source tree.
 
 A dependency-free substitute for `wp i18n make-pot`: it walks the PHP that
 ships with the plugin, collects every gettext call for this text domain, and
@@ -14,9 +14,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DOMAIN = 'nexachat-ai'
+DOMAIN = 'vazho'
 SCAN = ('includes', 'widgets', 'blocks')
-ROOT_FILES = ('nexachat-ai.php', 'uninstall.php')
+ROOT_FILES = ('vazho.php', 'uninstall.php')
 
 # Functions to collect, mapped to (singular index, plural index, context index).
 FUNCTIONS = {
@@ -178,7 +178,7 @@ def collect():
 
 
 def version() -> str:
-    header = (ROOT / 'nexachat-ai.php').read_text(encoding='utf-8')
+    header = (ROOT / 'vazho.php').read_text(encoding='utf-8')
     found = re.search(r"define\(\s*'SSC_CHATBOT_VERSION',\s*'([^']+)'", header)
     return found.group(1) if found else '0.0.0'
 
@@ -190,19 +190,19 @@ def main() -> None:
 
     stamp = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S+00:00')
     out = [
-        '# NexaChatAI translation template.',
+        '# Vazho translation template.',
         f'# Copyright (C) {datetime.now(timezone.utc).year} DbsStudio',
         '# This file is distributed under the GPLv2 or later.',
         'msgid ""',
         'msgstr ""',
-        f'"Project-Id-Version: NexaChatAI {version()}\\n"',
+        f'"Project-Id-Version: Vazho {version()}\\n"',
         '"Report-Msgid-Bugs-To: https://dbsstudio.ir/issues\\n"',
         '"MIME-Version: 1.0\\n"',
         '"Content-Type: text/plain; charset=UTF-8\\n"',
         '"Content-Transfer-Encoding: 8bit\\n"',
         f'"POT-Creation-Date: {stamp}\\n"',
         '"X-Generator: tools/make-pot.py\\n"',
-        '"X-Domain: nexachat-ai\\n"',
+        '"X-Domain: vazho\\n"',
         '"Plural-Forms: nplurals=2; plural=(n > 1);\\n"',
         '',
     ]

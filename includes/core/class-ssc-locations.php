@@ -6,7 +6,7 @@
  * "locations"; the older single "location" text still works and is shown as
  * the first place until a list is saved.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,12 +30,12 @@ class SSC_Locations {
 	 */
 	public static function types() {
 		return array(
-			'hq'        => __( 'Head office', 'nexachat-ai' ),
-			'factory'   => __( 'Factory', 'nexachat-ai' ),
-			'branch'    => __( 'Branch', 'nexachat-ai' ),
-			'store'     => __( 'Store', 'nexachat-ai' ),
-			'warehouse' => __( 'Warehouse', 'nexachat-ai' ),
-			'other'     => __( 'Other place', 'nexachat-ai' ),
+			'hq'        => __( 'Head office', 'vazho' ),
+			'factory'   => __( 'Factory', 'vazho' ),
+			'branch'    => __( 'Branch', 'vazho' ),
+			'store'     => __( 'Store', 'vazho' ),
+			'warehouse' => __( 'Warehouse', 'vazho' ),
+			'other'     => __( 'Other place', 'vazho' ),
 		);
 	}
 

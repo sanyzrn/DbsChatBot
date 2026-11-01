@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<ruleset name="Smart Support Chatbot">
-	<description>WordPress Coding Standards for Smart Support Chatbot.</description>
+<ruleset name="Vazho">
+	<description>WordPress Coding Standards for Vazho.</description>
 
 	<!-- Every PHP file that ships inside the distributed plugin. -->
-	<file>nexachat-ai.php</file>
+	<file>vazho.php</file>
 	<file>uninstall.php</file>
 	<file>index.php</file>
 	<file>includes/</file>

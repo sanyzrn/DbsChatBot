@@ -11,7 +11,7 @@ function ssc_test_screen( $get, $render ) {
 	$notices  = array();
 	$previous = set_error_handler(
 		function ( $no, $message, $file, $line ) use ( &$notices ) {
-			if ( false !== strpos( $file, 'nexachat-ai' ) || false !== strpos( $file, 'DbsChatBot' ) ) {
+			if ( false !== strpos( $file, 'vazho' ) || false !== strpos( $file, 'DbsChatBot' ) ) {
 				$notices[] = $message . ' @ ' . basename( $file ) . ':' . $line;
 			}
 			return true;
@@ -41,7 +41,7 @@ check( false !== strpos( $html, 'page=ssc-knowledge#identity' ) && false !== str
 
 // The Gutenberg block carries the current brand and its editor texts come from the server (translated).
 $ssc_block = WP_Block_Type_Registry::get_instance()->get_registered( 'ssc/chatbot' );
-check( $ssc_block && 'NexaChatAI' === $ssc_block->title && false === stripos( $ssc_block->title, 'smart' ), 'The block is named NexaChatAI, not the old brand' );
+check( $ssc_block && 'Vazho' === $ssc_block->title && false === stripos( $ssc_block->title, 'smart' ), 'The block is named Vazho, not the old brand' );
 check( false !== strpos( (string) file_get_contents( SSC_CHATBOT_DIR . 'blocks/chatbot/index.js' ), 'sscBlockI18n' ) && false === strpos( (string) file_get_contents( SSC_CHATBOT_DIR . 'blocks/chatbot/index.js' ), 'Smart Assistant' ), 'The block editor script reads its texts from the server and has no old brand' );
 
 // About links work for marketplace customers without private repository access.
@@ -231,7 +231,7 @@ $prompt = SSC_Prompt_Builder::build_for_chat( 'where is the factory?', 'general'
 check( false !== strpos( $prompt, 'https://maps.app.goo.gl/AbC' ) && false !== strpos( $prompt, 'Qazvin plot 5' ) && false === strpos( $prompt, '- Location:' ), 'The assistant is given every place with its map link, instead of one address' );
 check( false !== strpos( $prompt, 'Working hours: ' . SSC_Availability::describe_schedule() ) && false !== strpos( SSC_Availability::describe_schedule(), '09:00–17:00' ), 'With no hours written in the profile the assistant quotes the chat schedule' );
 check( false !== strpos( $prompt, 'نفس‌یار' ), 'A name set only in Appearance is the name the assistant introduces itself with' );
-check( 'نفس‌یار' === SSC_Frontend::display_name( SSC_Settings::all() ) && 'Sara' === SSC_Frontend::display_name( array( 'assistant_display_name' => '', 'business' => array( 'assistant_name' => 'Sara' ) ) ) && 'Nexa' === SSC_Frontend::display_name( array( 'assistant_display_name' => '', 'business' => array() ) ), 'The chat header shows the Appearance name, else the persona name, else Nexa' );
+check( 'نفس‌یار' === SSC_Frontend::display_name( SSC_Settings::all() ) && 'Sara' === SSC_Frontend::display_name( array( 'assistant_display_name' => '', 'business' => array( 'assistant_name' => 'Sara' ) ) ) && 'Vazho' === SSC_Frontend::display_name( array( 'assistant_display_name' => '', 'business' => array() ) ), 'The chat header shows the Appearance name, else the persona name, else Vazho' );
 SSC_Settings::update( array( 'business' => array_merge( SSC_Settings::business(), array( 'hours' => 'شنبه تا چهارشنبه ۹ تا ۱۷' ) ) ) );
 check( false !== strpos( SSC_Prompt_Builder::build_for_chat( 'hours?', 'general', '', 'web' ), 'Working hours: شنبه تا چهارشنبه ۹ تا ۱۷' ), 'Hours written in the profile win over the schedule');
 
@@ -288,4 +288,3 @@ if ( null === $screens_before['modules'] ) {
 } else {
 	update_option( SSC_Modules::OPTION, $screens_before['modules'], false );
 }
-

@@ -5,7 +5,7 @@
  * are likely to ask, answered only from that material. Nothing is applied
  * until the administrator reviews and picks the suggestions.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -62,11 +62,11 @@ class SSC_Suggest {
 	public static function generate() {
 		$provider = SSC_Providers::current();
 		if ( null === $provider ) {
-			return new WP_Error( 'ssc_no_ai', __( 'Connect an AI provider first (AI Connection).', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_no_ai', __( 'Connect an AI provider first (AI Connection).', 'vazho' ) );
 		}
 		$material = self::material();
 		if ( mb_strlen( $material ) < 200 ) {
-			return new WP_Error( 'ssc_no_material', __( 'There is not enough material yet. Fill in the business profile, add knowledge or import pages first.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_no_material', __( 'There is not enough material yet. Fill in the business profile, add knowledge or import pages first.', 'vazho' ) );
 		}
 		$system = 'You help set up a customer-support assistant for the organization described in the material. '
 			. 'Reply with JSON only, no prose, in this shape: '
@@ -85,11 +85,11 @@ class SSC_Suggest {
 			)
 		);
 		if ( empty( $result['ok'] ) ) {
-			return new WP_Error( 'ssc_ai_failed', __( 'The AI provider did not answer. Please try again in a minute.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_ai_failed', __( 'The AI provider did not answer. Please try again in a minute.', 'vazho' ) );
 		}
 		$data = self::parse( (string) $result['text'] );
 		if ( ! $data ) {
-			return new WP_Error( 'ssc_ai_format', __( 'The AI answer could not be read. Please try again.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_ai_format', __( 'The AI answer could not be read. Please try again.', 'vazho' ) );
 		}
 		return $data;
 	}

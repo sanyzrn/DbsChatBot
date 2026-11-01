@@ -7,7 +7,7 @@
  * actual generation and validates the response structure (HTTP 200 alone is
  * NOT sufficient).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -198,13 +198,13 @@ abstract class SSC_Provider {
 		if ( 'length' === $finish ) {
 			return array(
 				'code'    => 'length',
-				'message' => __( 'The model used its whole answer budget before writing an answer. Raise "Max answer length" in AI Connection, or pick a model that thinks less before answering.', 'nexachat-ai' ),
+				'message' => __( 'The model used its whole answer budget before writing an answer. Raise "Max answer length" in AI Connection, or pick a model that thinks less before answering.', 'vazho' ),
 			);
 		}
 		if ( 'filtered' === $finish ) {
 			return array(
 				'code'    => 'filtered',
-				'message' => __( 'The provider stopped this answer under its content policy.', 'nexachat-ai' ),
+				'message' => __( 'The provider stopped this answer under its content policy.', 'vazho' ),
 			);
 		}
 		return null;
@@ -262,7 +262,7 @@ abstract class SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'    => 'model',
-					'message' => __( 'No model selected.', 'nexachat-ai' ),
+					'message' => __( 'No model selected.', 'vazho' ),
 				),
 			);
 		}
@@ -322,7 +322,7 @@ abstract class SSC_Provider {
 				'finish' => $finish,
 				'error'  => null !== $why ? $why : array(
 					'code'    => 'malformed',
-					'message' => __( 'The provider replied 200 but no generated text was found in the response.', 'nexachat-ai' ),
+					'message' => __( 'The provider replied 200 but no generated text was found in the response.', 'vazho' ),
 				),
 			);
 		}
@@ -371,7 +371,7 @@ abstract class SSC_Provider {
 				'text'  => '',
 				'error' => array(
 					'code'     => 'auth',
-					'message'  => __( 'No API key provided.', 'nexachat-ai' ),
+					'message'  => __( 'No API key provided.', 'vazho' ),
 					'friendly' => SSC_HTTP::friendly_error( 'auth' ),
 				),
 			);

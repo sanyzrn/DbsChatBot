@@ -9,7 +9,7 @@
  * Security: same gates as /chat (is_live, rate limit). No secrets reach the
  * browser; the stream only carries assistant deltas + a final envelope.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

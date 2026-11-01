@@ -2,7 +2,7 @@
 /**
  * OpenRouter provider adapter (OpenAI-compatible aggregator).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -14,7 +14,7 @@
  *   unlicensed  the file is loaded and says the licence is not active (or it was changed).
  *               Premium modules are locked and AI answers are capped per day.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -96,7 +96,7 @@ class SSC_License {
 	 * @return string
 	 */
 	protected static function evaluate() {
-		if ( defined( 'NEXACHATAI_DISABLE_LICENSE_GATE' ) && NEXACHATAI_DISABLE_LICENSE_GATE ) {
+		if ( defined( 'VAZHO_DISABLE_LICENSE_GATE' ) && VAZHO_DISABLE_LICENSE_GATE ) {
 			return 'open'; // Support switch for a site that cannot reach the marketplace.
 		}
 		if ( ! class_exists( self::CLASS_NAME, false ) || ! method_exists( self::CLASS_NAME, 'isActive' ) ) {
@@ -121,7 +121,7 @@ class SSC_License {
 			 *
 			 * @param string $hash Published hash.
 			 */
-			$expected = (string) apply_filters( 'nexachatai_license_file_sha1', self::FILE_SHA1 );
+			$expected = (string) apply_filters( 'vazho_license_file_sha1', self::FILE_SHA1 );
 			if ( ! is_string( $hash ) || ! hash_equals( $expected, $hash ) ) {
 				$state = 'unlicensed'; // The marketplace file was replaced or edited.
 			} else {
@@ -184,7 +184,7 @@ class SSC_License {
 		}
 		return sprintf(
 			/* translators: 1: AI answers per day, 2: product page address. */
-			__( 'The licence for this site is not active. You can use everything to try it, up to %1$d AI answers a day; live chat, the messenger bot, the WooCommerce assistant, the SMS gateway, learning from the website and the pharmaceutical extension need an active licence. Product page: %2$s', 'nexachat-ai' ),
+			__( 'The licence for this site is not active. You can use everything to try it, up to %1$d AI answers a day; live chat, the messenger bot, the WooCommerce assistant, the SMS gateway, learning from the website and the pharmaceutical extension need an active licence. Product page: %2$s', 'vazho' ),
 			self::FREE_AI_DAILY,
 			self::PRODUCT_URL
 		);

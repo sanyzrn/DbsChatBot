@@ -2,7 +2,7 @@
 /**
  * OpenAI-compatible base adapter (OpenAI, OpenRouter, custom endpoints).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

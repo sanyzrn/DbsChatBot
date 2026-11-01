@@ -10,7 +10,7 @@
  *   (option ssc_chatbot_delete_on_uninstall).
  * - Transients and scheduled events are always cleaned up.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
@@ -64,7 +64,7 @@ function ssc_chatbot_run_uninstall( $site_id = 0 ) {
 		'ssc_chatbot_products',
 		'ssc_chatbot_knowledge',
 		'ssc_ai_cache_gen',
-		'nexachatai_replaced_legacy',
+		'vazho_replaced_legacy',
 		'ssc_chatbot_setup',
 		'ssc_chatbot_modules',
 		'ssc_chatbot_db_version',

@@ -1,6 +1,6 @@
 <div align="center">
 
-# NexaChatAI
+# Vazho
 
 **A professional AI assistant for WordPress — Persian/RTL-first, with full LTR support.**
 
@@ -17,7 +17,7 @@
 ---
 
 Install it, run the five-step setup wizard, and publish an assistant that actually
-knows your business. NexaChatAI connects to **your own** AI provider account — there
+knows your business. Vazho connects to **your own** AI provider account — there
 is no middleman, no per-message fee, and no data routed through a third-party service.
 
 **Simple by default, powerful by choice.** Advanced capabilities ship as modules that
@@ -26,10 +26,10 @@ stay switched off until you enable them.
 ## Download & installation
 
 1. Open the [latest release](https://github.com/sanyzrn/DbsChatBot/releases/latest) and
-   download **`nexachat-ai-<version>.zip`** (optionally check it against the `.sha256`
+   download **`vazho-<version>.zip`** (optionally check it against the `.sha256`
    file next to it).
    > The **"Source code (zip / tar.gz)"** archives that GitHub adds to every release are
-   > the raw repository, not an installable plugin. Always use `nexachat-ai-<version>.zip`.
+   > the raw repository, not an installable plugin. Always use `vazho-<version>.zip`.
 2. In WordPress: **Plugins → Add New → Upload Plugin**, choose the ZIP, then **Activate**.
 3. The setup wizard opens automatically. Complete the five steps and press **Publish** —
    until then the assistant stays invisible to visitors.
@@ -39,14 +39,6 @@ stay switched off until you enable them.
 **Requirements:** WordPress 5.6+, PHP 7.4+ with `mbstring` and `openssl`. An AI provider
 API key is optional — offline modes (FAQ bank only, or no AI engine) send nothing
 outside your server.
-
-### Upgrading from 1.0.x
-
-Since 1.1 the plugin lives in the `nexachat-ai` folder (it used to be
-`smart-support-chatbot`). Upload and activate the new ZIP: the old copy is deactivated
-automatically, all settings and data are kept, and its "remove data on uninstall"
-policy is switched off so deleting the old copy afterwards cannot erase shared data.
-Back up first and clear page/CDN caches after upgrading.
 
 ## Features
 
@@ -123,7 +115,7 @@ Layer C — Industry        independent extensions (pharmaceutical ADR reporting
 ```
 
 ```
-nexachat-ai.php  thin loader (hands over from the pre-1.1 folder safely)
+vazho.php  thin loader (hands over from the pre-1.1 folder safely)
 includes/
   bootstrap.php  constants, autoloader, activation hooks
   core/          engine, REST + AJAX transports, streaming, settings, schema, HTTP,
@@ -169,7 +161,7 @@ Planned work is kept in `docs/internal/` (written in Persian): [`ROADMAP-HARDENI
 `languages/fa_IR.json` is the source of the Persian catalog. After changing strings:
 
 ```bash
-python tools/make-pot.py            # refresh languages/nexachat-ai.pot
+python tools/make-pot.py            # refresh languages/vazho.pot
 python tools/build-translations.py  # compile fa_IR.json -> .po/.mo
 ```
 
@@ -177,7 +169,7 @@ python tools/build-translations.py  # compile fa_IR.json -> .po/.mo
 
 Releases are built by GitHub Actions and **publish themselves**: never upload a ZIP by hand.
 
-1. Bump `SSC_CHATBOT_VERSION` and the `Version:` header in `nexachat-ai.php`,
+1. Bump `SSC_CHATBOT_VERSION` and the `Version:` header in `vazho.php`,
    `Stable tag` in `readme.txt`, and the `version-x.y.z` badge at the top of this README
    (a fixed badge, so it shows the right version at once instead of waiting for a cache).
 2. Add a `= x.y.z =` section under `== Changelog ==` in `readme.txt` (it becomes the
@@ -244,7 +236,7 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 
 ## فارسی
 
-**نکسا‌چت‌ای‌آی** یک دستیار هوش مصنوعی حرفه‌ای برای وردپرس است که از ابتدا برای
+**واژو‌چت‌ای‌آی** یک دستیار هوش مصنوعی حرفه‌ای برای وردپرس است که از ابتدا برای
 فارسی و راست‌به‌چپ طراحی شده و از چپ‌به‌راست هم کامل پشتیبانی می‌کند.
 
 افزونه را نصب کنید، جادوگر پنج‌مرحله‌ای راه‌اندازی را کامل کنید و دستیاری منتشر
@@ -255,10 +247,10 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 ### دریافت و نصب
 
 ۱. از [آخرین انتشار](https://github.com/sanyzrn/DbsChatBot/releases/latest) فایل
-**`nexachat-ai-<نسخه>.zip`** را دریافت کنید.
+**`vazho-<نسخه>.zip`** را دریافت کنید.
 
 > فایل‌های **«Source code»** که GitHub به هر انتشار اضافه می‌کند، کد خام مخزن‌اند و
-> قابل نصب در وردپرس نیستند. همیشه فایل `nexachat-ai-<نسخه>.zip` را نصب کنید.
+> قابل نصب در وردپرس نیستند. همیشه فایل `vazho-<نسخه>.zip` را نصب کنید.
 
 ۲. در وردپرس: **افزونه‌ها ← افزودن ← بارگذاری افزونه**، فایل را انتخاب و سپس فعال کنید.
 
@@ -268,7 +260,7 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 ۴. دستیار را با ویجت شناور (خودکار)، کد کوتاه `[ssc_chatbot]`، بلوک گوتنبرگ یا ویجت
 المنتور روی سایت قرار دهید.
 
-**ارتقا از ۱٫۰:** از نسخهٔ ۱٫۱ پوشهٔ افزونه `nexachat-ai` است. با فعال کردن نسخهٔ
+**ارتقا از ۱٫۰:** از نسخهٔ ۱٫۱ پوشهٔ افزونه `vazho` است. با فعال کردن نسخهٔ
 جدید، نسخهٔ قدیمی خودکار غیرفعال می‌شود و همهٔ داده‌ها حفظ می‌شوند. سپس نسخهٔ قدیمی
 را حذف کنید. پیش از ارتقا پشتیبان بگیرید و بعد از آن کش صفحه/CDN را پاک کنید.
 
@@ -341,7 +333,7 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 
 انتشار **خودکار** است؛ ZIP را دستی بارگذاری نکنید.
 
-۱. شمارهٔ نسخه را در `nexachat-ai.php` (هر دو جا)، `Stable tag` در `readme.txt` و نشان
+۱. شمارهٔ نسخه را در `vazho.php` (هر دو جا)، `Stable tag` در `readme.txt` و نشان
 `version-x.y.z` بالای همین README بالا ببرید.
 
 ۲. بخش `= x.y.z =` را در changelog فایل `readme.txt` بنویسید. این متن یادداشت انتشار

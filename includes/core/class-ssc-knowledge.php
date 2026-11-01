@@ -6,7 +6,7 @@
  * DB-backed retrieval. The scoring model is preserved from 4.x (battle-tested)
  * with deterministic candidate windows.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -613,7 +613,7 @@ class SSC_Knowledge {
 			if ( 'cut' === $plan['rows'][ $index ]['state'] ) {
 				$body = mb_substr( $body, 0, $plan['rows'][ $index ]['kept'] ) . '…';
 			}
-			$title   = ! empty( $item['title'] ) ? $item['title'] : __( 'Reference', 'nexachat-ai' );
+			$title   = ! empty( $item['title'] ) ? $item['title'] : __( 'Reference', 'vazho' );
 			$parts[] = SSC_Prompt_Builder::fence( 'KNOWLEDGE', $title, $body );
 		}
 

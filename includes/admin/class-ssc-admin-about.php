@@ -3,7 +3,7 @@
  * About page: who makes the plugin, technical details, a system check and a
  * copyable report for support requests.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,7 +27,7 @@ class SSC_Admin_About {
 	public static function support_url() {
 		return add_query_arg(
 			array(
-				'product' => 'nexachatai',
+				'product' => 'vazho',
 				'version' => rawurlencode( SSC_CHATBOT_VERSION ),
 			),
 			self::SUPPORT_URL
@@ -39,7 +39,7 @@ class SSC_Admin_About {
 	 */
 	public function __construct() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 	}
 
@@ -50,7 +50,7 @@ class SSC_Admin_About {
 	 */
 	public static function plugin_headers() {
 		return get_file_data(
-			NEXACHATAI_MAIN_FILE,
+			VAZHO_MAIN_FILE,
 			array(
 				'version'      => 'Version',
 				'requires_wp'  => 'Requires at least',
@@ -85,53 +85,53 @@ class SSC_Admin_About {
 
 		$add(
 			'wp',
-			__( 'WordPress version', 'nexachat-ai' ),
+			__( 'WordPress version', 'vazho' ),
 			version_compare( $wp_version, $headers['requires_wp'], '>=' ) ? 'ok' : 'fail',
 			/* translators: 1: installed version, 2: required version. */
-			sprintf( __( '%1$s (needs %2$s or newer)', 'nexachat-ai' ), $ltr( $wp_version ), $ltr( $headers['requires_wp'] ) )
+			sprintf( __( '%1$s (needs %2$s or newer)', 'vazho' ), $ltr( $wp_version ), $ltr( $headers['requires_wp'] ) )
 		);
 		$add(
 			'php',
-			__( 'PHP version', 'nexachat-ai' ),
+			__( 'PHP version', 'vazho' ),
 			version_compare( PHP_VERSION, $headers['requires_php'], '>=' ) ? 'ok' : 'fail',
 			/* translators: 1: installed version, 2: required version. */
-			sprintf( __( '%1$s (needs %2$s or newer)', 'nexachat-ai' ), $ltr( PHP_VERSION ), $ltr( $headers['requires_php'] ) )
+			sprintf( __( '%1$s (needs %2$s or newer)', 'vazho' ), $ltr( PHP_VERSION ), $ltr( $headers['requires_php'] ) )
 		);
 		$add(
 			'openssl',
-			__( 'OpenSSL (encrypts API keys)', 'nexachat-ai' ),
+			__( 'OpenSSL (encrypts API keys)', 'vazho' ),
 			function_exists( 'openssl_encrypt' ) && defined( 'AUTH_KEY' ) && '' !== AUTH_KEY ? 'ok' : 'fail',
-			function_exists( 'openssl_encrypt' ) ? ( defined( 'AUTH_KEY' ) && '' !== AUTH_KEY ? __( 'Available', 'nexachat-ai' ) : __( 'AUTH_KEY is missing from wp-config.php', 'nexachat-ai' ) ) : __( 'Not installed', 'nexachat-ai' )
+			function_exists( 'openssl_encrypt' ) ? ( defined( 'AUTH_KEY' ) && '' !== AUTH_KEY ? __( 'Available', 'vazho' ) : __( 'AUTH_KEY is missing from wp-config.php', 'vazho' ) ) : __( 'Not installed', 'vazho' )
 		);
 		$add(
 			'mbstring',
-			__( 'mbstring (Persian text handling)', 'nexachat-ai' ),
+			__( 'mbstring (Persian text handling)', 'vazho' ),
 			function_exists( 'mb_substr' ) ? 'ok' : 'fail',
-			function_exists( 'mb_substr' ) ? __( 'Available', 'nexachat-ai' ) : __( 'Not installed', 'nexachat-ai' )
+			function_exists( 'mb_substr' ) ? __( 'Available', 'vazho' ) : __( 'Not installed', 'vazho' )
 		);
 		$add(
 			'zip',
-			__( 'ZipArchive (Word .docx import)', 'nexachat-ai' ),
+			__( 'ZipArchive (Word .docx import)', 'vazho' ),
 			class_exists( 'ZipArchive' ) ? 'ok' : 'warn',
-			class_exists( 'ZipArchive' ) ? __( 'Available', 'nexachat-ai' ) : __( 'Not installed: Word files cannot be imported', 'nexachat-ai' )
+			class_exists( 'ZipArchive' ) ? __( 'Available', 'vazho' ) : __( 'Not installed: Word files cannot be imported', 'vazho' )
 		);
 		$add(
 			'zlib',
-			__( 'zlib (PDF import, export review)', 'nexachat-ai' ),
+			__( 'zlib (PDF import, export review)', 'vazho' ),
 			function_exists( 'gzuncompress' ) ? 'ok' : 'warn',
-			function_exists( 'gzuncompress' ) ? __( 'Available', 'nexachat-ai' ) : __( 'Not installed: some PDF files cannot be read', 'nexachat-ai' )
+			function_exists( 'gzuncompress' ) ? __( 'Available', 'vazho' ) : __( 'Not installed: some PDF files cannot be read', 'vazho' )
 		);
 		$add(
 			'https',
-			__( 'Site address uses HTTPS', 'nexachat-ai' ),
+			__( 'Site address uses HTTPS', 'vazho' ),
 			0 === strpos( home_url(), 'https://' ) ? 'ok' : 'warn',
-			0 === strpos( home_url(), 'https://' ) ? __( 'Yes', 'nexachat-ai' ) : __( 'No: visitors’ messages travel unencrypted', 'nexachat-ai' )
+			0 === strpos( home_url(), 'https://' ) ? __( 'Yes', 'vazho' ) : __( 'No: visitors’ messages travel unencrypted', 'vazho' )
 		);
 		$add(
 			'cron',
-			__( 'Background tasks (WP-Cron)', 'nexachat-ai' ),
+			__( 'Background tasks (WP-Cron)', 'vazho' ),
 			defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ? 'warn' : 'ok',
-			defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ? __( 'Disabled in wp-config.php: make sure a server cron calls wp-cron.php', 'nexachat-ai' ) : __( 'Enabled', 'nexachat-ai' )
+			defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ? __( 'Disabled in wp-config.php: make sure a server cron calls wp-cron.php', 'vazho' ) : __( 'Enabled', 'vazho' )
 		);
 
 		$missing = array();
@@ -142,19 +142,19 @@ class SSC_Admin_About {
 		}
 		$add(
 			'tables',
-			__( 'Database tables', 'nexachat-ai' ),
+			__( 'Database tables', 'vazho' ),
 			$missing ? 'fail' : 'ok',
 			$missing
 				/* translators: %s: table names. */
-				? sprintf( __( 'Missing: %s. Deactivate and activate the plugin to create them.', 'nexachat-ai' ), implode( ', ', $missing ) )
+				? sprintf( __( 'Missing: %s. Deactivate and activate the plugin to create them.', 'vazho' ), implode( ', ', $missing ) )
 				/* translators: 1: number of tables, 2: schema version. */
-				: sprintf( __( 'All %1$d tables present (schema version %2$s)', 'nexachat-ai' ), count( self::tables() ), $ltr( SSC_Schema::DB_VERSION ) )
+				: sprintf( __( 'All %1$d tables present (schema version %2$s)', 'vazho' ), count( self::tables() ), $ltr( SSC_Schema::DB_VERSION ) )
 		);
 
 		$memory = (int) wp_convert_hr_to_bytes( (string) ini_get( 'memory_limit' ) );
 		$add(
 			'memory',
-			__( 'PHP memory limit', 'nexachat-ai' ),
+			__( 'PHP memory limit', 'vazho' ),
 			( $memory < 0 || $memory >= 64 * MB_IN_BYTES ) ? 'ok' : 'warn',
 			self::memory_label()
 		);
@@ -168,7 +168,7 @@ class SSC_Admin_About {
 	 */
 	protected static function memory_label() {
 		$limit = (string) ini_get( 'memory_limit' );
-		return '-1' === $limit ? __( 'Unlimited', 'nexachat-ai' ) : $limit;
+		return '-1' === $limit ? __( 'Unlimited', 'vazho' ) : $limit;
 	}
 
 	/**
@@ -210,7 +210,7 @@ class SSC_Admin_About {
 		$headers  = self::plugin_headers();
 		$provider = SSC_Providers::current();
 		$lines    = array(
-			'NexaChatAI ' . $headers['version'] . ' by ' . self::MAKER . ' (' . self::MAKER_URL . ')',
+			'Vazho ' . $headers['version'] . ' by ' . self::MAKER . ' (' . self::MAKER_URL . ')',
 			'Site: ' . home_url(),
 			'WordPress: ' . $wp_version . ( is_multisite() ? ' (multisite)' : '' ) . ', locale ' . get_locale(),
 			'PHP: ' . PHP_VERSION . ', memory ' . self::memory_label(),
@@ -284,16 +284,16 @@ class SSC_Admin_About {
 	 */
 	public static function note_label( $type ) {
 		$labels = array(
-			'fixed'    => __( 'Fixed', 'nexachat-ai' ),
-			'new'      => __( 'New', 'nexachat-ai' ),
-			'changed'  => __( 'Changed', 'nexachat-ai' ),
-			'improved' => __( 'Improved', 'nexachat-ai' ),
-			'removed'  => __( 'Removed', 'nexachat-ai' ),
-			'security' => __( 'Security', 'nexachat-ai' ),
-			'privacy'  => __( 'Privacy', 'nexachat-ai' ),
-			'docs'     => __( 'Docs', 'nexachat-ai' ),
+			'fixed'    => __( 'Fixed', 'vazho' ),
+			'new'      => __( 'New', 'vazho' ),
+			'changed'  => __( 'Changed', 'vazho' ),
+			'improved' => __( 'Improved', 'vazho' ),
+			'removed'  => __( 'Removed', 'vazho' ),
+			'security' => __( 'Security', 'vazho' ),
+			'privacy'  => __( 'Privacy', 'vazho' ),
+			'docs'     => __( 'Docs', 'vazho' ),
 		);
-		return isset( $labels[ $type ] ) ? $labels[ $type ] : __( 'Note', 'nexachat-ai' );
+		return isset( $labels[ $type ] ) ? $labels[ $type ] : __( 'Note', 'vazho' );
 	}
 
 	/**

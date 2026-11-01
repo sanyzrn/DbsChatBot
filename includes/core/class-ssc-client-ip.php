@@ -6,7 +6,7 @@
  * by a visitor who reaches the server directly proves nothing, so it is never
  * believed on its own. Pure logic: no WordPress calls.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

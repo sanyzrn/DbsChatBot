@@ -6,7 +6,7 @@
  *   Dashboard | Business Knowledge | AI Connection | Appearance | Modules | Settings
  * Module-specific pages appear ONLY while their modules are active.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,7 +36,7 @@ class SSC_Admin {
 	}
 
 	public function retry_notifications() {
-		if ( ! current_user_can( 'manage_options' ) ) { wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) ); }
+		if ( ! current_user_can( 'manage_options' ) ) { wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) ); }
 		check_admin_referer( 'ssc_retry_notifications' );
 		if ( SSC_Modules::is_active( 'notifications' ) ) { SSC_Notification_Queue::retry_exhausted(); }
 		wp_safe_redirect( admin_url( 'admin.php?page=ssc-dashboard' ) );
@@ -66,10 +66,10 @@ class SSC_Admin {
 	 * Menu tree.
 	 */
 	public function register_menu() {
-		$brand = defined( 'NEXACHATAI_NAME' ) ? NEXACHATAI_NAME : 'NexaChatAI';
+		$brand = defined( 'VAZHO_NAME' ) ? VAZHO_NAME : 'Vazho';
 		// The dashboard follows the current admin's language, not the widget's.
 		$locale = function_exists( 'determine_locale' ) ? determine_locale() : get_locale();
-		if ( preg_match( '/^fa(?:[_-]|$)/i', $locale ) ) { $brand = 'نکساچت'; }
+		if ( preg_match( '/^fa(?:[_-]|$)/i', $locale ) ) { $brand = 'واژو'; }
 
 		add_menu_page(
 			$brand,
@@ -81,20 +81,20 @@ class SSC_Admin {
 			58
 		);
 
-		add_submenu_page( 'ssc-dashboard', __( 'Dashboard', 'nexachat-ai' ), __( 'Dashboard', 'nexachat-ai' ), 'manage_options', 'ssc-dashboard', array( $this, 'render_dashboard' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'Business Knowledge', 'nexachat-ai' ), __( 'Business Knowledge', 'nexachat-ai' ), 'manage_options', 'ssc-knowledge', array( $this, 'render_knowledge' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'AI Connection', 'nexachat-ai' ), __( 'AI Connection', 'nexachat-ai' ), 'manage_options', 'ssc-connection', array( $this, 'render_connection' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'Appearance', 'nexachat-ai' ), __( 'Appearance', 'nexachat-ai' ), 'manage_options', 'ssc-appearance', array( $this, 'render_appearance' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'Modules', 'nexachat-ai' ), __( 'Modules', 'nexachat-ai' ), 'manage_options', 'ssc-modules', array( $this, 'render_modules' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'Settings', 'nexachat-ai' ), __( 'Settings', 'nexachat-ai' ), 'manage_options', 'ssc-settings', array( $this, 'render_settings' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Dashboard', 'vazho' ), __( 'Dashboard', 'vazho' ), 'manage_options', 'ssc-dashboard', array( $this, 'render_dashboard' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Business Knowledge', 'vazho' ), __( 'Business Knowledge', 'vazho' ), 'manage_options', 'ssc-knowledge', array( $this, 'render_knowledge' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'AI Connection', 'vazho' ), __( 'AI Connection', 'vazho' ), 'manage_options', 'ssc-connection', array( $this, 'render_connection' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Appearance', 'vazho' ), __( 'Appearance', 'vazho' ), 'manage_options', 'ssc-appearance', array( $this, 'render_appearance' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Modules', 'vazho' ), __( 'Modules', 'vazho' ), 'manage_options', 'ssc-modules', array( $this, 'render_modules' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Settings', 'vazho' ), __( 'Settings', 'vazho' ), 'manage_options', 'ssc-settings', array( $this, 'render_settings' ) );
 
 		// Wizard MUST stay registered so admin.php?page=ssc-wizard resolves the
 		// page hook. Hiding is done with CSS — never remove_submenu_page(), which
 		// makes WordPress fall through to "Cannot load ssc-wizard."
 		add_submenu_page(
 			'ssc-dashboard',
-			__( 'Setup Wizard', 'nexachat-ai' ),
-			__( 'Setup Wizard', 'nexachat-ai' ),
+			__( 'Setup Wizard', 'vazho' ),
+			__( 'Setup Wizard', 'vazho' ),
 			'manage_options',
 			'ssc-wizard',
 			array( $this, 'render_wizard' )
@@ -105,8 +105,8 @@ class SSC_Admin {
 	 * Closing entries: backup/transfer and the About page.
 	 */
 	public function register_tail_menu() {
-		add_submenu_page( 'ssc-dashboard', __( 'Export & Import', 'nexachat-ai' ), __( 'Export & Import', 'nexachat-ai' ), 'manage_options', 'ssc-transfer', array( $this, 'render_transfer' ) );
-		add_submenu_page( 'ssc-dashboard', __( 'About', 'nexachat-ai' ), __( 'About', 'nexachat-ai' ), 'manage_options', 'ssc-about', array( $this, 'render_about' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'Export & Import', 'vazho' ), __( 'Export & Import', 'vazho' ), 'manage_options', 'ssc-transfer', array( $this, 'render_transfer' ) );
+		add_submenu_page( 'ssc-dashboard', __( 'About', 'vazho' ), __( 'About', 'vazho' ), 'manage_options', 'ssc-about', array( $this, 'render_about' ) );
 	}
 
 	/**
@@ -136,9 +136,9 @@ class SSC_Admin {
 			return;
 		}
 		$nonce = wp_create_nonce( 'ssc_uninstall_policy' );
-		$label = __( 'NexaChatAI', 'nexachat-ai' );
-		$ask   = __( 'Delete the plugin AND permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?', 'nexachat-ai' );
-		$keep  = __( 'Delete the plugin but KEEP the saved data? (Cancel stops the deletion.)', 'nexachat-ai' );
+		$label = __( 'Vazho', 'vazho' );
+		$ask   = __( 'Delete the plugin AND permanently delete all saved data (settings, knowledge, conversations, requests, ADR cases)?', 'vazho' );
+		$keep  = __( 'Delete the plugin but KEEP the saved data? (Cancel stops the deletion.)', 'vazho' );
 		?>
 <script id="ssc-uninstall-confirm">
 (function () {
@@ -168,7 +168,7 @@ class SSC_Admin {
 			if (!result.success) { throw new Error('Policy not saved'); }
 			done();
 		}).catch(function () {
-			window.alert(<?php echo wp_json_encode( __( 'The data deletion preference could not be saved. Deletion was stopped. Please check Settings before trying again.', 'nexachat-ai' ) ); ?>);
+			window.alert(<?php echo wp_json_encode( __( 'The data deletion preference could not be saved. Deletion was stopped. Please check Settings before trying again.', 'vazho' ) ); ?>);
 		});
 	}
 
@@ -234,8 +234,8 @@ class SSC_Admin {
 				'wizardUrl'  => SSC_Setup::wizard_url(),
 				'chatbotUrl'  => SSC_CHATBOT_URL,
 				'i18n'       => array(
-					'online'  => __( 'Online', 'nexachat-ai' ),
-					'offline' => __( 'Offline', 'nexachat-ai' ),
+					'online'  => __( 'Online', 'vazho' ),
+					'offline' => __( 'Offline', 'vazho' ),
 				),
 			)
 		);
@@ -302,7 +302,7 @@ class SSC_Admin {
 	 */
 	public function render_wizard() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		$this->controller( 'SSC_Wizard' )->render();
 	}

@@ -7,7 +7,7 @@
  * lease, retried with exponential backoff, and left visible for manual retry
  * once its attempts are exhausted.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

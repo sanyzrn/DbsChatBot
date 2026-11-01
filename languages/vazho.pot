@@ -1,16 +1,16 @@
-# NexaChatAI translation template.
+# Vazho translation template.
 # Copyright (C) 2026 DbsStudio
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: NexaChatAI 1.7.8\n"
+"Project-Id-Version: Vazho 1.7.9\n"
 "Report-Msgid-Bugs-To: https://dbsstudio.ir/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-27 09:39:00+00:00\n"
+"POT-Creation-Date: 2026-11-01 19:45:04+00:00\n"
 "X-Generator: tools/make-pot.py\n"
-"X-Domain: nexachat-ai\n"
+"X-Domain: vazho\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: includes/admin/class-ssc-admin-about.php:42
@@ -352,9 +352,11 @@ msgid "About"
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:139
+#: includes/admin/views/wizard.php:477
+#: includes/core/class-ssc-frontend.php:61
 #: includes/core/class-ssc-plugin.php:159
 #: widgets/class-ssc-elementor-widget.php:32
-msgid "NexaChatAI"
+msgid "Vazho"
 msgstr ""
 
 #: includes/admin/class-ssc-admin.php:140
@@ -462,7 +464,7 @@ msgstr ""
 msgid "System health: %1$d of %2$d checks passed"
 msgstr ""
 
-#. translators: 1: checks passed, 2: all checks. */ __( 'System health: %1$d of %2$d checks passed', 'nexachat-ai' ), $passed, count( $checks ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?>
+#. translators: 1: checks passed, 2: all checks. */ __( 'System health: %1$d of %2$d checks passed', 'vazho' ), $passed, count( $checks ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the helper. ?>
 #: includes/admin/views/page-about.php:92
 msgid "System health"
 msgstr ""
@@ -472,7 +474,7 @@ msgid "Made by"
 msgstr ""
 
 #: includes/admin/views/page-about.php:100
-msgid "NexaChatAI is designed and developed by DbsStudio. For the latest news, other products, support and feedback, visit the website."
+msgid "Vazho is designed and developed by DbsStudio. For the latest news, other products, support and feedback, visit the website."
 msgstr ""
 
 #: includes/admin/views/page-about.php:106
@@ -1160,7 +1162,7 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
-#. translators: %d: number of sites. */ _n( 'On · %d site', 'On · %d sites', $ssc_domains, 'nexachat-ai' ), $ssc_domains ) : __( 'On', 'nexachat-ai' ) ) : __( 'Off', 'nexachat-ai' ) ) );
+#. translators: %d: number of sites. */ _n( 'On · %d site', 'On · %d sites', $ssc_domains, 'vazho' ), $ssc_domains ) : __( 'On', 'vazho' ) ) : __( 'Off', 'vazho' ) ) );
 #: includes/admin/views/page-connection.php:136
 msgid "Advanced"
 msgstr ""
@@ -2143,7 +2145,7 @@ msgstr ""
 msgid "Name (optional), e.g. Tehran office"
 msgstr ""
 
-#. translators: 1: number of chunks, 2: date. */ __( '%1$s chunks · added %2$s', 'nexachat-ai' ), number_format_i18n( (int) $ssc_doc['chunks'] ), SSC_Date::display( $ssc_doc['created_at'], false ) ) ); ?></small></span>
+#. translators: 1: number of chunks, 2: date. */ __( '%1$s chunks · added %2$s', 'vazho' ), number_format_i18n( (int) $ssc_doc['chunks'] ), SSC_Date::display( $ssc_doc['created_at'], false ) ) ); ?></small></span>
 #: includes/admin/views/page-knowledge.php:287
 #: includes/admin/views/page-knowledge.php:328
 #: includes/admin/views/page-knowledge.php:780
@@ -3546,7 +3548,7 @@ msgstr ""
 msgid "Ask: %s"
 msgstr ""
 
-#. translators: %s: question */ __( 'Ask: %s', 'nexachat-ai' ), $adr_field['label'] ) ); ?>" /></td>
+#. translators: %s: question */ __( 'Ask: %s', 'vazho' ), $adr_field['label'] ) ); ?>" /></td>
 #: includes/admin/views/page-settings.php:354
 msgid "Required: %s"
 msgstr ""
@@ -4115,7 +4117,7 @@ msgstr ""
 
 #. translators: 1: site name, 2: date, 3: plugin version.
 #: includes/admin/views/page-transfer.php:125
-msgid "File from “%1$s”, exported %2$s with NexaChatAI %3$s. Nothing has changed yet."
+msgid "File from “%1$s”, exported %2$s with Vazho %3$s. Nothing has changed yet."
 msgstr ""
 
 #: includes/admin/views/page-transfer.php:126
@@ -4226,12 +4228,12 @@ msgstr ""
 msgid "Restores the settings, products, knowledge entries, modules and FAQ bank as they were before the import on %s. Imported documents stay."
 msgstr ""
 
-#. translators: %s: date and time. */ __( 'Restores the settings, products, knowledge entries, modules and FAQ bank as they were before the import on %s. Imported documents stay.', 'nexachat-ai' ), SSC_Date::display( wp_date( 'Y-m-d H:i:s', $backup ) ) ) ); ?></p>
+#. translators: %s: date and time. */ __( 'Restores the settings, products, knowledge entries, modules and FAQ bank as they were before the import on %s. Imported documents stay.', 'vazho' ), SSC_Date::display( wp_date( 'Y-m-d H:i:s', $backup ) ) ) ); ?></p>
 #: includes/admin/views/page-transfer.php:238
 msgid "Go back to how things were before the last import?"
 msgstr ""
 
-#. translators: %s: date and time. */ __( 'Restores the settings, products, knowledge entries, modules and FAQ bank as they were before the import on %s. Imported documents stay.', 'nexachat-ai' ), SSC_Date::display( wp_date( 'Y-m-d H:i:s', $backup ) ) ) ); ?></p>
+#. translators: %s: date and time. */ __( 'Restores the settings, products, knowledge entries, modules and FAQ bank as they were before the import on %s. Imported documents stay.', 'vazho' ), SSC_Date::display( wp_date( 'Y-m-d H:i:s', $backup ) ) ) ); ?></p>
 #: includes/admin/views/page-transfer.php:238
 msgid "Undo the import"
 msgstr ""
@@ -4660,11 +4662,6 @@ msgstr ""
 msgid "Text direction"
 msgstr ""
 
-#: includes/admin/views/wizard.php:477
-#: includes/core/class-ssc-frontend.php:61
-msgid "Nexa"
-msgstr ""
-
 #: includes/admin/views/wizard.php:506
 msgid "Final check & launch"
 msgstr ""
@@ -4723,10 +4720,6 @@ msgstr ""
 
 #: includes/admin/views/wizard.php:574
 msgid "To publish, complete:"
-msgstr ""
-
-#: includes/bootstrap.php:68
-msgid "NexaChatAI moved to a new plugin folder (nexachat-ai). The old copy (smart-support-chatbot) was deactivated automatically; all settings and data were kept. The \"remove data on uninstall\" policy was switched off so deleting the old copy cannot erase shared data; you can now delete it from the Plugins screen."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:83
@@ -4861,7 +4854,7 @@ msgid "Assistant"
 msgstr ""
 
 #: includes/core/class-ssc-cron.php:68
-msgid "NexaChatAI: every five minutes"
+msgid "Vazho: every five minutes"
 msgstr ""
 
 #: includes/core/class-ssc-doc-extract.php:96
@@ -5129,7 +5122,7 @@ msgid "Place the AI assistant chat widget on this page."
 msgstr ""
 
 #: includes/core/class-ssc-frontend.php:483
-msgid "The assistant is configured in the NexaChatAI admin menu. Publishing is controlled there."
+msgid "The assistant is configured in the Vazho admin menu. Publishing is controlled there."
 msgstr ""
 
 #: includes/core/class-ssc-http.php:96
@@ -5267,7 +5260,7 @@ msgid "Connected, %s. New chats waiting for a person will arrive here. Reply to 
 msgstr ""
 
 #: includes/core/class-ssc-messenger.php:587
-msgid "NexaChatAI: every minute"
+msgid "Vazho: every minute"
 msgstr ""
 
 #: includes/core/class-ssc-modules.php:122
@@ -5729,11 +5722,11 @@ msgid "This is not a valid export file: it could not be read as JSON."
 msgstr ""
 
 #: includes/core/class-ssc-transfer.php:354
-msgid "This file was not created by NexaChatAI export."
+msgid "This file was not created by Vazho export."
 msgstr ""
 
 #: includes/core/class-ssc-transfer.php:357
-msgid "This file comes from a newer version of NexaChatAI. Update the plugin and try again."
+msgid "This file comes from a newer version of Vazho. Update the plugin and try again."
 msgstr ""
 
 #. translators: %s: setting name.
@@ -6775,7 +6768,7 @@ msgid "This offer is for carts of %s or more."
 msgstr ""
 
 #: includes/modules/class-ssc-module-woo.php:757
-msgid "Smart offer from the NexaChatAI assistant"
+msgid "Smart offer from the Vazho assistant"
 msgstr ""
 
 #: includes/modules/class-ssc-module-woo.php:780

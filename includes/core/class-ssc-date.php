@@ -6,7 +6,7 @@
  * Jalali plugin (WP-Parsidate, jdate helpers) is present it already
  * converts WordPress dates, so this only steps in when nothing else does.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

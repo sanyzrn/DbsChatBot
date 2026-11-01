@@ -11,7 +11,7 @@
  * same thing is there a conflict, and then nothing is saved until the person
  * decides. Pure logic, no WordPress calls.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

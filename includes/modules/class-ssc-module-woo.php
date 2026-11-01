@@ -14,7 +14,7 @@
  *
  * Requires WooCommerce; every entry point checks for it.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -48,7 +48,7 @@ class SSC_Module_Woo extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'WooCommerce sales assistant', 'nexachat-ai' );
+		return __( 'WooCommerce sales assistant', 'vazho' );
 	}
 
 	/**
@@ -57,7 +57,7 @@ class SSC_Module_Woo extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Real prices and stock in answers, product cards with "Add to cart", order tracking, comparisons, a smart discount for hesitating visitors and SMS cart reminders.', 'nexachat-ai' );
+		return __( 'Real prices and stock in answers, product cards with "Add to cart", order tracking, comparisons, a smart discount for hesitating visitors and SMS cart reminders.', 'vazho' );
 	}
 
 	/**
@@ -66,7 +66,7 @@ class SSC_Module_Woo extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Turns questions into orders and answers "where is my order?" without your team.', 'nexachat-ai' );
+		return __( 'Turns questions into orders and answers "where is my order?" without your team.', 'vazho' );
 	}
 
 	/**
@@ -335,17 +335,17 @@ class SSC_Module_Woo extends SSC_Module {
 	 */
 	public static function stock_text( $product ) {
 		if ( ! $product->is_in_stock() ) {
-			return __( 'Out of stock', 'nexachat-ai' );
+			return __( 'Out of stock', 'vazho' );
 		}
 		if ( $product->is_on_backorder() ) {
-			return __( 'Available on backorder', 'nexachat-ai' );
+			return __( 'Available on backorder', 'vazho' );
 		}
 		$qty = $product->get_stock_quantity();
 		if ( $product->managing_stock() && null !== $qty && $qty <= 5 ) {
 			/* translators: %d: units left. */
-			return sprintf( _n( 'Only %d left', 'Only %d left', (int) $qty, 'nexachat-ai' ), (int) $qty );
+			return sprintf( _n( 'Only %d left', 'Only %d left', (int) $qty, 'vazho' ), (int) $qty );
 		}
-		return __( 'In stock', 'nexachat-ai' );
+		return __( 'In stock', 'vazho' );
 	}
 
 	/**
@@ -487,32 +487,32 @@ class SSC_Module_Woo extends SSC_Module {
 			) : null,
 			'remind'     => 'yes' === SSC_Settings::get( 'woo_abandoned_enabled', 'no' ) && SSC_Modules::is_active( 'sms' ) && SSC_Module_Sms::ready(),
 			'i18n'       => array(
-				'addToCart'   => __( 'Add to cart', 'nexachat-ai' ),
-				'added'       => __( 'Added ✓', 'nexachat-ai' ),
-				'viewCart'    => __( 'View cart', 'nexachat-ai' ),
-				'options'     => __( 'Choose options', 'nexachat-ai' ),
-				'view'        => __( 'View', 'nexachat-ai' ),
-				'trackOrder'  => __( 'Track my order', 'nexachat-ai' ),
-				'orderNumber' => __( 'Order number', 'nexachat-ai' ),
-				'contact'     => __( 'Phone or email used for the order', 'nexachat-ai' ),
-				'check'       => __( 'Check', 'nexachat-ai' ),
-				'status'      => __( 'Status', 'nexachat-ai' ),
-				'date'        => __( 'Date', 'nexachat-ai' ),
-				'total'       => __( 'Total', 'nexachat-ai' ),
-				'items'       => __( 'Items', 'nexachat-ai' ),
-				'note'        => __( 'Latest update', 'nexachat-ai' ),
-				'tracking'    => __( 'Tracking code', 'nexachat-ai' ),
-				'copy'        => __( 'Copy', 'nexachat-ai' ),
-				'copied'      => __( 'Copied ✓', 'nexachat-ai' ),
-				'getCoupon'   => __( 'Show my discount code', 'nexachat-ai' ),
-				'apply'       => __( 'Apply to my cart', 'nexachat-ai' ),
-				'applied'     => __( 'Applied to your cart ✓', 'nexachat-ai' ),
-				'expires'     => __( 'Valid until', 'nexachat-ai' ),
-				'remind'      => __( 'Remind me about my cart by SMS', 'nexachat-ai' ),
-				'mobile'      => __( 'Mobile number', 'nexachat-ai' ),
-				'remindOk'    => __( 'I agree to receive one SMS reminder about my cart.', 'nexachat-ai' ),
-				'send'        => __( 'Send', 'nexachat-ai' ),
-				'error'       => __( 'That did not work. Please try again.', 'nexachat-ai' ),
+				'addToCart'   => __( 'Add to cart', 'vazho' ),
+				'added'       => __( 'Added ✓', 'vazho' ),
+				'viewCart'    => __( 'View cart', 'vazho' ),
+				'options'     => __( 'Choose options', 'vazho' ),
+				'view'        => __( 'View', 'vazho' ),
+				'trackOrder'  => __( 'Track my order', 'vazho' ),
+				'orderNumber' => __( 'Order number', 'vazho' ),
+				'contact'     => __( 'Phone or email used for the order', 'vazho' ),
+				'check'       => __( 'Check', 'vazho' ),
+				'status'      => __( 'Status', 'vazho' ),
+				'date'        => __( 'Date', 'vazho' ),
+				'total'       => __( 'Total', 'vazho' ),
+				'items'       => __( 'Items', 'vazho' ),
+				'note'        => __( 'Latest update', 'vazho' ),
+				'tracking'    => __( 'Tracking code', 'vazho' ),
+				'copy'        => __( 'Copy', 'vazho' ),
+				'copied'      => __( 'Copied ✓', 'vazho' ),
+				'getCoupon'   => __( 'Show my discount code', 'vazho' ),
+				'apply'       => __( 'Apply to my cart', 'vazho' ),
+				'applied'     => __( 'Applied to your cart ✓', 'vazho' ),
+				'expires'     => __( 'Valid until', 'vazho' ),
+				'remind'      => __( 'Remind me about my cart by SMS', 'vazho' ),
+				'mobile'      => __( 'Mobile number', 'vazho' ),
+				'remindOk'    => __( 'I agree to receive one SMS reminder about my cart.', 'vazho' ),
+				'send'        => __( 'Send', 'vazho' ),
+				'error'       => __( 'That did not work. Please try again.', 'vazho' ),
 			),
 		);
 		return $config;
@@ -531,9 +531,9 @@ class SSC_Module_Woo extends SSC_Module {
 		$amount = (int) SSC_Settings::get( 'woo_coupon_amount', 10 );
 		return 'percent' === SSC_Settings::get( 'woo_coupon_type', 'percent' )
 			/* translators: %d: percent. */
-			? sprintf( __( 'Still deciding? Here is %d%% off your order today 🎁', 'nexachat-ai' ), $amount )
+			? sprintf( __( 'Still deciding? Here is %d%% off your order today 🎁', 'vazho' ), $amount )
 			/* translators: %s: amount. */
-			: sprintf( __( 'Still deciding? Here is %s off your order today 🎁', 'nexachat-ai' ), self::money( $amount ) );
+			: sprintf( __( 'Still deciding? Here is %s off your order today 🎁', 'vazho' ), self::money( $amount ) );
 	}
 
 	/*
@@ -567,10 +567,10 @@ class SSC_Module_Woo extends SSC_Module {
 	 */
 	public static function permission( $request ) {
 		if ( ! SSC_Setup::is_live() || ! self::wc() ) {
-			return new WP_Error( 'ssc_not_available', __( 'This is not available right now.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_not_available', __( 'This is not available right now.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		if ( strlen( $request->get_body() ) > 4096 ) {
-			return new WP_Error( 'ssc_too_large', __( 'The request is too large.', 'nexachat-ai' ), array( 'status' => 413 ) );
+			return new WP_Error( 'ssc_too_large', __( 'The request is too large.', 'vazho' ), array( 'status' => 413 ) );
 		}
 		return true;
 	}
@@ -602,10 +602,10 @@ class SSC_Module_Woo extends SSC_Module {
 	 */
 	public static function rest_order( $request ) {
 		if ( 'yes' !== SSC_Settings::get( 'woo_order_tracking', 'yes' ) ) {
-			return new WP_Error( 'ssc_not_available', __( 'This is not available right now.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_not_available', __( 'This is not available right now.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		if ( self::blocked( 'order', 8 ) ) {
-			return new WP_Error( 'ssc_rate_limited', __( 'Too many attempts. Please try again in 15 minutes.', 'nexachat-ai' ), array( 'status' => 429 ) );
+			return new WP_Error( 'ssc_rate_limited', __( 'Too many attempts. Please try again in 15 minutes.', 'vazho' ), array( 'status' => 429 ) );
 		}
 		$number  = (int) preg_replace( '/\D/', '', SSC_Input::phone( (string) $request->get_param( 'order' ) ) );
 		$contact = trim( SSC_Input::text( (string) $request->get_param( 'contact' ), 120 ) );
@@ -616,7 +616,7 @@ class SSC_Module_Woo extends SSC_Module {
 		if ( ! $order || ! self::owns_order( $order, $contact ) ) {
 			self::blocked( 'order', 8, true );
 			// One answer for "no such order" and "details do not match": no enumeration.
-			return new WP_Error( 'ssc_order_not_found', __( 'No order matches these details. Check the order number and the phone or email you used.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_order_not_found', __( 'No order matches these details. Check the order number and the phone or email you used.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		return rest_ensure_response( self::order_payload( $order ) );
 	}
@@ -717,7 +717,7 @@ class SSC_Module_Woo extends SSC_Module {
 	 */
 	public static function rest_coupon( $request ) {
 		if ( 'yes' !== SSC_Settings::get( 'woo_coupon_enabled', 'no' ) ) {
-			return new WP_Error( 'ssc_not_available', __( 'This offer has ended.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_not_available', __( 'This offer has ended.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		$engine  = new SSC_Chat_Engine();
 		$visitor = 'ssc_woo_cpn_' . SSC_Input::visitor_key( $engine->client_ip() );
@@ -728,7 +728,7 @@ class SSC_Module_Woo extends SSC_Module {
 		$day   = 'ssc_woo_cpn_day_' . gmdate( 'Ymd' );
 		$count = (int) get_transient( $day );
 		if ( $count >= (int) SSC_Settings::get( 'woo_coupon_daily', 20 ) ) {
-			return new WP_Error( 'ssc_coupon_cap', __( 'Today\'s offers have all been claimed. Please check back tomorrow.', 'nexachat-ai' ), array( 'status' => 409 ) );
+			return new WP_Error( 'ssc_coupon_cap', __( 'Today\'s offers have all been claimed. Please check back tomorrow.', 'vazho' ), array( 'status' => 409 ) );
 		}
 		$min = (int) SSC_Settings::get( 'woo_coupon_min', 0 );
 		if ( $min > 0 ) {
@@ -738,7 +738,7 @@ class SSC_Module_Woo extends SSC_Module {
 			$subtotal = WC()->cart ? (float) WC()->cart->get_subtotal() : 0.0;
 			if ( $subtotal < $min ) {
 				/* translators: %s: minimum cart total. */
-				return new WP_Error( 'ssc_coupon_min', sprintf( __( 'This offer is for carts of %s or more.', 'nexachat-ai' ), self::money( $min ) ), array( 'status' => 409 ) );
+				return new WP_Error( 'ssc_coupon_min', sprintf( __( 'This offer is for carts of %s or more.', 'vazho' ), self::money( $min ) ), array( 'status' => 409 ) );
 			}
 		}
 		$hours  = (int) SSC_Settings::get( 'woo_coupon_hours', 24 );
@@ -754,7 +754,7 @@ class SSC_Module_Woo extends SSC_Module {
 		if ( $min > 0 ) {
 			$coupon->set_minimum_amount( $min );
 		}
-		$coupon->set_description( __( 'Smart offer from the NexaChatAI assistant', 'nexachat-ai' ) );
+		$coupon->set_description( __( 'Smart offer from the Vazho assistant', 'vazho' ) );
 		$coupon->save();
 		set_transient( $day, $count + 1, 2 * DAY_IN_SECONDS );
 		$payload = array(
@@ -774,25 +774,25 @@ class SSC_Module_Woo extends SSC_Module {
 	 */
 	public static function rest_remind( $request ) {
 		if ( 'yes' !== SSC_Settings::get( 'woo_abandoned_enabled', 'no' ) || ! SSC_Modules::is_active( 'sms' ) ) {
-			return new WP_Error( 'ssc_not_available', __( 'This is not available right now.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_not_available', __( 'This is not available right now.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		if ( ! SSC_Input::consent( $request->get_param( 'consent' ) ) ) {
-			return new WP_Error( 'ssc_consent', __( 'Please confirm that you want the reminder.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_consent', __( 'Please confirm that you want the reminder.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		if ( self::blocked( 'remind', 5 ) ) {
-			return new WP_Error( 'ssc_rate_limited', __( 'Too many attempts. Please try again in 15 minutes.', 'nexachat-ai' ), array( 'status' => 429 ) );
+			return new WP_Error( 'ssc_rate_limited', __( 'Too many attempts. Please try again in 15 minutes.', 'vazho' ), array( 'status' => 429 ) );
 		}
 		$phone = SSC_Module_Sms::normalize( (string) $request->get_param( 'phone' ) );
 		if ( ! preg_match( '/^09\d{9}$/', $phone ) ) {
 			self::blocked( 'remind', 5, true );
-			return new WP_Error( 'ssc_phone', __( 'Please enter a valid mobile number (09…).', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_phone', __( 'Please enter a valid mobile number (09…).', 'vazho' ), array( 'status' => 400 ) );
 		}
 		if ( function_exists( 'wc_load_cart' ) ) {
 			wc_load_cart();
 		}
 		$cart = WC()->cart;
 		if ( ! $cart || $cart->is_empty() ) {
-			return new WP_Error( 'ssc_cart_empty', __( 'Your cart is empty, so there is nothing to remind you about.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_cart_empty', __( 'Your cart is empty, so there is nothing to remind you about.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		$items = array();
 		foreach ( $cart->get_cart() as $line ) {
@@ -806,7 +806,7 @@ class SSC_Module_Woo extends SSC_Module {
 		return rest_ensure_response(
 			array(
 				'ok'      => true,
-				'message' => __( 'Done. If you do not finish your order, we will send you one reminder by SMS.', 'nexachat-ai' ),
+				'message' => __( 'Done. If you do not finish your order, we will send you one reminder by SMS.', 'vazho' ),
 			)
 		);
 	}
@@ -923,7 +923,7 @@ class SSC_Module_Woo extends SSC_Module {
 		if ( '' === $template ) {
 			$template = SSC_I18n::in_widget_locale(
 				function () {
-					return __( 'Your cart at {site} is waiting: {items}. Finish your order here: {cart_url}', 'nexachat-ai' );
+					return __( 'Your cart at {site} is waiting: {items}. Finish your order here: {cart_url}', 'vazho' );
 				}
 			);
 		}

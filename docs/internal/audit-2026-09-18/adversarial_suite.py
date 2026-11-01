@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Independent adversarial + AI-behavior suite for NexaChatAI (DbsChatBot audit).
+Independent adversarial + AI-behavior suite for Vazho (DbsChatBot audit).
 Isolated disposable WP site (SSC_TEST_SITE), mock model via mu-plugin capture.
 Every check prints PASS/FAIL with evidence; results appended to a JSON log.
 """
@@ -255,7 +255,7 @@ set_script('<img src=x onerror=alert(document.cookie)> **bold** and [link](https
 st, body = chat('Give me something fancy')
 r = json.loads(body)
 check('AI-13a', '<img' in r.get('reply', ''), 'Server returns model HTML verbatim (defense is client-side only)', r.get('reply'))
-js = open(WP + '/wp-content/plugins/smart-support-chatbot/assets/js/chatbot.js').read()
+js = open(WP + '/wp-content/plugins/vazho/assets/js/chatbot.js').read()
 node_code = r'''
 try { var { JSDOM } = require("jsdom"); } catch (e) { console.log("NO_JSDOM"); process.exit(2); }
 const dom = new JSDOM(); const document = dom.window.document;
@@ -319,3 +319,4 @@ fails = [r for r in results if not r['pass']]
 print('\n== SUITE COMPLETE: %d checks, %d passed, %d failed ==' % (len(results), len(results) - len(fails), len(fails)))
 for f in fails:
     print('FAILED:', f['id'], f['label'])
+

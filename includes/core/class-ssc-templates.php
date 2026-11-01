@@ -8,7 +8,7 @@
  * administrator wrote is overwritten, and modules are recommended, never
  * switched on silently.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -26,36 +26,36 @@ class SSC_Templates {
 	public static function all() {
 		$templates = array(
 			'store'      => array(
-				'label'    => __( 'Online store', 'nexachat-ai' ),
+				'label'    => __( 'Online store', 'vazho' ),
 				'icon'     => '🛒',
-				'hint'     => __( 'Product questions, prices, shipping and order tracking.', 'nexachat-ai' ),
-				'category' => __( 'Online store', 'nexachat-ai' ),
-				'industry' => __( 'E-commerce', 'nexachat-ai' ),
-				'role'     => __( 'Sales and support assistant', 'nexachat-ai' ),
+				'hint'     => __( 'Product questions, prices, shipping and order tracking.', 'vazho' ),
+				'category' => __( 'Online store', 'vazho' ),
+				'industry' => __( 'E-commerce', 'vazho' ),
+				'role'     => __( 'Sales and support assistant', 'vazho' ),
 				'tone'     => 'friendly',
-				'welcome'  => __( 'Hi! Looking for something? Ask me about products, prices, shipping or your order.', 'nexachat-ai' ),
-				'rules'    => __( 'Help visitors choose the right product and complete their purchase. Mention shipping times and return rules only from the knowledge provided.', 'nexachat-ai' ),
+				'welcome'  => __( 'Hi! Looking for something? Ask me about products, prices, shipping or your order.', 'vazho' ),
+				'rules'    => __( 'Help visitors choose the right product and complete their purchase. Mention shipping times and return rules only from the knowledge provided.', 'vazho' ),
 				'fields'   => array(),
 				'modules'  => array( 'woocommerce', 'sitesync', 'live', 'leads' ),
 			),
 			'clinic'     => array(
-				'label'    => __( 'Clinic or doctor\'s office', 'nexachat-ai' ),
+				'label'    => __( 'Clinic or doctor\'s office', 'vazho' ),
 				'icon'     => '🩺',
-				'hint'     => __( 'Services, doctors, hours, insurance and appointment requests.', 'nexachat-ai' ),
-				'category' => __( 'Clinic', 'nexachat-ai' ),
-				'industry' => __( 'Healthcare', 'nexachat-ai' ),
-				'role'     => __( 'Reception assistant', 'nexachat-ai' ),
+				'hint'     => __( 'Services, doctors, hours, insurance and appointment requests.', 'vazho' ),
+				'category' => __( 'Clinic', 'vazho' ),
+				'industry' => __( 'Healthcare', 'vazho' ),
+				'role'     => __( 'Reception assistant', 'vazho' ),
 				'tone'     => 'professional',
-				'welcome'  => __( 'Hello, welcome to our clinic. I can help with services, working hours and booking a visit.', 'nexachat-ai' ),
-				'rules'    => __( 'Never diagnose or suggest treatment; for symptoms, recommend booking a visit or, in an emergency, calling emergency services. Share services, doctors, hours and insurance information only from the knowledge provided.', 'nexachat-ai' ),
+				'welcome'  => __( 'Hello, welcome to our clinic. I can help with services, working hours and booking a visit.', 'vazho' ),
+				'rules'    => __( 'Never diagnose or suggest treatment; for symptoms, recommend booking a visit or, in an emergency, calling emergency services. Share services, doctors, hours and insurance information only from the knowledge provided.', 'vazho' ),
 				'fields'   => array(
 					array(
-						'label'    => __( 'Preferred day and time', 'nexachat-ai' ),
+						'label'    => __( 'Preferred day and time', 'vazho' ),
 						'type'     => 'text',
 						'required' => false,
 					),
 					array(
-						'label'    => __( 'Service needed', 'nexachat-ai' ),
+						'label'    => __( 'Service needed', 'vazho' ),
 						'type'     => 'text',
 						'required' => false,
 					),
@@ -63,18 +63,18 @@ class SSC_Templates {
 				'modules'  => array( 'leads', 'live', 'sitesync', 'notifications' ),
 			),
 			'school'     => array(
-				'label'    => __( 'School or training center', 'nexachat-ai' ),
+				'label'    => __( 'School or training center', 'vazho' ),
 				'icon'     => '🎓',
-				'hint'     => __( 'Courses, schedules, fees and registration.', 'nexachat-ai' ),
-				'category' => __( 'Education', 'nexachat-ai' ),
-				'industry' => __( 'Education', 'nexachat-ai' ),
-				'role'     => __( 'Admissions advisor', 'nexachat-ai' ),
+				'hint'     => __( 'Courses, schedules, fees and registration.', 'vazho' ),
+				'category' => __( 'Education', 'vazho' ),
+				'industry' => __( 'Education', 'vazho' ),
+				'role'     => __( 'Admissions advisor', 'vazho' ),
 				'tone'     => 'friendly',
-				'welcome'  => __( 'Hi! Want to know about our courses, schedules or how to register? Just ask.', 'nexachat-ai' ),
-				'rules'    => __( 'Help visitors find the right course for their level and goal; ask about their level when it matters. Quote fees, dates and certificates only from the knowledge provided.', 'nexachat-ai' ),
+				'welcome'  => __( 'Hi! Want to know about our courses, schedules or how to register? Just ask.', 'vazho' ),
+				'rules'    => __( 'Help visitors find the right course for their level and goal; ask about their level when it matters. Quote fees, dates and certificates only from the knowledge provided.', 'vazho' ),
 				'fields'   => array(
 					array(
-						'label'    => __( 'Course of interest', 'nexachat-ai' ),
+						'label'    => __( 'Course of interest', 'vazho' ),
 						'type'     => 'text',
 						'required' => false,
 					),
@@ -82,36 +82,36 @@ class SSC_Templates {
 				'modules'  => array( 'leads', 'sitesync', 'faq', 'live' ),
 			),
 			'pharma'     => array(
-				'label'    => __( 'Pharmaceutical company', 'nexachat-ai' ),
+				'label'    => __( 'Pharmaceutical company', 'vazho' ),
 				'icon'     => '💊',
-				'hint'     => __( 'Approved product information and side-effect reporting.', 'nexachat-ai' ),
-				'category' => __( 'Pharmaceutical manufacturer', 'nexachat-ai' ),
-				'industry' => __( 'Pharmaceutical', 'nexachat-ai' ),
-				'role'     => __( 'Product information assistant', 'nexachat-ai' ),
+				'hint'     => __( 'Approved product information and side-effect reporting.', 'vazho' ),
+				'category' => __( 'Pharmaceutical manufacturer', 'vazho' ),
+				'industry' => __( 'Pharmaceutical', 'vazho' ),
+				'role'     => __( 'Product information assistant', 'vazho' ),
 				'tone'     => 'formal',
-				'welcome'  => __( 'Hello. I can share approved information about our products and help you report a side effect.', 'nexachat-ai' ),
-				'rules'    => __( 'Share only approved product information from the knowledge provided. For personal medical questions, refer the visitor to their doctor or pharmacist.', 'nexachat-ai' ),
+				'welcome'  => __( 'Hello. I can share approved information about our products and help you report a side effect.', 'vazho' ),
+				'rules'    => __( 'Share only approved product information from the knowledge provided. For personal medical questions, refer the visitor to their doctor or pharmacist.', 'vazho' ),
 				'fields'   => array(),
 				'modules'  => array( 'pharma', 'notifications', 'sitesync' ),
 			),
 			'realestate' => array(
-				'label'    => __( 'Real estate', 'nexachat-ai' ),
+				'label'    => __( 'Real estate', 'vazho' ),
 				'icon'     => '🏠',
-				'hint'     => __( 'Listings, neighbourhoods and viewing requests.', 'nexachat-ai' ),
-				'category' => __( 'Real estate agency', 'nexachat-ai' ),
-				'industry' => __( 'Real estate', 'nexachat-ai' ),
-				'role'     => __( 'Property advisor', 'nexachat-ai' ),
+				'hint'     => __( 'Listings, neighbourhoods and viewing requests.', 'vazho' ),
+				'category' => __( 'Real estate agency', 'vazho' ),
+				'industry' => __( 'Real estate', 'vazho' ),
+				'role'     => __( 'Property advisor', 'vazho' ),
 				'tone'     => 'professional',
-				'welcome'  => __( 'Hello! Tell me what kind of property you are looking for and your budget, and I will point you to the right listings.', 'nexachat-ai' ),
-				'rules'    => __( 'Ask for budget, area and size when they are missing. Quote prices and availability only from the knowledge provided and offer a viewing request for serious interest.', 'nexachat-ai' ),
+				'welcome'  => __( 'Hello! Tell me what kind of property you are looking for and your budget, and I will point you to the right listings.', 'vazho' ),
+				'rules'    => __( 'Ask for budget, area and size when they are missing. Quote prices and availability only from the knowledge provided and offer a viewing request for serious interest.', 'vazho' ),
 				'fields'   => array(
 					array(
-						'label'    => __( 'Budget', 'nexachat-ai' ),
+						'label'    => __( 'Budget', 'vazho' ),
 						'type'     => 'text',
 						'required' => false,
 					),
 					array(
-						'label'    => __( 'Preferred area', 'nexachat-ai' ),
+						'label'    => __( 'Preferred area', 'vazho' ),
 						'type'     => 'text',
 						'required' => false,
 					),
@@ -119,18 +119,18 @@ class SSC_Templates {
 				'modules'  => array( 'leads', 'live', 'sitesync', 'notifications' ),
 			),
 			'services'   => array(
-				'label'    => __( 'Services company', 'nexachat-ai' ),
+				'label'    => __( 'Services company', 'vazho' ),
 				'icon'     => '🛠️',
-				'hint'     => __( 'Services, pricing, coverage area and quote requests.', 'nexachat-ai' ),
-				'category' => __( 'Services', 'nexachat-ai' ),
-				'industry' => __( 'Professional services', 'nexachat-ai' ),
-				'role'     => __( 'Customer advisor', 'nexachat-ai' ),
+				'hint'     => __( 'Services, pricing, coverage area and quote requests.', 'vazho' ),
+				'category' => __( 'Services', 'vazho' ),
+				'industry' => __( 'Professional services', 'vazho' ),
+				'role'     => __( 'Customer advisor', 'vazho' ),
 				'tone'     => 'professional',
-				'welcome'  => __( 'Hello! Tell me what you need and I will explain our services, prices and how to get a quote.', 'nexachat-ai' ),
-				'rules'    => __( 'Understand the visitor\'s need before recommending a service. Offer the quote request form for anything that needs a custom price.', 'nexachat-ai' ),
+				'welcome'  => __( 'Hello! Tell me what you need and I will explain our services, prices and how to get a quote.', 'vazho' ),
+				'rules'    => __( 'Understand the visitor\'s need before recommending a service. Offer the quote request form for anything that needs a custom price.', 'vazho' ),
 				'fields'   => array(
 					array(
-						'label'    => __( 'Service needed', 'nexachat-ai' ),
+						'label'    => __( 'Service needed', 'vazho' ),
 						'type'     => 'text',
 						'required' => false,
 					),
@@ -155,7 +155,7 @@ class SSC_Templates {
 	public static function apply( $id ) {
 		$all = self::all();
 		if ( ! isset( $all[ $id ] ) ) {
-			return new WP_Error( 'ssc_template', __( 'Unknown template.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_template', __( 'Unknown template.', 'vazho' ) );
 		}
 		$t        = $all[ $id ];
 		$business = SSC_Settings::business();

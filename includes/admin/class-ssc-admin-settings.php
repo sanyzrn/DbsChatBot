@@ -3,7 +3,7 @@
  * Settings page: privacy & retention, security/limits, module settings,
  * advanced engine options, data tools (export/uninstall safety).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ class SSC_Admin_Settings {
 	 */
 	public function __construct() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		add_action( 'admin_init', array( $this, 'handle_actions' ), 5 );
 	}
@@ -145,12 +145,12 @@ class SSC_Admin_Settings {
 			}
 			if ( isset( $_POST['ssc_sms_test'] ) && SSC_Modules::is_active( 'sms' ) ) {
 				$to     = isset( $_POST['sms_test_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['sms_test_phone'] ) ) : '';
-				$result = SSC_Module_Sms::send( $to, __( 'Test message from your website assistant. SMS is working.', 'nexachat-ai' ) );
+				$result = SSC_Module_Sms::send( $to, __( 'Test message from your website assistant. SMS is working.', 'vazho' ) );
 				set_transient(
 					'ssc_sms_status',
 					array(
 						'ok'   => true === $result,
-						'text' => true === $result ? __( 'The test SMS was accepted by the panel.', 'nexachat-ai' ) : $result->get_error_message(),
+						'text' => true === $result ? __( 'The test SMS was accepted by the panel.', 'vazho' ) : $result->get_error_message(),
 					),
 					HOUR_IN_SECONDS
 				);
@@ -193,7 +193,7 @@ class SSC_Admin_Settings {
 		if ( ! SSC_Messenger::ready() ) {
 			$status = array(
 				'ok'   => false,
-				'text' => __( 'Add the bot token first.', 'nexachat-ai' ),
+				'text' => __( 'Add the bot token first.', 'vazho' ),
 			);
 		} else {
 			$me     = SSC_Messenger::bot_info( true );
@@ -202,7 +202,7 @@ class SSC_Admin_Settings {
 				$status = array(
 					'ok'   => false,
 					/* translators: %s: error from the messenger. */
-					'text' => sprintf( __( 'The bot could not be connected: %s', 'nexachat-ai' ), $result->get_error_message() ),
+					'text' => sprintf( __( 'The bot could not be connected: %s', 'vazho' ), $result->get_error_message() ),
 				);
 			} else {
 				$name   = ! empty( $me['username'] ) ? '@' . $me['username'] : SSC_Messenger::platform_label();
@@ -210,9 +210,9 @@ class SSC_Admin_Settings {
 					'ok'   => true,
 					'text' => 'polling' === SSC_Messenger::mode()
 						/* translators: %s: bot username. */
-						? sprintf( __( 'Connected to %s. New messages are checked every minute, and every few seconds while the Live chat screen is open.', 'nexachat-ai' ), $name )
+						? sprintf( __( 'Connected to %s. New messages are checked every minute, and every few seconds while the Live chat screen is open.', 'vazho' ), $name )
 						/* translators: %s: bot username. */
-						: sprintf( __( 'Connected to %s. Messages arrive instantly.', 'nexachat-ai' ), $name ),
+						: sprintf( __( 'Connected to %s. Messages arrive instantly.', 'vazho' ), $name ),
 				);
 			}
 		}
@@ -287,30 +287,30 @@ class SSC_Admin_Settings {
 
 		// One line under each tile.
 		$rate  = array(
-			'ip'      => __( 'Rate limit by IP', 'nexachat-ai' ),
-			'session' => __( 'Rate limit by session', 'nexachat-ai' ),
-			'both'    => __( 'Rate limit by IP and session', 'nexachat-ai' ),
-			'off'     => __( 'Rate limit off', 'nexachat-ai' ),
+			'ip'      => __( 'Rate limit by IP', 'vazho' ),
+			'session' => __( 'Rate limit by session', 'vazho' ),
+			'both'    => __( 'Rate limit by IP and session', 'vazho' ),
+			'off'     => __( 'Rate limit off', 'vazho' ),
 		);
 		$tiles = array(
 			'privacy'    => implode(
 				' · ',
 				array(
-					'yes' === $s['consent_enabled'] ? __( 'Consent required', 'nexachat-ai' ) : __( 'Consent optional', 'nexachat-ai' ),
-					'full' === $s['ip_storage'] ? __( 'Full IPs stored', 'nexachat-ai' ) : ( 'none' === $s['ip_storage'] ? __( 'IPs not stored', 'nexachat-ai' ) : __( 'IPs anonymized', 'nexachat-ai' ) ),
+					'yes' === $s['consent_enabled'] ? __( 'Consent required', 'vazho' ) : __( 'Consent optional', 'vazho' ),
+					'full' === $s['ip_storage'] ? __( 'Full IPs stored', 'vazho' ) : ( 'none' === $s['ip_storage'] ? __( 'IPs not stored', 'vazho' ) : __( 'IPs anonymized', 'vazho' ) ),
 				)
 			),
 			'display'    => implode(
 				' · ',
 				array(
-					'all' === $s['display_mode'] ? __( 'All pages', 'nexachat-ai' ) : __( 'Selected pages', 'nexachat-ai' ),
-					'yes' === $s['business_hours_enabled'] ? __( 'Business hours on', 'nexachat-ai' ) : __( 'Always available', 'nexachat-ai' ),
+					'all' === $s['display_mode'] ? __( 'All pages', 'vazho' ) : __( 'Selected pages', 'vazho' ),
+					'yes' === $s['business_hours_enabled'] ? __( 'Business hours on', 'vazho' ) : __( 'Always available', 'vazho' ),
 				)
 			),
 			'protection' => isset( $rate[ $s['rate_limit_mode'] ] ) ? $rate[ $s['rate_limit_mode'] ] : $rate['ip'],
 			/* translators: %d: number of modules. */
-			'modules'    => sprintf( _n( '%d module with options', '%d modules with options', $mod_count, 'nexachat-ai' ), $mod_count ),
-			'data'       => 'yes' === get_option( 'ssc_chatbot_delete_on_uninstall', 'no' ) ? __( 'Data is erased on delete', 'nexachat-ai' ) : __( 'Data is kept on delete', 'nexachat-ai' ),
+			'modules'    => sprintf( _n( '%d module with options', '%d modules with options', $mod_count, 'vazho' ), $mod_count ),
+			'data'       => 'yes' === get_option( 'ssc_chatbot_delete_on_uninstall', 'no' ) ? __( 'Data is erased on delete', 'vazho' ) : __( 'Data is kept on delete', 'vazho' ),
 		);
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-settings.php';
 	}

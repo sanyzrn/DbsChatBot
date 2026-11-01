@@ -12,7 +12,7 @@
  * fa_IR file loaded on an en_US site is never consulted. Filtering our own
  * domain with our own MO file works the same on every supported version.
  *
- * @package NexaChatAI
+ * @package Vazho
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class SSC_I18n {
 
-	const DOMAIN = 'nexachat-ai';
+	const DOMAIN = 'vazho';
 
 	/**
 	 * Locales the widget can be switched to (bundled translations + source).

@@ -16,7 +16,7 @@
  *
  * The pure build() method is unit-tested without WordPress I/O.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

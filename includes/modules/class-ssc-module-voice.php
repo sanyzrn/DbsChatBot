@@ -5,7 +5,7 @@
  * When inactive: no mic/speaker controls in the widget, no voice config sent
  * to the frontend, no voice features reachable (server computes the flags).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +32,7 @@ class SSC_Module_Voice extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Voice Interaction', 'nexachat-ai' );
+		return __( 'Voice Interaction', 'vazho' );
 	}
 
 	/**
@@ -41,7 +41,7 @@ class SSC_Module_Voice extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Visitors speak to the assistant and listen to answers (microphone input and text-to-speech playback).', 'nexachat-ai' );
+		return __( 'Visitors speak to the assistant and listen to answers (microphone input and text-to-speech playback).', 'vazho' );
 	}
 
 	/**
@@ -50,7 +50,7 @@ class SSC_Module_Voice extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Hands-free conversations and accessible answers for visitors on the go.', 'nexachat-ai' );
+		return __( 'Hands-free conversations and accessible answers for visitors on the go.', 'vazho' );
 	}
 
 	/**

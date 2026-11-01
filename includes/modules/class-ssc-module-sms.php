@@ -7,7 +7,7 @@
  * Every provider is called over HTTPS with credentials from the encrypted
  * vault; failures are reported as WP_Error with the provider's own message.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -32,7 +32,7 @@ class SSC_Module_Sms extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'SMS', 'nexachat-ai' );
+		return __( 'SMS', 'vazho' );
 	}
 
 	/**
@@ -41,7 +41,7 @@ class SSC_Module_Sms extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Connect your SMS panel (Kavenegar, Melipayamak, IPPanel/Faraz SMS or SMS.ir) to text yourself about new requests and to send cart reminders.', 'nexachat-ai' );
+		return __( 'Connect your SMS panel (Kavenegar, Melipayamak, IPPanel/Faraz SMS or SMS.ir) to text yourself about new requests and to send cart reminders.', 'vazho' );
 	}
 
 	/**
@@ -50,7 +50,7 @@ class SSC_Module_Sms extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Never miss a lead, and bring back customers who left their cart.', 'nexachat-ai' );
+		return __( 'Never miss a lead, and bring back customers who left their cart.', 'vazho' );
 	}
 
 	/**
@@ -103,10 +103,10 @@ class SSC_Module_Sms extends SSC_Module {
 	 */
 	public static function providers() {
 		return array(
-			'kavenegar'   => __( 'Kavenegar', 'nexachat-ai' ),
-			'melipayamak' => __( 'Melipayamak', 'nexachat-ai' ),
-			'ippanel'     => __( 'IPPanel / Faraz SMS', 'nexachat-ai' ),
-			'smsir'       => __( 'SMS.ir', 'nexachat-ai' ),
+			'kavenegar'   => __( 'Kavenegar', 'vazho' ),
+			'melipayamak' => __( 'Melipayamak', 'vazho' ),
+			'ippanel'     => __( 'IPPanel / Faraz SMS', 'vazho' ),
+			'smsir'       => __( 'SMS.ir', 'vazho' ),
 		);
 	}
 
@@ -150,12 +150,12 @@ class SSC_Module_Sms extends SSC_Module {
 	 */
 	public static function send( $to, $text ) {
 		if ( ! SSC_Modules::is_active( 'sms' ) || ! self::ready() ) {
-			return new WP_Error( 'ssc_sms_off', __( 'SMS is not configured.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_sms_off', __( 'SMS is not configured.', 'vazho' ) );
 		}
 		$to   = self::normalize( $to );
 		$text = trim( (string) $text );
 		if ( '' === $to || '' === $text ) {
-			return new WP_Error( 'ssc_sms_input', __( 'A valid mobile number and a message are required.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_sms_input', __( 'A valid mobile number and a message are required.', 'vazho' ) );
 		}
 		$provider = (string) SSC_Settings::get( 'sms_provider', 'kavenegar' );
 		$key      = SSC_Settings::get_secret( 'sms_api_key' );
@@ -288,7 +288,7 @@ class SSC_Module_Sms extends SSC_Module {
 	 */
 	protected static function decode( $response ) {
 		if ( is_wp_error( $response ) ) {
-			return new WP_Error( 'ssc_sms_http', __( 'The SMS panel could not be reached.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_sms_http', __( 'The SMS panel could not be reached.', 'vazho' ) );
 		}
 		$data = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 		return is_array( $data ) ? $data : self::provider_error( 'HTTP ' . (int) wp_remote_retrieve_response_code( $response ) );
@@ -302,7 +302,7 @@ class SSC_Module_Sms extends SSC_Module {
 	 */
 	protected static function provider_error( $message ) {
 		/* translators: %s: message from the SMS provider. */
-		return new WP_Error( 'ssc_sms_rejected', sprintf( __( 'The SMS panel refused the message: %s', 'nexachat-ai' ), '' !== trim( (string) $message ) ? $message : '—' ) );
+		return new WP_Error( 'ssc_sms_rejected', sprintf( __( 'The SMS panel refused the message: %s', 'vazho' ), '' !== trim( (string) $message ) ? $message : '—' ) );
 	}
 
 	/**
@@ -319,9 +319,9 @@ class SSC_Module_Sms extends SSC_Module {
 		// Health data never goes out by SMS: only the case number.
 		$text = 'pharma_adr' === $type
 			/* translators: %d: case number. */
-			? sprintf( __( 'New side-effect report #%d. Sign in to review it.', 'nexachat-ai' ), (int) $submission_id )
+			? sprintf( __( 'New side-effect report #%d. Sign in to review it.', 'vazho' ), (int) $submission_id )
 			/* translators: 1: request type, 2: request number. */
-			: sprintf( __( 'New %1$s #%2$d on your website.', 'nexachat-ai' ), SSC_Schema::type_label( $type ), (int) $submission_id );
+			: sprintf( __( 'New %1$s #%2$d on your website.', 'vazho' ), SSC_Schema::type_label( $type ), (int) $submission_id );
 		self::send( $phone, $text );
 	}
 }

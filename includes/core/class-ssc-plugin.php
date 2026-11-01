@@ -2,7 +2,7 @@
 /**
  * Main plugin controller (singleton).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -111,8 +111,8 @@ final class SSC_Plugin {
 		$url = SSC_Setup::is_complete() ? admin_url( 'admin.php?page=ssc-dashboard' ) : SSC_Setup::wizard_url();
 		array_unshift(
 			$links,
-			'<a href="' . esc_url( $url ) . '">' . esc_html__( 'Setup', 'nexachat-ai' ) . '</a>',
-			'<a href="' . esc_url( admin_url( 'admin.php?page=ssc-settings' ) ) . '">' . esc_html__( 'Settings', 'nexachat-ai' ) . '</a>'
+			'<a href="' . esc_url( $url ) . '">' . esc_html__( 'Setup', 'vazho' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=ssc-settings' ) ) . '">' . esc_html__( 'Settings', 'vazho' ) . '</a>'
 		);
 		return $links;
 	}
@@ -142,8 +142,8 @@ final class SSC_Plugin {
 		if ( ! function_exists( 'wp_add_privacy_policy_content' ) ) {
 			return;
 		}
-		$content  = '<p>' . esc_html__( 'This site uses an AI chat assistant. Messages you type are processed by this website and sent to the AI provider selected by the site owner (an external service) to generate replies. If you submit a contact form, your name, phone number and message are stored so we can follow up.', 'nexachat-ai' ) . '</p>';
-		$content .= '<p>' . esc_html__( 'Server conversation history is optional and follows the configured retention policy. Outside pharmaceutical mode, the browser may keep a short-lived conversation and the server may cache answers. In pharmaceutical mode these two caches are disabled; submitted safety reports are still stored for review. Deleting a browser conversation does not delete server records. Contact the site owner about access or deletion requests.', 'nexachat-ai' ) . '</p>';
+		$content  = '<p>' . esc_html__( 'This site uses an AI chat assistant. Messages you type are processed by this website and sent to the AI provider selected by the site owner (an external service) to generate replies. If you submit a contact form, your name, phone number and message are stored so we can follow up.', 'vazho' ) . '</p>';
+		$content .= '<p>' . esc_html__( 'Server conversation history is optional and follows the configured retention policy. Outside pharmaceutical mode, the browser may keep a short-lived conversation and the server may cache answers. In pharmaceutical mode these two caches are disabled; submitted safety reports are still stored for review. Deleting a browser conversation does not delete server records. Contact the site owner about access or deletion requests.', 'vazho' ) . '</p>';
 		wp_add_privacy_policy_content( get_bloginfo( 'name' ), wp_kses_post( $content ) );
 	}
 
@@ -156,7 +156,7 @@ final class SSC_Plugin {
 		$elements_manager->add_category(
 			'ssc_chatbot',
 			array(
-				'title' => __( 'NexaChatAI', 'nexachat-ai' ),
+				'title' => __( 'Vazho', 'vazho' ),
 				'icon'  => 'eicon-chat',
 			)
 		);

@@ -2,7 +2,7 @@
 /**
  * CSAT module: end-of-conversation satisfaction survey.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ class SSC_Module_Csat extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Satisfaction Survey (CSAT)', 'nexachat-ai' );
+		return __( 'Satisfaction Survey (CSAT)', 'vazho' );
 	}
 
 	/**
@@ -38,7 +38,7 @@ class SSC_Module_Csat extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'A short 1-5 star survey at the end of a real conversation, with a skip option.', 'nexachat-ai' );
+		return __( 'A short 1-5 star survey at the end of a real conversation, with a skip option.', 'vazho' );
 	}
 
 	/**
@@ -47,7 +47,7 @@ class SSC_Module_Csat extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Track assistant quality over time with one simple number.', 'nexachat-ai' );
+		return __( 'Track assistant quality over time with one simple number.', 'vazho' );
 	}
 
 	/**

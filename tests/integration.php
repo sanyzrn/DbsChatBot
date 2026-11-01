@@ -4,7 +4,7 @@ $root = getenv( 'SSC_WP_TEST_ROOT' );
 if ( ! $root || ! is_file( $root . '/wp-load.php' ) ) { fwrite( STDERR, "Set SSC_WP_TEST_ROOT to the disposable WordPress directory.\n" ); exit( 1 ); }
 require $root . '/wp-load.php';
 if ( ! defined( 'SSC_TEST_SITE' ) || ! SSC_TEST_SITE ) { throw new RuntimeException( 'Refusing to modify a non-test site.' ); }
-require_once dirname( __DIR__ ) . '/nexachat-ai.php';
+require_once dirname( __DIR__ ) . '/vazho.php';
 ssc_chatbot_activate();
 add_filter( 'pre_wp_mail', '__return_true' ); // No messages may leave the test environment.
 add_filter( 'pre_http_request', function () { return new WP_Error( 'test_network_blocked', 'External requests are mocked.' ); } );
@@ -199,19 +199,19 @@ $frontend = new SSC_Frontend();
 $frontend->register_assets();
 wp_set_current_user( 0 );
 $frontend->enqueue_with_config();
-$script_data = wp_scripts()->get_data( 'nexachat-ai', 'data' );
+$script_data = wp_scripts()->get_data( 'vazho', 'data' );
 wp_set_current_user( 1 );
 check( false !== strpos( $script_data, '"nonce":""' ), 'Public widget sends no incompatible or expiring nonce to guests by default' );
 check( ! empty( $frontend->build_config()['nonce'] ) && $frontend->build_config()['memory']['threads'], 'Signed-in users get a REST nonce and their conversation list' );
 add_filter( 'ssc_enforce_rest_nonce', '__return_true' );
 $frontend = new SSC_Frontend();
 $frontend->enqueue_with_config();
-$script_data = wp_scripts()->get_data( 'nexachat-ai', 'data' );
+$script_data = wp_scripts()->get_data( 'vazho', 'data' );
 check( false !== strpos( $script_data, '"nonce":"' . wp_create_nonce( 'wp_rest' ) . '"' ), 'Strict widget nonce uses the WordPress REST action' );
 remove_filter( 'ssc_enforce_rest_nonce', '__return_true' );
-load_textdomain( 'nexachat-ai', dirname( __DIR__ ) . '/languages/nexachat-ai-fa_IR.mo', 'fa_IR' );
-check( __( 'Report a side effect', 'nexachat-ai' ) === 'گزارش عارضهٔ دارویی', 'Bundled Persian gettext catalog loads' );
-unload_textdomain( 'nexachat-ai', true ); // Later checks expect the site's own language.
+load_textdomain( 'vazho', dirname( __DIR__ ) . '/languages/vazho-fa_IR.mo', 'fa_IR' );
+check( __( 'Report a side effect', 'vazho' ) === 'گزارش عارضهٔ دارویی', 'Bundled Persian gettext catalog loads' );
+unload_textdomain( 'vazho', true ); // Later checks expect the site's own language.
 check( SSC_Settings::clamp_int( 'font_size', 0 ) === 12 && SSC_Settings::clamp_int( 'window_width', 5000 ) === 520 && SSC_Settings::clamp_int( 'ai_max_tokens', 0 ) === 100, 'Integer settings are clamped to usable ranges' );
 $raw_fields = array(
     array( 'label' => 'Company', 'type' => 'text', 'key' => '' ),
@@ -419,14 +419,14 @@ SSC_Settings::update( array() );
 // (WordPress < 6.5 uses nothing else), and the widget language must be
 // independent of the site language.
 $classic_mo = new MO();
-check( $classic_mo->import_from_file( SSC_CHATBOT_DIR . 'languages/nexachat-ai-fa_IR.mo' ) && 'منوی اصلی' === $classic_mo->translate( 'Main menu' ), 'Persian catalog loads with the classic MO reader' );
+check( $classic_mo->import_from_file( SSC_CHATBOT_DIR . 'languages/vazho-fa_IR.mo' ) && 'منوی اصلی' === $classic_mo->translate( 'Main menu' ), 'Persian catalog loads with the classic MO reader' );
 check( 'fa_IR' === SSC_I18n::locale_from_language( 'فارسی' ) && 'fa_IR' === SSC_I18n::locale_from_language( 'fa-IR' ) && 'en_US' === SSC_I18n::locale_from_language( 'English' ) && '' === SSC_I18n::locale_from_language( 'Deutsch' ), 'Answer-language names map to widget locales' );
 $widget_language_before = SSC_Settings::get( 'widget_language', 'auto' );
 SSC_Settings::update( array( 'widget_language' => 'fa_IR' ) );
 $widget_active = SSC_I18n::use_widget_locale();
-$widget_fa     = __( 'Main menu', 'nexachat-ai' );
+$widget_fa     = __( 'Main menu', 'vazho' );
 SSC_I18n::restore();
-$widget_clean = false === has_filter( 'gettext_nexachat-ai', array( 'SSC_I18n', 'gettext' ) );
+$widget_clean = false === has_filter( 'gettext_vazho', array( 'SSC_I18n', 'gettext' ) );
 SSC_Settings::update( array( 'widget_language' => $widget_language_before ) );
 check( $widget_active && 'منوی اصلی' === $widget_fa && $widget_clean, 'Widget language overrides the English site language, and only while active' );
 

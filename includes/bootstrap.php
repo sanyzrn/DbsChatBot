@@ -1,20 +1,20 @@
 <?php
 /**
- * Plugin bootstrap (loaded by nexachat-ai.php once it is safe to declare
+ * Plugin bootstrap (loaded by vazho.php once it is safe to declare
  * functions and classes; see the hand-over note in the main file).
  *
- * @package NexaChatAI
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SSC_CHATBOT_FILE', NEXACHATAI_MAIN_FILE );
-define( 'SSC_CHATBOT_DIR', plugin_dir_path( NEXACHATAI_MAIN_FILE ) );
-define( 'SSC_CHATBOT_URL', plugin_dir_url( NEXACHATAI_MAIN_FILE ) );
-define( 'SSC_CHATBOT_BASENAME', plugin_basename( NEXACHATAI_MAIN_FILE ) );
-define( 'NEXACHATAI_NAME', 'NexaChatAI' );
+define( 'SSC_CHATBOT_FILE', VAZHO_MAIN_FILE );
+define( 'SSC_CHATBOT_DIR', plugin_dir_path( VAZHO_MAIN_FILE ) );
+define( 'SSC_CHATBOT_URL', plugin_dir_url( VAZHO_MAIN_FILE ) );
+define( 'SSC_CHATBOT_BASENAME', plugin_basename( VAZHO_MAIN_FILE ) );
+define( 'VAZHO_NAME', 'Vazho' );
 
 /*
  * Autoloader: maps SSC_* class names to class-ssc-*.php files across the
@@ -36,7 +36,7 @@ function ssc_chatbot_activate() {
 	SSC_Setup::on_activation();
 	flush_rewrite_rules();
 }
-register_activation_hook( NEXACHATAI_MAIN_FILE, 'ssc_chatbot_activate' );
+register_activation_hook( VAZHO_MAIN_FILE, 'ssc_chatbot_activate' );
 
 /**
  * Deactivation: only unschedule recurring work. Data is never touched.
@@ -45,7 +45,7 @@ function ssc_chatbot_deactivate() {
 	SSC_Cron::unschedule();
 	flush_rewrite_rules();
 }
-register_deactivation_hook( NEXACHATAI_MAIN_FILE, 'ssc_chatbot_deactivate' );
+register_deactivation_hook( VAZHO_MAIN_FILE, 'ssc_chatbot_deactivate' );
 
 /**
  * Boot the plugin after all core files of WordPress are available.
@@ -58,22 +58,10 @@ function ssc_chatbot_boot() {
 add_action( 'plugins_loaded', 'ssc_chatbot_boot', 5 );
 
 /**
- * One-time notice after taking over from the pre-rename folder.
- */
-function nexachatai_legacy_notice() {
-	if ( ! get_option( 'nexachatai_replaced_legacy' ) || ! current_user_can( 'activate_plugins' ) ) {
-		return;
-	}
-	delete_option( 'nexachatai_replaced_legacy' );
-	echo '<div class="notice notice-info is-dismissible"><p>' . esc_html__( 'NexaChatAI moved to a new plugin folder (nexachat-ai). The old copy (smart-support-chatbot) was deactivated automatically; all settings and data were kept. The "remove data on uninstall" policy was switched off so deleting the old copy cannot erase shared data; you can now delete it from the Plugins screen.', 'nexachat-ai' ) . '</p></div>';
-}
-add_action( 'admin_notices', 'nexachatai_legacy_notice' );
-
-/**
  * Translations.
  */
 function ssc_chatbot_load_textdomain() {
-	load_plugin_textdomain( 'nexachat-ai', false, dirname( SSC_CHATBOT_BASENAME ) . '/languages' );
+	load_plugin_textdomain( 'vazho', false, dirname( SSC_CHATBOT_BASENAME ) . '/languages' );
 }
 add_action( 'init', 'ssc_chatbot_load_textdomain' );
 

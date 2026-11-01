@@ -2,7 +2,7 @@
 /**
  * Anthropic Claude provider adapter.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

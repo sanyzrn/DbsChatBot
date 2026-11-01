@@ -3,7 +3,7 @@
  * Business Knowledge page: business profile, knowledge items, product
  * catalog, document import (KB).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ class SSC_Admin_Knowledge {
 	 */
 	public function __construct() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		add_action( 'admin_init', array( $this, 'handle_actions' ), 5 );
 	}

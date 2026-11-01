@@ -2,7 +2,7 @@
 /**
  * Human handoff module: escalation offers when the assistant cannot answer.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ class SSC_Module_Handoff extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Human Handoff', 'nexachat-ai' );
+		return __( 'Human Handoff', 'vazho' );
 	}
 
 	/**
@@ -38,7 +38,7 @@ class SSC_Module_Handoff extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'When the assistant cannot answer, it transparently offers an escalation to a human expert via a consultation request.', 'nexachat-ai' );
+		return __( 'When the assistant cannot answer, it transparently offers an escalation to a human expert via a consultation request.', 'vazho' );
 	}
 
 	/**
@@ -47,7 +47,7 @@ class SSC_Module_Handoff extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'No visitor is ever left stuck without a path to a real person.', 'nexachat-ai' );
+		return __( 'No visitor is ever left stuck without a path to a real person.', 'vazho' );
 	}
 
 	/**
@@ -85,7 +85,7 @@ class SSC_Module_Handoff extends SSC_Module {
 	public static function handoff_text() {
 		$text = (string) SSC_Settings::get( 'handoff_text', '' );
 		if ( '' === trim( $text ) ) {
-			$text = __( 'It looks like this question is better handled by a human expert. Would you like to leave a consultation request?', 'nexachat-ai' );
+			$text = __( 'It looks like this question is better handled by a human expert. Would you like to leave a consultation request?', 'vazho' );
 		}
 		return $text;
 	}

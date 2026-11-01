@@ -3,7 +3,7 @@
  * Dashboard page: publication status, connection health, knowledge readiness,
  * actionable warnings.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ class SSC_Admin_Dashboard {
 	 */
 	public function __construct() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		if ( isset( $_GET['ssc_dash_action'], $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'ssc_dash' ) ) {
 			$action = sanitize_key( wp_unslash( $_GET['ssc_dash_action'] ) );

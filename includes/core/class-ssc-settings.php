@@ -7,7 +7,7 @@
  *   installation keeps its data through the 5.0 upgrade.
  * - New keys merge over defaults; unknown legacy keys are preserved.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1146,14 +1146,14 @@ class SSC_Settings {
 	 */
 	public static function form_field_type_labels() {
 		return array(
-			'text'     => __( 'Short text', 'nexachat-ai' ),
-			'textarea' => __( 'Long text', 'nexachat-ai' ),
-			'tel'      => __( 'Phone', 'nexachat-ai' ),
-			'email'    => __( 'Email', 'nexachat-ai' ),
-			'number'   => __( 'Number', 'nexachat-ai' ),
-			'select'   => __( 'Dropdown', 'nexachat-ai' ),
-			'radio'    => __( 'Single choice', 'nexachat-ai' ),
-			'checkbox' => __( 'Checkbox', 'nexachat-ai' ),
+			'text'     => __( 'Short text', 'vazho' ),
+			'textarea' => __( 'Long text', 'vazho' ),
+			'tel'      => __( 'Phone', 'vazho' ),
+			'email'    => __( 'Email', 'vazho' ),
+			'number'   => __( 'Number', 'vazho' ),
+			'select'   => __( 'Dropdown', 'vazho' ),
+			'radio'    => __( 'Single choice', 'vazho' ),
+			'checkbox' => __( 'Checkbox', 'vazho' ),
 		);
 	}
 
@@ -1247,7 +1247,7 @@ class SSC_Settings {
 			$items[] = array(
 				'id'      => 'ki-org-profile',
 				'type'    => 'general',
-				'title'   => isset( $new['business']['org_name'] ) && '' !== $new['business']['org_name'] ? $new['business']['org_name'] : __( 'About the organization', 'nexachat-ai' ),
+				'title'   => isset( $new['business']['org_name'] ) && '' !== $new['business']['org_name'] ? $new['business']['org_name'] : __( 'About the organization', 'vazho' ),
 				'content' => wp_kses_post( (string) $old_knowledge[ $company_id ] ),
 			);
 		}

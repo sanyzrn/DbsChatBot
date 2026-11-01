@@ -1,6 +1,6 @@
-# NexaChatAI (DbsChatBot) — Independent Multidisciplinary Audit
+# Vazho (DbsChatBot) — Independent Multidisciplinary Audit
 
-**Plugin:** NexaChatAI / `smart-support-chatbot` **0.6.1-beta**
+**Plugin:** Vazho / `vazho` **0.6.1-beta**
 **Repository:** https://github.com/sanyzrn/DbsChatBot (HEAD `246021d`, "up", 2026-09-18)
 **Audit date:** 2026-09-18 · **Auditor model:** GLM (Super Z) acting as a multidisciplinary audit team (WordPress architecture, backend/frontend, UI/UX, accessibility, security, AI/RAG evaluation, pharmaceutical safety, QA)
 **Intended market per vendor:** pharmaceutical companies (Persian/English, RTL/LTR, approved-content-only vs. general-educational answering)
@@ -66,7 +66,7 @@ A non-blocker but mandatory reading for any buyer: §4 distinguishes what was ve
 
 - WordPress **7.1.1**, SQLite Database Integration drop-in **1.8.0** (no MySQL available in sandbox), PHP **8.3.13** static binary (mbstring, openssl, pdo_sqlite, sqlite3, curl), Node 24, Python 3.12.
 - Site marked `SSC_TEST_SITE` (vendor's own guard); synthetic data only; outbound HTTP and mail mocked (`pre_http_request` mu-plugin + vendor's `pre_wp_mail`); server bound to `127.0.0.1:8097`.
-- Plugin copied into `wp-content/plugins/smart-support-chatbot` (symlinks disallowed in sandbox — this also forced the vendor suites to be run from their documented layout; no product file was edited).
+- Plugin copied into `wp-content/plugins/vazho` (symlinks disallowed in sandbox — this also forced the vendor suites to be run from their documented layout; no product file was edited).
 - A **must-use mock provider** (`audit-mock-must-use.php`, Appendix B) captured every outbound model request (URL + full messages + body) and returned scripted replies, enabling end-to-end pipeline testing without any external or paid call.
 - Headless Chromium (agent-browser) for UI/UX/a11y; all screenshots in `audit-artifacts/`.
 
@@ -170,7 +170,7 @@ Format: ID · severity · affected journey · evidence label. Each entry gives f
 | F-15 | Info | Data hygiene | `form_fields` is stored unsanitized and sanitized on read (`class-ssc-admin-settings.php:80` vs `SSC_Settings::form_fields()`); current readers all use the sanitized accessor — latent inconsistency only. | Sanitize on write; fix comment. |
 | F-16 | Info | Schema | FULLTEXT keys defined on qa/kb tables are never used by queries (retrieval loads rows and scores in PHP). | Either use or drop; document SQLite behavior. |
 | F-17 | Info | UX | Inbox status changes are GET-based mutations (nonce present — safe, unconventional; `page-requests.php:85-99`). | Switch to POST. |
-| F-18 | Info | Build | `blocks/chatbot/index.php` etc. are 0-byte stubs; `esc_attr` used where `esc_url` fits (`wizard.php:456`); dist branding `nexachat-ai-*` vs slug `smart-support-chatbot`. | Cosmetic. |
+| F-18 | Info | Build | `blocks/chatbot/index.php` etc. are 0-byte stubs; `esc_attr` used where `esc_url` fits (`wizard.php:456`); dist branding `vazho-*` vs slug `vazho`. | Cosmetic. |
 
 ## 3.4 Positive verifications (confirmed working — worth keeping)
 
@@ -355,3 +355,4 @@ Run the same inputs (T1–T6 + A.1) against the real provider with the customer'
 | `audit-artifacts/adversarial_suite.py` | the independent test harness |
 | `audit-artifacts/audit-mock-must-use.php` | the mock/capture mu-plugin fixture |
 | `audit-artifacts/01…12-*.png` | UI screenshots (EN/FA × desktop/mobile, widget, ADR flow, admin) |
+

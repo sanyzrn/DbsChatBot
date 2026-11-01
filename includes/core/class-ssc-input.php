@@ -5,7 +5,7 @@
  * Every visitor-supplied value crosses one of these helpers before it reaches
  * storage, a provider, or an export, so the sanitizing rules live in one place.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -205,8 +205,8 @@ class SSC_Input {
 			return $text;
 		}
 		return $pharma
-			? __( 'I consent to the processing of my contact and health information for safety review and follow-up.', 'nexachat-ai' )
-			: __( 'I consent to the processing of my contact information and message for follow-up.', 'nexachat-ai' );
+			? __( 'I consent to the processing of my contact and health information for safety review and follow-up.', 'vazho' )
+			: __( 'I consent to the processing of my contact information and message for follow-up.', 'vazho' );
 	}
 
 	/**

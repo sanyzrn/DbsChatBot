@@ -3,7 +3,7 @@
  * Inline SVG icons for the admin screens (stroke style, currentColor).
  * Static, trusted markup: callers may echo the result as is.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

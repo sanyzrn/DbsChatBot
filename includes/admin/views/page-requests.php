@@ -3,7 +3,7 @@
  * Requests inbox (leads module): summary tiles, status chips, a filtered
  * table with a colour accent per status, and a helpful empty state.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  * @var array $result   Paginated rows.
  * @var array $filters  Active filters.
  */
@@ -16,10 +16,10 @@ $updated = isset( $_GET['updated'] ) ? (int) $_GET['updated'] : 0; // phpcs:igno
 $base    = admin_url( 'admin.php' );
 
 $ssc_statuses = array(
-	'new'         => __( 'New', 'nexachat-ai' ),
-	'in_progress' => __( 'In progress', 'nexachat-ai' ),
-	'done'        => __( 'Done', 'nexachat-ai' ),
-	'archived'    => __( 'Archived', 'nexachat-ai' ),
+	'new'         => __( 'New', 'vazho' ),
+	'in_progress' => __( 'In progress', 'vazho' ),
+	'done'        => __( 'Done', 'vazho' ),
+	'archived'    => __( 'Archived', 'vazho' ),
 );
 $ssc_hues     = array(
 	'new'         => 'amber',
@@ -59,29 +59,29 @@ $ssc_link     = function ( $status ) use ( $base, $filters ) {
 <div class="ssc-page ssc-requests">
 	<header class="ssc-page__head">
 		<div>
-			<h1><?php esc_html_e( 'Requests', 'nexachat-ai' ); ?></h1>
-			<p class="ssc-page__sub"><?php echo esc_html( sprintf( _n( '%d request', '%d requests', $result['total'], 'nexachat-ai' ), $result['total'] ) ); ?></p>
+			<h1><?php esc_html_e( 'Requests', 'vazho' ); ?></h1>
+			<p class="ssc-page__sub"><?php echo esc_html( sprintf( _n( '%d request', '%d requests', $result['total'], 'vazho' ), $result['total'] ) ); ?></p>
 		</div>
-		<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'ssc_export_submissions', 'type' => $filters['type'], 'status' => $filters['status'] ), admin_url( 'admin-post.php' ) ), 'ssc_export' ) ); ?>"><?php esc_html_e( 'Export CSV', 'nexachat-ai' ); ?></a>
+		<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'ssc_export_submissions', 'type' => $filters['type'], 'status' => $filters['status'] ), admin_url( 'admin-post.php' ) ), 'ssc_export' ) ); ?>"><?php esc_html_e( 'Export CSV', 'vazho' ); ?></a>
 	</header>
 
 	<?php if ( $updated ) : ?>
-		<div class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Updated.', 'nexachat-ai' ); ?></div>
+		<div class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Updated.', 'vazho' ); ?></div>
 	<?php endif; ?>
 
 	<section class="ssc-hstats">
 		<?php
-		SSC_Admin_UI::stat( 'mail', 'amber', number_format_i18n( $ssc_tally['new'] ), __( 'New', 'nexachat-ai' ), $ssc_link( 'new' ) );
-		SSC_Admin_UI::stat( 'clock', 'blue', number_format_i18n( $ssc_tally['in_progress'] ), __( 'In progress', 'nexachat-ai' ), $ssc_link( 'in_progress' ) );
-		SSC_Admin_UI::stat( 'check', 'green', number_format_i18n( $ssc_tally['done'] ), __( 'Done', 'nexachat-ai' ), $ssc_link( 'done' ) );
-		SSC_Admin_UI::stat( 'check', 'violet', $ssc_resolved . '%', __( 'Handled', 'nexachat-ai' ), '', $ssc_resolved );
+		SSC_Admin_UI::stat( 'mail', 'amber', number_format_i18n( $ssc_tally['new'] ), __( 'New', 'vazho' ), $ssc_link( 'new' ) );
+		SSC_Admin_UI::stat( 'clock', 'blue', number_format_i18n( $ssc_tally['in_progress'] ), __( 'In progress', 'vazho' ), $ssc_link( 'in_progress' ) );
+		SSC_Admin_UI::stat( 'check', 'green', number_format_i18n( $ssc_tally['done'] ), __( 'Done', 'vazho' ), $ssc_link( 'done' ) );
+		SSC_Admin_UI::stat( 'check', 'violet', $ssc_resolved . '%', __( 'Handled', 'vazho' ), '', $ssc_resolved );
 		?>
 	</section>
 
 	<?php
 	$ssc_chips = array(
 		array(
-			'label'  => __( 'All statuses', 'nexachat-ai' ),
+			'label'  => __( 'All statuses', 'vazho' ),
 			'url'    => $ssc_link( '' ),
 			'count'  => $ssc_all,
 			'active' => '' === $filters['status'],
@@ -97,43 +97,43 @@ $ssc_link     = function ( $status ) use ( $base, $filters ) {
 			'hue'    => $ssc_hues[ $ssc_st ],
 		);
 	}
-	SSC_Admin_UI::chips( $ssc_chips, __( 'Status', 'nexachat-ai' ) );
+	SSC_Admin_UI::chips( $ssc_chips, __( 'Status', 'vazho' ) );
 	?>
 
 	<form method="get" class="ssc-filterbar">
 		<input type="hidden" name="page" value="ssc-requests" />
 		<input type="hidden" name="status" value="<?php echo esc_attr( $filters['status'] ); ?>" />
-		<select name="type" aria-label="<?php esc_attr_e( 'Type', 'nexachat-ai' ); ?>">
-			<option value=""><?php esc_html_e( 'All types', 'nexachat-ai' ); ?></option>
-			<option value="consult" <?php selected( $filters['type'], 'consult' ); ?>><?php esc_html_e( 'Consultation', 'nexachat-ai' ); ?></option>
+		<select name="type" aria-label="<?php esc_attr_e( 'Type', 'vazho' ); ?>">
+			<option value=""><?php esc_html_e( 'All types', 'vazho' ); ?></option>
+			<option value="consult" <?php selected( $filters['type'], 'consult' ); ?>><?php esc_html_e( 'Consultation', 'vazho' ); ?></option>
 			<?php if ( ! SSC_Modules::is_active( 'pharma' ) ) : ?>
-				<option value="pharma_adr" <?php selected( $filters['type'], 'pharma_adr' ); ?>><?php esc_html_e( 'ADR reports', 'nexachat-ai' ); ?></option>
+				<option value="pharma_adr" <?php selected( $filters['type'], 'pharma_adr' ); ?>><?php esc_html_e( 'ADR reports', 'vazho' ); ?></option>
 			<?php endif; ?>
 		</select>
-		<input type="search" name="s" value="<?php echo esc_attr( $filters['search'] ); ?>" placeholder="<?php esc_attr_e( 'Search name or text…', 'nexachat-ai' ); ?>" />
-		<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Filter', 'nexachat-ai' ); ?></button>
+		<input type="search" name="s" value="<?php echo esc_attr( $filters['search'] ); ?>" placeholder="<?php esc_attr_e( 'Search name or text…', 'vazho' ); ?>" />
+		<button type="submit" class="ssc-btn ssc-btn--secondary"><?php esc_html_e( 'Filter', 'vazho' ); ?></button>
 		<?php if ( $ssc_filtered ) : ?>
-			<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( add_query_arg( 'page', 'ssc-requests', $base ) ); ?>"><?php esc_html_e( 'Clear filters', 'nexachat-ai' ); ?></a>
+			<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( add_query_arg( 'page', 'ssc-requests', $base ) ); ?>"><?php esc_html_e( 'Clear filters', 'vazho' ); ?></a>
 		<?php endif; ?>
 	</form>
 
 	<?php if ( empty( $result['items'] ) ) : ?>
 		<?php
 		if ( $ssc_filtered ) {
-			SSC_Admin_UI::empty_state( 'search', 'slate', __( 'Nothing matches these filters', 'nexachat-ai' ), __( 'Try another status or a shorter search.', 'nexachat-ai' ), __( 'Clear filters', 'nexachat-ai' ), add_query_arg( 'page', 'ssc-requests', $base ) );
+			SSC_Admin_UI::empty_state( 'search', 'slate', __( 'Nothing matches these filters', 'vazho' ), __( 'Try another status or a shorter search.', 'vazho' ), __( 'Clear filters', 'vazho' ), add_query_arg( 'page', 'ssc-requests', $base ) );
 		} else {
-			SSC_Admin_UI::empty_state( 'mail', 'amber', __( 'No requests yet', 'nexachat-ai' ), __( 'No requests yet. When visitors submit the consultation form, they appear here.', 'nexachat-ai' ), __( 'Set up the request form', 'nexachat-ai' ), admin_url( 'admin.php?page=ssc-settings#mod-leads' ) );
+			SSC_Admin_UI::empty_state( 'mail', 'amber', __( 'No requests yet', 'vazho' ), __( 'No requests yet. When visitors submit the consultation form, they appear here.', 'vazho' ), __( 'Set up the request form', 'vazho' ), admin_url( 'admin.php?page=ssc-settings#mod-leads' ) );
 		}
 		?>
 	<?php else : ?>
-		<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table">
+		<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'vazho' ); ?>"><table class="ssc-table">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Received', 'nexachat-ai' ); ?></th>
-					<th><?php esc_html_e( 'Name', 'nexachat-ai' ); ?></th>
-					<th><?php esc_html_e( 'Phone', 'nexachat-ai' ); ?></th>
-					<th><?php esc_html_e( 'Request', 'nexachat-ai' ); ?></th>
-					<th><?php esc_html_e( 'Status', 'nexachat-ai' ); ?></th>
+					<th><?php esc_html_e( 'Received', 'vazho' ); ?></th>
+					<th><?php esc_html_e( 'Name', 'vazho' ); ?></th>
+					<th><?php esc_html_e( 'Phone', 'vazho' ); ?></th>
+					<th><?php esc_html_e( 'Request', 'vazho' ); ?></th>
+					<th><?php esc_html_e( 'Status', 'vazho' ); ?></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -172,7 +172,7 @@ $ssc_link     = function ( $status ) use ( $base, $filters ) {
 								<input type="hidden" name="id" value="<?php echo esc_attr( (string) $row['id'] ); ?>" />
 								<?php wp_nonce_field( 'ssc_req_' . $row['id'] ); ?>
 								<input type="hidden" name="ssc_req_action" value="status" />
-								<select name="status_to" aria-label="<?php esc_attr_e( 'Change status', 'nexachat-ai' ); ?>">
+								<select name="status_to" aria-label="<?php esc_attr_e( 'Change status', 'vazho' ); ?>">
 									<?php foreach ( $ssc_statuses as $st => $st_label ) : ?>
 										<option value="<?php echo esc_attr( $st ); ?>" <?php selected( $row['status'], $st ); ?>><?php echo esc_html( $st_label ); ?></option>
 									<?php endforeach; ?>
@@ -180,7 +180,7 @@ $ssc_link     = function ( $status ) use ( $base, $filters ) {
 							</form>
 						</td>
 						<td class="ssc-td-actions">
-							<a class="ssc-link--danger" href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'ssc_req_action', 'delete', $row_base ), 'ssc_req_' . $row['id'] ) ); ?>"><?php esc_html_e( 'Delete', 'nexachat-ai' ); ?></a>
+							<a class="ssc-link--danger" href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'ssc_req_action', 'delete', $row_base ), 'ssc_req_' . $row['id'] ) ); ?>"><?php esc_html_e( 'Delete', 'vazho' ); ?></a>
 						</td>
 					</tr>
 				<?php endforeach; ?>
@@ -188,7 +188,7 @@ $ssc_link     = function ( $status ) use ( $base, $filters ) {
 		</table></div>
 
 		<?php if ( $result['total_pages'] > 1 ) : ?>
-			<nav class="ssc-pagination" aria-label="<?php esc_attr_e( 'Pagination', 'nexachat-ai' ); ?>">
+			<nav class="ssc-pagination" aria-label="<?php esc_attr_e( 'Pagination', 'vazho' ); ?>">
 				<?php
 				$paged = (int) $filters['page'];
 				for ( $p = 1; $p <= $result['total_pages']; ++$p ) {
