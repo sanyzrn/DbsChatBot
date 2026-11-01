@@ -241,4 +241,3 @@ if ( is_array( $summary ) && '' !== $summary['meta']['exported'] && false !== st
 		</div>
 	</div>
 </div>
-

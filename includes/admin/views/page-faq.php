@@ -139,4 +139,3 @@ $ssc_qa_mode    = (string) SSC_Settings::get( 'qa_mode', 'ai_first' );
 	<?php SSC_Admin_UI::acc_close(); ?>
 	</div>
 </div>
-

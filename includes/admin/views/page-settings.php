@@ -766,4 +766,3 @@ $secret_error = isset( $_GET['secret_error'] ) ? (int) $_GET['secret_error'] : 0
 	</div>
 	</div>
 </div>
-

@@ -304,4 +304,3 @@ class SSC_HTTP {
 		);
 	}
 }
-

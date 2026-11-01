@@ -298,4 +298,3 @@ class SSC_Provider_Webhook extends SSC_Provider {
 		return $result;
 	}
 }
-

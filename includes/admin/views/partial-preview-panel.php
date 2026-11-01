@@ -57,4 +57,3 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 
 				<p class="ssc-preview-panel__hint"><?php esc_html_e( 'This is the real assistant: changes apply instantly and you can chat with it (answers use the saved AI connection). Save when you are happy.', 'vazho' ); ?></p>
 			</aside>
-

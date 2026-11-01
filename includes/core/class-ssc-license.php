@@ -190,4 +190,3 @@ class SSC_License {
 		);
 	}
 }
-

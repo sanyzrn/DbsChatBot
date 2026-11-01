@@ -984,4 +984,3 @@ class SSC_Doc_Extract {
 		return (string) mb_convert_encoding( $bytes, 'UTF-8', 'ISO-8859-1' );
 	}
 }
-

@@ -284,4 +284,3 @@ class SSC_Modules {
 		return $out;
 	}
 }
-

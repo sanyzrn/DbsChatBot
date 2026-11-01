@@ -938,4 +938,3 @@ class SSC_Module_Woo extends SSC_Module {
 		);
 	}
 }
-

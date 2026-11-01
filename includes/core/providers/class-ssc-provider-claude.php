@@ -224,4 +224,3 @@ class SSC_Provider_Claude extends SSC_Provider {
 		return is_array( $data ) && isset( $data['stop_reason'] ) ? self::normalize_finish( $data['stop_reason'] ) : '';
 	}
 }
-

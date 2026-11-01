@@ -204,4 +204,3 @@ class SSC_Templates {
 		);
 	}
 }
-

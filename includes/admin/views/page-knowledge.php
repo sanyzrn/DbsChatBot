@@ -922,4 +922,3 @@ $ssc_order = array_merge( array_keys( SSC_Knowledge_Score::panels() ), array( 'a
 		</section>
 	</div>
 </div>
-

@@ -160,4 +160,3 @@ $ssc_url        = function ( $source, $rating ) {
 		<?php endif; ?>
 	<?php endif; ?>
 </div>
-

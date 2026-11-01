@@ -82,4 +82,3 @@ class SSC_Provider_Custom extends SSC_Provider_OpenAI_Compat {
 		);
 	}
 }
-

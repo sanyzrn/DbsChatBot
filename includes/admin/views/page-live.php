@@ -39,4 +39,3 @@ defined( 'ABSPATH' ) || exit;
 			</section>
 		</div>
 </div>
-

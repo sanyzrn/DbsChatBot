@@ -54,4 +54,3 @@ $configured = isset( $_GET['configured'] ) ? (int) $_GET['configured'] : 0; // p
 		</div>
 	</form>
 </div>
-

@@ -185,4 +185,3 @@ class SSC_Provider_Openai extends SSC_Provider_OpenAI_Compat {
 		return self::clean_sources( $sources );
 	}
 }
-

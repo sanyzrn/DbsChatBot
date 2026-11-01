@@ -288,4 +288,3 @@ if ( null === $screens_before['modules'] ) {
 } else {
 	update_option( SSC_Modules::OPTION, $screens_before['modules'], false );
 }
-

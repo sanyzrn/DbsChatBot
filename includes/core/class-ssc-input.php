@@ -291,4 +291,3 @@ class SSC_Input {
 		return fputcsv( $stream, array_map( array( __CLASS__, 'csv_cell' ), $row ), ',', '"', '' );
 	}
 }
-

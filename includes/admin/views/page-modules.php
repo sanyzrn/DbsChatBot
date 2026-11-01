@@ -226,4 +226,3 @@ $ssc_percent = $ssc_total > 0 ? (int) round( 100 * $ssc_on / $ssc_total ) : 0;
 		<p><?php esc_html_e( 'No modules in this view.', 'vazho' ); ?></p>
 	</div>
 </div>
-

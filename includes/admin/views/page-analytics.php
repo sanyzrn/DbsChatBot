@@ -96,4 +96,3 @@ $ssc_faq_url  = SSC_Modules::is_active( 'faq' ) ? admin_url( 'admin.php?page=ssc
 		</section>
 	</div>
 </div>
-

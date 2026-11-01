@@ -448,4 +448,3 @@ class SSC_Setup {
 		self::update_state( array( 'redirect_done' => true ) );
 	}
 }
-

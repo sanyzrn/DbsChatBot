@@ -2008,4 +2008,3 @@ class SSC_Schema {
 		update_option( 'ssc_chatbot_qa_migrated', 1, false );
 	}
 }
-

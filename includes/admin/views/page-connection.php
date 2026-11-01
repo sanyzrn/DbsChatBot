@@ -326,4 +326,3 @@ if ( 'none' !== $sel && ! $verified ) {
 	</div>
 	</div>
 </div>
-

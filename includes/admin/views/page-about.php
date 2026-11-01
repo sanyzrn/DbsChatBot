@@ -258,4 +258,3 @@ $ssc_specs  = array(
 		<p class="ssc-acredits__foot">© <?php echo esc_html( gmdate( 'Y' ) ); ?> <a href="<?php echo esc_url( SSC_Admin_About::MAKER_URL ); ?>" target="_blank" rel="noopener"><?php echo esc_html( SSC_Admin_About::MAKER ); ?></a> · <a href="<?php echo esc_url( SSC_Admin_About::MAKER_URL ); ?>" target="_blank" rel="noopener">DbsStudio.ir</a></p>
 	</section>
 </div>
-

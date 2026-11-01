@@ -294,4 +294,3 @@ class SSC_I18n {
 		return $mo ? $mo->translate_plural( $single, $plural, $number, $context ) : ( 1 === (int) $number ? $single : $plural );
 	}
 }
-

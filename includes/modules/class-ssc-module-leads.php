@@ -666,4 +666,3 @@ class SSC_Module_Leads extends SSC_Module {
 		exit;
 	}
 }
-

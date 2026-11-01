@@ -297,4 +297,3 @@ class SSC_Module_Faq extends SSC_Module {
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-faq.php';
 	}
 }
-

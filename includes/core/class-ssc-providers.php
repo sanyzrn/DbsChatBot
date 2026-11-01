@@ -124,4 +124,3 @@ class SSC_Providers {
 		return $select;
 	}
 }
-

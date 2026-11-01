@@ -83,4 +83,3 @@ class SSC_Module_Proactive extends SSC_Module {
 		);
 	}
 }
-

@@ -268,4 +268,3 @@ class SSC_Quantities {
 		);
 	}
 }
-

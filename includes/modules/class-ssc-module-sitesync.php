@@ -399,4 +399,3 @@ class SSC_Module_Sitesync extends SSC_Module {
 		return count( $docs );
 	}
 }
-

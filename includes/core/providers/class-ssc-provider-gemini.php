@@ -224,4 +224,3 @@ class SSC_Provider_Gemini extends SSC_Provider {
 		return parent::embedded_error( $data );
 	}
 }
-

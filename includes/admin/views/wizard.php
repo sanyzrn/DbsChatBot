@@ -584,4 +584,3 @@ $dir = 'ltr'; // Admin UI is always LTR regardless of site locale.
 			</main>
 	</div>
 </div>
-

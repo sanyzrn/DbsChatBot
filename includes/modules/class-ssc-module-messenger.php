@@ -285,4 +285,3 @@ class SSC_Module_Messenger extends SSC_Module {
 		);
 	}
 }
-

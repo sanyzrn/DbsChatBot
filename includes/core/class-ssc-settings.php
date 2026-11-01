@@ -1390,4 +1390,3 @@ class SSC_Settings {
 		return $new;
 	}
 }
-

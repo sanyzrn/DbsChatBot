@@ -325,4 +325,3 @@ class SSC_Module_Sms extends SSC_Module {
 		self::send( $phone, $text );
 	}
 }
-

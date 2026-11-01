@@ -240,4 +240,3 @@ $ssc_active_modules = count(
 		</ul>
 	</section>
 </div>
-

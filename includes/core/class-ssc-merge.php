@@ -309,4 +309,3 @@ class SSC_Merge {
 		);
 	}
 }
-

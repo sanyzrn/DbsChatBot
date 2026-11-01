@@ -1633,4 +1633,3 @@ class SSC_Module_Pharma extends SSC_Module {
 		exit;
 	}
 }
-

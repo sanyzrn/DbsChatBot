@@ -154,4 +154,3 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 		<?php endif; ?>
 	</section>
 </div>
-

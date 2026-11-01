@@ -421,4 +421,3 @@ abstract class SSC_Provider {
 		return true;
 	}
 }
-

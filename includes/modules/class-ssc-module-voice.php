@@ -84,4 +84,3 @@ class SSC_Module_Voice extends SSC_Module {
 		);
 	}
 }
-

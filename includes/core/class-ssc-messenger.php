@@ -602,4 +602,3 @@ class SSC_Messenger {
 		}
 	}
 }
-

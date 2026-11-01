@@ -383,4 +383,3 @@ class SSC_Stream {
 		);
 	}
 }
-

@@ -238,4 +238,3 @@ class SSC_Notification_Queue {
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE status IN ('sent', 'cancelled') AND updated_at < %d", time() - 30 * DAY_IN_SECONDS ) );
 	}
 }
-

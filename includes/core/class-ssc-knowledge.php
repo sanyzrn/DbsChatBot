@@ -620,4 +620,3 @@ class SSC_Knowledge {
 		return implode( "\n\n", $parts );
 	}
 }
-

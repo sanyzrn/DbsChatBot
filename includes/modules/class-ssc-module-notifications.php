@@ -331,4 +331,3 @@ class SSC_Module_Notifications extends SSC_Module {
 		return SSC_Notification_Queue::last_failure();
 	}
 }
-

@@ -102,4 +102,3 @@ class SSC_Lease {
 		self::forget( $option );
 	}
 }
-

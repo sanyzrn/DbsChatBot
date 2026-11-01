@@ -174,4 +174,3 @@ class SSC_Knowledge_Polarity {
 		return '';
 	}
 }
-

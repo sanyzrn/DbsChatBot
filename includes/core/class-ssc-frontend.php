@@ -536,4 +536,3 @@ class SSC_Frontend {
 		return $this->rendered;
 	}
 }
-

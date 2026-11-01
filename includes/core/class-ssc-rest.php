@@ -785,4 +785,3 @@ class SSC_REST {
 		);
 	}
 }
-

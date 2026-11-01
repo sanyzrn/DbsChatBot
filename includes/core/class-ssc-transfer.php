@@ -1097,4 +1097,3 @@ class SSC_Transfer {
 		return true;
 	}
 }
-

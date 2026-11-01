@@ -172,4 +172,3 @@ final class SSC_Plugin {
 		$widgets_manager->register( new SSC_Elementor_Widget() );
 	}
 }
-

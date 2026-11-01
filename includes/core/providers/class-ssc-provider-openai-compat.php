@@ -148,4 +148,3 @@ abstract class SSC_Provider_OpenAI_Compat extends SSC_Provider {
 		return '';
 	}
 }
-

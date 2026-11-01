@@ -129,4 +129,3 @@ abstract class SSC_Module {
 	 */
 	public function on_deactivate() {}
 }
-

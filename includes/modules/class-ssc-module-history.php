@@ -175,4 +175,3 @@ class SSC_Module_History extends SSC_Module {
 		exit;
 	}
 }
-

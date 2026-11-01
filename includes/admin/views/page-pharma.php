@@ -142,4 +142,3 @@ $ssc_link     = function ( $status ) use ( $filters ) {
 		<?php endif; ?>
 	<?php endif; ?>
 </div>
-

@@ -201,4 +201,3 @@ class SSC_Locations {
 		return $out;
 	}
 }
-

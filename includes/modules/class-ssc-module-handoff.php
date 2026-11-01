@@ -90,4 +90,3 @@ class SSC_Module_Handoff extends SSC_Module {
 		return $text;
 	}
 }
-

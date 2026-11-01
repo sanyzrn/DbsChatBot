@@ -1457,4 +1457,3 @@ class SSC_Module_Live extends SSC_Module {
 		// phpcs:enable
 	}
 }
-
