@@ -29,6 +29,13 @@ class SSC_Chat_Engine {
 	public $last_source = 'fallback';
 
 	/**
+	 * Provenance of this generation only; never inherited from another engine.
+	 *
+	 * @var array|null
+	 */
+	protected $receipt_snapshot = null;
+
+	/**
 	 * Provider failure detail (admin-only diagnostics; never shown publicly).
 	 *
 	 * @var string
@@ -72,9 +79,11 @@ class SSC_Chat_Engine {
 	 * @return array envelope: ok, reply, source, handoff, log_id, log_token, flags.
 	 */
 	public function chat( $message, $product = 'general', $history = array(), $on_delta = null ) {
-		$this->last_source     = 'fallback';
-		$this->last_error      = '';
-		$this->last_error_code = '';
+		$this->receipt_snapshot = null;
+		$this->web_sources      = array();
+		$this->last_source      = 'fallback';
+		$this->last_error       = '';
+		$this->last_error_code  = '';
 
 		// Hard ceiling on message size (token + abuse protection).
 		$message = SSC_Input::message( $message, 2000 );
@@ -220,6 +229,10 @@ class SSC_Chat_Engine {
 			$cached    = get_transient( $cache_key );
 			if ( false !== $cached && '' !== $cached ) {
 				$this->last_source = 'cache';
+				if ( is_array( $cached ) ) {
+					$this->receipt_snapshot = SSC_Modules::is_active( 'answer_receipt' ) && isset( $cached['receipt'] ) ? $cached['receipt'] : null;
+					return isset( $cached['reply'] ) && is_string( $cached['reply'] ) ? $cached['reply'] : '';
+				}
 				return (string) $cached;
 			}
 		}
@@ -259,6 +272,9 @@ class SSC_Chat_Engine {
 		SSC_License::count_ai_answer();
 		$reply             = $result['text'];
 		$this->web_sources = isset( $result['sources'] ) && is_array( $result['sources'] ) ? $result['sources'] : array();
+		if ( SSC_Modules::is_active( 'answer_receipt' ) ) {
+			$this->receipt_snapshot = SSC_Answer_Receipt::snapshot( SSC_Prompt_Builder::last_sources(), $this->web_sources );
+		}
 
 		/*
 		 * An answer the model did not finish is never presented as a normal
@@ -273,7 +289,7 @@ class SSC_Chat_Engine {
 		}
 		if ( $cache_enabled && $cache_key && '' === $incomplete ) {
 			$ttl = (int) apply_filters( 'ssc_ai_cache_ttl', 6 * HOUR_IN_SECONDS );
-			set_transient( $cache_key, $reply, $ttl );
+			set_transient( $cache_key, null !== $this->receipt_snapshot ? array( 'reply' => $reply, 'receipt' => $this->receipt_snapshot ) : $reply, $ttl );
 		}
 		$this->last_source = 'ai';
 		return $reply;
@@ -463,6 +479,9 @@ class SSC_Chat_Engine {
 				$token            = $this->log_token( $log_id );
 				$out['log_token'] = $token;
 			}
+		}
+		if ( SSC_Modules::is_active( 'answer_receipt' ) ) {
+			$out = SSC_Answer_Receipt::decorate( $out, $source, $this->receipt_snapshot );
 		}
 		return $out;
 	}

@@ -500,16 +500,19 @@ class SSC_REST {
 		}
 
 		return rest_ensure_response(
-			array(
-				'reply'     => $reply,
-				'source'    => $result['source'],
-				'handoff'   => ! empty( $result['handoff'] ),
-				'log_id'    => (int) $result['log_id'],
-				'log_token' => (string) $result['log_token'],
-				'flags'     => isset( $result['flags'] ) ? (object) $result['flags'] : new stdClass(),
-				'sources'   => isset( $result['sources'] ) ? $result['sources'] : array(),
-				'cards'     => isset( $result['cards'] ) ? $result['cards'] : array(),
-				'actions'   => isset( $result['actions'] ) ? $result['actions'] : array(),
+			SSC_Answer_Receipt::transport(
+				array(
+					'reply'     => $reply,
+					'source'    => $result['source'],
+					'handoff'   => ! empty( $result['handoff'] ),
+					'log_id'    => (int) $result['log_id'],
+					'log_token' => (string) $result['log_token'],
+					'flags'     => isset( $result['flags'] ) ? (object) $result['flags'] : new stdClass(),
+					'sources'   => isset( $result['sources'] ) ? $result['sources'] : array(),
+					'cards'     => isset( $result['cards'] ) ? $result['cards'] : array(),
+					'actions'   => isset( $result['actions'] ) ? $result['actions'] : array(),
+				),
+				$result
 			)
 		);
 	}
@@ -704,12 +707,15 @@ class SSC_REST {
 			return new WP_Error( 'ssc_chat_failed', __( 'The message could not be processed.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		return rest_ensure_response(
-			array(
-				'reply'   => 'unanswered' === $result['source'] && '' !== $this->engine->last_error ? $this->engine->admin_error_notice() : $result['reply'],
-				'source'  => $result['source'],
-				'handoff' => ! empty( $result['handoff'] ),
-				'flags'   => isset( $result['flags'] ) ? (object) $result['flags'] : new stdClass(),
-				'sources' => isset( $result['sources'] ) ? $result['sources'] : array(),
+			SSC_Answer_Receipt::transport(
+				array(
+					'reply'   => 'unanswered' === $result['source'] && '' !== $this->engine->last_error ? $this->engine->admin_error_notice() : $result['reply'],
+					'source'  => $result['source'],
+					'handoff' => ! empty( $result['handoff'] ),
+					'flags'   => isset( $result['flags'] ) ? (object) $result['flags'] : new stdClass(),
+					'sources' => isset( $result['sources'] ) ? $result['sources'] : array(),
+				),
+				$result
 			)
 		);
 	}

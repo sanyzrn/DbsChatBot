@@ -306,6 +306,9 @@ msgstr "هوش مصنوعی"
 msgid "AI Connection"
 msgstr "اتصال هوش مصنوعی"
 
+msgid "AI answer"
+msgstr "پاسخ هوش مصنوعی"
+
 msgid "AI can make mistakes."
 msgstr "هوش مصنوعی ممکن است اشتباه کند."
 
@@ -353,6 +356,9 @@ msgstr "دربارهٔ افزونه"
 
 msgid "About the organization"
 msgstr "دربارهٔ سازمان"
+
+msgid "About this answer"
+msgstr "دربارهٔ این پاسخ"
 
 msgid "About to leave, or lingering on a product or cart page"
 msgstr "هنگام ترک سایت یا ماندن طولانی در صفحهٔ محصول یا سبد خرید"
@@ -562,6 +568,9 @@ msgid "Answer"
 msgid_plural "Answers"
 msgstr[0] "پاسخ"
 msgstr[1] "پاسخ"
+
+msgid "Answer Receipt"
+msgstr "رسید پاسخ"
 
 msgid "Answer added."
 msgstr "پاسخ اضافه شد."
@@ -1651,6 +1660,9 @@ msgstr "رسمی"
 msgid "Friendly"
 msgstr "دوستانه"
 
+msgid "From saved answers"
+msgstr "از پاسخ‌های ثبت‌شده"
+
 msgid "From → To"
 msgstr "از ← به"
 
@@ -1939,6 +1951,9 @@ msgstr "بلافاصله (وب‌هوک) — پیشنهادی برای سایت 
 msgid "Insufficient permissions."
 msgstr "دسترسی کافی ندارید."
 
+msgid "Integration response"
+msgstr "پاسخ یکپارچه‌سازی"
+
 msgid "Intramuscular"
 msgstr "داخل عضلانی"
 
@@ -2169,6 +2184,9 @@ msgstr "ساخته‌شده توسط"
 
 msgid "Main menu"
 msgstr "منوی اصلی"
+
+msgid "Make answer provenance visible without promising correctness."
+msgstr "منشأ پاسخ را روشن کنید؛ بدون تضمین درستی آن."
 
 msgid "Make it yours"
 msgstr "شخصی‌سازی ظاهر"
@@ -2440,6 +2458,9 @@ msgstr "هنوز گفتگویی دربارهٔ محصولات ثبت نشده ا
 msgid "No products yet"
 msgstr "هنوز محصولی نیست"
 
+msgid "No public reference is available for this answer."
+msgstr "برای این پاسخ منبع عمومیِ قابل نمایش در دسترس نیست."
+
 msgid "No ratings yet"
 msgstr "هنوز امتیازی ثبت نشده"
 
@@ -2653,6 +2674,9 @@ msgstr "ساعت کاری"
 
 msgid "Opens at"
 msgstr "ساعت شروع"
+
+msgid "Operator response"
+msgstr "پاسخ اپراتور"
 
 msgid "Operators"
 msgstr "اپراتورها"
@@ -2908,6 +2932,9 @@ msgstr "منطقه دلخواه"
 
 msgid "Preferred day and time"
 msgstr "روز و ساعت دلخواه"
+
+msgid "Prepared:"
+msgstr "زمان تهیه:"
 
 msgid "Press Alt+C to open chat"
 msgstr "برای باز کردن گفتگو Alt+C را بزنید"
@@ -3401,6 +3428,9 @@ msgstr "پاسخ‌های آماده"
 msgid "Saved replies (one per line)"
 msgstr "پاسخ‌های آماده (هر خط یک پاسخ)"
 
+msgid "Saved response"
+msgstr "پاسخ ذخیره‌شده"
+
 msgid "School or training center"
 msgstr "آموزشگاه یا مرکز آموزشی"
 
@@ -3603,6 +3633,9 @@ msgstr[1] "نمایش %d نسخهٔ قدیمی‌تر"
 
 msgid "Show all conversations"
 msgstr "نمایش همهٔ گفتگوها"
+
+msgid "Show how each answer was prepared, with available public references."
+msgstr "روش تهیهٔ هر پاسخ و منابع عمومیِ در دسترس آن را نمایش دهید."
 
 msgid "Show modules"
 msgstr "نمایش ماژول‌ها"
@@ -4083,6 +4116,9 @@ msgstr "نامی که مشتریان شما را با آن می‌شناسند"
 msgid "The options of the modules you switched on. Open one to change it."
 msgstr "گزینه‌های ماژول‌هایی که روشن کرده‌اید. برای تغییر، یکی را باز کنید."
 
+msgid "The original provenance of this saved response is unavailable."
+msgstr "اطلاعات منشأ اصلی این پاسخ ذخیره‌شده در دسترس نیست."
+
 msgid "The page could not be imported (check the URL or try later)."
 msgstr "صفحه وارد نشد (نشانی را بررسی کنید یا بعداً تلاش کنید)."
 
@@ -4206,6 +4242,9 @@ msgstr "هنوز چیزی برای خلاصه کردن نیست."
 msgid "There is nothing to undo."
 msgstr "چیزی برای واگرد وجود ندارد."
 
+msgid "These references accompanied generation. They do not verify every claim in the answer."
+msgstr "این منابع هنگام تهیهٔ پاسخ در اختیار مدل بوده‌اند؛ درستی همهٔ جزئیات پاسخ را تأیید نمی‌کنند."
+
 msgid "This PDF is password-protected or encrypted. Remove the protection and upload it again."
 msgstr "این PDF رمزدار یا رمزگذاری‌شده است. محافظت را بردارید و دوباره بارگذاری کنید."
 
@@ -4259,6 +4298,9 @@ msgstr "هوش مصنوعی از همین اطلاعات سازمان شما ر�
 
 msgid "This is what the assistant tells visitors. Leave it empty to use the chat schedule from Settings (%s). That schedule only decides when the chat shows as online."
 msgstr "این همان چیزی است که دستیار به بازدیدکنندگان می‌گوید. اگر خالی بگذارید از برنامهٔ گفتگو در تنظیمات (%s) استفاده می‌شود. آن برنامه فقط تعیین می‌کند گفتگو چه زمانی آنلاین نشان داده شود."
+
+msgid "This label describes how the answer was prepared, not a guarantee of correctness."
+msgstr "این نشان روش تهیهٔ پاسخ را مشخص می‌کند و تضمین درستی آن نیست."
 
 msgid "This link code is invalid or expired. Create a new one in the Live inbox."
 msgstr "این کد اتصال نامعتبر یا منقضی است. در صفحهٔ گفتگوی زنده یک کد جدید بسازید."

@@ -1282,7 +1282,7 @@
                                 // The final DOM is stable: feedback handlers must not be replaced by an animation.
                         }
                         handleFlags(data);
-                        renderSources(node, data.sources);
+                        if (!renderReceipt(node, data.receipt)) { renderSources(node, data.sources); }
                         renderCards(node, data.cards);
                         handleActions(data.actions);
                         var tools = messageTools(node, reply);
@@ -1327,6 +1327,32 @@
                 if (cfg.features && cfg.features.faq) {
                         suggestRelated();
                 }
+        }
+
+        /** A receipt describes provenance, never a correctness score. No history is stored here. */
+        function renderReceipt(node, receipt) {
+                if (!node || !receipt || receipt.version !== 1 || ['bank', 'ai', 'cache', 'filter', 'live'].indexOf(receipt.kind) < 0) { return false; }
+                var details = el('details', 'ssc-receipt');
+                var summary = el('summary', 'ssc-receipt__summary');
+                summary.textContent = String(receipt.label || receipt.detailsLabel || 'About this answer');
+                summary.title = String(receipt.detailsLabel || 'About this answer');
+                details.appendChild(summary);
+                var note = el('p', 'ssc-receipt__note');
+                note.textContent = String(receipt.note || '');
+                note.setAttribute('dir', 'auto');
+                details.appendChild(note);
+                if (typeof receipt.generated_at === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(receipt.generated_at)) {
+                        var value = new Date(receipt.generated_at);
+                        if (!isNaN(value.getTime())) {
+                                var time = el('time', 'ssc-receipt__time');
+                                time.dateTime = receipt.generated_at;
+                                time.textContent = String(receipt.timeLabel || 'Prepared:') + ' ' + value.toLocaleString(cfg.direction === 'rtl' ? 'fa-IR' : 'en-US');
+                                details.appendChild(time);
+                        }
+                }
+                renderSources(details, receipt.sources);
+                node.appendChild(details);
+                return true;
         }
 
         /** Knowledge documents the answer was grounded on (links when imported from a URL). */
