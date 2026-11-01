@@ -1,3 +1,5 @@
+> HISTORICAL REPORT — 2026-09-18, version 0.6.1-beta. Not a current task list or current security verdict. Ephemeral screenshots, transcripts and the environment-specific mock/harness were removed during cleanup; references to `audit-artifacts/*` below describe historical evidence, not files present in today's checkout. Do not run the archived reproduction commands against a live site. Use `tests/README.md`, the current integration suite and `agent-workflows/STATUS.md` for current work. Earlier artifacts remain recoverable from Git history.
+
 # Vazho (DbsChatBot) — Independent Multidisciplinary Audit
 
 **Plugin:** Vazho / `vazho` **0.6.1-beta**
