@@ -3,7 +3,7 @@
  * Export & Import page: download everything as one file, restore it here or
  * on another site, review before anything changes, undo the last import.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ class SSC_Admin_Transfer {
 	 */
 	public function __construct() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		add_action( 'admin_init', array( $this, 'handle_actions' ), 5 );
 	}
@@ -74,7 +74,7 @@ class SSC_Admin_Transfer {
 				self::prg( array( 'transfer' => 'error' ) );
 			}
 			if ( ! SSC_Transfer::stage( $result, get_current_user_id() ) ) {
-				set_transient( 'ssc_transfer_error_' . get_current_user_id(), __( 'The file could not be held for review (the database refused it). Try a smaller file, for example without documents.', 'nexachat-ai' ), 5 * MINUTE_IN_SECONDS );
+				set_transient( 'ssc_transfer_error_' . get_current_user_id(), __( 'The file could not be held for review (the database refused it). Try a smaller file, for example without documents.', 'vazho' ), 5 * MINUTE_IN_SECONDS );
 				self::prg( array( 'transfer' => 'error' ) );
 			}
 			self::prg( array( 'transfer' => 'review' ) );
@@ -84,7 +84,7 @@ class SSC_Admin_Transfer {
 		if ( isset( $_POST['ssc_transfer_apply'] ) && check_admin_referer( 'ssc_transfer_apply' ) ) {
 			$bundle = SSC_Transfer::staged( get_current_user_id() );
 			if ( null === $bundle ) {
-				set_transient( 'ssc_transfer_error_' . get_current_user_id(), __( 'The uploaded file is no longer available. Upload it again.', 'nexachat-ai' ), 5 * MINUTE_IN_SECONDS );
+				set_transient( 'ssc_transfer_error_' . get_current_user_id(), __( 'The uploaded file is no longer available. Upload it again.', 'vazho' ), 5 * MINUTE_IN_SECONDS );
 				self::prg( array( 'transfer' => 'error' ) );
 			}
 			$mode   = isset( $_POST['mode'] ) && 'replace' === sanitize_key( wp_unslash( $_POST['mode'] ) ) ? 'replace' : 'merge';
@@ -114,14 +114,14 @@ class SSC_Admin_Transfer {
 	protected function read_upload() {
 		// The nonce was verified by the caller.
 		if ( empty( $_FILES['transfer_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['transfer_file']['tmp_name'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- upload validated here.
-			return new WP_Error( 'ssc_transfer_nofile', __( 'Choose the export file first.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_transfer_nofile', __( 'Choose the export file first.', 'vazho' ) );
 		}
 		$file = $_FILES['transfer_file']; // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- name is only read for its extension; the content is parsed as JSON.
 		if ( 'json' !== strtolower( pathinfo( (string) $file['name'], PATHINFO_EXTENSION ) ) ) {
-			return new WP_Error( 'ssc_transfer_ext', __( 'Choose a .json file created by the export.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_transfer_ext', __( 'Choose a .json file created by the export.', 'vazho' ) );
 		}
 		if ( (int) $file['size'] > SSC_Transfer::MAX_BYTES ) {
-			return new WP_Error( 'ssc_transfer_big', __( 'The file is too large to import (16 MB at most).', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_transfer_big', __( 'The file is too large to import (16 MB at most).', 'vazho' ) );
 		}
 		$json = (string) file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- validated upload.
 		return SSC_Transfer::parse( $json );

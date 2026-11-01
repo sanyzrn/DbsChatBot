@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def read_versions(root=ROOT):
     """The version in the plugin header, the constant, readme.txt's Stable tag and the README version badge."""
-    plugin = (root / 'nexachat-ai.php').read_text(encoding='utf-8')
+    plugin = (root / 'vazho.php').read_text(encoding='utf-8')
     readme = (root / 'readme.txt').read_text(encoding='utf-8')
     header = re.search(r'^\s*\*\s*Version:\s*(\S+)', plugin, re.M)
     constant = re.search(r"define\(\s*'SSC_CHATBOT_VERSION',\s*'([^']+)'", plugin)
@@ -66,7 +66,7 @@ def decide(event, ref_type, ref_name, input_tag, versions, existing_tags,
             return False, '', 'the CI run was not a push to main: nothing is published'
         version = versions.get('constant', '')
         if not version:
-            raise ValueError('SSC_CHATBOT_VERSION was not found in nexachat-ai.php.')
+            raise ValueError('SSC_CHATBOT_VERSION was not found in vazho.php.')
         tag = 'v' + version
         if tag in existing_tags:
             return False, tag, 'version %s is already released: nothing to publish' % version

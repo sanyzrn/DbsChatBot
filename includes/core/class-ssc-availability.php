@@ -6,7 +6,7 @@
  * and page include/exclude rules. The frontend mirrors the computed status;
  * it never decides alone.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -78,7 +78,7 @@ class SSC_Availability {
 		if ( '' !== $msg ) {
 			return $msg;
 		}
-		return __( 'We are currently away. Leave a message and we will get back to you during business hours.', 'nexachat-ai' );
+		return __( 'We are currently away. Leave a message and we will get back to you during business hours.', 'vazho' );
 	}
 
 	/**
@@ -194,7 +194,7 @@ class SSC_Availability {
 		$start = self::parse_hhmm( (string) SSC_Settings::get( 'business_hours_start', '09:00' ), 9 * 60 );
 		$end   = self::parse_hhmm( (string) SSC_Settings::get( 'business_hours_end', '18:00' ), 18 * 60 );
 		$days  = self::day_ranges( self::allowed_days() );
-		$time  = $start === $end ? __( 'all day', 'nexachat-ai' ) : sprintf( '%02d:%02d–%02d:%02d', intdiv( $start, 60 ), $start % 60, intdiv( $end, 60 ), $end % 60 );
+		$time  = $start === $end ? __( 'all day', 'vazho' ) : sprintf( '%02d:%02d–%02d:%02d', intdiv( $start, 60 ), $start % 60, intdiv( $end, 60 ), $end % 60 );
 		$tz    = trim( (string) SSC_Settings::get( 'business_timezone', '' ) );
 		return $days . ', ' . $time . ( '' !== $tz ? ' (' . $tz . ')' : '' );
 	}
@@ -214,7 +214,7 @@ class SSC_Availability {
 			}
 		}
 		if ( 7 === count( array_filter( $set ) ) ) {
-			return __( 'every day', 'nexachat-ai' );
+			return __( 'every day', 'vazho' );
 		}
 		$name  = function ( $n ) {
 			global $wp_locale;

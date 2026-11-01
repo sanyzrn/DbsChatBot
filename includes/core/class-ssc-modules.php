@@ -6,7 +6,7 @@
  * Server-side enforcement pattern (used everywhere):
  *   if ( ! SSC_Modules::is_active( 'voice' ) ) { return error_or_noop; }
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -119,7 +119,7 @@ class SSC_Modules {
 			return false;
 		}
 		if ( SSC_License::module_locked( $id ) ) {
-			return new WP_Error( 'ssc_module_license', __( 'This module needs an active licence.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_module_license', __( 'This module needs an active licence.', 'vazho' ) );
 		}
 		if ( self::is_active( $id ) ) {
 			return true;
@@ -137,7 +137,7 @@ class SSC_Modules {
 				'ssc_module_dep',
 				sprintf(
 					/* translators: %s: comma-separated list of required module names. */
-					__( 'This module needs: %s', 'nexachat-ai' ),
+					__( 'This module needs: %s', 'vazho' ),
 					implode( ', ', $missing )
 				)
 			);
@@ -242,12 +242,12 @@ class SSC_Modules {
 	 */
 	public static function categories() {
 		return array(
-			'engagement'    => __( 'Customer Engagement', 'nexachat-ai' ),
-			'communication' => __( 'Communication', 'nexachat-ai' ),
-			'analytics'     => __( 'Analytics', 'nexachat-ai' ),
-			'knowledge'     => __( 'Knowledge & Intelligence', 'nexachat-ai' ),
-			'business'      => __( 'Business Tools', 'nexachat-ai' ),
-			'industry'      => __( 'Industry Extensions', 'nexachat-ai' ),
+			'engagement'    => __( 'Customer Engagement', 'vazho' ),
+			'communication' => __( 'Communication', 'vazho' ),
+			'analytics'     => __( 'Analytics', 'vazho' ),
+			'knowledge'     => __( 'Knowledge & Intelligence', 'vazho' ),
+			'business'      => __( 'Business Tools', 'vazho' ),
+			'industry'      => __( 'Industry Extensions', 'vazho' ),
 		);
 	}
 
@@ -284,3 +284,4 @@ class SSC_Modules {
 		return $out;
 	}
 }
+

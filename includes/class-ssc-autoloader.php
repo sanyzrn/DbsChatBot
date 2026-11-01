@@ -6,7 +6,7 @@
  * layer directories. Keeps the plugin free of require_once chains and makes
  * the module system lightweight.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

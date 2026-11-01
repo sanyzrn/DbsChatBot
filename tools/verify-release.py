@@ -5,7 +5,7 @@ correct package looks like, so a mistake in build-release.py is caught rather
 than mirrored. Exits non-zero on any finding.
 
 Usage:  python tools/verify-release.py [path/to/plugin.zip]
-        python tools/verify-release.py --rtl path/to/nexachat-ai-x.y.z-rtl.zip
+        python tools/verify-release.py --rtl path/to/vazho-x.y.z-rtl.zip
 
 The public ZIP must never contain the RTL-Theme licence file; the marketplace ZIP
 (--rtl) must contain exactly one, next to the main plugin file.
@@ -17,7 +17,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SLUG = 'nexachat-ai'
+SLUG = 'vazho'
 
 # Nothing matching these may appear anywhere in the archive.
 FORBIDDEN_PATTERNS = (
@@ -41,7 +41,7 @@ FORBIDDEN_PATTERNS = (
 
 # The plugin cannot install or run without these.
 REQUIRED = (
-    f'{SLUG}/nexachat-ai.php',
+    f'{SLUG}/vazho.php',
     f'{SLUG}/uninstall.php',
     f'{SLUG}/index.php',
     f'{SLUG}/readme.txt',
@@ -51,12 +51,12 @@ REQUIRED = (
     f'{SLUG}/assets/js/chatbot.js',
     f'{SLUG}/assets/css/chatbot.css',
     f'{SLUG}/blocks/chatbot/block.json',
-    f'{SLUG}/languages/nexachat-ai.pot',
+    f'{SLUG}/languages/vazho.pot',
 )
 
 
 def newest_archive() -> Path:
-    archives = sorted((ROOT / 'dist').glob('nexachat-ai-*.zip'), key=lambda p: p.stat().st_mtime)
+    archives = sorted((ROOT / 'dist').glob('vazho-*.zip'), key=lambda p: p.stat().st_mtime)
     if not archives:
         sys.exit('No archive found in dist/. Run tools/build-release.py first.')
     return archives[-1]
@@ -95,9 +95,9 @@ def main() -> None:
             problems.append(f'The marketplace ZIP must hold exactly one RTL_License file next to the main plugin file; found {licenses}.')
         else:
             with zipfile.ZipFile(archive) as bundle:
-                main_php = bundle.read(f'{SLUG}/nexachat-ai.php').decode('utf-8', 'ignore')
+                main_php = bundle.read(f'{SLUG}/vazho.php').decode('utf-8', 'ignore')
             if expected[0].split('/')[-1] not in main_php:
-                problems.append('nexachat-ai.php does not load the licence file that is in the ZIP.')
+                problems.append('vazho.php does not load the licence file that is in the ZIP.')
     elif licenses:
         problems.append(f'Marketplace licence file in the public ZIP: {licenses}')
 

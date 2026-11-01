@@ -4,7 +4,7 @@
  * ring at the top of the Settings screen. Pure logic (no WordPress calls):
  * the caller passes in the settings and what it knows about the server.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

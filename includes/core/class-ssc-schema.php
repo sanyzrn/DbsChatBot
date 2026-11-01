@@ -9,7 +9,7 @@
  * - Submission `type` values are canonicalized ('pharma_adr', 'consult', ...)
  *   while keeping the legacy Persian display strings readable via type_label().
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -606,7 +606,7 @@ class SSC_Schema {
 	 */
 	public static function submission_types() {
 		$types = array(
-			'consult' => __( 'Consultation request', 'nexachat-ai' ),
+			'consult' => __( 'Consultation request', 'vazho' ),
 		);
 		/**
 		 * Modules may register additional submission types.
@@ -629,13 +629,13 @@ class SSC_Schema {
 		}
 		// Legacy display strings from 4.x.
 		$legacy = array(
-			'گزارش عوارض دارویی' => __( 'Adverse drug reaction report', 'nexachat-ai' ),
-			'درخواست مشاوره'     => __( 'Consultation request', 'nexachat-ai' ),
+			'گزارش عوارض دارویی' => __( 'Adverse drug reaction report', 'vazho' ),
+			'درخواست مشاوره'     => __( 'Consultation request', 'vazho' ),
 		);
 		if ( isset( $legacy[ $type ] ) ) {
 			return $legacy[ $type ];
 		}
-		return ( '' === $type ) ? __( 'General', 'nexachat-ai' ) : $type;
+		return ( '' === $type ) ? __( 'General', 'vazho' ) : $type;
 	}
 
 	/*
@@ -825,7 +825,7 @@ class SSC_Schema {
 		global $wpdb;
 		$table = self::table_name();
 		$user  = wp_get_current_user();
-		self::audit( (int) $id, 'delete', '', '', $user ? $user->user_login : '', __( 'Submission deleted', 'nexachat-ai' ) );
+		self::audit( (int) $id, 'delete', '', '', $user ? $user->user_login : '', __( 'Submission deleted', 'vazho' ) );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- custom table delete.
 		return false !== $wpdb->delete( $table, array( 'id' => (int) $id ), array( '%d' ) );
 	}
@@ -2008,3 +2008,4 @@ class SSC_Schema {
 		update_option( 'ssc_chatbot_qa_migrated', 1, false );
 	}
 }
+

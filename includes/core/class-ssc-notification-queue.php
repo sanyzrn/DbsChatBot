@@ -7,7 +7,7 @@
  * lease, retried with exponential backoff, and left visible for manual retry
  * once its attempts are exhausted.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -238,3 +238,4 @@ class SSC_Notification_Queue {
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE status IN ('sent', 'cancelled') AND updated_at < %d", time() - 30 * DAY_IN_SECONDS ) );
 	}
 }
+

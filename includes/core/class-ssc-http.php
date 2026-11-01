@@ -8,7 +8,7 @@
  * - HTTPS required whenever credentials travel,
  * - timeouts and response validation centralized.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -93,12 +93,12 @@ class SSC_HTTP {
 		);
 
 		if ( ! self::is_safe_url( $url, $opts['needs_https'] ) ) {
-			return self::fail( 'endpoint', __( 'The endpoint address is not allowed (it must be a valid public address; HTTPS is required when credentials are sent).', 'nexachat-ai' ) );
+			return self::fail( 'endpoint', __( 'The endpoint address is not allowed (it must be a valid public address; HTTPS is required when credentials are sent).', 'vazho' ) );
 		}
 
 		$payload = wp_json_encode( $body );
 		if ( false === $payload ) {
-			return self::fail( 'malformed', __( 'The request body could not be encoded.', 'nexachat-ai' ) );
+			return self::fail( 'malformed', __( 'The request body could not be encoded.', 'vazho' ) );
 		}
 
 		$headers['Content-Type'] = 'application/json';
@@ -158,7 +158,7 @@ class SSC_HTTP {
 		}
 
 		if ( ! is_array( $data ) ) {
-			return self::fail( 'malformed', __( 'The provider response was not valid JSON.', 'nexachat-ai' ) );
+			return self::fail( 'malformed', __( 'The provider response was not valid JSON.', 'vazho' ) );
 		}
 
 		return array(
@@ -266,22 +266,22 @@ class SSC_HTTP {
 	 */
 	public static function friendly_error( $code ) {
 		$map = array(
-			'auth'       => __( 'The API key was rejected. Double-check the key and that it belongs to the selected provider.', 'nexachat-ai' ),
-			'permission' => __( 'The provider refused the request: this key or project has no permission for the selected model or action (HTTP 403). The key itself may be fine. Check the project permissions and model access.', 'nexachat-ai' ),
-			'policy'     => __( 'The request was blocked by a security policy at the provider or at a firewall in front of it (HTTP 403). This is not necessarily a wrong key. Check the account\'s access rules, IP restrictions and content policy, then test again.', 'nexachat-ai' ),
-			'forbidden'  => __( 'The provider refused the request (HTTP 403) without saying why. That does not always mean the key is wrong. Check the account\'s access rules and the model, and quote the request id if you contact the provider.', 'nexachat-ai' ),
-			'model'      => __( 'The selected model is not available for this account or does not exist. Pick another model or enter the model ID manually.', 'nexachat-ai' ),
-			'credits'    => __( 'The account has insufficient credits or billing is not active. Check your provider account balance.', 'nexachat-ai' ),
-			'rate_limit' => __( 'The provider is rate-limiting requests right now. Wait a moment and test again.', 'nexachat-ai' ),
-			'region'     => __( 'The provider is not available from your server region or the account is region-restricted.', 'nexachat-ai' ),
-			'network'    => __( 'The server could not reach the provider (network or provider outage). Try again later.', 'nexachat-ai' ),
-			'timeout'    => __( 'The provider took too long to respond. Try a faster model or test again.', 'nexachat-ai' ),
-			'endpoint'   => __( 'The endpoint address is invalid or not allowed.', 'nexachat-ai' ),
-			'malformed'  => __( 'The provider returned an unexpected response format.', 'nexachat-ai' ),
-			'length'     => __( 'The model used its whole answer budget before it wrote anything. Raise "Max answer length", or choose a model that thinks less before answering.', 'nexachat-ai' ),
-			'filtered'   => __( 'The provider stopped the answer under its content policy.', 'nexachat-ai' ),
+			'auth'       => __( 'The API key was rejected. Double-check the key and that it belongs to the selected provider.', 'vazho' ),
+			'permission' => __( 'The provider refused the request: this key or project has no permission for the selected model or action (HTTP 403). The key itself may be fine. Check the project permissions and model access.', 'vazho' ),
+			'policy'     => __( 'The request was blocked by a security policy at the provider or at a firewall in front of it (HTTP 403). This is not necessarily a wrong key. Check the account\'s access rules, IP restrictions and content policy, then test again.', 'vazho' ),
+			'forbidden'  => __( 'The provider refused the request (HTTP 403) without saying why. That does not always mean the key is wrong. Check the account\'s access rules and the model, and quote the request id if you contact the provider.', 'vazho' ),
+			'model'      => __( 'The selected model is not available for this account or does not exist. Pick another model or enter the model ID manually.', 'vazho' ),
+			'credits'    => __( 'The account has insufficient credits or billing is not active. Check your provider account balance.', 'vazho' ),
+			'rate_limit' => __( 'The provider is rate-limiting requests right now. Wait a moment and test again.', 'vazho' ),
+			'region'     => __( 'The provider is not available from your server region or the account is region-restricted.', 'vazho' ),
+			'network'    => __( 'The server could not reach the provider (network or provider outage). Try again later.', 'vazho' ),
+			'timeout'    => __( 'The provider took too long to respond. Try a faster model or test again.', 'vazho' ),
+			'endpoint'   => __( 'The endpoint address is invalid or not allowed.', 'vazho' ),
+			'malformed'  => __( 'The provider returned an unexpected response format.', 'vazho' ),
+			'length'     => __( 'The model used its whole answer budget before it wrote anything. Raise "Max answer length", or choose a model that thinks less before answering.', 'vazho' ),
+			'filtered'   => __( 'The provider stopped the answer under its content policy.', 'vazho' ),
 		);
-		return isset( $map[ $code ] ) ? $map[ $code ] : __( 'Unknown connection error.', 'nexachat-ai' );
+		return isset( $map[ $code ] ) ? $map[ $code ] : __( 'Unknown connection error.', 'vazho' );
 	}
 
 	/**
@@ -304,3 +304,4 @@ class SSC_HTTP {
 		);
 	}
 }
+

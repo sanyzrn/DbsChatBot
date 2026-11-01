@@ -7,7 +7,7 @@
  * Pure logic (no WordPress calls): the same rules are mirrored by the page
  * script for live updates, and unit tests pin them.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

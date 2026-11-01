@@ -10,7 +10,7 @@ Usage:  python tools/build-release.py
 
 The second form builds the ZIP sold on RTL-Theme: the same files plus the
 marketplace licence file, placed unchanged in the plugin folder, under the name
-nexachat-ai-<version>-rtl.zip. The licence file belongs to that marketplace
+vazho-<version>-rtl.zip. The licence file belongs to that marketplace
 product and stays out of the repository and out of the public ZIP.
 """
 
@@ -22,11 +22,11 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SLUG = 'nexachat-ai'
+SLUG = 'vazho'
 
 # Files shipped from the plugin root.
 ROOT_FILES = (
-    'nexachat-ai.php',
+    'vazho.php',
     'index.php',
     'uninstall.php',
     'readme.txt',
@@ -50,7 +50,7 @@ FIXED_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 
 def plugin_version() -> str:
     """Read the single source of truth for the version."""
-    source = (ROOT / 'nexachat-ai.php').read_text(encoding='utf-8')
+    source = (ROOT / 'vazho.php').read_text(encoding='utf-8')
     match = re.search(r"define\(\s*'SSC_CHATBOT_VERSION',\s*'([^']+)'", source)
     if not match:
         sys.exit('Could not read SSC_CHATBOT_VERSION from the plugin header.')
@@ -96,12 +96,12 @@ def main() -> None:
         license_path = Path(args.rtl_license)
         if not license_path.is_file() or not RTL_LICENSE_NAME.match(license_path.name):
             sys.exit('--rtl-license must point to the unchanged RTL_License_<hash>.php file.')
-        loader = (ROOT / 'nexachat-ai.php').read_text(encoding='utf-8')
+        loader = (ROOT / 'vazho.php').read_text(encoding='utf-8')
         if license_path.name not in loader:
-            sys.exit(f'nexachat-ai.php does not load {license_path.name}; update the loader to this file name first.')
+            sys.exit(f'vazho.php does not load {license_path.name}; update the loader to this file name first.')
 
     version = plugin_version()
-    header = (ROOT / 'nexachat-ai.php').read_text(encoding='utf-8')
+    header = (ROOT / 'vazho.php').read_text(encoding='utf-8')
     declared = re.search(r'^\s*\*\s*Version:\s*(\S+)', header, re.M)
     if declared and declared.group(1) != version:
         sys.exit(
@@ -119,7 +119,7 @@ def main() -> None:
 
     output = Path(args.out) if args.out else ROOT / 'dist'
     output.mkdir(parents=True, exist_ok=True)
-    archive = output / (f'nexachat-ai-{version}-rtl.zip' if license_path else f'nexachat-ai-{version}.zip')
+    archive = output / (f'vazho-{version}-rtl.zip' if license_path else f'vazho-{version}.zip')
     # (archive name, source path); the licence file sits next to the main plugin file, byte for byte.
     entries = [(f'{SLUG}/' + path.relative_to(ROOT).as_posix(), path) for path in collect()]
     if license_path:

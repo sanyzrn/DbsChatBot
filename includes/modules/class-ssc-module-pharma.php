@@ -18,7 +18,7 @@
  * - The AI never invents pharmaceutical facts: when this module is active a
  *   strict medical-answer rule set is injected into every prompt.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,7 +45,7 @@ class SSC_Module_Pharma extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Pharmaceutical Extension', 'nexachat-ai' );
+		return __( 'Pharmaceutical Extension', 'vazho' );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class SSC_Module_Pharma extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Structured adverse drug reaction (ADR) intake with ICH E2A-style seriousness criteria, case management, audit trail and follow-up workflow for pharmacovigilance teams.', 'nexachat-ai' );
+		return __( 'Structured adverse drug reaction (ADR) intake with ICH E2A-style seriousness criteria, case management, audit trail and follow-up workflow for pharmacovigilance teams.', 'vazho' );
 	}
 
 	/**
@@ -63,7 +63,7 @@ class SSC_Module_Pharma extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Capture complete, reviewable safety reports instead of loose chat messages.', 'nexachat-ai' );
+		return __( 'Capture complete, reviewable safety reports instead of loose chat messages.', 'vazho' );
 	}
 
 	/**
@@ -149,7 +149,7 @@ class SSC_Module_Pharma extends SSC_Module {
 	 * @return array
 	 */
 	public function register_type( $types ) {
-		$types['pharma_adr'] = __( 'Adverse drug reaction report', 'nexachat-ai' );
+		$types['pharma_adr'] = __( 'Adverse drug reaction report', 'vazho' );
 		return $types;
 	}
 
@@ -176,7 +176,7 @@ class SSC_Module_Pharma extends SSC_Module {
 				break;
 			}
 		}
-		$offer = __( 'If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?', 'nexachat-ai' );
+		$offer = __( 'If you want to report a side effect of a medicine, I can register a structured safety report that our team will review. Would you like to start the report?', 'vazho' );
 
 		/*
 		 * Emergency guidance comes FIRST and on its own: it does not wait for
@@ -226,7 +226,7 @@ class SSC_Module_Pharma extends SSC_Module {
 	 * @return string
 	 */
 	protected static function emergency_notice() {
-		$english = __( 'This may be a medical emergency. Stop and seek immediate medical help now — call your local emergency number or go to the nearest emergency department. Do not wait for a reply here.', 'nexachat-ai' );
+		$english = __( 'This may be a medical emergency. Stop and seek immediate medical help now — call your local emergency number or go to the nearest emergency department. Do not wait for a reply here.', 'vazho' );
 		$persian = 'این وضعیت می‌تواند اورژانس پزشکی باشد. همین حالا کمک پزشکی فوری بگیرید — با اورژانس تماس بگیرید یا به نزدیک‌ترین بخش اورژانس بروید. منتظر پاسخ در این گفتگو نمانید.';
 
 		/**
@@ -627,89 +627,89 @@ class SSC_Module_Pharma extends SSC_Module {
 	public static function form_schema() {
 		return array(
 			'reporter' => array(
-				'label'  => __( 'Reporter', 'nexachat-ai' ),
+				'label'  => __( 'Reporter', 'vazho' ),
 				'fields' => array(
 					'reporter_type' => array(
-						'label'   => __( 'Reporter role', 'nexachat-ai' ),
+						'label'   => __( 'Reporter role', 'vazho' ),
 						'type'    => 'select',
 						'options' => array( 'patient', 'physician', 'pharmacist', 'nurse', 'other_health_professional' ),
 					),
 					'name'          => array(
-						'label'    => __( 'Reporter name', 'nexachat-ai' ),
+						'label'    => __( 'Reporter name', 'vazho' ),
 						'type'     => 'text',
 						'required' => true,
 					),
 					'phone'         => array(
-						'label'    => __( 'Contact phone', 'nexachat-ai' ),
+						'label'    => __( 'Contact phone', 'vazho' ),
 						'type'     => 'tel',
 						'required' => true,
 					),
 					'patient_age'   => array(
-						'label' => __( 'Patient age (years)', 'nexachat-ai' ),
+						'label' => __( 'Patient age (years)', 'vazho' ),
 						'type'  => 'number',
 					),
 					'patient_sex'   => array(
-						'label'   => __( 'Patient sex', 'nexachat-ai' ),
+						'label'   => __( 'Patient sex', 'vazho' ),
 						'type'    => 'select',
 						'options' => array( 'female', 'male', 'other', 'unknown' ),
 					),
 				),
 			),
 			'product'  => array(
-				'label'  => __( 'Suspected product', 'nexachat-ai' ),
+				'label'  => __( 'Suspected product', 'vazho' ),
 				'fields' => array(
 					'product'      => array(
-						'label'    => __( 'Product name', 'nexachat-ai' ),
+						'label'    => __( 'Product name', 'vazho' ),
 						'type'     => 'product',
 						'required' => true,
 					),
 					'batch_number' => array(
-						'label' => __( 'Batch / lot number', 'nexachat-ai' ),
+						'label' => __( 'Batch / lot number', 'vazho' ),
 						'type'  => 'text',
 					),
 					'dose'         => array(
-						'label' => __( 'Dose and frequency used', 'nexachat-ai' ),
+						'label' => __( 'Dose and frequency used', 'vazho' ),
 						'type'  => 'text',
 					),
 					'route'        => array(
-						'label'   => __( 'Route of administration', 'nexachat-ai' ),
+						'label'   => __( 'Route of administration', 'vazho' ),
 						'type'    => 'select',
 						'options' => array( 'oral', 'topical', 'intravenous', 'intramuscular', 'subcutaneous', 'inhalation', 'ophthalmic', 'other', 'unknown' ),
 					),
 				),
 			),
 			'reaction' => array(
-				'label'  => __( 'Suspected reaction', 'nexachat-ai' ),
+				'label'  => __( 'Suspected reaction', 'vazho' ),
 				'fields' => array(
 					'description'       => array(
-						'label'    => __( 'What happened? Describe the reaction and dates.', 'nexachat-ai' ),
+						'label'    => __( 'What happened? Describe the reaction and dates.', 'vazho' ),
 						'type'     => 'textarea',
 						'required' => true,
 					),
 					'severity'          => array(
-						'label'   => __( 'Clinical severity (how it felt)', 'nexachat-ai' ),
+						'label'   => __( 'Clinical severity (how it felt)', 'vazho' ),
 						'type'    => 'select',
 						'options' => array( 'mild', 'moderate', 'severe' ),
 					),
 					'seriousness'       => array(
-						'label'   => __( 'Regulatory seriousness criteria (any that apply)', 'nexachat-ai' ),
+						'label'   => __( 'Regulatory seriousness criteria (any that apply)', 'vazho' ),
 						'type'    => 'checkboxes',
 						'options' => array(
-							'death'               => __( 'Resulted in death', 'nexachat-ai' ),
-							'life_threatening'    => __( 'Life-threatening', 'nexachat-ai' ),
-							'hospitalization'     => __( 'Required or prolonged hospitalization', 'nexachat-ai' ),
-							'disability'          => __( 'Persistent or significant disability', 'nexachat-ai' ),
-							'congenital_anomaly'  => __( 'Congenital anomaly or birth defect', 'nexachat-ai' ),
-							'medically_important' => __( 'Other medically important event', 'nexachat-ai' ),
+							'death'               => __( 'Resulted in death', 'vazho' ),
+							'life_threatening'    => __( 'Life-threatening', 'vazho' ),
+							'hospitalization'     => __( 'Required or prolonged hospitalization', 'vazho' ),
+							'disability'          => __( 'Persistent or significant disability', 'vazho' ),
+							'congenital_anomaly'  => __( 'Congenital anomaly or birth defect', 'vazho' ),
+							'medically_important' => __( 'Other medically important event', 'vazho' ),
 						),
 					),
 					'outcome'           => array(
-						'label'   => __( 'Outcome so far', 'nexachat-ai' ),
+						'label'   => __( 'Outcome so far', 'vazho' ),
 						'type'    => 'select',
 						'options' => array( 'recovered', 'recovering', 'not_recovered', 'sequelae', 'hospitalized', 'death', 'unknown' ),
 					),
 					'concomitant_drugs' => array(
-						'label' => __( 'Other medicines taken at the same time', 'nexachat-ai' ),
+						'label' => __( 'Other medicines taken at the same time', 'vazho' ),
 						'type'  => 'textarea',
 					),
 				),
@@ -755,10 +755,10 @@ class SSC_Module_Pharma extends SSC_Module {
 	 */
 	public static function preset_labels() {
 		return array(
-			'short'    => __( 'Short — essentials only (5 questions)', 'nexachat-ai' ),
-			'standard' => __( 'Standard — essentials plus patient and outcome', 'nexachat-ai' ),
-			'full'     => __( 'Full — every question (most complete reports)', 'nexachat-ai' ),
-			'custom'   => __( 'Custom — choose each question', 'nexachat-ai' ),
+			'short'    => __( 'Short — essentials only (5 questions)', 'vazho' ),
+			'standard' => __( 'Standard — essentials plus patient and outcome', 'vazho' ),
+			'full'     => __( 'Full — every question (most complete reports)', 'vazho' ),
+			'custom'   => __( 'Custom — choose each question', 'vazho' ),
 		);
 	}
 
@@ -769,11 +769,11 @@ class SSC_Module_Pharma extends SSC_Module {
 	 */
 	public static function custom_type_labels() {
 		return array(
-			'text'       => __( 'Short text', 'nexachat-ai' ),
-			'textarea'   => __( 'Long text', 'nexachat-ai' ),
-			'number'     => __( 'Number', 'nexachat-ai' ),
-			'select'     => __( 'Dropdown (one choice)', 'nexachat-ai' ),
-			'checkboxes' => __( 'Checkboxes (several choices)', 'nexachat-ai' ),
+			'text'       => __( 'Short text', 'vazho' ),
+			'textarea'   => __( 'Long text', 'vazho' ),
+			'number'     => __( 'Number', 'vazho' ),
+			'select'     => __( 'Dropdown (one choice)', 'vazho' ),
+			'checkboxes' => __( 'Checkboxes (several choices)', 'vazho' ),
 		);
 	}
 
@@ -1015,42 +1015,42 @@ class SSC_Module_Pharma extends SSC_Module {
 	public static function option_label( $field, $value ) {
 		$labels = array(
 			'reporter_type' => array(
-				'patient'                   => __( 'Patient / consumer', 'nexachat-ai' ),
-				'physician'                 => __( 'Physician', 'nexachat-ai' ),
-				'pharmacist'                => __( 'Pharmacist', 'nexachat-ai' ),
-				'nurse'                     => __( 'Nurse', 'nexachat-ai' ),
-				'other_health_professional' => __( 'Other health professional', 'nexachat-ai' ),
+				'patient'                   => __( 'Patient / consumer', 'vazho' ),
+				'physician'                 => __( 'Physician', 'vazho' ),
+				'pharmacist'                => __( 'Pharmacist', 'vazho' ),
+				'nurse'                     => __( 'Nurse', 'vazho' ),
+				'other_health_professional' => __( 'Other health professional', 'vazho' ),
 			),
 			'patient_sex'   => array(
-				'female'  => __( 'Female', 'nexachat-ai' ),
-				'male'    => __( 'Male', 'nexachat-ai' ),
-				'other'   => __( 'Other', 'nexachat-ai' ),
-				'unknown' => __( 'Unknown', 'nexachat-ai' ),
+				'female'  => __( 'Female', 'vazho' ),
+				'male'    => __( 'Male', 'vazho' ),
+				'other'   => __( 'Other', 'vazho' ),
+				'unknown' => __( 'Unknown', 'vazho' ),
 			),
 			'route'         => array(
-				'oral'          => __( 'Oral', 'nexachat-ai' ),
-				'topical'       => __( 'Topical', 'nexachat-ai' ),
-				'intravenous'   => __( 'Intravenous', 'nexachat-ai' ),
-				'intramuscular' => __( 'Intramuscular', 'nexachat-ai' ),
-				'subcutaneous'  => __( 'Subcutaneous', 'nexachat-ai' ),
-				'inhalation'    => __( 'Inhalation', 'nexachat-ai' ),
-				'ophthalmic'    => __( 'Ophthalmic', 'nexachat-ai' ),
-				'other'         => __( 'Other', 'nexachat-ai' ),
-				'unknown'       => __( 'Unknown', 'nexachat-ai' ),
+				'oral'          => __( 'Oral', 'vazho' ),
+				'topical'       => __( 'Topical', 'vazho' ),
+				'intravenous'   => __( 'Intravenous', 'vazho' ),
+				'intramuscular' => __( 'Intramuscular', 'vazho' ),
+				'subcutaneous'  => __( 'Subcutaneous', 'vazho' ),
+				'inhalation'    => __( 'Inhalation', 'vazho' ),
+				'ophthalmic'    => __( 'Ophthalmic', 'vazho' ),
+				'other'         => __( 'Other', 'vazho' ),
+				'unknown'       => __( 'Unknown', 'vazho' ),
 			),
 			'severity'      => array(
-				'mild'     => __( 'Mild', 'nexachat-ai' ),
-				'moderate' => __( 'Moderate', 'nexachat-ai' ),
-				'severe'   => __( 'Severe', 'nexachat-ai' ),
+				'mild'     => __( 'Mild', 'vazho' ),
+				'moderate' => __( 'Moderate', 'vazho' ),
+				'severe'   => __( 'Severe', 'vazho' ),
 			),
 			'outcome'       => array(
-				'recovered'     => __( 'Recovered', 'nexachat-ai' ),
-				'recovering'    => __( 'Recovering', 'nexachat-ai' ),
-				'not_recovered' => __( 'Not recovered', 'nexachat-ai' ),
-				'sequelae'      => __( 'Sequelae / permanent impairment', 'nexachat-ai' ),
-				'hospitalized'  => __( 'Hospitalized', 'nexachat-ai' ),
-				'death'         => __( 'Death', 'nexachat-ai' ),
-				'unknown'       => __( 'Unknown', 'nexachat-ai' ),
+				'recovered'     => __( 'Recovered', 'vazho' ),
+				'recovering'    => __( 'Recovering', 'vazho' ),
+				'not_recovered' => __( 'Not recovered', 'vazho' ),
+				'sequelae'      => __( 'Sequelae / permanent impairment', 'vazho' ),
+				'hospitalized'  => __( 'Hospitalized', 'vazho' ),
+				'death'         => __( 'Death', 'vazho' ),
+				'unknown'       => __( 'Unknown', 'vazho' ),
 			),
 		);
 		if ( isset( $labels[ $field ] ) && isset( $labels[ $field ][ $value ] ) ) {
@@ -1111,7 +1111,7 @@ class SSC_Module_Pharma extends SSC_Module {
 			$params['extra'] = is_string( $params['extra'] ) ? json_decode( $params['extra'], true ) : array();
 		}
 		if ( ! SSC_Modules::is_active( 'pharma' ) ) {
-			return new WP_Error( 'ssc_module_off', __( 'ADR reporting is disabled on this site.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_module_off', __( 'ADR reporting is disabled on this site.', 'vazho' ), array( 'status' => 404 ) );
 		}
 
 		if ( ! empty( $params['ssc_hp'] ) ) {
@@ -1127,14 +1127,14 @@ class SSC_Module_Pharma extends SSC_Module {
 
 		$errors = array();
 		if ( mb_strlen( $name ) < 2 || mb_strlen( $name ) > 80 ) {
-			$errors[] = __( 'Please enter the reporter name (2-80 characters).', 'nexachat-ai' );
+			$errors[] = __( 'Please enter the reporter name (2-80 characters).', 'vazho' );
 		}
 		$pattern = (string) apply_filters( 'ssc_phone_pattern', '/^\+?\d[\d\s\-]{6,18}\d$/' );
 		if ( ! preg_match( $pattern, $phone ) ) {
-			$errors[] = __( 'Please enter a valid contact phone.', 'nexachat-ai' );
+			$errors[] = __( 'Please enter a valid contact phone.', 'vazho' );
 		}
 		if ( mb_strlen( $desc ) < 10 || mb_strlen( $desc ) > 10000 ) {
-			$errors[] = __( 'Please describe the reaction (10-10000 characters).', 'nexachat-ai' );
+			$errors[] = __( 'Please describe the reaction (10-10000 characters).', 'vazho' );
 		}
 
 		// Consent is REQUIRED for ADR reports (sensitive health data), independent
@@ -1142,7 +1142,7 @@ class SSC_Module_Pharma extends SSC_Module {
 		$consent_meta = array();
 		$consent      = SSC_Input::consent( $params['consent'] ?? false );
 		if ( ! $consent ) {
-			$errors[] = __( 'Your consent is required to submit a safety report.', 'nexachat-ai' );
+			$errors[] = __( 'Your consent is required to submit a safety report.', 'vazho' );
 		} else {
 			$consent_meta = array(
 				'_consent'        => 1,
@@ -1169,7 +1169,7 @@ class SSC_Module_Pharma extends SSC_Module {
 				$questions[ $key ] = $field['label'];
 			}
 			/* translators: %s: field label. */
-			$required_message = sprintf( __( 'The field "%s" is required.', 'nexachat-ai' ), $field['label'] );
+			$required_message = sprintf( __( 'The field "%s" is required.', 'vazho' ), $field['label'] );
 			switch ( $field['type'] ) {
 				case 'checkboxes':
 					$allowed = $field['custom'] ? $field['options'] : array_keys( $field['options'] );
@@ -1207,7 +1207,7 @@ class SSC_Module_Pharma extends SSC_Module {
 						}
 					}
 					if ( 'general' === $valid ) {
-						$errors[] = __( 'Unknown product. Please choose from the list.', 'nexachat-ai' );
+						$errors[] = __( 'Unknown product. Please choose from the list.', 'vazho' );
 					}
 						$extra['product_id'] = $valid;
 					break;
@@ -1218,13 +1218,13 @@ class SSC_Module_Pharma extends SSC_Module {
 					$raw   = '' === $typed ? '' : SSC_Input::ascii_number( $typed );
 					if ( '' !== $typed && '' === $raw ) {
 						if ( 'patient_age' === $key ) {
-							$errors[] = __( 'Patient age must be between 0 and 130 years.', 'nexachat-ai' );
+							$errors[] = __( 'Patient age must be between 0 and 130 years.', 'vazho' );
 						} else {
 							/* translators: %s: field label. */
-							$errors[] = sprintf( __( 'The field "%s" must be a number.', 'nexachat-ai' ), $field['label'] );
+							$errors[] = sprintf( __( 'The field "%s" must be a number.', 'vazho' ), $field['label'] );
 						}
 					} elseif ( 'patient_age' === $key && '' !== $raw && ( (float) $raw < 0 || (float) $raw > 130 ) ) {
-						$errors[] = __( 'Patient age must be between 0 and 130 years.', 'nexachat-ai' );
+						$errors[] = __( 'Patient age must be between 0 and 130 years.', 'vazho' );
 					}
 					if ( ! empty( $field['required'] ) && '' === $typed ) {
 						$errors[] = $required_message;
@@ -1274,11 +1274,11 @@ class SSC_Module_Pharma extends SSC_Module {
 			)
 		);
 		if ( ! $id ) {
-			return new WP_Error( 'ssc_storage', __( 'The report could not be stored. Please try again.', 'nexachat-ai' ), array( 'status' => 500 ) );
+			return new WP_Error( 'ssc_storage', __( 'The report could not be stored. Please try again.', 'vazho' ), array( 'status' => 500 ) );
 		}
 
 		// Audit trail entry (case creation).
-		SSC_Schema::audit( $id, 'created', '', 'new', 'system', __( 'ADR report received', 'nexachat-ai' ) );
+		SSC_Schema::audit( $id, 'created', '', 'new', 'system', __( 'ADR report received', 'vazho' ) );
 
 		// Notifications: immediate for serious cases, normal otherwise.
 		if ( SSC_Modules::is_active( 'notifications' ) ) {
@@ -1317,8 +1317,8 @@ class SSC_Module_Pharma extends SSC_Module {
 		}
 		add_submenu_page(
 			current_user_can( 'manage_options' ) ? 'ssc-dashboard' : 'tools.php',
-			__( 'ADR Cases', 'nexachat-ai' ),
-			__( 'ADR Cases', 'nexachat-ai' ),
+			__( 'ADR Cases', 'vazho' ),
+			__( 'ADR Cases', 'vazho' ),
 			current_user_can( 'manage_options' ) ? 'manage_options' : self::cap(),
 			'ssc-pharma',
 			array( $this, 'render_page' )
@@ -1349,7 +1349,7 @@ class SSC_Module_Pharma extends SSC_Module {
 		if ( current_user_can( 'manage_options' ) && isset( $_POST['ssc_pharma_setup_save'] ) && check_admin_referer( 'ssc_pharma_setup' ) ) {
 			$pv_email = isset( $_POST['pv_contact'] ) ? sanitize_email( wp_unslash( $_POST['pv_contact'] ) ) : '';
 			if ( ! is_email( $pv_email ) ) {
-				wp_die( esc_html__( 'Enter a valid pharmacovigilance contact email.', 'nexachat-ai' ) );
+				wp_die( esc_html__( 'Enter a valid pharmacovigilance contact email.', 'vazho' ) );
 			}
 			update_option(
 				'ssc_pharma_setup',
@@ -1457,7 +1457,7 @@ class SSC_Module_Pharma extends SSC_Module {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- single-case export.
 		$case = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d AND type = 'pharma_adr'", $id ), ARRAY_A );
 		if ( ! $case ) {
-			wp_die( esc_html__( 'Case not found.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Case not found.', 'vazho' ) );
 		}
 		$audit   = SSC_Schema::get_audit( $id );
 		$payload = array(
@@ -1505,7 +1505,7 @@ class SSC_Module_Pharma extends SSC_Module {
 			array( '%s', '%s', '%s', '%s' ),
 			array( '%d' )
 		);
-		SSC_Schema::audit( $id, 'anonymized', $case['status'], $case['status'], $actor, __( 'Reporter PII removed (privacy request)', 'nexachat-ai' ) );
+		SSC_Schema::audit( $id, 'anonymized', $case['status'], $case['status'], $actor, __( 'Reporter PII removed (privacy request)', 'vazho' ) );
 	}
 
 	/**
@@ -1533,11 +1533,11 @@ class SSC_Module_Pharma extends SSC_Module {
 	 */
 	public static function case_statuses() {
 		return array(
-			'new'         => __( 'New (awaiting triage)', 'nexachat-ai' ),
-			'in_progress' => __( 'Under assessment', 'nexachat-ai' ),
-			'follow_up'   => __( 'Follow-up requested', 'nexachat-ai' ),
-			'done'        => __( 'Closed', 'nexachat-ai' ),
-			'archived'    => __( 'Archived', 'nexachat-ai' ),
+			'new'         => __( 'New (awaiting triage)', 'vazho' ),
+			'in_progress' => __( 'Under assessment', 'vazho' ),
+			'follow_up'   => __( 'Follow-up requested', 'vazho' ),
+			'done'        => __( 'Closed', 'vazho' ),
+			'archived'    => __( 'Archived', 'vazho' ),
 		);
 	}
 
@@ -1546,7 +1546,7 @@ class SSC_Module_Pharma extends SSC_Module {
 	 */
 	public function render_page() {
 		if ( ! self::user_can() ) {
-			wp_die( esc_html__( 'You do not have permission to access case records.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'You do not have permission to access case records.', 'vazho' ) );
 		}
 		$setup = get_option( 'ssc_pharma_setup', array() );
 		if ( empty( $setup['done'] ) && current_user_can( 'manage_options' ) ) {
@@ -1633,3 +1633,4 @@ class SSC_Module_Pharma extends SSC_Module {
 		exit;
 	}
 }
+

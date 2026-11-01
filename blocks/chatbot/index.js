@@ -9,7 +9,7 @@
 	var useBlockProps = wp.blockEditor.useBlockProps;
 	var Placeholder = wp.components.Placeholder;
 	// Texts come from the server (already translated); the English fallback is for a missing script.
-	var text = window.sscBlockI18n || { label: 'NexaChatAI', instructions: 'The assistant is configured in the NexaChatAI admin menu. Publishing is controlled there.' };
+	var text = window.sscBlockI18n || { label: 'Vazho', instructions: 'The assistant is configured in the Vazho admin menu. Publishing is controlled there.' };
 
 	registerBlockType('ssc/chatbot', {
 		edit: function () {

@@ -2,7 +2,7 @@
 /**
  * Provider registry.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,7 +69,7 @@ class SSC_Providers {
 	 * @return string[]
 	 */
 	public static function labels() {
-		$out = array( 'none' => __( 'No AI engine (offline answers only)', 'nexachat-ai' ) );
+		$out = array( 'none' => __( 'No AI engine (offline answers only)', 'vazho' ) );
 		foreach ( self::all() as $id => $provider ) {
 			$out[ $id ] = $provider->label();
 		}
@@ -124,3 +124,4 @@ class SSC_Providers {
 		return $select;
 	}
 }
+

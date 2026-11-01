@@ -11,7 +11,7 @@
  * honeypot, size caps, whitelists). Sites that disagree can re-enable
  * enforcement with the ssc_enforce_rest_nonce filter.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,12 +50,12 @@ class SSC_REST {
 	 */
 	public function public_permission( $request = null ) {
 		if ( $request && strlen( $request->get_body() ) > 131072 ) {
-			return new WP_Error( 'ssc_too_large', __( 'The request is too large.', 'nexachat-ai' ), array( 'status' => 413 ) );
+			return new WP_Error( 'ssc_too_large', __( 'The request is too large.', 'vazho' ), array( 'status' => 413 ) );
 		}
 		if ( apply_filters( 'ssc_enforce_rest_nonce', false ) ) {
 			$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
 			if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-				return new WP_Error( 'ssc_bad_nonce', __( 'Your session has expired. Please refresh the page.', 'nexachat-ai' ), array( 'status' => 403 ) );
+				return new WP_Error( 'ssc_bad_nonce', __( 'Your session has expired. Please refresh the page.', 'vazho' ), array( 'status' => 403 ) );
 			}
 		}
 		return true;
@@ -69,10 +69,10 @@ class SSC_REST {
 	 */
 	public function threads_permission( $request = null ) {
 		if ( ! is_user_logged_in() || 'yes' !== SSC_Settings::get( 'chat_threads', 'yes' ) ) {
-			return new WP_Error( 'ssc_forbidden', __( 'Sign in to see your conversations.', 'nexachat-ai' ), array( 'status' => 403 ) );
+			return new WP_Error( 'ssc_forbidden', __( 'Sign in to see your conversations.', 'vazho' ), array( 'status' => 403 ) );
 		}
 		if ( ! SSC_Setup::is_live() && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'ssc_offline', __( 'The assistant is not available.', 'nexachat-ai' ), array( 'status' => 403 ) );
+			return new WP_Error( 'ssc_offline', __( 'The assistant is not available.', 'vazho' ), array( 'status' => 403 ) );
 		}
 		return $this->public_permission( $request );
 	}
@@ -100,7 +100,7 @@ class SSC_REST {
 	public function thread( $request ) {
 		$row = SSC_Conversation::row( (string) $request['id'] );
 		if ( ! $row || get_current_user_id() !== (int) $row['user_id'] ) {
-			return new WP_Error( 'ssc_not_found', __( 'This conversation is no longer available.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_not_found', __( 'This conversation is no longer available.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		return rest_ensure_response(
 			array(
@@ -121,7 +121,7 @@ class SSC_REST {
 	public function forget_thread( $request ) {
 		$row = SSC_Conversation::row( (string) $request['id'] );
 		if ( ! $row || get_current_user_id() !== (int) $row['user_id'] ) {
-			return new WP_Error( 'ssc_not_found', __( 'This conversation is no longer available.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_not_found', __( 'This conversation is no longer available.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		SSC_Conversation::forget( (string) $request['id'] );
 		return rest_ensure_response( array( 'ok' => true ) );
@@ -134,7 +134,7 @@ class SSC_REST {
 	 */
 	public function admin_permission() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'ssc_forbidden', __( 'Insufficient permissions.', 'nexachat-ai' ), array( 'status' => 403 ) );
+			return new WP_Error( 'ssc_forbidden', __( 'Insufficient permissions.', 'vazho' ), array( 'status' => 403 ) );
 		}
 		return true;
 	}
@@ -431,11 +431,11 @@ class SSC_REST {
 	 */
 	public function chat_stream( $request ) {
 		if ( ! SSC_Setup::is_live() ) {
-			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'nexachat-ai' ), array( 'status' => 403 ) );
+			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'vazho' ), array( 'status' => 403 ) );
 		}
 		$cid = (string) $request->get_param( 'cid' );
 		if ( ! $this->engine->allow_request( 'chat', $cid ) ) {
-			return new WP_Error( 'ssc_rate_limited', __( 'You have reached the daily usage limit. Please try again tomorrow.', 'nexachat-ai' ), array( 'status' => 429 ) );
+			return new WP_Error( 'ssc_rate_limited', __( 'You have reached the daily usage limit. Please try again tomorrow.', 'vazho' ), array( 'status' => 429 ) );
 		}
 
 		$history = json_decode( (string) $request->get_param( 'history' ), true );
@@ -458,7 +458,7 @@ class SSC_REST {
 	 */
 	public function status() {
 		if ( ! SSC_Setup::is_live() ) {
-			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'nexachat-ai' ), array( 'status' => 403 ) );
+			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'vazho' ), array( 'status' => 403 ) );
 		}
 		$response = rest_ensure_response( SSC_Availability::live_status() );
 		$response->header( 'Cache-Control', 'no-store, max-age=0' );
@@ -473,11 +473,11 @@ class SSC_REST {
 	 */
 	public function chat( $request ) {
 		if ( ! SSC_Setup::is_live() ) {
-			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'nexachat-ai' ), array( 'status' => 403 ) );
+			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'vazho' ), array( 'status' => 403 ) );
 		}
 		$cid = (string) $request->get_param( 'cid' );
 		if ( ! $this->engine->allow_request( 'chat', $cid ) ) {
-			return new WP_Error( 'ssc_rate_limited', __( 'You have reached the daily usage limit. Please try again tomorrow.', 'nexachat-ai' ), array( 'status' => 429 ) );
+			return new WP_Error( 'ssc_rate_limited', __( 'You have reached the daily usage limit. Please try again tomorrow.', 'vazho' ), array( 'status' => 429 ) );
 		}
 
 		$history = json_decode( (string) $request->get_param( 'history' ), true );
@@ -490,7 +490,7 @@ class SSC_REST {
 		);
 
 		if ( ! $result['ok'] ) {
-			return new WP_Error( 'ssc_chat_failed', __( 'The message could not be processed.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_chat_failed', __( 'The message could not be processed.', 'vazho' ), array( 'status' => 400 ) );
 		}
 
 		// Admin-only diagnostics: real provider errors never reach visitors.
@@ -522,7 +522,7 @@ class SSC_REST {
 	 */
 	public function submit( $request ) {
 		if ( ! SSC_Setup::is_live() ) {
-			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'nexachat-ai' ), array( 'status' => 403 ) );
+			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'vazho' ), array( 'status' => 403 ) );
 		}
 		$params = $request->get_json_params();
 		if ( ! is_array( $params ) ) {
@@ -533,19 +533,19 @@ class SSC_REST {
 		// Strict module isolation: each submission type requires its own module.
 		if ( 'pharma_adr' === $type ) {
 			if ( ! SSC_Modules::is_active( 'pharma' ) ) {
-				return new WP_Error( 'ssc_module_off', __( 'ADR reporting is disabled on this site.', 'nexachat-ai' ), array( 'status' => 404 ) );
+				return new WP_Error( 'ssc_module_off', __( 'ADR reporting is disabled on this site.', 'vazho' ), array( 'status' => 404 ) );
 			}
 			$module = SSC_Modules::get( 'pharma' );
 		} else {
 			if ( ! SSC_Modules::is_active( 'leads' ) ) {
-				return new WP_Error( 'ssc_module_off', __( 'Form submission is disabled on this site.', 'nexachat-ai' ), array( 'status' => 404 ) );
+				return new WP_Error( 'ssc_module_off', __( 'Form submission is disabled on this site.', 'vazho' ), array( 'status' => 404 ) );
 			}
 			$module = SSC_Modules::get( 'leads' );
 		}
 
 		$cid = isset( $params['cid'] ) ? (string) $params['cid'] : '';
 		if ( ! $this->engine->allow_request( 'submit', $cid ) ) {
-			return new WP_Error( 'ssc_rate_limited', __( 'Too many submissions today. Please try again tomorrow.', 'nexachat-ai' ), array( 'status' => 429 ) );
+			return new WP_Error( 'ssc_rate_limited', __( 'Too many submissions today. Please try again tomorrow.', 'vazho' ), array( 'status' => 429 ) );
 		}
 		$result = $module->handle_submission( $params, $this->engine->client_ip() );
 		if ( is_wp_error( $result ) ) {
@@ -584,20 +584,20 @@ class SSC_REST {
 	 */
 	public function feedback( $request ) {
 		if ( ! SSC_Setup::is_live() || ! SSC_Modules::is_active( 'history' ) ) {
-			return new WP_Error( 'ssc_module_off', __( 'Feedback is disabled on this site.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_module_off', __( 'Feedback is disabled on this site.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		$cid    = (string) $request->get_param( 'cid' );
 		$log_id = (int) $request->get_param( 'log_id' );
 		$rating = (int) $request->get_param( 'rating' );
 		$token  = (string) $request->get_param( 'log_token' );
 		if ( ! $this->engine->allow_request( 'feedback', $cid ) ) {
-			return new WP_Error( 'ssc_rate_limited', __( 'Too many votes today.', 'nexachat-ai' ), array( 'status' => 429 ) );
+			return new WP_Error( 'ssc_rate_limited', __( 'Too many votes today.', 'vazho' ), array( 'status' => 429 ) );
 		}
 		if ( ! in_array( $rating, array( 1, -1 ), true ) ) {
-			return new WP_Error( 'ssc_invalid_rating', __( 'Invalid rating.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_invalid_rating', __( 'Invalid rating.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		if ( ! $this->engine->verify_log_token( $log_id, $token ) ) {
-			return new WP_Error( 'ssc_bad_token', __( 'Invalid feedback token.', 'nexachat-ai' ), array( 'status' => 403 ) );
+			return new WP_Error( 'ssc_bad_token', __( 'Invalid feedback token.', 'vazho' ), array( 'status' => 403 ) );
 		}
 		SSC_Schema::set_chatlog_rating( $log_id, $rating );
 		return rest_ensure_response( array( 'ok' => true ) );
@@ -611,14 +611,14 @@ class SSC_REST {
 	 */
 	public function csat( $request ) {
 		if ( ! SSC_Setup::is_live() || ! SSC_Modules::is_active( 'csat' ) ) {
-			return new WP_Error( 'ssc_module_off', __( 'The survey is disabled on this site.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_module_off', __( 'The survey is disabled on this site.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		$score = (int) $request->get_param( 'score' );
 		if ( $score < 1 || $score > 5 ) {
-			return new WP_Error( 'ssc_invalid_score', __( 'Invalid score.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_invalid_score', __( 'Invalid score.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		if ( ! $this->engine->allow_request( 'csat', '' ) ) {
-			return new WP_Error( 'ssc_rate_limited', __( 'Too many votes today.', 'nexachat-ai' ), array( 'status' => 429 ) );
+			return new WP_Error( 'ssc_rate_limited', __( 'Too many votes today.', 'vazho' ), array( 'status' => 429 ) );
 		}
 		SSC_Schema::record_csat( $score );
 		return rest_ensure_response( array( 'ok' => true ) );
@@ -641,7 +641,7 @@ class SSC_REST {
 			return rest_ensure_response(
 				array(
 					'ok'      => false,
-					'message' => __( 'Unknown provider.', 'nexachat-ai' ),
+					'message' => __( 'Unknown provider.', 'vazho' ),
 				)
 			);
 		}
@@ -678,7 +678,7 @@ class SSC_REST {
 				'reply'      => isset( $result['text'] ) ? $result['text'] : '',
 				'code'       => isset( $result['error']['code'] ) ? $result['error']['code'] : '',
 				'request_id' => $request_id,
-				'message'    => $result['ok'] ? __( 'Connection verified — the model replied successfully.', 'nexachat-ai' ) : ( isset( $result['error']['friendly'] ) ? $result['error']['friendly'] : '' ),
+				'message'    => $result['ok'] ? __( 'Connection verified — the model replied successfully.', 'vazho' ) : ( isset( $result['error']['friendly'] ) ? $result['error']['friendly'] : '' ),
 			)
 		);
 	}
@@ -701,7 +701,7 @@ class SSC_REST {
 			is_array( $history ) ? $history : array()
 		);
 		if ( ! $result['ok'] ) {
-			return new WP_Error( 'ssc_chat_failed', __( 'The message could not be processed.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_chat_failed', __( 'The message could not be processed.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		return rest_ensure_response(
 			array(
@@ -726,7 +726,7 @@ class SSC_REST {
 			return rest_ensure_response(
 				array(
 					'ok'      => false,
-					'message' => __( 'Configure and verify an AI provider first.', 'nexachat-ai' ),
+					'message' => __( 'Configure and verify an AI provider first.', 'vazho' ),
 				)
 			);
 		}
@@ -735,7 +735,7 @@ class SSC_REST {
 			return rest_ensure_response(
 				array(
 					'ok'      => false,
-					'message' => __( 'Complete the business profile (step 1) first.', 'nexachat-ai' ),
+					'message' => __( 'Complete the business profile (step 1) first.', 'vazho' ),
 				)
 			);
 		}
@@ -763,7 +763,7 @@ class SSC_REST {
 			return rest_ensure_response(
 				array(
 					'ok'      => false,
-					'message' => isset( $result['error']['friendly'] ) ? $result['error']['friendly'] : __( 'The identity test could not run.', 'nexachat-ai' ),
+					'message' => isset( $result['error']['friendly'] ) ? $result['error']['friendly'] : __( 'The identity test could not run.', 'vazho' ),
 				)
 			);
 		}
@@ -780,8 +780,9 @@ class SSC_REST {
 			array(
 				'ok'      => $mentions,
 				'reply'   => $result['text'],
-				'message' => $mentions ? __( 'Identity verified — the assistant correctly identified your organization.', 'nexachat-ai' ) : __( 'The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again.', 'nexachat-ai' ),
+				'message' => $mentions ? __( 'Identity verified — the assistant correctly identified your organization.', 'vazho' ) : __( 'The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again.', 'vazho' ),
 			)
 		);
 	}
 }
+

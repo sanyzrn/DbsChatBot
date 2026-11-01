@@ -4,7 +4,7 @@
  * OBSERVABLE failures and a retry queue (the 4.x fire-and-forget behaviour
  * is replaced by durable delivery jobs and scheduled retries).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,7 +33,7 @@ class SSC_Module_Notifications extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Notifications', 'nexachat-ai' );
+		return __( 'Notifications', 'vazho' );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class SSC_Module_Notifications extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Instant alerts for new requests via Bale/Telegram and/or email, with delivery tracking and automatic retries for failed deliveries.', 'nexachat-ai' );
+		return __( 'Instant alerts for new requests via Bale/Telegram and/or email, with delivery tracking and automatic retries for failed deliveries.', 'vazho' );
 	}
 
 	/**
@@ -51,7 +51,7 @@ class SSC_Module_Notifications extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Never miss a request - failed deliveries are retried and surfaced instead of vanishing.', 'nexachat-ai' );
+		return __( 'Never miss a request - failed deliveries are retried and surfaced instead of vanishing.', 'vazho' );
 	}
 
 	/**
@@ -198,7 +198,7 @@ class SSC_Module_Notifications extends SSC_Module {
 			$to = get_option( 'admin_email' );
 		}
 		/* translators: %s: submission type label. */
-		$subject = sprintf( __( 'New request: %s', 'nexachat-ai' ), SSC_Schema::type_label( $row['type'] ) );
+		$subject = sprintf( __( 'New request: %s', 'vazho' ), SSC_Schema::type_label( $row['type'] ) );
 		$sent    = wp_mail( $to, $subject, $text, array( 'Content-Type: text/plain; charset=UTF-8' ) );
 		return $sent ? array(
 			'ok'    => true,
@@ -222,15 +222,15 @@ class SSC_Module_Notifications extends SSC_Module {
 		$serious = $is_adr && SSC_Module_Pharma::is_serious_row( $row );
 
 		if ( $serious ) {
-			$lines[] = '🚨 ' . __( 'SERIOUS adverse reaction report - review immediately', 'nexachat-ai' );
+			$lines[] = '🚨 ' . __( 'SERIOUS adverse reaction report - review immediately', 'vazho' );
 		}
 		/* translators: %s: type label. */
-		$lines[] = sprintf( __( 'New request (%s)', 'nexachat-ai' ), $type );
+		$lines[] = sprintf( __( 'New request (%s)', 'vazho' ), $type );
 		// Medical narratives and direct identifiers stay in the access-controlled inbox.
 		if ( $is_adr ) {
 			$lines[] = sprintf(
 				/* translators: %d: internal case number. */
-				__( 'Case #%d — sign in to review the report.', 'nexachat-ai' ),
+				__( 'Case #%d — sign in to review the report.', 'vazho' ),
 				(int) $row['id']
 			);
 			$lines[] = admin_url( 'admin.php?page=ssc-pharma&view=' . (int) $row['id'] );
@@ -238,20 +238,20 @@ class SSC_Module_Notifications extends SSC_Module {
 		}
 		if ( ! empty( $row['name'] ) ) {
 			/* translators: %s: name. */
-			$lines[] = sprintf( __( 'Name: %s', 'nexachat-ai' ), $row['name'] );
+			$lines[] = sprintf( __( 'Name: %s', 'vazho' ), $row['name'] );
 		}
 		if ( ! empty( $row['phone'] ) ) {
 			/* translators: %s: phone. */
-			$lines[] = sprintf( __( 'Phone: %s', 'nexachat-ai' ), $row['phone'] );
+			$lines[] = sprintf( __( 'Phone: %s', 'vazho' ), $row['phone'] );
 		}
 		$email = SSC_Module_Leads::email_of( $row );
 		if ( '' !== $email ) {
 			/* translators: %s: email address. */
-			$lines[] = sprintf( __( 'Email: %s', 'nexachat-ai' ), $email );
+			$lines[] = sprintf( __( 'Email: %s', 'vazho' ), $email );
 		}
 		if ( ! empty( $row['product'] ) ) {
 			/* translators: %s: product. */
-			$lines[] = sprintf( __( 'Product: %s', 'nexachat-ai' ), $row['product'] );
+			$lines[] = sprintf( __( 'Product: %s', 'vazho' ), $row['product'] );
 		}
 		if ( $is_adr ) {
 			foreach ( array( 'severity', 'outcome', 'batch_number', 'concomitant_drugs', 'reporter_type' ) as $field ) {
@@ -331,3 +331,4 @@ class SSC_Module_Notifications extends SSC_Module {
 		return SSC_Notification_Queue::last_failure();
 	}
 }
+

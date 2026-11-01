@@ -10,7 +10,7 @@
  * - When deactivated: ALL data is preserved (only the feature flag flips).
  * - Each module declares dependencies and whether it needs configuration.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -129,3 +129,4 @@ abstract class SSC_Module {
 	 */
 	public function on_deactivate() {}
 }
+

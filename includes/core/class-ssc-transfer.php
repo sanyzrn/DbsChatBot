@@ -16,7 +16,7 @@
  * - Before an import changes anything, the current state is snapshotted so the
  *   last import can be undone.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class SSC_Transfer {
 
-	const FORMAT        = 'nexachat-ai-export';
+	const FORMAT        = 'vazho-export';
 	const VERSION       = 1;
 	const MAX_BYTES     = 16777216; // 16 MB: the file, its decoded copy and the staged copy are all held in memory.
 	const KDF_ROUNDS    = 150000;
@@ -43,43 +43,43 @@ class SSC_Transfer {
 	public static function sections() {
 		return array(
 			'business'  => array(
-				'label' => __( 'Business profile', 'nexachat-ai' ),
-				'hint'  => __( 'Name, contacts, description and tone.', 'nexachat-ai' ),
+				'label' => __( 'Business profile', 'vazho' ),
+				'hint'  => __( 'Name, contacts, description and tone.', 'vazho' ),
 				'icon'  => 'building',
 			),
 			'settings'  => array(
-				'label' => __( 'Settings & appearance', 'nexachat-ai' ),
-				'hint'  => __( 'Look, behaviour, privacy, limits and module options.', 'nexachat-ai' ),
+				'label' => __( 'Settings & appearance', 'vazho' ),
+				'hint'  => __( 'Look, behaviour, privacy, limits and module options.', 'vazho' ),
 				'icon'  => 'sliders',
 			),
 			'modules'   => array(
-				'label' => __( 'Active modules', 'nexachat-ai' ),
-				'hint'  => __( 'Which optional features are switched on.', 'nexachat-ai' ),
+				'label' => __( 'Active modules', 'vazho' ),
+				'hint'  => __( 'Which optional features are switched on.', 'vazho' ),
 				'icon'  => 'puzzle',
 			),
 			'products'  => array(
-				'label' => __( 'Products & services', 'nexachat-ai' ),
-				'hint'  => __( 'Every product with its summary and specifications.', 'nexachat-ai' ),
+				'label' => __( 'Products & services', 'vazho' ),
+				'hint'  => __( 'Every product with its summary and specifications.', 'vazho' ),
 				'icon'  => 'box',
 			),
 			'knowledge' => array(
-				'label' => __( 'Knowledge entries', 'nexachat-ai' ),
-				'hint'  => __( 'Policies, prices and other facts.', 'nexachat-ai' ),
+				'label' => __( 'Knowledge entries', 'vazho' ),
+				'hint'  => __( 'Policies, prices and other facts.', 'vazho' ),
 				'icon'  => 'book',
 			),
 			'faq'       => array(
-				'label' => __( 'FAQ answer bank', 'nexachat-ai' ),
-				'hint'  => __( 'Question and answer pairs.', 'nexachat-ai' ),
+				'label' => __( 'FAQ answer bank', 'vazho' ),
+				'hint'  => __( 'Question and answer pairs.', 'vazho' ),
 				'icon'  => 'chat',
 			),
 			'documents' => array(
-				'label' => __( 'Documents', 'nexachat-ai' ),
-				'hint'  => __( 'Uploaded files and imported pages. Website pages are re-learned automatically.', 'nexachat-ai' ),
+				'label' => __( 'Documents', 'vazho' ),
+				'hint'  => __( 'Uploaded files and imported pages. Website pages are re-learned automatically.', 'vazho' ),
 				'icon'  => 'file',
 			),
 			'secrets'   => array(
-				'label' => __( 'API keys & tokens', 'nexachat-ai' ),
-				'hint'  => __( 'AI provider keys, bot token, SMS key. Protected with a password.', 'nexachat-ai' ),
+				'label' => __( 'API keys & tokens', 'vazho' ),
+				'hint'  => __( 'AI provider keys, bot token, SMS key. Protected with a password.', 'vazho' ),
 				'icon'  => 'key',
 			),
 		);
@@ -157,13 +157,13 @@ class SSC_Transfer {
 		$known  = array_keys( self::sections() );
 		$wanted = array_values( array_intersect( $known, array_map( 'strval', (array) $wanted ) ) );
 		if ( ! $wanted ) {
-			return new WP_Error( 'ssc_transfer_empty', __( 'Choose at least one thing to export.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_transfer_empty', __( 'Choose at least one thing to export.', 'vazho' ) );
 		}
 		if ( in_array( 'secrets', $wanted, true ) && self::MIN_PASSWORD > strlen( (string) $passphrase ) ) {
 			return new WP_Error(
 				'ssc_transfer_password',
 				/* translators: %d: minimum password length. */
-				sprintf( __( 'Choose a password of at least %d characters to protect the API keys.', 'nexachat-ai' ), self::MIN_PASSWORD )
+				sprintf( __( 'Choose a password of at least %d characters to protect the API keys.', 'vazho' ), self::MIN_PASSWORD )
 			);
 		}
 
@@ -226,7 +226,7 @@ class SSC_Transfer {
 			}
 			$sealed = self::seal( $plain, (string) $passphrase );
 			if ( false === $sealed ) {
-				return new WP_Error( 'ssc_transfer_crypto', __( 'The API keys could not be encrypted on this server (OpenSSL is required). Export without them.', 'nexachat-ai' ) );
+				return new WP_Error( 'ssc_transfer_crypto', __( 'The API keys could not be encrypted on this server (OpenSSL is required). Export without them.', 'vazho' ) );
 			}
 			$bundle['secret_names'] = array_keys( $plain );
 			$bundle['secrets']      = $sealed;
@@ -252,7 +252,7 @@ class SSC_Transfer {
 	public static function filename() {
 		$host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
 		$host = trim( (string) preg_replace( '/[^a-z0-9]+/', '-', strtolower( $host ) ), '-' );
-		return 'nexachat-ai-' . ( '' !== $host ? $host . '-' : '' ) . gmdate( 'Ymd-His' ) . '.json';
+		return 'vazho-' . ( '' !== $host ? $host . '-' : '' ) . gmdate( 'Ymd-His' ) . '.json';
 	}
 
 	/*
@@ -340,7 +340,7 @@ class SSC_Transfer {
 	public static function parse( $json ) {
 		$json = (string) $json;
 		if ( strlen( $json ) > self::MAX_BYTES ) {
-			return new WP_Error( 'ssc_transfer_big', __( 'The file is too large to import (16 MB at most).', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_transfer_big', __( 'The file is too large to import (16 MB at most).', 'vazho' ) );
 		}
 		// A byte-order mark from a Windows editor would break the decoder.
 		if ( 0 === strpos( $json, "\xEF\xBB\xBF" ) ) {
@@ -348,13 +348,13 @@ class SSC_Transfer {
 		}
 		$bundle = json_decode( $json, true, 48 );
 		if ( ! is_array( $bundle ) ) {
-			return new WP_Error( 'ssc_transfer_json', __( 'This is not a valid export file: it could not be read as JSON.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_transfer_json', __( 'This is not a valid export file: it could not be read as JSON.', 'vazho' ) );
 		}
 		if ( ! isset( $bundle['format'] ) || self::FORMAT !== $bundle['format'] ) {
-			return new WP_Error( 'ssc_transfer_format', __( 'This file was not created by NexaChatAI export.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_transfer_format', __( 'This file was not created by Vazho export.', 'vazho' ) );
 		}
 		if ( ! isset( $bundle['format_version'] ) || (int) $bundle['format_version'] > self::VERSION ) {
-			return new WP_Error( 'ssc_transfer_version', __( 'This file comes from a newer version of NexaChatAI. Update the plugin and try again.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_transfer_version', __( 'This file comes from a newer version of Vazho. Update the plugin and try again.', 'vazho' ) );
 		}
 		$shape = self::shape_problem( $bundle );
 		if ( null !== $shape && 'settings' === $shape['section'] ) {
@@ -362,7 +362,7 @@ class SSC_Transfer {
 				'ssc_transfer_shape',
 				sprintf(
 					/* translators: %s: setting name. */
-					__( 'This file cannot be imported: the setting “%s” holds a value of the wrong kind (a list where text belongs, or the other way round). Nothing was changed.', 'nexachat-ai' ),
+					__( 'This file cannot be imported: the setting “%s” holds a value of the wrong kind (a list where text belongs, or the other way round). Nothing was changed.', 'vazho' ),
 					$shape['field']
 				)
 			);
@@ -372,7 +372,7 @@ class SSC_Transfer {
 				'ssc_transfer_shape',
 				sprintf(
 					/* translators: 1: section name, 2: row number, 3: field name. */
-					__( 'This file cannot be imported: %1$s, row %2$d has an invalid value in the field “%3$s”. Nothing was changed.', 'nexachat-ai' ),
+					__( 'This file cannot be imported: %1$s, row %2$d has an invalid value in the field “%3$s”. Nothing was changed.', 'vazho' ),
 					$shape['section'],
 					$shape['row'],
 					$shape['field']
@@ -671,7 +671,7 @@ class SSC_Transfer {
 
 		foreach ( $wanted as $id ) {
 			if ( ! isset( $bundle[ $id ] ) || ! is_array( $bundle[ $id ] ) ) {
-				$report[] = self::row( $id, 'skipped', 0, __( 'Not in the file.', 'nexachat-ai' ) );
+				$report[] = self::row( $id, 'skipped', 0, __( 'Not in the file.', 'vazho' ) );
 				continue;
 			}
 			switch ( $id ) {
@@ -756,7 +756,7 @@ class SSC_Transfer {
 			SSC_Settings::update( $patch );
 		}
 		if ( $held ) {
-			return self::row( 'settings', 'warn', count( $patch ), __( 'The settings that decide where information is sent (AI endpoint, notification recipients) were kept as they were: they are imported only together with the API keys.', 'nexachat-ai' ) );
+			return self::row( 'settings', 'warn', count( $patch ), __( 'The settings that decide where information is sent (AI endpoint, notification recipients) were kept as they were: they are imported only together with the API keys.', 'vazho' ) );
 		}
 		return self::row( 'settings', 'ok', count( $patch ), '' );
 	}
@@ -799,7 +799,7 @@ class SSC_Transfer {
 		}
 		$count = count( $want ) - count( $failed );
 		if ( $failed ) {
-			return self::row( 'modules', 'warn', $count, __( 'Some modules could not be switched on because a module they need is missing.', 'nexachat-ai' ) );
+			return self::row( 'modules', 'warn', $count, __( 'Some modules could not be switched on because a module they need is missing.', 'vazho' ) );
 		}
 		return self::row( 'modules', 'ok', $count, '' );
 	}
@@ -971,7 +971,7 @@ class SSC_Transfer {
 			}
 		}
 		if ( $failed ) {
-			return self::row( 'documents', 'warn', $count, __( 'Some documents could not be imported and were left as they were. Documents that are not in the file were not removed.', 'nexachat-ai' ) );
+			return self::row( 'documents', 'warn', $count, __( 'Some documents could not be imported and were left as they were. Documents that are not in the file were not removed.', 'vazho' ) );
 		}
 		return self::row( 'documents', 'ok', $count, '' );
 	}
@@ -985,10 +985,10 @@ class SSC_Transfer {
 	 */
 	protected static function apply_secrets( $map, $passphrase ) {
 		if ( '' === $passphrase ) {
-			return self::row( 'secrets', 'warn', 0, __( 'No password was entered, so the API keys were not imported.', 'nexachat-ai' ) );
+			return self::row( 'secrets', 'warn', 0, __( 'No password was entered, so the API keys were not imported.', 'vazho' ) );
 		}
 		if ( false === $map ) {
-			return self::row( 'secrets', 'warn', 0, __( 'The password is wrong (or the keys in the file are damaged), so the API keys were not imported. Everything else was.', 'nexachat-ai' ) );
+			return self::row( 'secrets', 'warn', 0, __( 'The password is wrong (or the keys in the file are damaged), so the API keys were not imported. Everything else was.', 'vazho' ) );
 		}
 		$allowed = SSC_Settings::secret_fields();
 		$count   = 0;
@@ -1004,7 +1004,7 @@ class SSC_Transfer {
 			}
 		}
 		if ( $failed ) {
-			return self::row( 'secrets', 'warn', $count, __( 'Some keys could not be encrypted on this server and were not saved.', 'nexachat-ai' ) );
+			return self::row( 'secrets', 'warn', $count, __( 'Some keys could not be encrypted on this server and were not saved.', 'vazho' ) );
 		}
 		return self::row( 'secrets', 'ok', $count, '' );
 	}
@@ -1097,3 +1097,4 @@ class SSC_Transfer {
 		return true;
 	}
 }
+

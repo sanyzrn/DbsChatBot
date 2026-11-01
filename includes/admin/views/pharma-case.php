@@ -2,7 +2,7 @@
 /**
  * ADR case detail view (pharma module): full report, workflow, audit trail.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  * @var array $case Case row.
  * @var array $audit Audit rows.
  */
@@ -20,60 +20,60 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 <div class="ssc-page ssc-adr-case">
 	<header class="ssc-page__head">
 		<div>
-			<h1><?php echo esc_html( sprintf( __( 'ADR case #%d', 'nexachat-ai' ), (int) $case['id'] ) ); ?></h1>
+			<h1><?php echo esc_html( sprintf( __( 'ADR case #%d', 'vazho' ), (int) $case['id'] ) ); ?></h1>
 			<p class="ssc-page__sub"><?php echo esc_html( SSC_Date::display( $case['created_at'] ) ); ?> · <span class="ssc-pill" data-ssc-hue="<?php echo esc_attr( $serious ? 'red' : 'blue' ); ?>"><?php echo esc_html( isset( $statuses[ $case['status'] ] ) ? $statuses[ $case['status'] ] : $case['status'] ); ?></span></p>
 		</div>
-		<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-pharma' ) ); ?>"><span class="ssc-dir-arrow" aria-hidden="true">←</span> <?php esc_html_e( 'All cases', 'nexachat-ai' ); ?></a>
+		<a class="ssc-btn ssc-btn--ghost" href="<?php echo esc_url( admin_url( 'admin.php?page=ssc-pharma' ) ); ?>"><span class="ssc-dir-arrow" aria-hidden="true">←</span> <?php esc_html_e( 'All cases', 'vazho' ); ?></a>
 	</header>
 
 	<?php if ( $serious ) : ?>
-		<div class="ssc-notice ssc-notice--error" role="alert"><strong><?php esc_html_e( 'SERIOUS case', 'nexachat-ai' ); ?></strong> — <?php echo esc_html( implode( ', ', $criteria ) ); ?></div>
+		<div class="ssc-notice ssc-notice--error" role="alert"><strong><?php esc_html_e( 'SERIOUS case', 'vazho' ); ?></strong> — <?php echo esc_html( implode( ', ', $criteria ) ); ?></div>
 	<?php endif; ?>
 
 	<div class="ssc-grid ssc-grid--2">
 		<section class="ssc-card">
-			<?php SSC_Admin_UI::card_title( 'user', 'blue', __( 'Reporter', 'nexachat-ai' ) ); ?>
-			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--kv">
+			<?php SSC_Admin_UI::card_title( 'user', 'blue', __( 'Reporter', 'vazho' ) ); ?>
+			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'vazho' ); ?>"><table class="ssc-table ssc-table--kv">
 				<tbody>
-					<tr><th><?php esc_html_e( 'Name', 'nexachat-ai' ); ?></th><td><?php echo esc_html( $case['name'] ); ?></td></tr>
-					<tr><th><?php esc_html_e( 'Phone', 'nexachat-ai' ); ?></th><td dir="ltr"><?php echo esc_html( $case['phone'] ); ?></td></tr>
-					<tr><th><?php esc_html_e( 'Reporter role', 'nexachat-ai' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'reporter_type', (string) $case['reporter_type'] ) ); ?></td></tr>
+					<tr><th><?php esc_html_e( 'Name', 'vazho' ); ?></th><td><?php echo esc_html( $case['name'] ); ?></td></tr>
+					<tr><th><?php esc_html_e( 'Phone', 'vazho' ); ?></th><td dir="ltr"><?php echo esc_html( $case['phone'] ); ?></td></tr>
+					<tr><th><?php esc_html_e( 'Reporter role', 'vazho' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'reporter_type', (string) $case['reporter_type'] ) ); ?></td></tr>
 					<?php if ( isset( $extra['patient_age'] ) && '' !== (string) $extra['patient_age'] ) : ?>
-						<tr><th><?php esc_html_e( 'Patient age', 'nexachat-ai' ); ?></th><td><?php echo esc_html( (string) $extra['patient_age'] ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Patient age', 'vazho' ); ?></th><td><?php echo esc_html( (string) $extra['patient_age'] ); ?></td></tr>
 					<?php endif; ?>
 					<?php if ( ! empty( $extra['patient_sex'] ) ) : ?>
-						<tr><th><?php esc_html_e( 'Patient sex', 'nexachat-ai' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'patient_sex', (string) $extra['patient_sex'] ) ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Patient sex', 'vazho' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'patient_sex', (string) $extra['patient_sex'] ) ); ?></td></tr>
 					<?php endif; ?>
 				</tbody>
 			</table></div>
 		</section>
 
 		<section class="ssc-card">
-			<?php SSC_Admin_UI::card_title( 'box', 'violet', __( 'Suspected product', 'nexachat-ai' ) ); ?>
-			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--kv">
+			<?php SSC_Admin_UI::card_title( 'box', 'violet', __( 'Suspected product', 'vazho' ) ); ?>
+			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'vazho' ); ?>"><table class="ssc-table ssc-table--kv">
 				<tbody>
-					<tr><th><?php esc_html_e( 'Product', 'nexachat-ai' ); ?></th><td><?php echo esc_html( $case['product'] ); ?></td></tr>
-					<tr><th><?php esc_html_e( 'Batch / lot', 'nexachat-ai' ); ?></th><td><?php echo esc_html( $case['batch_number'] ); ?></td></tr>
+					<tr><th><?php esc_html_e( 'Product', 'vazho' ); ?></th><td><?php echo esc_html( $case['product'] ); ?></td></tr>
+					<tr><th><?php esc_html_e( 'Batch / lot', 'vazho' ); ?></th><td><?php echo esc_html( $case['batch_number'] ); ?></td></tr>
 					<?php if ( ! empty( $extra['dose'] ) ) : ?>
-						<tr><th><?php esc_html_e( 'Dose & frequency', 'nexachat-ai' ); ?></th><td><?php echo esc_html( (string) $extra['dose'] ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Dose & frequency', 'vazho' ); ?></th><td><?php echo esc_html( (string) $extra['dose'] ); ?></td></tr>
 					<?php endif; ?>
 					<?php if ( ! empty( $extra['route'] ) ) : ?>
-						<tr><th><?php esc_html_e( 'Route', 'nexachat-ai' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'route', (string) $extra['route'] ) ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Route', 'vazho' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'route', (string) $extra['route'] ) ); ?></td></tr>
 					<?php endif; ?>
 				</tbody>
 			</table></div>
 		</section>
 
 		<section class="ssc-card">
-			<?php SSC_Admin_UI::card_title( 'heart', 'rose', __( 'Reaction', 'nexachat-ai' ) ); ?>
+			<?php SSC_Admin_UI::card_title( 'heart', 'rose', __( 'Reaction', 'vazho' ) ); ?>
 			<blockquote class="ssc-quote"><?php echo esc_html( (string) $case['description'] ); ?></blockquote>
-			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--kv">
+			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'vazho' ); ?>"><table class="ssc-table ssc-table--kv">
 				<tbody>
-					<tr><th><?php esc_html_e( 'Clinical severity', 'nexachat-ai' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'severity', (string) $case['severity'] ) ); ?></td></tr>
-					<tr><th><?php esc_html_e( 'Seriousness criteria', 'nexachat-ai' ); ?></th><td><?php echo $criteria ? esc_html( implode( ', ', $criteria ) ) : '—'; ?></td></tr>
-					<tr><th><?php esc_html_e( 'Outcome', 'nexachat-ai' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'outcome', (string) $case['outcome'] ) ); ?></td></tr>
+					<tr><th><?php esc_html_e( 'Clinical severity', 'vazho' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'severity', (string) $case['severity'] ) ); ?></td></tr>
+					<tr><th><?php esc_html_e( 'Seriousness criteria', 'vazho' ); ?></th><td><?php echo $criteria ? esc_html( implode( ', ', $criteria ) ) : '—'; ?></td></tr>
+					<tr><th><?php esc_html_e( 'Outcome', 'vazho' ); ?></th><td><?php echo esc_html( SSC_Module_Pharma::option_label( 'outcome', (string) $case['outcome'] ) ); ?></td></tr>
 					<?php if ( ! empty( $case['concomitant_drugs'] ) ) : ?>
-						<tr><th><?php esc_html_e( 'Concomitant drugs', 'nexachat-ai' ); ?></th><td><?php echo esc_html( (string) $case['concomitant_drugs'] ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Concomitant drugs', 'vazho' ); ?></th><td><?php echo esc_html( (string) $case['concomitant_drugs'] ); ?></td></tr>
 					<?php endif; ?>
 				</tbody>
 			</table></div>
@@ -82,8 +82,8 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 		<?php foreach ( SSC_Module_Pharma::custom_answers( $extra ) as $ssc_answer_group ) : ?>
 			<?php if ( $ssc_answer_group ) : ?>
 				<section class="ssc-card">
-					<?php SSC_Admin_UI::card_title( 'list', 'slate', __( 'Additional questions', 'nexachat-ai' ) ); ?>
-					<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table ssc-table--kv">
+					<?php SSC_Admin_UI::card_title( 'list', 'slate', __( 'Additional questions', 'vazho' ) ); ?>
+					<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'vazho' ); ?>"><table class="ssc-table ssc-table--kv">
 						<tbody>
 							<?php foreach ( $ssc_answer_group as $ssc_question => $ssc_answer ) : ?>
 								<tr><th dir="auto"><?php echo esc_html( $ssc_question ); ?></th><td dir="auto"><?php echo esc_html( $ssc_answer ); ?></td></tr>
@@ -95,12 +95,12 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 		<?php endforeach; ?>
 
 		<section class="ssc-card">
-			<?php SSC_Admin_UI::card_title( 'scale', 'green', __( 'Case workflow', 'nexachat-ai' ) ); ?>
+			<?php SSC_Admin_UI::card_title( 'scale', 'green', __( 'Case workflow', 'vazho' ) ); ?>
 			<form method="post" class="ssc-form">
 				<?php wp_nonce_field( 'ssc_case_' . (int) $case['id'] ); ?>
 				<input type="hidden" name="case_id" value="<?php echo esc_attr( (string) $case['id'] ); ?>" />
 				<div class="ssc-field">
-					<label for="ssc_case_status"><?php esc_html_e( 'Status', 'nexachat-ai' ); ?></label>
+					<label for="ssc_case_status"><?php esc_html_e( 'Status', 'vazho' ); ?></label>
 					<select id="ssc_case_status" name="ssc_case_status">
 						<?php foreach ( $statuses as $st => $st_label ) : ?>
 							<option value="<?php echo esc_attr( $st ); ?>" <?php selected( $case['status'], $st ); ?>><?php echo esc_html( $st_label ); ?></option>
@@ -108,35 +108,35 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 					</select>
 				</div>
 				<div class="ssc-field">
-					<label for="case_note"><?php esc_html_e( 'Follow-up note (recorded in the audit trail)', 'nexachat-ai' ); ?></label>
+					<label for="case_note"><?php esc_html_e( 'Follow-up note (recorded in the audit trail)', 'vazho' ); ?></label>
 					<textarea id="case_note" name="case_note" rows="3"></textarea>
 				</div>
-				<button type="submit" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Update case', 'nexachat-ai' ); ?></button>
+				<button type="submit" class="ssc-btn ssc-btn--primary"><?php esc_html_e( 'Update case', 'vazho' ); ?></button>
 			</form>
 		</section>
 
 		<section class="ssc-card">
-			<?php SSC_Admin_UI::card_title( 'lock', 'amber', __( 'Privacy actions (per record)', 'nexachat-ai' ) ); ?>
-			<p class="ssc-card__sub"><?php esc_html_e( 'Export this case, remove direct identifiers, or permanently delete the record. Removing identifiers does not anonymize free-text narratives or audit notes; review those separately under your retention policy.', 'nexachat-ai' ); ?></p>
+			<?php SSC_Admin_UI::card_title( 'lock', 'amber', __( 'Privacy actions (per record)', 'vazho' ) ); ?>
+			<p class="ssc-card__sub"><?php esc_html_e( 'Export this case, remove direct identifiers, or permanently delete the record. Removing identifiers does not anonymize free-text narratives or audit notes; review those separately under your retention policy.', 'vazho' ); ?></p>
 			<form method="post" class="ssc-form" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
 				<?php wp_nonce_field( 'ssc_case_privacy_' . (int) $case['id'] ); ?>
 				<input type="hidden" name="case_id" value="<?php echo esc_attr( (string) $case['id'] ); ?>" />
-				<button type="submit" name="ssc_case_privacy" value="export" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Export JSON', 'nexachat-ai' ); ?></button>
+				<button type="submit" name="ssc_case_privacy" value="export" class="ssc-btn ssc-btn--ghost"><?php esc_html_e( 'Export JSON', 'vazho' ); ?></button>
 				<?php if ( empty( $extra['_anonymized'] ) ) : ?>
-					<button type="submit" name="ssc_case_privacy" value="anonymize" class="ssc-btn ssc-btn--ghost" onclick="return confirm('<?php echo esc_js( __( 'Remove reporter name, phone, IP and demographics? Clinical fields stay for PV review.', 'nexachat-ai' ) ); ?>');"><?php esc_html_e( 'Remove direct identifiers', 'nexachat-ai' ); ?></button>
+					<button type="submit" name="ssc_case_privacy" value="anonymize" class="ssc-btn ssc-btn--ghost" onclick="return confirm('<?php echo esc_js( __( 'Remove reporter name, phone, IP and demographics? Clinical fields stay for PV review.', 'vazho' ) ); ?>');"><?php esc_html_e( 'Remove direct identifiers', 'vazho' ); ?></button>
 				<?php else : ?>
-					<span class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Direct identifiers removed', 'nexachat-ai' ); ?></span>
+					<span class="ssc-notice ssc-notice--success" role="status"><?php esc_html_e( 'Direct identifiers removed', 'vazho' ); ?></span>
 				<?php endif; ?>
-			<button type="submit" name="ssc_case_privacy" value="purge" class="ssc-btn ssc-btn--danger" onclick="return confirm('<?php echo esc_js( __( 'Permanently delete this case? Clinical data is removed; a purge entry stays in the audit trail.', 'nexachat-ai' ) ); ?>');"><?php esc_html_e( 'Delete case', 'nexachat-ai' ); ?></button>
+			<button type="submit" name="ssc_case_privacy" value="purge" class="ssc-btn ssc-btn--danger" onclick="return confirm('<?php echo esc_js( __( 'Permanently delete this case? Clinical data is removed; a purge entry stays in the audit trail.', 'vazho' ) ); ?>');"><?php esc_html_e( 'Delete case', 'vazho' ); ?></button>
 			</form>
 		</section>
 	</div>
 
 	<section class="ssc-card ssc-mt">
-		<?php SSC_Admin_UI::card_title( 'clock', 'slate', __( 'Audit trail', 'nexachat-ai' ) ); ?>
+		<?php SSC_Admin_UI::card_title( 'clock', 'slate', __( 'Audit trail', 'vazho' ) ); ?>
 		<?php if ( $audit ) : ?>
-			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'nexachat-ai' ); ?>"><table class="ssc-table">
-				<thead><tr><th><?php esc_html_e( 'Time', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Action', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'From → To', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'By', 'nexachat-ai' ); ?></th><th><?php esc_html_e( 'Note', 'nexachat-ai' ); ?></th></tr></thead>
+			<div class="ssc-table-scroll" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrollable table', 'vazho' ); ?>"><table class="ssc-table">
+				<thead><tr><th><?php esc_html_e( 'Time', 'vazho' ); ?></th><th><?php esc_html_e( 'Action', 'vazho' ); ?></th><th><?php esc_html_e( 'From → To', 'vazho' ); ?></th><th><?php esc_html_e( 'By', 'vazho' ); ?></th><th><?php esc_html_e( 'Note', 'vazho' ); ?></th></tr></thead>
 				<tbody>
 					<?php foreach ( $audit as $entry ) : ?>
 						<tr>
@@ -150,7 +150,8 @@ $statuses  = SSC_Module_Pharma::case_statuses();
 				</tbody>
 			</table></div>
 		<?php else : ?>
-			<p class="ssc-card__sub"><?php esc_html_e( 'No audit entries yet.', 'nexachat-ai' ); ?></p>
+			<p class="ssc-card__sub"><?php esc_html_e( 'No audit entries yet.', 'vazho' ); ?></p>
 		<?php endif; ?>
 	</section>
 </div>
+

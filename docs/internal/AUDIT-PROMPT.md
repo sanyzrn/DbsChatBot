@@ -1,15 +1,15 @@
-# Full audit prompt for NexaChatAI
+# Full audit prompt for Vazho
 
 Paste everything below the line into a new agent session (Claude Code or similar) that has shell access, a browser (Playwright/Chromium) and this repository. The prompt is in English because agents follow long technical instructions most reliably in English. The report itself is requested in Persian; change the "Report language" line if needed.
 
 ---
 
-You are a senior WordPress QA engineer and security reviewer. Audit the **NexaChatAI** plugin (folder `nexachat-ai`, this repository) end to end **by really installing and using it**: not only by reading code. Your output is one Markdown report.
+You are a senior WordPress QA engineer and security reviewer. Audit the **Vazho** plugin (folder `vazho`, this repository) end to end **by really installing and using it**: not only by reading code. Your output is one Markdown report.
 
 ## Ground rules (read first)
 
 1. **Evidence or it did not happen.** Every finding and every "works" claim needs evidence: the exact steps, the expected and actual result, and at least one of a screenshot path, log excerpt, HTTP request/response, or DB query result. Anything you could not run goes under "Not tested", with the reason. Never write "should work", "likely fine" or invented output.
-2. **Test the shipped artifact.** Build the ZIP with `python tools/build-release.py` and verify it with `python tools/verify-release.py`. Or download the latest `nexachat-ai-<version>.zip` from GitHub Releases. Install that ZIP through the real WordPress upload flow (Plugins → Add New → Upload), not by symlinking the repo. Use a symlinked copy only for later re-runs of the automated test suites.
+2. **Test the shipped artifact.** Build the ZIP with `python tools/build-release.py` and verify it with `python tools/verify-release.py`. Or download the latest `vazho-<version>.zip` from GitHub Releases. Install that ZIP through the real WordPress upload flow (Plugins → Add New → Upload), not by symlinking the repo. Use a symlinked copy only for later re-runs of the automated test suites.
 3. **Audit only.** Do not change plugin code, push commits, open PRs or create releases. Scratch scripts belong outside the repository.
 4. **Isolation and safety.**
    - Use disposable WordPress installs and databases only.
@@ -57,7 +57,7 @@ If real keys exist, additionally run a short smoke test per provider: Claude, Op
    - enforce readiness on the server too. Try publishing with a crafted POST while items are missing.
 3. **Upgrade path:**
    - Install the previous release ZIP from GitHub Releases and create data (settings, knowledge, products, conversations, ADR reports). Then upgrade by uploading the new ZIP ("Replace current with uploaded"). All data must survive, and there must be no duplicate tables or cron events.
-   - If feasible, repeat from the legacy folder name the plugin migrates from; see `nexachat-ai.php` / `includes/bootstrap.php`.
+   - If feasible, repeat from the legacy folder name the plugin migrates from; see `vazho.php` / `includes/bootstrap.php`.
 4. **Deactivate / reactivate:** cron events are cleaned up and restored, and there are no errors.
 5. **Uninstall (delete):** check what `uninstall.php` removes. Report any leftover options, tables, transients, cron events or uploaded files. On multisite, check every site.
 
@@ -138,7 +138,7 @@ For each item, note what you did and what happened.
   - Personal-data export/erasure hooks exist, or record that they are missing.
   - Retention and cleanup work.
 - **Files:** uploads are restricted by type and size; no directory listing or direct PHP access to plugin files (every folder must have `index.php` or equivalent guards).
-- Run `phpcs` with the repo's ruleset (`vendor/bin/phpcs`). Run the official **Plugin Check** plugin (`wp plugin install plugin-check`, then `wp plugin check nexachat-ai`) and summarise its errors and warnings.
+- Run `phpcs` with the repo's ruleset (`vendor/bin/phpcs`). Run the official **Plugin Check** plugin (`wp plugin install plugin-check`, then `wp plugin check vazho`) and summarise its errors and warnings.
 
 ## 5. Performance and compatibility
 

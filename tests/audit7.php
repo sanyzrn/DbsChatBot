@@ -19,7 +19,7 @@ file_put_contents( $lic_file, "<?php\nclass " . SSC_License::CLASS_NAME . " {\n\
 require $lic_file;
 $lic_class = SSC_License::CLASS_NAME;
 $lic_hash  = function () use ( $lic_file ) { return sha1_file( $lic_file ); };
-add_filter( 'nexachatai_license_file_sha1', $lic_hash );
+add_filter( 'vazho_license_file_sha1', $lic_hash );
 
 // Licensed.
 $lic_class::$active = true;
@@ -54,10 +54,10 @@ SSC_License::reset();
 
 // The marketplace file was replaced or edited: unlicensed, even if the stand-in says "active".
 $lic_class::$active = true;
-remove_filter( 'nexachatai_license_file_sha1', $lic_hash );
+remove_filter( 'vazho_license_file_sha1', $lic_hash );
 SSC_License::reset();
 check( 'unlicensed' === SSC_License::state(), 'Licence: a licence file that does not match the published hash is treated as not licensed' );
-add_filter( 'nexachatai_license_file_sha1', $lic_hash );
+add_filter( 'vazho_license_file_sha1', $lic_hash );
 
 // A check that fails must not take the site down or lock the owner out.
 $lic_class::$throw = true;
@@ -106,11 +106,11 @@ check( SSC_License::ai_used_today() === $lic_before, 'Licence: answers are not c
 
 // Source guards: the kill switch exists and the licence file is never required directly.
 $lic_source = (string) file_get_contents( SSC_CHATBOT_DIR . 'includes/core/class-ssc-license.php' );
-check( false !== strpos( $lic_source, 'NEXACHATAI_DISABLE_LICENSE_GATE' ), 'Licence: a support switch can turn the limits off for a site that cannot reach the marketplace' );
+check( false !== strpos( $lic_source, 'VAZHO_DISABLE_LICENSE_GATE' ), 'Licence: a support switch can turn the limits off for a site that cannot reach the marketplace' );
 
 // Restore.
 remove_filter( 'pre_http_request', $lic_mock, 30 );
-remove_filter( 'nexachatai_license_file_sha1', $lic_hash );
+remove_filter( 'vazho_license_file_sha1', $lic_hash );
 delete_transient( 'ssc_ai_day_' . gmdate( 'Ymd' ) );
 delete_option( SSC_Chat_Engine::FAILURE_OPTION );
 SSC_Settings::set_secret( 'openai_api_key', '' );

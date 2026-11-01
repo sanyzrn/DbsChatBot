@@ -8,7 +8,7 @@
  * share. The comparison is deliberately cautious: an unknown unit is compared
  * as a word, and a missing unit never makes two quantities differ.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -268,3 +268,4 @@ class SSC_Quantities {
 		);
 	}
 }
+

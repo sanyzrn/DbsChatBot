@@ -11,9 +11,9 @@
 
 Please report security issues **privately**, not through a public issue.
 
-- Use the private report form: <https://dbsstudio.ir/issues?product=nexachatai&kind=security>
+- Use the private report form: <https://dbsstudio.ir/issues?product=vazho&kind=security>
   (it reaches the maintainer directly and nothing is published), or
-- email **kaspersky.sany@gmail.com** with `NexaChatAI security` in the subject.
+- email **kaspersky.sany@gmail.com** with `Vazho security` in the subject.
 
 Helpful details: affected version, WordPress and PHP versions, reproduction steps,
 and what an attacker gains. A proof of concept is welcome but not required.

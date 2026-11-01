@@ -16,7 +16,7 @@
  * Nothing here runs unless a module that needs it is active: modules call
  * SSC_Messenger::register() from their own register().
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -77,7 +77,7 @@ class SSC_Messenger {
 	 * @return string
 	 */
 	public static function platform_label() {
-		return 'telegram' === self::platform() ? __( 'Telegram', 'nexachat-ai' ) : __( 'Bale', 'nexachat-ai' );
+		return 'telegram' === self::platform() ? __( 'Telegram', 'vazho' ) : __( 'Bale', 'vazho' );
 	}
 
 	/**
@@ -108,18 +108,18 @@ class SSC_Messenger {
 	 */
 	public static function api( $method, $params = array(), $timeout = 10 ) {
 		if ( ! self::ready() ) {
-			return new WP_Error( 'ssc_messenger_token', __( 'No bot token is configured.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_messenger_token', __( 'No bot token is configured.', 'vazho' ) );
 		}
 		$base     = 'telegram' === self::platform() ? 'https://api.telegram.org' : 'https://tapi.bale.ai';
 		$url      = $base . '/bot' . rawurlencode( SSC_Settings::get_secret( 'notify_token' ) ) . '/' . rawurlencode( $method );
 		$response = SSC_HTTP::post_json( $url, array(), (object) $params, array( 'timeout' => $timeout ) );
 		if ( empty( $response['ok'] ) ) {
-			$message = isset( $response['error']['message'] ) ? $response['error']['message'] : __( 'The messenger did not answer.', 'nexachat-ai' );
+			$message = isset( $response['error']['message'] ) ? $response['error']['message'] : __( 'The messenger did not answer.', 'vazho' );
 			return new WP_Error( 'ssc_messenger_http', $message );
 		}
 		$data = isset( $response['data'] ) ? $response['data'] : array();
 		if ( empty( $data['ok'] ) ) {
-			$description = isset( $data['description'] ) ? (string) $data['description'] : __( 'The messenger rejected the request.', 'nexachat-ai' );
+			$description = isset( $data['description'] ) ? (string) $data['description'] : __( 'The messenger rejected the request.', 'vazho' );
 			return new WP_Error( 'ssc_messenger_api', $description );
 		}
 		return isset( $data['result'] ) ? $data['result'] : true;
@@ -446,7 +446,7 @@ class SSC_Messenger {
 	protected static function complete_link( $code, $from, $chat, $message ) {
 		$user_id = (int) get_transient( 'ssc_msgr_link_' . $code );
 		if ( ! $user_id || ( ! user_can( $user_id, SSC_Module_Live::CAP ) && ! user_can( $user_id, 'manage_options' ) ) ) {
-			self::send( $chat, __( 'This link code is invalid or expired. Create a new one in the Live inbox.', 'nexachat-ai' ) );
+			self::send( $chat, __( 'This link code is invalid or expired. Create a new one in the Live inbox.', 'vazho' ) );
 			return;
 		}
 		delete_transient( 'ssc_msgr_link_' . $code );
@@ -467,7 +467,7 @@ class SSC_Messenger {
 			$chat,
 			sprintf(
 				/* translators: %s: operator first name. */
-				__( 'Connected, %s. New chats waiting for a person will arrive here. Reply to a chat message to answer the visitor. Commands: /bot returns the chat to the assistant, /close ends it.', 'nexachat-ai' ),
+				__( 'Connected, %s. New chats waiting for a person will arrive here. Reply to a chat message to answer the visitor. Commands: /bot returns the chat to the assistant, /close ends it.', 'vazho' ),
 				$name
 			)
 		);
@@ -584,7 +584,7 @@ class SSC_Messenger {
 	public static function schedules( $schedules ) {
 		$schedules['ssc_every_minute'] = array(
 			'interval' => MINUTE_IN_SECONDS,
-			'display'  => did_action( 'init' ) ? __( 'NexaChatAI: every minute', 'nexachat-ai' ) : 'NexaChatAI: every minute',
+			'display'  => did_action( 'init' ) ? __( 'Vazho: every minute', 'vazho' ) : 'Vazho: every minute',
 		);
 		return $schedules;
 	}
@@ -602,3 +602,4 @@ class SSC_Messenger {
 		}
 	}
 }
+

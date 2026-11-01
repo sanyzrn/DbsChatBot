@@ -114,7 +114,7 @@ jobs:
         run: |
           set -e
           tag="${TAG#v}"
-          version=$(grep -oP "define\( 'SSC_CHATBOT_VERSION', '\K[^']+" nexachat-ai.php)
+          version=$(grep -oP "define\( 'SSC_CHATBOT_VERSION', '\K[^']+" vazho.php)
           echo "tag=$tag plugin=$version"
           if [ "$tag" != "$version" ]; then
             echo "::error::Tag $TAG does not match SSC_CHATBOT_VERSION $version"
@@ -148,7 +148,7 @@ jobs:
           notes = (
               match.group(1).strip()
               + '\n\n---\n\n'
-              + '**Install:** download `nexachat-ai-' + version + '.zip` below and upload it via '
+              + '**Install:** download `vazho-' + version + '.zip` below and upload it via '
               + 'Plugins → Add New → Upload Plugin. The "Source code" archives are the raw '
               + 'repository and are not installable.\n'
               + 'Verify the download against the published `.sha256` file.\n'
@@ -168,7 +168,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          title="NexaChatAI ${TAG#v}"
+          title="Vazho ${TAG#v}"
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release $TAG already exists: attaching the ZIP and refreshing its notes."
             gh release upload "$TAG" dist/*.zip dist/*.zip.sha256 --clobber
@@ -194,4 +194,4 @@ jobs:
           set -e
           assets=$(gh release view "$TAG" --json assets --jq '.assets[].name')
           echo "$assets"
-          echo "$assets" | grep -qx "nexachat-ai-${TAG#v}.zip" || { echo "::error::nexachat-ai-${TAG#v}.zip is not attached to $TAG"; exit 1; }
+          echo "$assets" | grep -qx "vazho-${TAG#v}.zip" || { echo "::error::vazho-${TAG#v}.zip is not attached to $TAG"; exit 1; }

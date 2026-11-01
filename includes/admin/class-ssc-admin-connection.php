@@ -5,7 +5,7 @@
  * Connection tests run against the CURRENTLY ENTERED credentials (via the
  * REST test-connection endpoint) before anything needs to be saved.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,7 +22,7 @@ class SSC_Admin_Connection {
 	 */
 	public function __construct() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		add_action( 'admin_init', array( $this, 'handle_actions' ), 5 );
 	}

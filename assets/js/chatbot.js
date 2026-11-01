@@ -1,5 +1,5 @@
 /**
- * NexaChatAI — frontend widget (v5).
+ * Vazho — frontend widget (v5).
  *
  * Design notes:
  * - Vanilla JS, no dependencies, no build step.

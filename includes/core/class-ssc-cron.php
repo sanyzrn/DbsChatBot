@@ -2,7 +2,7 @@
 /**
  * Scheduled maintenance (daily cleanup).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -65,7 +65,7 @@ class SSC_Cron {
 			'interval' => 300,
 			// Other plugins may run this filter before init; never load
 			// translations that early.
-			'display'  => did_action( 'init' ) ? __( 'NexaChatAI: every five minutes', 'nexachat-ai' ) : 'NexaChatAI: every five minutes',
+			'display'  => did_action( 'init' ) ? __( 'Vazho: every five minutes', 'vazho' ) : 'Vazho: every five minutes',
 		);
 		return $schedules;
 	}

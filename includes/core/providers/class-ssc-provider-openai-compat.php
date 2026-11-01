@@ -2,7 +2,7 @@
 /**
  * OpenAI-compatible base adapter (OpenAI, OpenRouter, custom endpoints).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -148,3 +148,4 @@ abstract class SSC_Provider_OpenAI_Compat extends SSC_Provider {
 		return '';
 	}
 }
+

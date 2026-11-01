@@ -3,7 +3,7 @@
  * Analytics module: conversation trends, top topics, unanswered questions
  * radar, CSAT summary. Insights only - respects every privacy switch.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +30,7 @@ class SSC_Module_Analytics extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Analytics & Insights', 'nexachat-ai' );
+		return __( 'Analytics & Insights', 'vazho' );
 	}
 
 	/**
@@ -39,7 +39,7 @@ class SSC_Module_Analytics extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Conversation volume trends, most-discussed products, the unanswered-questions radar and satisfaction summary.', 'nexachat-ai' );
+		return __( 'Conversation volume trends, most-discussed products, the unanswered-questions radar and satisfaction summary.', 'vazho' );
 	}
 
 	/**
@@ -48,7 +48,7 @@ class SSC_Module_Analytics extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'See exactly what visitors ask and where your knowledge has gaps - not decorative charts.', 'nexachat-ai' );
+		return __( 'See exactly what visitors ask and where your knowledge has gaps - not decorative charts.', 'vazho' );
 	}
 
 	/**
@@ -139,8 +139,8 @@ class SSC_Module_Analytics extends SSC_Module {
 		}
 		add_submenu_page(
 			'ssc-dashboard',
-			__( 'Analytics', 'nexachat-ai' ),
-			__( 'Analytics', 'nexachat-ai' ),
+			__( 'Analytics', 'vazho' ),
+			__( 'Analytics', 'vazho' ),
 			'manage_options',
 			'ssc-analytics',
 			array( $this, 'render_page' )
@@ -152,9 +152,10 @@ class SSC_Module_Analytics extends SSC_Module {
 	 */
 	public function render_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		$data = $this->insights();
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-analytics.php';
 	}
 }
+

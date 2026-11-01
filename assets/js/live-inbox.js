@@ -1,5 +1,5 @@
 /**
- * NexaChatAI — Live chat inbox (operator side).
+ * Vazho — Live chat inbox (operator side).
  *
  * Polls the inbox REST routes: the thread list every few seconds (this is
  * also the operator's "online" heartbeat) and the open conversation more

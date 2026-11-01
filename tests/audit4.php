@@ -20,8 +20,8 @@ if ( ! class_exists( 'WooCommerce' ) ) {
 	}
 	do_action( 'before_woocommerce_init' );
 	$declared = \Automattic\WooCommerce\Utilities\FeaturesUtil::$calls;
-	check( array( array( 'custom_order_tables', NEXACHATAI_MAIN_FILE, true ) ) === $declared, 'HPOS: the plugin declares compatibility with custom order tables, for its own main file' );
-	check( 1 === preg_match( '/\*\s+Plugin Name:/', (string) file_get_contents( NEXACHATAI_MAIN_FILE ) ), 'HPOS: the declared file is the plugin file WooCommerce maps to the plugin' );
+	check( array( array( 'custom_order_tables', VAZHO_MAIN_FILE, true ) ) === $declared, 'HPOS: the plugin declares compatibility with custom order tables, for its own main file' );
+	check( 1 === preg_match( '/\*\s+Plugin Name:/', (string) file_get_contents( VAZHO_MAIN_FILE ) ), 'HPOS: the declared file is the plugin file WooCommerce maps to the plugin' );
 } else {
 	check( true, 'HPOS: real WooCommerce is loaded and receives the declaration itself (skipped)' );
 }

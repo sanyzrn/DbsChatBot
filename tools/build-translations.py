@@ -9,7 +9,7 @@ from pathlib import Path
 
 root = Path(__file__).resolve().parents[1] / 'languages'
 messages = json.loads((root / 'fa_IR.json').read_text(encoding='utf-8'))
-header = 'Project-Id-Version: NexaChatAI\nLanguage: fa_IR\nContent-Type: text/plain; charset=UTF-8\nPlural-Forms: nplurals=2; plural=(n > 1);\n'
+header = 'Project-Id-Version: Vazho\nLanguage: fa_IR\nContent-Type: text/plain; charset=UTF-8\nPlural-Forms: nplurals=2; plural=(n > 1);\n'
 messages[''] = header
 ordered = sorted(messages)
 
@@ -34,7 +34,7 @@ for values in (originals, translated):
 # translation index as hash_offset - translations_offset and rejects the file
 # when the offset is 0.
 mo = struct.pack('<7I', 0x950412de, 0, len(ordered), 28, 28 + 8 * len(ordered), 0, 28 + 16 * len(ordered)) + b''.join(tables) + b''.join(chunks)
-(root / 'nexachat-ai-fa_IR.mo').write_bytes(mo)
+(root / 'vazho-fa_IR.mo').write_bytes(mo)
 
 quote = lambda value: json.dumps(value, ensure_ascii=False)
 entries = []
@@ -46,5 +46,5 @@ for key in ordered:
         entries.append(f'msgid {quote(singular)}\nmsgid_plural {quote(plural)}\n{forms}')
     else:
         entries.append(f'msgid {quote(key)}\nmsgstr {quote(value)}')
-(root / 'nexachat-ai-fa_IR.po').write_text('\n\n'.join(entries) + '\n', encoding='utf-8')
+(root / 'vazho-fa_IR.po').write_text('\n\n'.join(entries) + '\n', encoding='utf-8')
 print(f'Built {len(messages) - 1} Persian translations.')

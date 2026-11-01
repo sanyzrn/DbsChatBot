@@ -4,7 +4,7 @@
  * (assets/js/admin.js bindPreview reads the data attributes and the form
  * fields by id). Shared by the Appearance screen and the setup wizard.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  * @var array $s        Settings.
  * @var array $business Business profile.
  */
@@ -16,9 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 $primary    = $s['primary_color'] ? $s['primary_color'] : '#b61615';
 $org_name   = isset( $business['org_name'] ) && $business['org_name'] ? $business['org_name'] : get_bloginfo( 'name' );
 $asst_name  = SSC_Frontend::display_name( $s );
-$w_title    = $s['welcome_title'] ? $s['welcome_title'] : __( 'Hello! 👋', 'nexachat-ai' );
-$w_text     = $s['welcome_text'] ? wp_strip_all_tags( $s['welcome_text'] ) : __( 'How can I help you today?', 'nexachat-ai' );
-$disclaimer = $s['disclaimer'] ? $s['disclaimer'] : __( 'AI can make mistakes.', 'nexachat-ai' );
+$w_title    = $s['welcome_title'] ? $s['welcome_title'] : __( 'Hello! 👋', 'vazho' );
+$w_text     = $s['welcome_text'] ? wp_strip_all_tags( $s['welcome_text'] ) : __( 'How can I help you today?', 'vazho' );
+$disclaimer = $s['disclaimer'] ? $s['disclaimer'] : __( 'AI can make mistakes.', 'vazho' );
 $dir        = in_array( $s['direction'], array( 'rtl', 'ltr' ), true ) ? $s['direction'] : 'rtl';
 $theme_mode = in_array( $s['theme_mode'], array( 'light', 'dark', 'auto' ), true ) ? $s['theme_mode'] : 'light';
 $pos        = 'left' === $s['position'] ? 'left' : 'right';
@@ -43,10 +43,10 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 				data-launcher-size="<?php echo esc_attr( (string) $s['launcher_size'] ); ?>"
 			>
 				<div class="ssc-preview-panel__bar">
-					<strong><?php esc_html_e( 'Live preview', 'nexachat-ai' ); ?></strong>
-					<div class="ssc-preview-toggle" role="group" aria-label="<?php esc_attr_e( 'Preview theme', 'nexachat-ai' ); ?>">
-						<button type="button" data-pv-theme="light" class="is-on"><?php esc_html_e( 'Light', 'nexachat-ai' ); ?></button>
-						<button type="button" data-pv-theme="dark"><?php esc_html_e( 'Dark', 'nexachat-ai' ); ?></button>
+					<strong><?php esc_html_e( 'Live preview', 'vazho' ); ?></strong>
+					<div class="ssc-preview-toggle" role="group" aria-label="<?php esc_attr_e( 'Preview theme', 'vazho' ); ?>">
+						<button type="button" data-pv-theme="light" class="is-on"><?php esc_html_e( 'Light', 'vazho' ); ?></button>
+						<button type="button" data-pv-theme="dark"><?php esc_html_e( 'Dark', 'vazho' ); ?></button>
 					</div>
 				</div>
 
@@ -55,5 +55,6 @@ $pos        = 'left' === $s['position'] ? 'left' : 'right';
 					<div id="ssc-live-preview"></div>
 				</div>
 
-				<p class="ssc-preview-panel__hint"><?php esc_html_e( 'This is the real assistant: changes apply instantly and you can chat with it (answers use the saved AI connection). Save when you are happy.', 'nexachat-ai' ); ?></p>
+				<p class="ssc-preview-panel__hint"><?php esc_html_e( 'This is the real assistant: changes apply instantly and you can chat with it (answers use the saved AI connection). Save when you are happy.', 'vazho' ); ?></p>
 			</aside>
+

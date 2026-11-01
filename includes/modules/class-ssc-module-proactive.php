@@ -5,7 +5,7 @@
  * Design principles: configurable, restrained, respectful - a single nudge
  * per browser session, auto-dismisses, never covers content.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +32,7 @@ class SSC_Module_Proactive extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Proactive Invitation', 'nexachat-ai' );
+		return __( 'Proactive Invitation', 'vazho' );
 	}
 
 	/**
@@ -41,7 +41,7 @@ class SSC_Module_Proactive extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'A single, dismissible invitation bubble after a delay - shown at most once per browser session.', 'nexachat-ai' );
+		return __( 'A single, dismissible invitation bubble after a delay - shown at most once per browser session.', 'vazho' );
 	}
 
 	/**
@@ -50,7 +50,7 @@ class SSC_Module_Proactive extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Gently start conversations with hesitant visitors without being intrusive.', 'nexachat-ai' );
+		return __( 'Gently start conversations with hesitant visitors without being intrusive.', 'vazho' );
 	}
 
 	/**
@@ -83,3 +83,4 @@ class SSC_Module_Proactive extends SSC_Module {
 		);
 	}
 }
+

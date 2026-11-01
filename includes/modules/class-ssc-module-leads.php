@@ -9,7 +9,7 @@
  * CONFIGURED form definition (never trusted from the client), submission
  * types are whitelisted, and the anti-bot honeypot is enforced here.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,7 +36,7 @@ class SSC_Module_Leads extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Consultation & Lead Collection', 'nexachat-ai' );
+		return __( 'Consultation & Lead Collection', 'vazho' );
 	}
 
 	/**
@@ -45,7 +45,7 @@ class SSC_Module_Leads extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Structured request forms inside the chat with custom fields, consent capture and a request inbox.', 'nexachat-ai' );
+		return __( 'Structured request forms inside the chat with custom fields, consent capture and a request inbox.', 'vazho' );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class SSC_Module_Leads extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Turn conversations into actionable requests with clean, validated contact data.', 'nexachat-ai' );
+		return __( 'Turn conversations into actionable requests with clean, validated contact data.', 'vazho' );
 	}
 
 	/**
@@ -282,7 +282,7 @@ class SSC_Module_Leads extends SSC_Module {
 		if ( $engine ) {
 			$engine->flags['consult_offer'] = true;
 		}
-		return __( 'Of course. Tap the button below, leave your name and phone number with a short description of what you need, and our team will contact you.', 'nexachat-ai' );
+		return __( 'Of course. Tap the button below, leave your name and phone number with a short description of what you need, and our team will contact you.', 'vazho' );
 	}
 
 	/**
@@ -302,8 +302,8 @@ class SSC_Module_Leads extends SSC_Module {
 		}
 		add_submenu_page(
 			'ssc-dashboard',
-			__( 'Requests', 'nexachat-ai' ),
-			__( 'Requests', 'nexachat-ai' ),
+			__( 'Requests', 'vazho' ),
+			__( 'Requests', 'vazho' ),
 			'manage_options',
 			'ssc-requests',
 			array( $this, 'render_page' )
@@ -315,7 +315,7 @@ class SSC_Module_Leads extends SSC_Module {
 	 */
 	public function render_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		// Request handling (PRG pattern - refresh never re-posts).
 		$this->handle_row_actions();
@@ -415,14 +415,14 @@ class SSC_Module_Leads extends SSC_Module {
 				$pharma = SSC_Modules::get( 'pharma' );
 				return $pharma->handle_submission( $params, $ip );
 			}
-			return new WP_Error( 'ssc_module_off', __( 'ADR reporting is disabled on this site.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_module_off', __( 'ADR reporting is disabled on this site.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		if ( 'consult' !== $type ) {
-			return new WP_Error( 'ssc_bad_type', __( 'Invalid submission type.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_bad_type', __( 'Invalid submission type.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		// Module isolation: consultation forms require the leads module.
 		if ( ! SSC_Modules::is_active( 'leads' ) ) {
-			return new WP_Error( 'ssc_module_off', __( 'Form submission is disabled on this site.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_module_off', __( 'Form submission is disabled on this site.', 'vazho' ), array( 'status' => 404 ) );
 		}
 
 		$name  = isset( $params['name'] ) ? SSC_Input::text( $params['name'], 81 ) : '';
@@ -443,10 +443,10 @@ class SSC_Module_Leads extends SSC_Module {
 		// Validation.
 		$errors = array();
 		if ( $bad_email ) {
-			$errors[] = __( 'Please enter a valid email address, or leave it empty.', 'nexachat-ai' );
+			$errors[] = __( 'Please enter a valid email address, or leave it empty.', 'vazho' );
 		}
 		if ( mb_strlen( $name ) < 2 || mb_strlen( $name ) > 80 ) {
-			$errors[] = __( 'Please enter your name (2-80 characters).', 'nexachat-ai' );
+			$errors[] = __( 'Please enter your name (2-80 characters).', 'vazho' );
 		}
 		/**
 		 * Filter the phone validation pattern.
@@ -455,10 +455,10 @@ class SSC_Module_Leads extends SSC_Module {
 		 */
 		$pattern = (string) apply_filters( 'ssc_phone_pattern', '/^\+?\d[\d\s\-]{6,18}\d$/' );
 		if ( ! preg_match( $pattern, $phone ) ) {
-			$errors[] = __( 'Please enter a valid phone number.', 'nexachat-ai' );
+			$errors[] = __( 'Please enter a valid phone number.', 'vazho' );
 		}
 		if ( mb_strlen( $desc ) < 10 || mb_strlen( $desc ) > 1000 ) {
-			$errors[] = __( 'Please describe your request (10-1000 characters).', 'nexachat-ai' );
+			$errors[] = __( 'Please describe your request (10-1000 characters).', 'vazho' );
 		}
 
 		// Dynamic custom fields validated against the CONFIGURED definitions.
@@ -472,7 +472,7 @@ class SSC_Module_Leads extends SSC_Module {
 		if ( 'yes' === SSC_Settings::get( 'consent_enabled', 'no' ) ) {
 			$consent = SSC_Input::consent( $params['consent'] ?? false );
 			if ( ! $consent ) {
-				$errors[] = __( 'Your consent is required to submit this form.', 'nexachat-ai' );
+				$errors[] = __( 'Your consent is required to submit this form.', 'vazho' );
 			} else {
 				$consent_meta = wp_json_encode(
 					array(
@@ -513,7 +513,7 @@ class SSC_Module_Leads extends SSC_Module {
 			)
 		);
 		if ( ! $id ) {
-			return new WP_Error( 'ssc_storage', __( 'The request could not be stored. Please try again.', 'nexachat-ai' ), array( 'status' => 500 ) );
+			return new WP_Error( 'ssc_storage', __( 'The request could not be stored. Please try again.', 'vazho' ), array( 'status' => 500 ) );
 		}
 
 		// Notify (module-gated).
@@ -545,7 +545,7 @@ class SSC_Module_Leads extends SSC_Module {
 			if ( ! is_scalar( $value ) ) {
 				// A list or an object where a single value belongs is refused, never quietly turned into "empty".
 				/* translators: %s: field label. */
-				return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" has an invalid value.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
+				return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" has an invalid value.', 'vazho' ), $field['label'] ), array( 'status' => 400 ) );
 			}
 			$typed = trim( (string) $value );
 			switch ( $field['type'] ) {
@@ -553,7 +553,7 @@ class SSC_Module_Leads extends SSC_Module {
 					$checked = SSC_Input::strict_email( $typed );
 					if ( false === $checked ) {
 						/* translators: %s: field label. */
-						return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" must be a valid email.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
+						return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" must be a valid email.', 'vazho' ), $field['label'] ), array( 'status' => 400 ) );
 					}
 					$value = $checked;
 					break;
@@ -564,7 +564,7 @@ class SSC_Module_Leads extends SSC_Module {
 						$digits = SSC_Input::ascii_number( $typed );
 						if ( '' === $digits ) {
 							/* translators: %s: field label. */
-							return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" must be a number.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
+							return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" must be a number.', 'vazho' ), $field['label'] ), array( 'status' => 400 ) );
 						}
 						$value = (float) $digits;
 					}
@@ -585,13 +585,13 @@ class SSC_Module_Leads extends SSC_Module {
 					$value = (string) $value;
 					if ( '' !== $value && ! in_array( $value, array_map( 'strval', $field['options'] ), true ) ) {
 						/* translators: %s: field label. */
-						return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" must be one of the choices.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
+						return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" must be one of the choices.', 'vazho' ), $field['label'] ), array( 'status' => 400 ) );
 					}
 					break;
 			}
 			if ( $field['required'] && '' === (string) $value ) {
 				/* translators: %s: field label. */
-				return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" is required.', 'nexachat-ai' ), $field['label'] ), array( 'status' => 400 ) );
+				return new WP_Error( 'ssc_field', sprintf( __( 'The field "%s" is required.', 'vazho' ), $field['label'] ), array( 'status' => 400 ) );
 			}
 			if ( '' !== (string) $value ) {
 				$out[ $key ] = $value;
@@ -611,10 +611,10 @@ class SSC_Module_Leads extends SSC_Module {
 	 */
 	public function export_csv() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'ssc_export' ) ) {
-			wp_die( esc_html__( 'Invalid nonce.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Invalid nonce.', 'vazho' ) );
 		}
 
 		$type   = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : '';
@@ -666,3 +666,4 @@ class SSC_Module_Leads extends SSC_Module {
 		exit;
 	}
 }
+

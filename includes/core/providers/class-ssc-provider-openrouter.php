@@ -2,7 +2,7 @@
 /**
  * OpenRouter provider adapter (OpenAI-compatible aggregator).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -121,3 +121,4 @@ class SSC_Provider_Openrouter extends SSC_Provider_OpenAI_Compat {
 		return self::clean_sources( $sources );
 	}
 }
+

@@ -15,7 +15,7 @@
  * older is folded into a short rolling summary (see refresh_summary()), so a
  * long conversation never "forgets" how it started.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -340,8 +340,8 @@ class SSC_Conversation {
 		$to       = (int) $row['total'] - self::window() - $first;
 		$slice    = array_slice( $row['messages'], $from, max( 0, $to - $from ) );
 		$lines    = array();
-		$visitor  = __( 'Visitor', 'nexachat-ai' );
-		$reply_by = __( 'Assistant', 'nexachat-ai' );
+		$visitor  = __( 'Visitor', 'vazho' );
+		$reply_by = __( 'Assistant', 'vazho' );
 		foreach ( $slice as $message ) {
 			$lines[] = ( 'user' === $message['role'] ? $visitor : $reply_by ) . ': ' . mb_substr( (string) $message['content'], 0, 1500 );
 		}

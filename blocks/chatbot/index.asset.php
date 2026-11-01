@@ -3,7 +3,7 @@
  * Hand-declared script dependencies for the block editor script
  * (substitute for the @wordpress/scripts-generated asset file).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -6,7 +6,7 @@
  * With the Live chat module on, these conversations also appear in the
  * operator inbox and customers can ask for a person with /human.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -31,7 +31,7 @@ class SSC_Module_Messenger extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Messenger bot (Bale / Telegram)', 'nexachat-ai' );
+		return __( 'Messenger bot (Bale / Telegram)', 'vazho' );
 	}
 
 	/**
@@ -40,7 +40,7 @@ class SSC_Module_Messenger extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Customers can talk to your assistant inside Bale or Telegram, with the same knowledge and rules as the website chat.', 'nexachat-ai' );
+		return __( 'Customers can talk to your assistant inside Bale or Telegram, with the same knowledge and rules as the website chat.', 'vazho' );
 	}
 
 	/**
@@ -49,7 +49,7 @@ class SSC_Module_Messenger extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Be where your customers already are: one assistant, on your site and in their messenger.', 'nexachat-ai' );
+		return __( 'Be where your customers already are: one assistant, on your site and in their messenger.', 'vazho' );
 	}
 
 	/**
@@ -267,21 +267,22 @@ class SSC_Module_Messenger extends SSC_Module {
 			function () use ( $key ) {
 				switch ( $key ) {
 					case 'not_live':
-						return __( 'The assistant is not available yet. Please try again later.', 'nexachat-ai' );
+						return __( 'The assistant is not available yet. Please try again later.', 'vazho' );
 					case 'text_only':
-						return __( 'I can read text messages only. Please type your question.', 'nexachat-ai' );
+						return __( 'I can read text messages only. Please type your question.', 'vazho' );
 					case 'no_live':
-						return __( 'Talking to a person is not available here. Please leave your question and contact details, or call us.', 'nexachat-ai' );
+						return __( 'Talking to a person is not available here. Please leave your question and contact details, or call us.', 'vazho' );
 					case 'limit':
-						return __( 'You have reached the daily usage limit. Please try again tomorrow.', 'nexachat-ai' );
+						return __( 'You have reached the daily usage limit. Please try again tomorrow.', 'vazho' );
 					case 'human':
-						return __( 'Talk to a person', 'nexachat-ai' );
+						return __( 'Talk to a person', 'vazho' );
 					case 'hello':
-						return __( 'Hello! Ask me anything about our products and services.', 'nexachat-ai' );
+						return __( 'Hello! Ask me anything about our products and services.', 'vazho' );
 					default:
-						return __( 'Sorry, something went wrong. Please try again.', 'nexachat-ai' );
+						return __( 'Sorry, something went wrong. Please try again.', 'vazho' );
 				}
 			}
 		);
 	}
 }
+

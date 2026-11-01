@@ -9,7 +9,7 @@
  * Privacy: transcript logging is opt-in. Non-pharma replies may use the
  * configured transient cache; aggregate counters are independent of logging.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -304,12 +304,12 @@ class SSC_Chat_Engine {
 	 */
 	public static function incomplete_note( $kind ) {
 		if ( 'length' === $kind ) {
-			return __( '(The answer was cut short because it reached the length limit. Ask me to continue to get the rest.)', 'nexachat-ai' );
+			return __( '(The answer was cut short because it reached the length limit. Ask me to continue to get the rest.)', 'vazho' );
 		}
 		if ( 'filtered' === $kind ) {
-			return __( '(The provider stopped this answer under its content policy, so it may be incomplete.)', 'nexachat-ai' );
+			return __( '(The provider stopped this answer under its content policy, so it may be incomplete.)', 'vazho' );
 		}
-		return __( '(The answer was interrupted. Ask again to continue.)', 'nexachat-ai' );
+		return __( '(The answer was interrupted. Ask again to continue.)', 'vazho' );
 	}
 
 	/**
@@ -372,7 +372,7 @@ class SSC_Chat_Engine {
 			return '';
 		}
 		$friendly = '' !== $this->last_error_code ? SSC_HTTP::friendly_error( $this->last_error_code ) : '';
-		return '⚠️ ' . __( 'Admin-only notice: the AI could not answer.', 'nexachat-ai' ) . ' ' . $friendly . "\n\n" . __( 'Provider detail:', 'nexachat-ai' ) . ' ' . $this->last_error;
+		return '⚠️ ' . __( 'Admin-only notice: the AI could not answer.', 'vazho' ) . ' ' . $friendly . "\n\n" . __( 'Provider detail:', 'vazho' ) . ' ' . $this->last_error;
 	}
 
 	/**
@@ -384,7 +384,7 @@ class SSC_Chat_Engine {
 		$this->last_source = 'unanswered';
 		$fallback          = (string) SSC_Settings::get( 'ai_fallback_msg', '' );
 		if ( '' === trim( $fallback ) ) {
-			$fallback = __( 'Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly.', 'nexachat-ai' );
+			$fallback = __( 'Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly.', 'vazho' );
 		}
 		$envelope = $this->envelope( true, $fallback, 'unanswered' );
 		// Handoff is suggested only when the module is active (server-enforced).

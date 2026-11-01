@@ -2,7 +2,7 @@
 /**
  * Google Gemini provider adapter.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -219,8 +219,9 @@ class SSC_Provider_Gemini extends SSC_Provider {
 	 */
 	public function embedded_error( $data ) {
 		if ( isset( $data['candidates'][0]['finishReason'] ) && 'SAFETY' === $data['candidates'][0]['finishReason'] ) {
-			return __( 'The model blocked the test prompt for safety reasons.', 'nexachat-ai' );
+			return __( 'The model blocked the test prompt for safety reasons.', 'vazho' );
 		}
 		return parent::embedded_error( $data );
 	}
 }
+

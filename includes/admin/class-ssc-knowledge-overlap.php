@@ -5,7 +5,7 @@
  * addresses. The assistant reads both, so two versions can make it answer
  * differently from one question to the next. Pure logic, no WordPress calls.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

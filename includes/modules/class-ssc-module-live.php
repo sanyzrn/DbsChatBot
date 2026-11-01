@@ -15,7 +15,7 @@
  *
  * Transcripts stored here follow their own retention (live_retention_days).
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -49,7 +49,7 @@ class SSC_Module_Live extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'Live chat & operator inbox', 'nexachat-ai' );
+		return __( 'Live chat & operator inbox', 'vazho' );
 	}
 
 	/**
@@ -58,7 +58,7 @@ class SSC_Module_Live extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'See conversations as they happen, take over from the assistant with one click, and answer from the dashboard or straight from Bale/Telegram. Visitors can ask for a person at any time.', 'nexachat-ai' );
+		return __( 'See conversations as they happen, take over from the assistant with one click, and answer from the dashboard or straight from Bale/Telegram. Visitors can ask for a person at any time.', 'vazho' );
 	}
 
 	/**
@@ -67,7 +67,7 @@ class SSC_Module_Live extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'The assistant and your team in one chat: no lost customers when a question needs a person.', 'nexachat-ai' );
+		return __( 'The assistant and your team in one chat: no lost customers when a question needs a person.', 'vazho' );
 	}
 
 	/**
@@ -258,7 +258,7 @@ class SSC_Module_Live extends SSC_Module {
 	public static function operator_name( $user_id ) {
 		$user = get_userdata( $user_id );
 		if ( ! $user ) {
-			return __( 'Support team', 'nexachat-ai' );
+			return __( 'Support team', 'vazho' );
 		}
 		return '' !== trim( (string) $user->first_name ) ? $user->first_name : $user->display_name;
 	}
@@ -441,11 +441,11 @@ class SSC_Module_Live extends SSC_Module {
 		$text = SSC_I18n::in_widget_locale(
 			function () use ( $status, $operator ) {
 				$texts = array(
-					'waiting' => __( 'The visitor asked to talk to a person.', 'nexachat-ai' ),
+					'waiting' => __( 'The visitor asked to talk to a person.', 'vazho' ),
 					/* translators: %s: operator name. */
-					'human'   => sprintf( __( '%s joined the chat.', 'nexachat-ai' ), SSC_Module_Live::operator_name( $operator ) ),
-					'bot'     => __( 'The assistant is answering again.', 'nexachat-ai' ),
-					'closed'  => __( 'The chat was closed.', 'nexachat-ai' ),
+					'human'   => sprintf( __( '%s joined the chat.', 'vazho' ), SSC_Module_Live::operator_name( $operator ) ),
+					'bot'     => __( 'The assistant is answering again.', 'vazho' ),
+					'closed'  => __( 'The chat was closed.', 'vazho' ),
 				);
 				return $texts[ $status ];
 			}
@@ -576,7 +576,7 @@ class SSC_Module_Live extends SSC_Module {
 		return array(
 			'status'    => 'waiting',
 			'available' => true,
-			'message'   => __( 'I have asked a colleague to join. Please stay in this chat; you can keep writing in the meantime.', 'nexachat-ai' ),
+			'message'   => __( 'I have asked a colleague to join. Please stay in this chat; you can keep writing in the meantime.', 'vazho' ),
 		);
 	}
 
@@ -587,7 +587,7 @@ class SSC_Module_Live extends SSC_Module {
 	 */
 	public static function offline_text() {
 		$text = trim( (string) SSC_Settings::get( 'live_offline_text', '' ) );
-		return '' !== $text ? $text : __( 'Our team is not available right now. Leave your number and we will call you back.', 'nexachat-ai' );
+		return '' !== $text ? $text : __( 'Our team is not available right now. Leave your number and we will call you back.', 'vazho' );
 	}
 
 	/**
@@ -602,7 +602,7 @@ class SSC_Module_Live extends SSC_Module {
 			return str_replace( '{name}', self::operator_name( $operator ), $text );
 		}
 		/* translators: %s: operator name. */
-		return sprintf( __( 'Hi, this is %s from the support team. How can I help?', 'nexachat-ai' ), self::operator_name( $operator ) );
+		return sprintf( __( 'Hi, this is %s from the support team. How can I help?', 'vazho' ), self::operator_name( $operator ) );
 	}
 
 	/**
@@ -659,7 +659,7 @@ class SSC_Module_Live extends SSC_Module {
 						$thread['channel_chat'],
 						SSC_I18n::in_widget_locale(
 							function () {
-								return __( 'The assistant is answering again.', 'nexachat-ai' );
+								return __( 'The assistant is answering again.', 'vazho' );
 							}
 						)
 					);
@@ -769,7 +769,7 @@ class SSC_Module_Live extends SSC_Module {
 	 * @return string
 	 */
 	protected static function label( $thread ) {
-		$who = '' !== $thread['visitor_label'] ? $thread['visitor_label'] : __( 'Visitor', 'nexachat-ai' );
+		$who = '' !== $thread['visitor_label'] ? $thread['visitor_label'] : __( 'Visitor', 'vazho' );
 		return '#' . (int) $thread['id'] . ' · ' . $who;
 	}
 
@@ -786,7 +786,7 @@ class SSC_Module_Live extends SSC_Module {
 		$recent = array_slice( self::messages( (int) $thread['id'], 0, array( 'visitor' ) ), -3 );
 		$lines  = array(
 			/* translators: %s: chat label. */
-			'🙋 ' . sprintf( __( 'A visitor wants to talk to a person (%s)', 'nexachat-ai' ), self::label( $thread ) ),
+			'🙋 ' . sprintf( __( 'A visitor wants to talk to a person (%s)', 'vazho' ), self::label( $thread ) ),
 		);
 		foreach ( $recent as $message ) {
 			$lines[] = '• ' . mb_substr( $message['body'], 0, 300 );
@@ -794,12 +794,12 @@ class SSC_Module_Live extends SSC_Module {
 		if ( '' !== $thread['page_url'] ) {
 			$lines[] = $thread['page_url'];
 		}
-		$lines[] = __( 'Reply to this message to answer the visitor.', 'nexachat-ai' );
+		$lines[] = __( 'Reply to this message to answer the visitor.', 'vazho' );
 		$markup  = array(
 			'inline_keyboard' => array(
 				array(
 					array(
-						'text'          => __( 'Take over', 'nexachat-ai' ),
+						'text'          => __( 'Take over', 'vazho' ),
 						'callback_data' => 'live:take:' . (int) $thread['id'],
 					),
 				),
@@ -850,7 +850,7 @@ class SSC_Module_Live extends SSC_Module {
 		if ( ! $thread ) {
 			// With the Messenger bot on, an operator's own messages are a normal chat (handy for testing).
 			if ( $context['private'] && ! SSC_Modules::is_active( 'messenger' ) ) {
-				SSC_Messenger::send( $context['chat'], __( 'Reply to a chat message (swipe or long-press it, then Reply) to answer that visitor.', 'nexachat-ai' ) );
+				SSC_Messenger::send( $context['chat'], __( 'Reply to a chat message (swipe or long-press it, then Reply) to answer that visitor.', 'vazho' ) );
 			}
 			return;
 		}
@@ -872,10 +872,10 @@ class SSC_Module_Live extends SSC_Module {
 	 */
 	public static function status_label( $status ) {
 		$labels = array(
-			'bot'     => __( 'Assistant answering', 'nexachat-ai' ),
-			'waiting' => __( 'Waiting for a person', 'nexachat-ai' ),
-			'human'   => __( 'With an operator', 'nexachat-ai' ),
-			'closed'  => __( 'Closed', 'nexachat-ai' ),
+			'bot'     => __( 'Assistant answering', 'vazho' ),
+			'waiting' => __( 'Waiting for a person', 'vazho' ),
+			'human'   => __( 'With an operator', 'vazho' ),
+			'closed'  => __( 'Closed', 'vazho' ),
 		);
 		return isset( $labels[ $status ] ) ? $labels[ $status ] : $status;
 	}
@@ -895,7 +895,7 @@ class SSC_Module_Live extends SSC_Module {
 	public static function summarize( $thread ) {
 		$provider = SSC_Providers::current();
 		if ( null === $provider ) {
-			return new WP_Error( 'ssc_no_ai', __( 'Configure an AI provider to get summaries.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_no_ai', __( 'Configure an AI provider to get summaries.', 'vazho' ) );
 		}
 		$lines = array();
 		foreach ( array_slice( self::messages( (int) $thread['id'] ), -40 ) as $m ) {
@@ -910,7 +910,7 @@ class SSC_Module_Live extends SSC_Module {
 			$lines[] = $who[ $m['sender'] ] . ': ' . mb_substr( $m['body'], 0, 600 );
 		}
 		if ( count( $lines ) < 1 ) {
-			return new WP_Error( 'ssc_empty', __( 'There is nothing to summarize yet.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_empty', __( 'There is nothing to summarize yet.', 'vazho' ) );
 		}
 		$system = 'You write handover notes for a customer-support operator who is about to join a chat. '
 			. 'Answer in the language the visitor writes in. Give exactly three short bullet points: '
@@ -926,7 +926,7 @@ class SSC_Module_Live extends SSC_Module {
 			)
 		);
 		if ( empty( $result['ok'] ) || '' === trim( (string) $result['text'] ) ) {
-			return new WP_Error( 'ssc_ai_failed', __( 'The summary could not be written right now.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_ai_failed', __( 'The summary could not be written right now.', 'vazho' ) );
 		}
 		$summary = mb_substr( trim( wp_strip_all_tags( (string) $result['text'] ) ), 0, 2000 );
 		global $wpdb;
@@ -952,14 +952,14 @@ class SSC_Module_Live extends SSC_Module {
 		$config['live']             = array(
 			'waitMinutes' => (int) SSC_Settings::get( 'live_wait_minutes', 3 ),
 			'i18n'        => array(
-				'talkToPerson' => __( 'Talk to a person', 'nexachat-ai' ),
-				'waiting'      => __( 'Waiting for a colleague to join…', 'nexachat-ai' ),
-				'joined'       => __( 'joined the chat', 'nexachat-ai' ),
-				'backToBot'    => __( 'Back to the assistant', 'nexachat-ai' ),
-				'operator'     => __( 'Support team', 'nexachat-ai' ),
-				'noAnswer'     => __( 'Nobody has picked up yet. Would you like to leave your number instead?', 'nexachat-ai' ),
-				'leaveNumber'  => __( 'Leave my number', 'nexachat-ai' ),
-				'keepWaiting'  => __( 'Keep waiting', 'nexachat-ai' ),
+				'talkToPerson' => __( 'Talk to a person', 'vazho' ),
+				'waiting'      => __( 'Waiting for a colleague to join…', 'vazho' ),
+				'joined'       => __( 'joined the chat', 'vazho' ),
+				'backToBot'    => __( 'Back to the assistant', 'vazho' ),
+				'operator'     => __( 'Support team', 'vazho' ),
+				'noAnswer'     => __( 'Nobody has picked up yet. Would you like to leave your number instead?', 'vazho' ),
+				'leaveNumber'  => __( 'Leave my number', 'vazho' ),
+				'keepWaiting'  => __( 'Keep waiting', 'vazho' ),
 			),
 		);
 		return $config;
@@ -1053,16 +1053,16 @@ class SSC_Module_Live extends SSC_Module {
 	 */
 	public static function public_permission( $request ) {
 		if ( ! SSC_Setup::is_live() ) {
-			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'nexachat-ai' ), array( 'status' => 403 ) );
+			return new WP_Error( 'ssc_not_live', __( 'The assistant is not available yet.', 'vazho' ), array( 'status' => 403 ) );
 		}
 		if ( strlen( $request->get_body() ) > 8192 ) {
-			return new WP_Error( 'ssc_too_large', __( 'The request is too large.', 'nexachat-ai' ), array( 'status' => 413 ) );
+			return new WP_Error( 'ssc_too_large', __( 'The request is too large.', 'vazho' ), array( 'status' => 413 ) );
 		}
 		$engine = new SSC_Chat_Engine();
 		$key    = 'ssc_live_rate_' . SSC_Input::visitor_key( $engine->client_ip() );
 		$count  = (int) get_transient( $key );
 		if ( $count > 90 ) {
-			return new WP_Error( 'ssc_rate_limited', __( 'Please slow down and try again in a minute.', 'nexachat-ai' ), array( 'status' => 429 ) );
+			return new WP_Error( 'ssc_rate_limited', __( 'Please slow down and try again in a minute.', 'vazho' ), array( 'status' => 429 ) );
 		}
 		set_transient( $key, $count + 1, MINUTE_IN_SECONDS );
 		return true;
@@ -1074,7 +1074,7 @@ class SSC_Module_Live extends SSC_Module {
 	 * @return true|WP_Error
 	 */
 	public static function admin_permission() {
-		return self::user_can() ? true : new WP_Error( 'ssc_forbidden', __( 'Insufficient permissions.', 'nexachat-ai' ), array( 'status' => 403 ) );
+		return self::user_can() ? true : new WP_Error( 'ssc_forbidden', __( 'Insufficient permissions.', 'vazho' ), array( 'status' => 403 ) );
 	}
 
 	/**
@@ -1086,7 +1086,7 @@ class SSC_Module_Live extends SSC_Module {
 	public static function rest_request( $request ) {
 		$conv = SSC_Conversation::sanitize_id( (string) $request->get_param( 'conv' ) );
 		if ( '' === $conv ) {
-			return new WP_Error( 'ssc_bad_request', __( 'The chat could not be identified. Please refresh the page.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_bad_request', __( 'The chat could not be identified. Please refresh the page.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		$result = self::request_human(
 			$conv,
@@ -1167,7 +1167,7 @@ class SSC_Module_Live extends SSC_Module {
 			'status'       => $t['status'],
 			'statusLabel'  => self::status_label( $t['status'] ),
 			'channel'      => $t['channel'],
-			'label'        => '' !== $t['visitor_label'] ? $t['visitor_label'] : sprintf( /* translators: %d: chat number. */ __( 'Visitor #%d', 'nexachat-ai' ), (int) $t['id'] ),
+			'label'        => '' !== $t['visitor_label'] ? $t['visitor_label'] : sprintf( /* translators: %d: chat number. */ __( 'Visitor #%d', 'vazho' ), (int) $t['id'] ),
 			'page'         => $t['page_url'],
 			'operator'     => (int) $t['operator_id'],
 			'operatorName' => (int) $t['operator_id'] ? self::operator_name( (int) $t['operator_id'] ) : '',
@@ -1228,7 +1228,7 @@ class SSC_Module_Live extends SSC_Module {
 	public static function rest_thread( $request ) {
 		$thread = self::thread( (int) $request['id'] );
 		if ( ! $thread ) {
-			return new WP_Error( 'ssc_not_found', __( 'Chat not found.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_not_found', __( 'Chat not found.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		$after    = max( 0, (int) $request->get_param( 'after' ) );
 		$messages = array();
@@ -1263,10 +1263,10 @@ class SSC_Module_Live extends SSC_Module {
 		$thread = self::thread( (int) $request['id'] );
 		$text   = mb_substr( sanitize_textarea_field( (string) $request->get_param( 'body' ) ), 0, 4000 );
 		if ( ! $thread || '' === trim( $text ) ) {
-			return new WP_Error( 'ssc_bad_request', __( 'Write a message first.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_bad_request', __( 'Write a message first.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		if ( 'closed' === $thread['status'] && 'web' === $thread['channel'] ) {
-			return new WP_Error( 'ssc_closed', __( 'This chat is closed; the visitor will not see new messages.', 'nexachat-ai' ), array( 'status' => 409 ) );
+			return new WP_Error( 'ssc_closed', __( 'This chat is closed; the visitor will not see new messages.', 'vazho' ), array( 'status' => 409 ) );
 		}
 		$id = self::operator_reply( $thread, $text, get_current_user_id(), 'admin' );
 		return rest_ensure_response( array( 'id' => $id ) );
@@ -1282,7 +1282,7 @@ class SSC_Module_Live extends SSC_Module {
 		$thread = self::thread( (int) $request['id'] );
 		$action = sanitize_key( (string) $request->get_param( 'action' ) );
 		if ( ! $thread || ! self::act( $thread, $action, get_current_user_id() ) ) {
-			return new WP_Error( 'ssc_bad_request', __( 'That action is not possible.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_bad_request', __( 'That action is not possible.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		return rest_ensure_response( array( 'thread' => self::thread_payload( self::thread( (int) $thread['id'] ) ) ) );
 	}
@@ -1296,7 +1296,7 @@ class SSC_Module_Live extends SSC_Module {
 	public static function rest_summary( $request ) {
 		$thread = self::thread( (int) $request['id'] );
 		if ( ! $thread ) {
-			return new WP_Error( 'ssc_not_found', __( 'Chat not found.', 'nexachat-ai' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ssc_not_found', __( 'Chat not found.', 'vazho' ), array( 'status' => 404 ) );
 		}
 		$summary = self::summarize( $thread );
 		if ( is_wp_error( $summary ) ) {
@@ -1332,7 +1332,7 @@ class SSC_Module_Live extends SSC_Module {
 			return rest_ensure_response( array( 'linked' => false ) );
 		}
 		if ( ! SSC_Messenger::ready() ) {
-			return new WP_Error( 'ssc_messenger_token', __( 'Add the bot token in Settings → Modules first.', 'nexachat-ai' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ssc_messenger_token', __( 'Add the bot token in Settings → Modules first.', 'vazho' ), array( 'status' => 400 ) );
 		}
 		$code = SSC_Messenger::link_code( $user_id );
 		return rest_ensure_response(
@@ -1360,9 +1360,9 @@ class SSC_Module_Live extends SSC_Module {
 		$waiting = self::waiting_count();
 		$badge   = $waiting ? ' <span class="awaiting-mod count-' . (int) $waiting . '"><span class="pending-count">' . (int) $waiting . '</span></span>' : '';
 		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page( 'ssc-dashboard', __( 'Live chat', 'nexachat-ai' ), __( 'Live chat', 'nexachat-ai' ) . $badge, 'manage_options', 'ssc-live', array( $this, 'render_page' ) );
+			add_submenu_page( 'ssc-dashboard', __( 'Live chat', 'vazho' ), __( 'Live chat', 'vazho' ) . $badge, 'manage_options', 'ssc-live', array( $this, 'render_page' ) );
 		} else {
-			add_menu_page( __( 'Live chat', 'nexachat-ai' ), __( 'Live chat', 'nexachat-ai' ) . $badge, self::CAP, 'ssc-live', array( $this, 'render_page' ), 'dashicons-format-chat', 3 );
+			add_menu_page( __( 'Live chat', 'vazho' ), __( 'Live chat', 'vazho' ) . $badge, self::CAP, 'ssc-live', array( $this, 'render_page' ), 'dashicons-format-chat', 3 );
 		}
 	}
 
@@ -1389,32 +1389,32 @@ class SSC_Module_Live extends SSC_Module {
 				'linked' => '' !== SSC_Messenger::operator_chat( get_current_user_id() ),
 				'bot'    => SSC_Messenger::ready(),
 				'i18n'   => array(
-					'empty'       => __( 'No conversations yet. They appear here as visitors chat.', 'nexachat-ai' ),
-					'pick'        => __( 'Choose a conversation on the left.', 'nexachat-ai' ),
-					'take'        => __( 'Take over', 'nexachat-ai' ),
-					'release'     => __( 'Return to the assistant', 'nexachat-ai' ),
-					'close'       => __( 'Close chat', 'nexachat-ai' ),
-					'send'        => __( 'Send', 'nexachat-ai' ),
-					'placeholder' => __( 'Write your reply… (Enter to send, Shift+Enter for a new line)', 'nexachat-ai' ),
-					'summary'     => __( 'AI summary', 'nexachat-ai' ),
-					'summarize'   => __( 'Write a summary', 'nexachat-ai' ),
-					'summarizing' => __( 'Writing…', 'nexachat-ai' ),
-					'canned'      => __( 'Saved replies', 'nexachat-ai' ),
-					'visitor'     => __( 'Visitor', 'nexachat-ai' ),
-					'assistant'   => __( 'Assistant', 'nexachat-ai' ),
-					'page'        => __( 'Page', 'nexachat-ai' ),
-					'available'   => __( 'Available', 'nexachat-ai' ),
-					'away'        => __( 'Away', 'nexachat-ai' ),
-					'link'        => __( 'Answer from my messenger', 'nexachat-ai' ),
-					'linked'      => __( 'Messenger connected', 'nexachat-ai' ),
-					'unlink'      => __( 'Disconnect', 'nexachat-ai' ),
+					'empty'       => __( 'No conversations yet. They appear here as visitors chat.', 'vazho' ),
+					'pick'        => __( 'Choose a conversation on the left.', 'vazho' ),
+					'take'        => __( 'Take over', 'vazho' ),
+					'release'     => __( 'Return to the assistant', 'vazho' ),
+					'close'       => __( 'Close chat', 'vazho' ),
+					'send'        => __( 'Send', 'vazho' ),
+					'placeholder' => __( 'Write your reply… (Enter to send, Shift+Enter for a new line)', 'vazho' ),
+					'summary'     => __( 'AI summary', 'vazho' ),
+					'summarize'   => __( 'Write a summary', 'vazho' ),
+					'summarizing' => __( 'Writing…', 'vazho' ),
+					'canned'      => __( 'Saved replies', 'vazho' ),
+					'visitor'     => __( 'Visitor', 'vazho' ),
+					'assistant'   => __( 'Assistant', 'vazho' ),
+					'page'        => __( 'Page', 'vazho' ),
+					'available'   => __( 'Available', 'vazho' ),
+					'away'        => __( 'Away', 'vazho' ),
+					'link'        => __( 'Answer from my messenger', 'vazho' ),
+					'linked'      => __( 'Messenger connected', 'vazho' ),
+					'unlink'      => __( 'Disconnect', 'vazho' ),
 					/* translators: %s: link code. */
-					'linkHelp'    => __( 'Open the bot and send this code: %s (valid for 15 minutes).', 'nexachat-ai' ),
-					'openBot'     => __( 'Open the bot', 'nexachat-ai' ),
-					'error'       => __( 'Something went wrong. Please try again.', 'nexachat-ai' ),
-					'closedNote'  => __( 'This chat is closed.', 'nexachat-ai' ),
-					'open'        => __( 'Open', 'nexachat-ai' ),
-					'closedTab'   => __( 'Closed', 'nexachat-ai' ),
+					'linkHelp'    => __( 'Open the bot and send this code: %s (valid for 15 minutes).', 'vazho' ),
+					'openBot'     => __( 'Open the bot', 'vazho' ),
+					'error'       => __( 'Something went wrong. Please try again.', 'vazho' ),
+					'closedNote'  => __( 'This chat is closed.', 'vazho' ),
+					'open'        => __( 'Open', 'vazho' ),
+					'closedTab'   => __( 'Closed', 'vazho' ),
 				),
 			)
 		);
@@ -1425,7 +1425,7 @@ class SSC_Module_Live extends SSC_Module {
 	 */
 	public function render_page() {
 		if ( ! self::user_can() ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-live.php';
 	}
@@ -1457,3 +1457,4 @@ class SSC_Module_Live extends SSC_Module {
 		// phpcs:enable
 	}
 }
+

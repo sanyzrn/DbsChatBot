@@ -5,7 +5,7 @@
  * once even when two requests start it together. The lock always expires, so
  * a request that dies cannot block the job for good.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -102,3 +102,4 @@ class SSC_Lease {
 		self::forget( $option );
 	}
 }
+

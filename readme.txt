@@ -1,4 +1,4 @@
-=== NexaChatAI ===
+=== Vazho ===
 Contributors: DbsStudio
 Tags: chatbot, ai, support, persian, rtl
 Requires at least: 5.6
@@ -12,7 +12,7 @@ AI assistant for WordPress that knows your business: multi-provider AI, answer s
 
 == Description ==
 
-NexaChatAI is a professional AI assistant for WordPress: install it, run the setup wizard, and publish an assistant that actually knows your business.
+Vazho is a professional AI assistant for WordPress: install it, run the setup wizard, and publish an assistant that actually knows your business.
 
 = Product philosophy =
 
@@ -50,7 +50,7 @@ All of the following are off by default and appear only after you switch them on
 
 == External services ==
 
-NexaChatAI contacts an outside service only after the site owner has chosen and configured it. Nothing is sent to the plugin's author: there is no telemetry, no licence check and no update ping. (The copy sold on RTL-Theme also contains that marketplace's own licence file. It is the marketplace's code, not this plugin's; the plugin only loads it where ionCube is available and does not call it otherwise.)
+Vazho contacts an outside service only after the site owner has chosen and configured it. Nothing is sent to the plugin's author: there is no telemetry, no licence check and no update ping. (The copy sold on RTL-Theme also contains that marketplace's own licence file. It is the marketplace's code, not this plugin's; the plugin only loads it where ionCube is available and does not call it otherwise.)
 
 = AI provider (the one the owner selects) =
 Used to write answers, to build the optional knowledge index (embeddings), to summarise long conversations, and for the optional web search. Called on each chat message, on each indexing job and on the administrator's connection test. Sent: the visitor's message, the recent conversation or its summary, the business profile and the knowledge excerpts found for the question, and the assistant's instructions. In pharmaceutical mode the visitor's text can describe a health problem; the owner should have a data-processing agreement with the provider they choose. The owner's API key goes only to that provider.
@@ -72,12 +72,11 @@ Used for cart reminders and administrator alerts. Called only when the SMS modul
 
 == Installation ==
 
-1. Download the installable `nexachat-ai-<version>.zip` from the marketplace or account where you purchased the plugin.
+1. Download the installable `vazho-<version>.zip` from the marketplace or account where you purchased the plugin.
 2. Plugins → Add New → Upload Plugin, choose the ZIP and activate — the setup wizard opens automatically.
 3. Complete the five steps and publish.
 4. Use the floating widget, shortcode `[ssc_chatbot]`, Gutenberg block, or Elementor widget.
 
-Upgrading from 1.0.x (folder `smart-support-chatbot`): install and activate the new ZIP. The old copy is deactivated automatically and all data is kept; then delete the old copy.
 
 == Frequently Asked Questions ==
 
@@ -87,7 +86,7 @@ No. Offline modes (FAQ bank only / no AI engine) work without sending data outsi
 
 = Who pays for AI usage? =
 
-You do. NexaChatAI uses your own API keys — no middleman.
+You do. Vazho uses your own API keys — no middleman.
 
 = What happens to data when I delete the plugin? =
 
@@ -117,9 +116,9 @@ PHP mbstring and OpenSSL extensions are needed. The server also needs outbound H
 * Docs: readme.txt notes that the marketplace copy contains the marketplace's own licence file.
 
 = 1.7.8 =
-* Changed: the Gutenberg block is named NexaChatAI and its title and editor texts follow the site language (it was still called "Smart Assistant Chatbot" and sent editors to a menu with that name).
+* Changed: the Gutenberg block is named Vazho and its title and editor texts follow the site language (it was still called "Vazho" and sent editors to a menu with that name).
 * Changed: the AI connection screen and this file say that the server must be able to reach the AI provider, and that some providers refuse or block servers inside Iran; use a host outside Iran or an OpenAI-compatible gateway you can reach.
-* Changed: all addresses point to DbsStudio. The plugin page is dbsstudio.ir/nexachatai, and "Report a problem" in About opens dbsstudio.ir/issues with the product and the installed version already filled in. Security reports use the same private form.
+* Changed: all addresses point to DbsStudio. The plugin page is dbsstudio.ir/vazho, and "Report a problem" in About opens dbsstudio.ir/issues with the product and the installed version already filled in. Security reports use the same private form.
 * Docs: the full SIL Open Font License (Vazirmatn, Inter) and Apache 2.0 (Roboto) texts ship next to the bundled fonts.
 
 = 1.7.7 =
@@ -138,7 +137,7 @@ PHP mbstring and OpenSSL extensions are needed. The server also needs outbound H
 * Fixed: product, menu and brochure buttons keep readable brand-color hover, focus and pressed states instead of looking disabled under host-theme styles.
 * Fixed: the floating chat button stays opaque and circular, and becomes darker on hover/focus/press.
 * Fixed: the empty Persian message composer and its placeholder align to the right while typed text keeps automatic direction.
-* Changed: the WordPress sidebar displays «نکساچت» for a Persian administrator language, independently of the widget language.
+* Changed: the WordPress sidebar displays «واژو» for a Persian administrator language, independently of the widget language.
 * Changed: restored the original NexaHR furred mascot, including its face, tuft, feet and pointer-driven gaze. Each SVG has isolated gradient IDs so the header and launcher render independently.
 
 = 1.7.4 =
@@ -286,7 +285,7 @@ PHP mbstring and OpenSSL extensions are needed. The server also needs outbound H
 
 * Fixed: the release pipeline now attaches the installable ZIP even when the release was created in the GitHub UI first, and can be re-run for an existing tag.
 * Fixed: a "translation loaded too early" notice (WordPress 6.7+) during activation; cron events are now scheduled on init.
-* Docs: README, installation steps (download `nexachat-ai-<version>.zip`, not "Source code") and the Persian pharmaceutical setup guide updated for 1.1.
+* Docs: README, installation steps (download `vazho-<version>.zip`, not "Source code") and the Persian pharmaceutical setup guide updated for 1.1.
 
 = 1.1.0 =
 
@@ -299,7 +298,7 @@ PHP mbstring and OpenSSL extensions are needed. The server also needs outbound H
 * New: visitor IP anonymization (default) for logs and requests.
 * New: answer scope — only from your knowledge, your business and its field (default for new sites), or any question — with an optional reply for unrelated questions. Replaces the old "strict mode" checkbox; existing sites keep their behaviour.
 * New: optional web search through the provider's own tool (OpenAI Responses, Claude, Gemini Google Search, OpenRouter), with an optional domain allow-list and web citations under answers. Always off in knowledge-only and pharmaceutical modes.
-* Changed: plugin folder, main file and text domain are now `nexachat-ai`. An active pre-rename copy is detected and deactivated automatically; settings and data are shared and kept.
+* Changed: plugin folder, main file and text domain are now `vazho`. An active pre-rename copy is detected and deactivated automatically; settings and data are shared and kept.
 * Fixed: "bottom right" appeared bottom-left on RTL sites; chat questions containing "<" were truncated; checkbox/radio label spacing.
 
 = 1.0.0 =
@@ -368,7 +367,7 @@ First stable release. Everything from the 0.6.x beta line, plus:
 
 = 0.5.1-beta =
 
-* Rebrand: NexaChatAI by DbsStudio
+* Rebrand: Vazho by DbsStudio
 * Admin layout uses full width on large monitors
 * Delete-time prompt: erase all stored data or keep it for reinstall
 * Streaming AI replies, display rules, business hours, live dark/light appearance preview
@@ -392,11 +391,10 @@ Fixes the setup wizard's Publish button staying disabled on the final step. No d
 
 = 1.1.1 =
 
-Documentation and release-packaging update; no data changes. Upgrading from 1.0.x? See the 1.1.0 notice below.
-
+Documentation and release-packaging update; no data changes.
 = 1.1.0 =
 
-The plugin now lives in the `nexachat-ai` folder. Install the new ZIP and activate it: the old `smart-support-chatbot` copy is deactivated automatically and all data is kept. Its "remove data on uninstall" policy is switched off during the hand-over so deleting the old copy cannot erase shared data. Back up first, then clear page/CDN caches.
+The plugin installs into the `vazho` folder. Clear page/CDN caches after updating.
 
 = 1.0.0 =
 

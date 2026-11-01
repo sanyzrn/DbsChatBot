@@ -5,7 +5,7 @@
  * A module manager, not a store: no prices, no plans, no purchase buttons.
  * Statuses: Active / Inactive / Setup Required.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,7 +22,7 @@ class SSC_Admin_Modules {
 	 */
 	public function __construct() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		add_action( 'admin_init', array( $this, 'handle_actions' ), 5 );
 	}

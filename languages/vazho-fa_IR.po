@@ -1,5 +1,5 @@
 msgid ""
-msgstr "Project-Id-Version: NexaChatAI\nLanguage: fa_IR\nContent-Type: text/plain; charset=UTF-8\nPlural-Forms: nplurals=2; plural=(n > 1);\n"
+msgstr "Project-Id-Version: Vazho\nLanguage: fa_IR\nContent-Type: text/plain; charset=UTF-8\nPlural-Forms: nplurals=2; plural=(n > 1);\n"
 
 msgid "\"Ask\" and \"Required\" are editable in Custom mode; the other lengths use a fixed set. If the seriousness question is off, serious cases cannot be flagged for immediate notification."
 msgstr "«پرسیده شود» و «الزامی» فقط در حالت دلخواه قابل تغییرند؛ بقیهٔ حالت‌ها مجموعهٔ ثابتی دارند. اگر سؤال معیارهای جدی‌بودن خاموش باشد، موارد جدی برای اطلاع‌رسانی فوری مشخص نمی‌شوند."
@@ -1558,8 +1558,8 @@ msgstr "برچسب فیلد"
 msgid "Field type"
 msgstr "نوع فیلد"
 
-msgid "File from “%1$s”, exported %2$s with NexaChatAI %3$s. Nothing has changed yet."
-msgstr "فایل از «%1$s»، برون‌بری‌شده در %2$s با نکسا‌چت‌ای‌آی %3$s. هنوز چیزی تغییر نکرده است."
+msgid "File from “%1$s”, exported %2$s with Vazho %3$s. Nothing has changed yet."
+msgstr "فایل از «%1$s»، برون‌بری‌شده در %2$s با واژو‌چت‌ای‌آی %3$s. هنوز چیزی تغییر نکرده است."
 
 msgid "Filter"
 msgstr "فیلتر"
@@ -2364,24 +2364,6 @@ msgstr "درخواست‌های جدید از طریق رباتی که در کا
 
 msgid "New side-effect report #%d. Sign in to review it."
 msgstr "گزارش عارضهٔ جدید #%d. برای بررسی وارد پیشخوان شوید."
-
-msgid "Nexa"
-msgstr "نکسا"
-
-msgid "NexaChatAI"
-msgstr "نکسا‌چت‌ای‌آی"
-
-msgid "NexaChatAI is designed and developed by DbsStudio. For the latest news, other products, support and feedback, visit the website."
-msgstr "نکسا‌چت‌ای‌آی را DbsStudio طراحی و توسعه داده است. برای آخرین خبرها، محصولات دیگر، پشتیبانی و ارسال بازخورد به وب‌سایت سر بزنید."
-
-msgid "NexaChatAI moved to a new plugin folder (nexachat-ai). The old copy (smart-support-chatbot) was deactivated automatically; all settings and data were kept. The \"remove data on uninstall\" policy was switched off so deleting the old copy cannot erase shared data; you can now delete it from the Plugins screen."
-msgstr "نکسا‌چت‌ای‌آی به پوشهٔ جدیدی (nexachat-ai) منتقل شد. نسخهٔ قدیمی (smart-support-chatbot) خودکار غیرفعال شد و همهٔ تنظیمات و داده‌ها حفظ شدند. سیاست «حذف داده هنگام حذف افزونه» خاموش شد تا حذف نسخهٔ قدیمی داده‌های مشترک را پاک نکند؛ اکنون می‌توانید آن را از صفحهٔ افزونه‌ها حذف کنید."
-
-msgid "NexaChatAI: every five minutes"
-msgstr "نکسا‌چت‌ای‌آی: هر پنج دقیقه"
-
-msgid "NexaChatAI: every minute"
-msgstr "NexaChatAI: هر دقیقه"
 
 msgid "Next"
 msgstr "گام بعدی"
@@ -3664,8 +3646,8 @@ msgstr "رد کردن"
 msgid "Smart discount for hesitating visitors"
 msgstr "تخفیف هوشمند برای بازدیدکنندگان مردد"
 
-msgid "Smart offer from the NexaChatAI assistant"
-msgstr "پیشنهاد هوشمند دستیار NexaChatAI"
+msgid "Smart offer from the Vazho assistant"
+msgstr "پیشنهاد هوشمند دستیار Vazho"
 
 msgid "Some documents could not be imported and were left as they were. Documents that are not in the file were not removed."
 msgstr "برخی اسناد وارد نشدند و همان‌طور که بودند ماندند. اسنادی که در فایل نیستند حذف نشدند."
@@ -3930,8 +3912,8 @@ msgstr "دستیار و تیم شما در یک گفتگو: وقتی سؤالی 
 msgid "The assistant is answering again."
 msgstr "از این به بعد دوباره دستیار پاسخ می‌دهد."
 
-msgid "The assistant is configured in the NexaChatAI admin menu. Publishing is controlled there."
-msgstr "دستیار از منوی «نکساچت» در پنل مدیریت تنظیم می‌شود و انتشار آن هم از همان‌جا کنترل می‌شود."
+msgid "The assistant is configured in the Vazho admin menu. Publishing is controlled there."
+msgstr "دستیار از منوی «واژو» در پنل مدیریت تنظیم می‌شود و انتشار آن هم از همان‌جا کنترل می‌شود."
 
 msgid "The assistant is invisible to visitors until the wizard is complete and you publish it. Pick up where you left off."
 msgstr "تا وقتی جادوگر کامل نشود و آن را منتشر نکنید، دستیار برای بازدیدکنندگان دیده نمی‌شود. از همان‌جا که ماندید ادامه دهید."
@@ -4254,11 +4236,11 @@ msgstr "این فایل وارد نمی‌شود: %1$s، ردیف %2$d در فی
 msgid "This file cannot be imported: the setting “%s” holds a value of the wrong kind (a list where text belongs, or the other way round). Nothing was changed."
 msgstr "این فایل وارد نمی‌شود: تنظیم «%s» مقداری از نوع نادرست دارد (فهرست به‌جای متن، یا برعکس). چیزی تغییر نکرد."
 
-msgid "This file comes from a newer version of NexaChatAI. Update the plugin and try again."
-msgstr "این فایل از نسخهٔ جدیدتری از نکسا‌چت‌ای‌آی است. افزونه را به‌روز کنید و دوباره تلاش کنید."
+msgid "This file comes from a newer version of Vazho. Update the plugin and try again."
+msgstr "این فایل از نسخهٔ جدیدتری از واژو‌چت‌ای‌آی است. افزونه را به‌روز کنید و دوباره تلاش کنید."
 
-msgid "This file was not created by NexaChatAI export."
-msgstr "این فایل با برون‌بری نکسا‌چت‌ای‌آی ساخته نشده است."
+msgid "This file was not created by Vazho export."
+msgstr "این فایل با برون‌بری واژو‌چت‌ای‌آی ساخته نشده است."
 
 msgid "This is an optional module"
 msgstr "این یک ماژول اختیاری است"
@@ -4499,6 +4481,18 @@ msgstr "معتبر تا"
 
 msgid "Value"
 msgstr "مقدار"
+
+msgid "Vazho"
+msgstr "واژو"
+
+msgid "Vazho is designed and developed by DbsStudio. For the latest news, other products, support and feedback, visit the website."
+msgstr "واژو‌چت‌ای‌آی را DbsStudio طراحی و توسعه داده است. برای آخرین خبرها، محصولات دیگر، پشتیبانی و ارسال بازخورد به وب‌سایت سر بزنید."
+
+msgid "Vazho: every five minutes"
+msgstr "واژو‌چت‌ای‌آی: هر پنج دقیقه"
+
+msgid "Vazho: every minute"
+msgstr "Vazho: هر دقیقه"
 
 msgid "Vazirmatn (Persian)"
 msgstr "وزیرمتن (فارسی)"

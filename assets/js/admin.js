@@ -1,5 +1,5 @@
 /**
- * NexaChatAI — admin interactions.
+ * Vazho — admin interactions.
  * Vanilla JS (no jQuery dependency). RTL-agnostic.
  */
 (function () {

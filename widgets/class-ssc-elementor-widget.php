@@ -2,7 +2,7 @@
 /**
  * Elementor widget: chatbot placement + safe appearance overrides.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'NexaChatAI', 'nexachat-ai' );
+		return __( 'Vazho', 'vazho' );
 	}
 
 	/**
@@ -65,7 +65,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 	 * @return string[]
 	 */
 	public function get_style_depends() {
-		return array( 'nexachat-ai' );
+		return array( 'vazho' );
 	}
 
 	/**
@@ -74,7 +74,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 	 * @return string[]
 	 */
 	public function get_script_depends() {
-		return array( 'nexachat-ai' );
+		return array( 'vazho' );
 	}
 
 	/**
@@ -85,13 +85,13 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 
 		$this->start_controls_section(
 			'content',
-			array( 'label' => __( 'Content', 'nexachat-ai' ) )
+			array( 'label' => __( 'Content', 'vazho' ) )
 		);
 
 		$this->add_control(
 			'assistant_display_name',
 			array(
-				'label'       => __( 'Assistant name (empty = global)', 'nexachat-ai' ),
+				'label'       => __( 'Assistant name (empty = global)', 'vazho' ),
 				'type'        => \Elementor\Controls_Manager::TEXT,
 				'default'     => '',
 				'placeholder' => (string) $s['assistant_display_name'],
@@ -101,7 +101,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'welcome_title',
 			array(
-				'label'   => __( 'Welcome title (empty = global)', 'nexachat-ai' ),
+				'label'   => __( 'Welcome title (empty = global)', 'vazho' ),
 				'type'    => \Elementor\Controls_Manager::TEXT,
 				'default' => '',
 			)
@@ -110,7 +110,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'welcome_text',
 			array(
-				'label'   => __( 'Welcome message (empty = global)', 'nexachat-ai' ),
+				'label'   => __( 'Welcome message (empty = global)', 'vazho' ),
 				'type'    => \Elementor\Controls_Manager::TEXTAREA,
 				'default' => '',
 			)
@@ -121,7 +121,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->start_controls_section(
 			'style',
 			array(
-				'label' => __( 'Style', 'nexachat-ai' ),
+				'label' => __( 'Style', 'vazho' ),
 				'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
 			)
 		);
@@ -129,13 +129,13 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'position',
 			array(
-				'label'   => __( 'Floating button position', 'nexachat-ai' ),
+				'label'   => __( 'Floating button position', 'vazho' ),
 				'type'    => \Elementor\Controls_Manager::SELECT,
 				'default' => '',
 				'options' => array(
-					''      => __( 'Global setting', 'nexachat-ai' ),
-					'right' => __( 'Bottom right', 'nexachat-ai' ),
-					'left'  => __( 'Bottom left', 'nexachat-ai' ),
+					''      => __( 'Global setting', 'vazho' ),
+					'right' => __( 'Bottom right', 'vazho' ),
+					'left'  => __( 'Bottom left', 'vazho' ),
 				),
 			)
 		);
@@ -143,7 +143,7 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'primary_color',
 			array(
-				'label'   => __( 'Primary color (empty = global)', 'nexachat-ai' ),
+				'label'   => __( 'Primary color (empty = global)', 'vazho' ),
 				'type'    => \Elementor\Controls_Manager::COLOR,
 				'default' => '',
 			)
@@ -152,14 +152,14 @@ class SSC_Elementor_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'theme_mode',
 			array(
-				'label'   => __( 'Theme (empty = global)', 'nexachat-ai' ),
+				'label'   => __( 'Theme (empty = global)', 'vazho' ),
 				'type'    => \Elementor\Controls_Manager::SELECT,
 				'default' => '',
 				'options' => array(
-					''      => __( 'Global setting', 'nexachat-ai' ),
-					'light' => __( 'Light', 'nexachat-ai' ),
-					'dark'  => __( 'Dark', 'nexachat-ai' ),
-					'auto'  => __( 'Match device', 'nexachat-ai' ),
+					''      => __( 'Global setting', 'vazho' ),
+					'light' => __( 'Light', 'vazho' ),
+					'dark'  => __( 'Dark', 'vazho' ),
+					'auto'  => __( 'Match device', 'vazho' ),
 				),
 			)
 		);

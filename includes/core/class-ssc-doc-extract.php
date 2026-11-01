@@ -9,7 +9,7 @@
  * non-Latin text is stored), and the text operators Tj, TJ, ' and ".
  * Scanned PDFs (images) have no text; they are reported as such.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -93,12 +93,12 @@ class SSC_Doc_Extract {
 	 */
 	protected static function too_big( $why ) {
 		if ( 'time' === $why ) {
-			return new WP_Error( 'ssc_doc_big', __( 'Reading this document took too long and was stopped. Split it into smaller documents and upload them one by one.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_doc_big', __( 'Reading this document took too long and was stopped. Split it into smaller documents and upload them one by one.', 'vazho' ) );
 		}
 		if ( 'text' === $why ) {
-			return new WP_Error( 'ssc_doc_big', __( 'This document has too much text to learn in one piece. Split it into smaller documents and upload them one by one. Nothing was added.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_doc_big', __( 'This document has too much text to learn in one piece. Split it into smaller documents and upload them one by one. Nothing was added.', 'vazho' ) );
 		}
-		return new WP_Error( 'ssc_doc_big', __( 'This document unpacks to far more data than its file size suggests, so it was refused to protect the server. Nothing was added. If it is genuine, save it again as a plain PDF or Word file.', 'nexachat-ai' ) );
+		return new WP_Error( 'ssc_doc_big', __( 'This document unpacks to far more data than its file size suggests, so it was refused to protect the server. Nothing was added. If it is genuine, save it again as a plain PDF or Word file.', 'vazho' ) );
 	}
 
 	/**
@@ -118,7 +118,7 @@ class SSC_Doc_Extract {
 		} elseif ( 'pdf' === $ext ) {
 			$text = self::pdf( (string) file_get_contents( $path ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- local upload.
 		} else {
-			return new WP_Error( 'ssc_doc_type', __( 'Unsupported document type.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_doc_type', __( 'Unsupported document type.', 'vazho' ) );
 		}
 		if ( '' !== self::$stopped ) {
 			return self::too_big( self::$stopped );
@@ -132,7 +132,7 @@ class SSC_Doc_Extract {
 		}
 		// Real text has letters; a scanned PDF yields nothing (or noise).
 		if ( preg_match_all( '/\p{L}/u', $text ) < 20 ) {
-			return new WP_Error( 'ssc_doc_empty', __( 'No readable text was found. If this is a scanned document, upload a text version (Word, or a PDF saved from a text editor).', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_doc_empty', __( 'No readable text was found. If this is a scanned document, upload a text version (Word, or a PDF saved from a text editor).', 'vazho' ) );
 		}
 		return $text;
 	}
@@ -181,11 +181,11 @@ class SSC_Doc_Extract {
 	 */
 	public static function docx( $path ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			return new WP_Error( 'ssc_doc_zip', __( 'This server cannot open Word files (the PHP zip extension is missing). Save the document as PDF or TXT and upload that.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_doc_zip', __( 'This server cannot open Word files (the PHP zip extension is missing). Save the document as PDF or TXT and upload that.', 'vazho' ) );
 		}
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $path ) ) {
-			return new WP_Error( 'ssc_doc_read', __( 'The file could not be opened. Is it a valid .docx document?', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_doc_read', __( 'The file could not be opened. Is it a valid .docx document?', 'vazho' ) );
 		}
 		$cap  = self::limit( 'stream', self::MAX_STREAM_BYTES );
 		$stat = $zip->statName( 'word/document.xml' );
@@ -202,7 +202,7 @@ class SSC_Doc_Extract {
 			return '';
 		}
 		if ( false === $xml || '' === $xml ) {
-			return new WP_Error( 'ssc_doc_read', __( 'The file could not be opened. Is it a valid .docx document?', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_doc_read', __( 'The file could not be opened. Is it a valid .docx document?', 'vazho' ) );
 		}
 		// Structure to line breaks, then drop the markup.
 		$xml  = preg_replace( array( '/<w:tab\/>/', '/<w:br[^>]*\/>/', '/<\/w:p>/', '/<\/w:tc>/' ), array( "\t", "\n", "\n", "\t" ), $xml );
@@ -225,17 +225,17 @@ class SSC_Doc_Extract {
 	 */
 	public static function pdf( $data ) {
 		if ( 0 !== strpos( ltrim( substr( $data, 0, 1024 ) ), '%PDF' ) ) {
-			return new WP_Error( 'ssc_doc_read', __( 'This does not look like a PDF file.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_doc_read', __( 'This does not look like a PDF file.', 'vazho' ) );
 		}
 		if ( preg_match( '/\/Encrypt\s/', $data ) ) {
-			return new WP_Error( 'ssc_doc_encrypted', __( 'This PDF is password-protected or encrypted. Remove the protection and upload it again.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_doc_encrypted', __( 'This PDF is password-protected or encrypted. Remove the protection and upload it again.', 'vazho' ) );
 		}
 		$objects = self::pdf_objects( $data );
 		if ( '' !== self::$stopped ) {
 			return '';
 		}
 		if ( ! $objects ) {
-			return new WP_Error( 'ssc_doc_read', __( 'The PDF could not be read.', 'nexachat-ai' ) );
+			return new WP_Error( 'ssc_doc_read', __( 'The PDF could not be read.', 'vazho' ) );
 		}
 
 		$out   = array();
@@ -984,3 +984,4 @@ class SSC_Doc_Extract {
 		return (string) mb_convert_encoding( $bytes, 'UTF-8', 'ISO-8859-1' );
 	}
 }
+

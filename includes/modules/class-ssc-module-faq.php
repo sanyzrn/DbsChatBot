@@ -3,7 +3,7 @@
  * FAQ module: curated offline answer bank management, CSV/JSON import,
  * suggestion endpoints.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +30,7 @@ class SSC_Module_Faq extends SSC_Module {
 	 * @return string
 	 */
 	public function title() {
-		return __( 'FAQ Answer Bank', 'nexachat-ai' );
+		return __( 'FAQ Answer Bank', 'vazho' );
 	}
 
 	/**
@@ -39,7 +39,7 @@ class SSC_Module_Faq extends SSC_Module {
 	 * @return string
 	 */
 	public function description() {
-		return __( 'Curated question/answer pairs with smart Persian/English matching. Works even when the AI engine is unavailable or set to bank-only mode.', 'nexachat-ai' );
+		return __( 'Curated question/answer pairs with smart Persian/English matching. Works even when the AI engine is unavailable or set to bank-only mode.', 'vazho' );
 	}
 
 	/**
@@ -48,7 +48,7 @@ class SSC_Module_Faq extends SSC_Module {
 	 * @return string
 	 */
 	public function benefit() {
-		return __( 'Instant, zero-cost, perfectly controlled answers for your most common questions.', 'nexachat-ai' );
+		return __( 'Instant, zero-cost, perfectly controlled answers for your most common questions.', 'vazho' );
 	}
 
 	/**
@@ -86,8 +86,8 @@ class SSC_Module_Faq extends SSC_Module {
 		}
 		add_submenu_page(
 			'ssc-dashboard',
-			__( 'FAQ Bank', 'nexachat-ai' ),
-			__( 'FAQ Bank', 'nexachat-ai' ),
+			__( 'FAQ Bank', 'vazho' ),
+			__( 'FAQ Bank', 'vazho' ),
 			'manage_options',
 			'ssc-faq',
 			array( $this, 'render_page' )
@@ -285,7 +285,7 @@ class SSC_Module_Faq extends SSC_Module {
 	 */
 	public function render_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'nexachat-ai' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'vazho' ) );
 		}
 		// Batched listing (no giant single form - 4.x fragility removed).
 		$page  = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
@@ -297,3 +297,4 @@ class SSC_Module_Faq extends SSC_Module {
 		require SSC_CHATBOT_DIR . 'includes/admin/views/page-faq.php';
 	}
 }
+

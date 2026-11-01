@@ -11,7 +11,7 @@
  * - The wizard NEVER blocks the WordPress dashboard or other plugins: it is
  *   a regular admin page that redirects once after activation.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -370,38 +370,38 @@ class SSC_Setup {
 		return array(
 			array(
 				'id'    => 'identity',
-				'label' => __( 'Business profile completed', 'nexachat-ai' ),
-				'todo'  => __( 'Complete the business profile', 'nexachat-ai' ),
+				'label' => __( 'Business profile completed', 'vazho' ),
+				'todo'  => __( 'Complete the business profile', 'vazho' ),
 				'done'  => $identity,
 			),
 			array(
 				'id'    => 'knowledge',
-				'label' => __( 'Essential business knowledge added', 'nexachat-ai' ),
-				'todo'  => __( 'Add the essential business knowledge', 'nexachat-ai' ),
+				'label' => __( 'Essential business knowledge added', 'vazho' ),
+				'todo'  => __( 'Add the essential business knowledge', 'vazho' ),
 				'done'  => $knowledge,
 			),
 			array(
 				'id'    => 'connection',
-				'label' => __( 'AI provider connection verified', 'nexachat-ai' ),
-				'todo'  => __( 'Verify the AI provider connection', 'nexachat-ai' ),
+				'label' => __( 'AI provider connection verified', 'vazho' ),
+				'todo'  => __( 'Verify the AI provider connection', 'vazho' ),
 				'done'  => $conn,
 			),
 			array(
 				'id'    => 'identity_test',
-				'label' => __( 'Business identity test passed', 'nexachat-ai' ),
-				'todo'  => __( 'Pass the business identity test', 'nexachat-ai' ),
+				'label' => __( 'Business identity test passed', 'vazho' ),
+				'todo'  => __( 'Pass the business identity test', 'vazho' ),
 				'done'  => $identity_verified,
 			),
 			array(
 				'id'    => 'appearance',
-				'label' => __( 'Appearance configured', 'nexachat-ai' ),
-				'todo'  => __( 'Configure the appearance', 'nexachat-ai' ),
+				'label' => __( 'Appearance configured', 'vazho' ),
+				'todo'  => __( 'Configure the appearance', 'vazho' ),
 				'done'  => $appearance,
 			),
 			array(
 				'id'    => 'privacy',
-				'label' => __( 'Privacy disclosures acknowledged', 'nexachat-ai' ),
-				'todo'  => __( 'Acknowledge the privacy disclosures', 'nexachat-ai' ),
+				'label' => __( 'Privacy disclosures acknowledged', 'vazho' ),
+				'todo'  => __( 'Acknowledge the privacy disclosures', 'vazho' ),
 				'done'  => $privacy,
 			),
 		);
@@ -448,3 +448,4 @@ class SSC_Setup {
 		self::update_state( array( 'redirect_done' => true ) );
 	}
 }
+

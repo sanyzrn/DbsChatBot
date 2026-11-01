@@ -8,7 +8,7 @@
  * the stored answer is NOT given and the question goes on to the assistant.
  * Pure logic, no WordPress calls.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -174,3 +174,4 @@ class SSC_Knowledge_Polarity {
 		return '';
 	}
 }
+

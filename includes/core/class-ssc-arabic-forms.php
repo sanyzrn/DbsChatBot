@@ -2,7 +2,7 @@
 /**
  * Arabic presentation forms to base letters.
  *
- * @package SmartSupportChatbot
+ * @package Vazho
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
