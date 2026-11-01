@@ -239,16 +239,19 @@ class SSC_Stream {
 	protected static function emit_done( $result ) {
 		self::emit(
 			'done',
-			array(
-				'reply'     => isset( $result['reply'] ) ? $result['reply'] : '',
-				'source'    => isset( $result['source'] ) ? $result['source'] : 'ai',
-				'handoff'   => ! empty( $result['handoff'] ),
-				'log_id'    => isset( $result['log_id'] ) ? (int) $result['log_id'] : 0,
-				'log_token' => isset( $result['log_token'] ) ? (string) $result['log_token'] : '',
-				'flags'     => isset( $result['flags'] ) ? $result['flags'] : (object) array(),
-				'sources'   => isset( $result['sources'] ) ? $result['sources'] : array(),
-				'cards'     => isset( $result['cards'] ) ? $result['cards'] : array(),
-				'actions'   => isset( $result['actions'] ) ? $result['actions'] : array(),
+			SSC_Answer_Receipt::transport(
+				array(
+					'reply'     => isset( $result['reply'] ) ? $result['reply'] : '',
+					'source'    => isset( $result['source'] ) ? $result['source'] : 'ai',
+					'handoff'   => ! empty( $result['handoff'] ),
+					'log_id'    => isset( $result['log_id'] ) ? (int) $result['log_id'] : 0,
+					'log_token' => isset( $result['log_token'] ) ? (string) $result['log_token'] : '',
+					'flags'     => isset( $result['flags'] ) ? $result['flags'] : (object) array(),
+					'sources'   => isset( $result['sources'] ) ? $result['sources'] : array(),
+					'cards'     => isset( $result['cards'] ) ? $result['cards'] : array(),
+					'actions'   => isset( $result['actions'] ) ? $result['actions'] : array(),
+				),
+				$result
 			)
 		);
 		exit;

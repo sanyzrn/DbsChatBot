@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01 19:45:04+00:00\n"
+"POT-Creation-Date: 2026-11-01 21:42:12+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: vazho\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: includes/admin/class-ssc-admin.php:305
 #: includes/admin/class-ssc-admin.php:39
 #: includes/admin/class-ssc-wizard.php:38
-#: includes/core/class-ssc-ajax.php:233
+#: includes/core/class-ssc-ajax.php:236
 #: includes/core/class-ssc-rest.php:137
 #: includes/modules/class-ssc-module-analytics.php:155
 #: includes/modules/class-ssc-module-faq.php:288
@@ -615,7 +615,7 @@ msgid "Christian Robertson, Apache License 2.0"
 msgstr ""
 
 #: includes/admin/views/page-analytics.php:25
-#: includes/core/class-ssc-modules.php:247
+#: includes/core/class-ssc-modules.php:248
 #: includes/modules/class-ssc-module-analytics.php:142
 #: includes/modules/class-ssc-module-analytics.php:143
 msgid "Analytics"
@@ -4730,11 +4730,11 @@ msgid "The request is too large."
 msgstr ""
 
 #: includes/core/class-ssc-ajax.php:104
-#: includes/core/class-ssc-ajax.php:142
+#: includes/core/class-ssc-ajax.php:145
 #: includes/core/class-ssc-rest.php:434
 #: includes/core/class-ssc-rest.php:461
 #: includes/core/class-ssc-rest.php:476
-#: includes/core/class-ssc-rest.php:525
+#: includes/core/class-ssc-rest.php:528
 #: includes/modules/class-ssc-module-live.php:1056
 msgid "The assistant is not available yet."
 msgstr ""
@@ -4749,61 +4749,105 @@ msgstr ""
 
 #: includes/core/class-ssc-ajax.php:115
 #: includes/core/class-ssc-rest.php:493
-#: includes/core/class-ssc-rest.php:704
+#: includes/core/class-ssc-rest.php:707
 msgid "The message could not be processed."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:149
-#: includes/core/class-ssc-rest.php:536
+#: includes/core/class-ssc-ajax.php:152
+#: includes/core/class-ssc-rest.php:539
 #: includes/modules/class-ssc-module-leads.php:418
 #: includes/modules/class-ssc-module-pharma.php:1114
 msgid "ADR reporting is disabled on this site."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:154
-#: includes/core/class-ssc-rest.php:541
+#: includes/core/class-ssc-ajax.php:157
+#: includes/core/class-ssc-rest.php:544
 #: includes/modules/class-ssc-module-leads.php:425
 msgid "Form submission is disabled on this site."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:160
-#: includes/core/class-ssc-rest.php:548
+#: includes/core/class-ssc-ajax.php:163
+#: includes/core/class-ssc-rest.php:551
 msgid "Too many submissions today. Please try again tomorrow."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:175
-#: includes/core/class-ssc-rest.php:587
+#: includes/core/class-ssc-ajax.php:178
+#: includes/core/class-ssc-rest.php:590
 msgid "Feedback is disabled on this site."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:181
-#: includes/core/class-ssc-ajax.php:222
-#: includes/core/class-ssc-rest.php:594
-#: includes/core/class-ssc-rest.php:621
+#: includes/core/class-ssc-ajax.php:184
+#: includes/core/class-ssc-ajax.php:225
+#: includes/core/class-ssc-rest.php:597
+#: includes/core/class-ssc-rest.php:624
 msgid "Too many votes today."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:184
+#: includes/core/class-ssc-ajax.php:187
 msgid "Invalid feedback."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:215
-#: includes/core/class-ssc-rest.php:614
+#: includes/core/class-ssc-ajax.php:218
+#: includes/core/class-ssc-rest.php:617
 msgid "The survey is disabled on this site."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:219
-#: includes/core/class-ssc-rest.php:618
+#: includes/core/class-ssc-ajax.php:222
+#: includes/core/class-ssc-rest.php:621
 msgid "Invalid score."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:239
+#: includes/core/class-ssc-ajax.php:242
 msgid "Select and save an AI provider first."
 msgstr ""
 
-#: includes/core/class-ssc-ajax.php:245
-#: includes/core/class-ssc-rest.php:681
+#: includes/core/class-ssc-ajax.php:248
+#: includes/core/class-ssc-rest.php:684
 msgid "Connection verified — the model replied successfully."
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:108
+msgid "From saved answers"
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:109
+msgid "AI answer"
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:110
+msgid "Saved response"
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:111
+msgid "Integration response"
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:112
+msgid "Operator response"
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:120
+msgid "This label describes how the answer was prepared, not a guarantee of correctness."
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:124
+msgid "The original provenance of this saved response is unavailable."
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:127
+msgid "These references accompanied generation. They do not verify every claim in the answer."
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:127
+msgid "No public reference is available for this answer."
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:139
+msgid "About this answer"
+msgstr ""
+
+#: includes/core/class-ssc-answer-receipt.php:140
+msgid "Prepared:"
 msgstr ""
 
 #: includes/core/class-ssc-availability.php:81
@@ -4818,27 +4862,27 @@ msgstr ""
 msgid "every day"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:307
+#: includes/core/class-ssc-chat-engine.php:327
 msgid "(The answer was cut short because it reached the length limit. Ask me to continue to get the rest.)"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:310
+#: includes/core/class-ssc-chat-engine.php:330
 msgid "(The provider stopped this answer under its content policy, so it may be incomplete.)"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:312
+#: includes/core/class-ssc-chat-engine.php:332
 msgid "(The answer was interrupted. Ask again to continue.)"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:375
+#: includes/core/class-ssc-chat-engine.php:395
 msgid "Admin-only notice: the AI could not answer."
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:375
+#: includes/core/class-ssc-chat-engine.php:395
 msgid "Provider detail:"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:387
+#: includes/core/class-ssc-chat-engine.php:407
 msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
 msgstr ""
 
@@ -5263,32 +5307,32 @@ msgstr ""
 msgid "Vazho: every minute"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:122
+#: includes/core/class-ssc-modules.php:123
 msgid "This module needs an active licence."
 msgstr ""
 
 #. translators: %s: comma-separated list of required module names.
-#: includes/core/class-ssc-modules.php:140
+#: includes/core/class-ssc-modules.php:141
 msgid "This module needs: %s"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:245
+#: includes/core/class-ssc-modules.php:246
 msgid "Customer Engagement"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:246
+#: includes/core/class-ssc-modules.php:247
 msgid "Communication"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:248
+#: includes/core/class-ssc-modules.php:249
 msgid "Knowledge & Intelligence"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:249
+#: includes/core/class-ssc-modules.php:250
 msgid "Business Tools"
 msgstr ""
 
-#: includes/core/class-ssc-modules.php:250
+#: includes/core/class-ssc-modules.php:251
 msgid "Industry Extensions"
 msgstr ""
 
@@ -5340,35 +5384,35 @@ msgstr ""
 msgid "The assistant is not available."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:597
+#: includes/core/class-ssc-rest.php:600
 msgid "Invalid rating."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:600
+#: includes/core/class-ssc-rest.php:603
 msgid "Invalid feedback token."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:644
+#: includes/core/class-ssc-rest.php:647
 msgid "Unknown provider."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:729
+#: includes/core/class-ssc-rest.php:735
 msgid "Configure and verify an AI provider first."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:738
+#: includes/core/class-ssc-rest.php:744
 msgid "Complete the business profile (step 1) first."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:766
+#: includes/core/class-ssc-rest.php:772
 msgid "The identity test could not run."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:783
+#: includes/core/class-ssc-rest.php:789
 msgid "Identity verified — the assistant correctly identified your organization."
 msgstr ""
 
-#: includes/core/class-ssc-rest.php:783
+#: includes/core/class-ssc-rest.php:789
 msgid "The model replied, but it did not identify your organization correctly. Review the business profile and knowledge, then run the test again."
 msgstr ""
 
@@ -5809,6 +5853,18 @@ msgstr ""
 
 #: includes/modules/class-ssc-module-analytics.php:51
 msgid "See exactly what visitors ask and where your knowledge has gaps - not decorative charts."
+msgstr ""
+
+#: includes/modules/class-ssc-module-answer-receipt.php:32
+msgid "Answer Receipt"
+msgstr ""
+
+#: includes/modules/class-ssc-module-answer-receipt.php:41
+msgid "Show how each answer was prepared, with available public references."
+msgstr ""
+
+#: includes/modules/class-ssc-module-answer-receipt.php:50
+msgid "Make answer provenance visible without promising correctness."
 msgstr ""
 
 #: includes/modules/class-ssc-module-csat.php:32

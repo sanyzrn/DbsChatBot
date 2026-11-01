@@ -1159,3 +1159,10 @@
 	.ssc-root .ssc-launcher--mascot:hover .ssc-m-body { animation: none !important; }
 }
 .ssc-root .ssc-head__avatar.has-mascot svg { width: 100%; height: 100%; }
+
+/* Optional answer provenance: native disclosure preserves keyboard behavior. */
+.ssc-root .ssc-receipt { margin-block-start: 8px; padding-block-start: 6px; border-block-start: 1px solid currentColor; font-size: .8em; overflow-wrap: anywhere; }
+.ssc-root .ssc-receipt__summary { cursor: pointer; padding-block: 5px; font-weight: 500; }
+.ssc-root .ssc-receipt__summary:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.ssc-root .ssc-receipt__note { margin-block: 6px; font-size: inherit; }
+.ssc-root .ssc-receipt__time { display: block; font-size: .95em; }

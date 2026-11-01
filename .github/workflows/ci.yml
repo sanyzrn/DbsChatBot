@@ -73,6 +73,12 @@ jobs:
       - run: node --check assets/js/admin.js
       - run: node --check blocks/chatbot/index.js
       - run: node --test tests/frontend.test.cjs tests/admin.test.cjs
+      - name: Install isolated browser test tooling
+        run: npm install --no-save --package-lock=false playwright@1.56.1
+      - name: Install Chromium for receipt UI checks
+        run: npx playwright install --with-deps chromium --only-shell
+      - name: Answer receipt browser regression
+        run: node tests/receipt-browser.cjs
 
   wordpress:
     name: WordPress integration (MySQL)

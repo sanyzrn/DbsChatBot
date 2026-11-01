@@ -1688,5 +1688,19 @@
   "Get a licence": "دریافت لایسنس",
   "Marketplace licence": "لایسنس مارکت",
   "Not active": "فعال نیست",
-  "The licence for this site is not active. You can use everything to try it, up to %1$d AI answers a day; live chat, the messenger bot, the WooCommerce assistant, the SMS gateway, learning from the website and the pharmaceutical extension need an active licence. Product page: %2$s": "لایسنس این سایت فعال نیست. برای امتحان می‌توانید از همه‌چیز استفاده کنید، تا %1$d پاسخ هوش مصنوعی در روز؛ چت زنده، ربات پیام‌رسان، دستیار ووکامرس، درگاه پیامک، یادگیری از سایت و افزونهٔ دارویی به لایسنس فعال نیاز دارند. صفحهٔ محصول: %2$s"
+  "The licence for this site is not active. You can use everything to try it, up to %1$d AI answers a day; live chat, the messenger bot, the WooCommerce assistant, the SMS gateway, learning from the website and the pharmaceutical extension need an active licence. Product page: %2$s": "لایسنس این سایت فعال نیست. برای امتحان می‌توانید از همه‌چیز استفاده کنید، تا %1$d پاسخ هوش مصنوعی در روز؛ چت زنده، ربات پیام‌رسان، دستیار ووکامرس، درگاه پیامک، یادگیری از سایت و افزونهٔ دارویی به لایسنس فعال نیاز دارند. صفحهٔ محصول: %2$s",
+  "Answer Receipt": "رسید پاسخ",
+  "Show how each answer was prepared, with available public references.": "روش تهیهٔ هر پاسخ و منابع عمومیِ در دسترس آن را نمایش دهید.",
+  "Make answer provenance visible without promising correctness.": "منشأ پاسخ را روشن کنید؛ بدون تضمین درستی آن.",
+  "From saved answers": "از پاسخ‌های ثبت‌شده",
+  "AI answer": "پاسخ هوش مصنوعی",
+  "Saved response": "پاسخ ذخیره‌شده",
+  "Integration response": "پاسخ یکپارچه‌سازی",
+  "Operator response": "پاسخ اپراتور",
+  "This label describes how the answer was prepared, not a guarantee of correctness.": "این نشان روش تهیهٔ پاسخ را مشخص می‌کند و تضمین درستی آن نیست.",
+  "The original provenance of this saved response is unavailable.": "اطلاعات منشأ اصلی این پاسخ ذخیره‌شده در دسترس نیست.",
+  "These references accompanied generation. They do not verify every claim in the answer.": "این منابع هنگام تهیهٔ پاسخ در اختیار مدل بوده‌اند؛ درستی همهٔ جزئیات پاسخ را تأیید نمی‌کنند.",
+  "No public reference is available for this answer.": "برای این پاسخ منبع عمومیِ قابل نمایش در دسترس نیست.",
+  "About this answer": "دربارهٔ این پاسخ",
+  "Prepared:": "زمان تهیه:"
 }

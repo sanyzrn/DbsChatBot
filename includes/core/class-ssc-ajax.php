@@ -119,16 +119,19 @@ class SSC_Ajax {
 			$reply = $this->engine->admin_error_notice();
 		}
 		wp_send_json_success(
-			array(
-				'reply'     => $reply,
-				'source'    => $result['source'],
-				'handoff'   => ! empty( $result['handoff'] ),
-				'log_id'    => (int) $result['log_id'],
-				'log_token' => (string) $result['log_token'],
-				'flags'     => isset( $result['flags'] ) ? (object) $result['flags'] : new stdClass(),
-				'sources'   => isset( $result['sources'] ) ? $result['sources'] : array(),
-				'cards'     => isset( $result['cards'] ) ? $result['cards'] : array(),
-				'actions'   => isset( $result['actions'] ) ? $result['actions'] : array(),
+			SSC_Answer_Receipt::transport(
+				array(
+					'reply'     => $reply,
+					'source'    => $result['source'],
+					'handoff'   => ! empty( $result['handoff'] ),
+					'log_id'    => (int) $result['log_id'],
+					'log_token' => (string) $result['log_token'],
+					'flags'     => isset( $result['flags'] ) ? (object) $result['flags'] : new stdClass(),
+					'sources'   => isset( $result['sources'] ) ? $result['sources'] : array(),
+					'cards'     => isset( $result['cards'] ) ? $result['cards'] : array(),
+					'actions'   => isset( $result['actions'] ) ? $result['actions'] : array(),
+				),
+				$result
 			)
 		);
 	}

@@ -41,6 +41,7 @@ class SSC_Modules {
 				new SSC_Module_Faq(),
 				new SSC_Module_Analytics(),
 				new SSC_Module_Csat(),
+				new SSC_Module_Answer_Receipt(),
 				new SSC_Module_Handoff(),
 				new SSC_Module_Proactive(),
 				new SSC_Module_Notifications(),

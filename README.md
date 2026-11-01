@@ -63,7 +63,7 @@ outside your server.
 
 ### Optional modules
 
-Voice input/output · Proactive invitation (delay / scroll / exit intent, per-page
+Answer receipt (response origin and available public references, without a correctness guarantee) · Voice input/output · Proactive invitation (delay / scroll / exit intent, per-page
 messages) · Notifications (Bale / Telegram / email) · Human handoff · Analytics ·
 CSAT survey · FAQ answer bank · Consultation forms (custom fields, CSV export) ·
 Pharmaceutical ADR reporting (configurable form: short/standard presets, own questions)
@@ -159,7 +159,7 @@ The [framework](docs/internal/agent-workflows/01-Vazho-Development-Framework.md)
 [owner decisions](docs/internal/agent-workflows/DECISIONS.md),
 [selection catalog](docs/internal/agent-workflows/Vazho-Selection-Catalog.md) and
 [continuation guide](docs/internal/agent-workflows/CONTINUE-HERE.md) define current scope.
-The first selected deliverable is the limited answer-receipt **design**, not implementation.
+The scoped answer-receipt module AR-01 is implemented on this development branch; see current status and PR #44 for validation and merge state.
 Older roadmaps and audits remain [supporting references](docs/internal/README.md);
 they are not authorization to build all listed features. Public releases are paused until the owner requests one.
 
