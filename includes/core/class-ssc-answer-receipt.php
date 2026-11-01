@@ -23,7 +23,10 @@ class SSC_Answer_Receipt {
 	 */
 	public static function snapshot( $context, $web ) {
 		$refs = array();
-		foreach ( array( 'context' => $context, 'web' => $web ) as $type => $items ) {
+		foreach ( array(
+			'context' => $context,
+			'web'     => $web,
+		) as $type => $items ) {
 			foreach ( (array) $items as $item ) {
 				if ( is_array( $item ) ) {
 					$item['type'] = $type;
@@ -31,7 +34,10 @@ class SSC_Answer_Receipt {
 				}
 			}
 		}
-		return array( 'generated_at' => gmdate( 'Y-m-d\TH:i:s\Z' ), 'sources' => self::public_sources( $refs ) );
+		return array(
+			'generated_at' => gmdate( 'Y-m-d\TH:i:s\Z' ),
+			'sources'      => self::public_sources( $refs ),
+		);
 	}
 
 	/**
@@ -54,7 +60,7 @@ class SSC_Answer_Receipt {
 			}
 			$type  = isset( $ref['type'] ) && 'web' === $ref['type'] ? 'web' : 'context';
 			$title = '';
-			if ( $home === strtolower( $parts['host'] ) ) {
+			if ( strtolower( $parts['host'] ) === $home ) {
 				$post_id = url_to_postid( $url );
 				$post    = $post_id ? get_post( $post_id ) : null;
 				if ( ! $post || 'publish' !== $post->post_status || '' !== $post->post_password || ! is_post_type_viewable( $post->post_type ) || in_array( (int) $post->ID, SSC_Module_Sitesync::excluded(), true ) ) {
@@ -73,7 +79,11 @@ class SSC_Answer_Receipt {
 			}
 			$title = wp_strip_all_tags( $title );
 			if ( '' !== trim( $title ) ) {
-				$out[ $url ] = array( 'title' => mb_substr( $title, 0, 160 ), 'url' => esc_url_raw( $url ), 'type' => $type );
+				$out[ $url ] = array(
+					'title' => mb_substr( $title, 0, 160 ),
+					'url'   => esc_url_raw( $url ),
+					'type'  => $type,
+				);
 			}
 			if ( count( $out ) >= 6 ) {
 				break;
@@ -101,8 +111,8 @@ class SSC_Answer_Receipt {
 			'filter' => __( 'Integration response', 'vazho' ),
 			'live'   => __( 'Operator response', 'vazho' ),
 		);
-		$known   = is_array( $snapshot ) && isset( $snapshot['generated_at'], $snapshot['sources'] );
-		$time    = $known && is_string( $snapshot['generated_at'] ) && preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $snapshot['generated_at'] ) ? $snapshot['generated_at'] : null;
+		$known  = is_array( $snapshot ) && isset( $snapshot['generated_at'], $snapshot['sources'] );
+		$time   = $known && is_string( $snapshot['generated_at'] ) && preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $snapshot['generated_at'] ) ? $snapshot['generated_at'] : null;
 		if ( 'bank' === $kind ) {
 			$time = gmdate( 'Y-m-d\TH:i:s\Z' );
 		}

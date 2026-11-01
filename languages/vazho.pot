@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01 21:35:39+00:00\n"
+"POT-Creation-Date: 2026-11-01 21:42:12+00:00\n"
 "X-Generator: tools/make-pot.py\n"
 "X-Domain: vazho\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -4806,47 +4806,47 @@ msgstr ""
 msgid "Connection verified — the model replied successfully."
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:98
+#: includes/core/class-ssc-answer-receipt.php:108
 msgid "From saved answers"
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:99
+#: includes/core/class-ssc-answer-receipt.php:109
 msgid "AI answer"
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:100
+#: includes/core/class-ssc-answer-receipt.php:110
 msgid "Saved response"
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:101
+#: includes/core/class-ssc-answer-receipt.php:111
 msgid "Integration response"
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:102
+#: includes/core/class-ssc-answer-receipt.php:112
 msgid "Operator response"
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:110
+#: includes/core/class-ssc-answer-receipt.php:120
 msgid "This label describes how the answer was prepared, not a guarantee of correctness."
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:114
+#: includes/core/class-ssc-answer-receipt.php:124
 msgid "The original provenance of this saved response is unavailable."
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:117
+#: includes/core/class-ssc-answer-receipt.php:127
 msgid "These references accompanied generation. They do not verify every claim in the answer."
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:117
+#: includes/core/class-ssc-answer-receipt.php:127
 msgid "No public reference is available for this answer."
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:129
+#: includes/core/class-ssc-answer-receipt.php:139
 msgid "About this answer"
 msgstr ""
 
-#: includes/core/class-ssc-answer-receipt.php:130
+#: includes/core/class-ssc-answer-receipt.php:140
 msgid "Prepared:"
 msgstr ""
 
@@ -4862,27 +4862,27 @@ msgstr ""
 msgid "every day"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:323
+#: includes/core/class-ssc-chat-engine.php:327
 msgid "(The answer was cut short because it reached the length limit. Ask me to continue to get the rest.)"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:326
+#: includes/core/class-ssc-chat-engine.php:330
 msgid "(The provider stopped this answer under its content policy, so it may be incomplete.)"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:328
+#: includes/core/class-ssc-chat-engine.php:332
 msgid "(The answer was interrupted. Ask again to continue.)"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:391
+#: includes/core/class-ssc-chat-engine.php:395
 msgid "Admin-only notice: the AI could not answer."
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:391
+#: includes/core/class-ssc-chat-engine.php:395
 msgid "Provider detail:"
 msgstr ""
 
-#: includes/core/class-ssc-chat-engine.php:403
+#: includes/core/class-ssc-chat-engine.php:407
 msgid "Thanks for your message. I do not have enough verified information to answer this right now. Please leave a request or contact us directly so we can help you properly."
 msgstr ""
 

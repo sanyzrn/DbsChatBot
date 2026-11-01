@@ -34,3 +34,9 @@ The browser audit additionally covered English/Persian rendering, the complete P
 `tools/build-translations.py` compiles the maintained Persian JSON catalog to PO/MO. `tools/build-release.py` creates the installable ZIP and SHA-256 from a file allowlist, excluding tests, local WordPress data, and credentials.
 
 With WooCommerce active on the test site, `tests/woo.php` also runs (catalogue, order tracking, coupons, cart reminders); without it that block prints SKIP. The suite raises PHP's `memory_limit` to 512M by itself.
+
+## Answer receipt (AR-01)
+
+`tests/answer-receipt.php` runs via the disposable WordPress integration entry point. It checks module-off payloads, bank-only behavior, engine isolation, safe public references, access changes, legacy/new cache and zero extra model calls using a mocked provider.
+
+`tests/receipt-browser.cjs` uses development-only Playwright (CI installs pinned tooling separately). Run `node tests/receipt-browser.cjs` with Playwright and Chromium available. It exercises the production disclosure renderer/CSS at 320/390/1280px in RTL/LTR, keyboard controls and escaping with synthetic payloads. It is a component browser test, not a full installed-WordPress or live-provider certification.

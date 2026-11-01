@@ -288,8 +288,12 @@ class SSC_Chat_Engine {
 			$reply                     = rtrim( $reply ) . "\n\n" . self::incomplete_note( $incomplete );
 		}
 		if ( $cache_enabled && $cache_key && '' === $incomplete ) {
-			$ttl = (int) apply_filters( 'ssc_ai_cache_ttl', 6 * HOUR_IN_SECONDS );
-			set_transient( $cache_key, null !== $this->receipt_snapshot ? array( 'reply' => $reply, 'receipt' => $this->receipt_snapshot ) : $reply, $ttl );
+			$ttl          = (int) apply_filters( 'ssc_ai_cache_ttl', 6 * HOUR_IN_SECONDS );
+			$cached_reply = null !== $this->receipt_snapshot ? array(
+				'reply'   => $reply,
+				'receipt' => $this->receipt_snapshot,
+			) : $reply;
+			set_transient( $cache_key, $cached_reply, $ttl );
 		}
 		$this->last_source = 'ai';
 		return $reply;

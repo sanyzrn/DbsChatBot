@@ -21,7 +21,7 @@ check( ! isset( $ar_missing['receipt'] ), 'Receipt: unanswered messages do not r
 $ar_post = wp_insert_post( array( 'post_title' => 'Public receipt page', 'post_type' => 'page', 'post_status' => 'publish', 'post_content' => 'Receipt reference.' ) );
 // Pretty URLs allow provenance to reject all token-bearing query strings.
 $ar_permalink = get_option( 'permalink_structure' );
-update_option( 'permalink_structure', '/%postname%/' );
+$GLOBALS['wp_rewrite']->set_permalink_structure( '/%postname%/' );
 flush_rewrite_rules();
 $ar_url = get_permalink( $ar_post );
 $ar_refs = array( array( 'title' => 'PRIVATE IMPORT TITLE', 'url' => $ar_url, 'type' => 'context' ) );
@@ -78,7 +78,7 @@ check( 'filter' === $ar_isolated['receipt']['kind'] && array() === $ar_isolated[
 remove_filter( 'ssc_pre_reply', $ar_bank_filter );
 remove_filter( 'pre_http_request', $ar_mock, 40 );
 wp_delete_post( $ar_post, true );
-update_option( 'permalink_structure', $ar_permalink );
+$GLOBALS['wp_rewrite']->set_permalink_structure( $ar_permalink );
 flush_rewrite_rules();
 SSC_Settings::set_secret( 'openai_api_key', '' );
 SSC_Settings::update( $ar_settings );
