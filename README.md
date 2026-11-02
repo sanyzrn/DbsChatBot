@@ -159,7 +159,7 @@ The [framework](docs/internal/agent-workflows/01-Vazho-Development-Framework.md)
 [owner decisions](docs/internal/agent-workflows/DECISIONS.md),
 [selection catalog](docs/internal/agent-workflows/Vazho-Selection-Catalog.md) and
 [continuation guide](docs/internal/agent-workflows/CONTINUE-HERE.md) define current scope.
-The scoped answer-receipt module AR-01 is implemented on this development branch; see current status and PR #44 for validation and merge state.
+The scoped answer-receipt module AR-01 is merged into main via PR #44; see current status for validation, limitations and the next selected task.
 Older roadmaps and audits remain [supporting references](docs/internal/README.md);
 they are not authorization to build all listed features. Public releases are paused until the owner requests one.
 
@@ -243,7 +243,7 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 
 ## فارسی
 
-**واژو‌چت‌ای‌آی** یک دستیار هوش مصنوعی حرفه‌ای برای وردپرس است که از ابتدا برای
+**واژو (Vazho)** یک دستیار هوش مصنوعی حرفه‌ای برای وردپرس است که از ابتدا برای
 فارسی و راست‌به‌چپ طراحی شده و از چپ‌به‌راست هم کامل پشتیبانی می‌کند.
 
 افزونه را نصب کنید، جادوگر پنج‌مرحله‌ای راه‌اندازی را کامل کنید و دستیاری منتشر
@@ -267,10 +267,6 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 ۴. دستیار را با ویجت شناور (خودکار)، کد کوتاه `[ssc_chatbot]`، بلوک گوتنبرگ یا ویجت
 المنتور روی سایت قرار دهید.
 
-**ارتقا از ۱٫۰:** از نسخهٔ ۱٫۱ پوشهٔ افزونه `vazho` است. با فعال کردن نسخهٔ
-جدید، نسخهٔ قدیمی خودکار غیرفعال می‌شود و همهٔ داده‌ها حفظ می‌شوند. سپس نسخهٔ قدیمی
-را حذف کنید. پیش از ارتقا پشتیبان بگیرید و بعد از آن کش صفحه/CDN را پاک کنید.
-
 **پیش‌نیازها:** وردپرس ۵٫۶ به بالا و PHP نسخهٔ ۷٫۴ به بالا به‌همراه افزونه‌های
 `mbstring` و `openssl`. کلید API اختیاری است. حالت‌های آفلاین (فقط بانک پرسش‌وپاسخ،
 یا بدون موتور هوش مصنوعی) هیچ داده‌ای به بیرون از سرور شما نمی‌فرستند.
@@ -291,7 +287,7 @@ see [`assets/fonts/LICENSE.txt`](assets/fonts/LICENSE.txt).
 - **پاسخ جریانی:** برای OpenAI، Claude، Gemini و سرویس‌های سازگار.
 - **حافظهٔ گفتگو در سرور:** مرورگر هرگز زمینهٔ گفتگوی مدل را تعیین نمی‌کند.
 - **ویجت:** ورودی چندخطی، پاسخ قالب‌بندی‌شده، جهت متن جداگانه برای هر پیام، کپی و
-  بازخورد، دکمهٔ تماس، منوی اصلی، تمام‌صفحه در موبایل، تم روشن و تیره.
+  بازخورد، دکمهٔ تماس، منوی اصلی، پنجرهٔ شناور موبایل با زمینهٔ مات، تم روشن و تیره.
 - **امنیت و حریم خصوصی:** رمزنگاری کلیدها، محافظت SSRF، محدودیت نرخ، ناشناس‌سازی IP
   به‌صورت پیش‌فرض و مدت نگهداری قابل تنظیم.
 - **هدف‌گیری نمایش:** مسیر صفحه، دستگاه، وضعیت ورود کاربر و ساعات کاری با وضعیت زنده.
